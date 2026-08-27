@@ -1,0 +1,316 @@
+﻿@page "/warehouses/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Lager bearbeiten</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Lager wird geladen...
+    </div>
+}
+else if (Warehouse == null)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>Lager nicht gefunden</h3>
+
+        <a href="/warehouses"
+           class="btn-primary">
+            Zurück zu Lager
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Lager bearbeiten</h1>
+
+                <p>
+                    @Warehouse.Name
+                </p>
+
+            </div>
+
+            <a href="/warehouses"
+               class="btn-secondary">
+                ← Zurück
+            </a>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdateWarehouse"
+                      FormName="WarehouseEditForm">
+
+                <DataAnnotationsValidator />
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Lagerinformationen</h2>
+
+                        <p>
+                            Lagerdaten bearbeiten.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <!-- NAME -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Name <span>*</span>
+                            </label>
+
+                            <InputText @bind-Value="Model.Name"
+                                       class="form-control" />
+
+                            <ValidationMessage For="@(() => Model.Name)" />
+
+                        </div>
+
+
+                        <!-- ACTIVE -->
+
+                        <div class="form-group checkbox-group">
+
+                            <label class="checkbox-label">
+
+                                <InputCheckbox @bind-Value="Model.IsActive" />
+
+                                <span>
+                                    Lager ist aktiv
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Beschreibung</h2>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <InputTextArea @bind-Value="Model.Description"
+                                       class="form-control textarea"
+                                       rows="5" />
+
+                    </div>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    <a href="/warehouses"
+                       class="btn-secondary">
+                        Abbrechen
+                    </a>
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Änderungen speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    private Warehouse? Warehouse;
+
+    private WarehouseModel Model = new();
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Warehouse = await db.Warehouses
+            .FirstOrDefaultAsync(x =>
+                x.Id == Id);
+
+
+        if (Warehouse != null)
+        {
+            Model = new WarehouseModel
+            {
+                Name = Warehouse.Name,
+
+                Description =
+                    Warehouse.Description,
+
+                IsActive =
+                    Warehouse.IsActive
+            };
+        }
+
+
+        IsLoading = false;
+    }
+
+
+    private async Task UpdateWarehouse()
+    {
+        if (Warehouse == null || IsSaving)
+            return;
+
+        IsSaving = true;
+        ErrorMessage = null;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var name = Model.Name.Trim();
+
+
+            // Prüfen auf doppelte Namen
+
+            var exists = await db.Warehouses
+                .AnyAsync(x =>
+                    x.Id != Id &&
+                    x.Name == name);
+
+            if (exists)
+            {
+                ErrorMessage =
+                    "Ein anderes Lager mit diesem Namen existiert bereits.";
+
+                return;
+            }
+
+
+            var warehouse =
+                await db.Warehouses
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+
+            if (warehouse == null)
+            {
+                ErrorMessage =
+                    "Lager nicht gefunden.";
+
+                return;
+            }
+
+
+            warehouse.Name = name;
+
+            warehouse.Description =
+                string.IsNullOrWhiteSpace(
+                    Model.Description)
+                    ? null
+                    : Model.Description.Trim();
+
+            warehouse.IsActive =
+                Model.IsActive;
+
+
+            await db.SaveChangesAsync();
+
+            Navigation.NavigateTo("/warehouses");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class WarehouseModel
+    {
+        [Required(
+            ErrorMessage =
+                "Name ist erforderlich.")]
+
+        [MaxLength(100)]
+        public string Name { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+
+        public bool IsActive { get; set; } = true;
+    }
+
+}

@@ -1,0 +1,924 @@
+﻿@page "/orders"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellungen</PageTitle>
+
+<div class="product-list-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Bestellungen</h1>
+            <p>Verwalten Sie Ihre Bestellungen.</p>
+        </div>
+
+        <a href="/orders/create"
+           class="btn-primary">
+            + Neue Bestellung
+        </a>
+
+    </div>
+
+
+    <!-- =========================================================
+         SEARCH / FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   class="search-input"
+                   placeholder="Bestellnummer, Referenz oder Kunde suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus"
+                @bind:after="FilterChanged">
+
+            <option value="0">
+                Alle Status
+            </option>
+
+            <option value="@((int)OrderStatus.Entwurf)">
+                Entwurf
+            </option>
+
+            <option value="@((int)OrderStatus.Bestätigt)">
+                Bestätigt
+            </option>
+
+            <option value="@((int)OrderStatus.InBearbeitung)">
+                In Bearbeitung
+            </option>
+
+            <option value="@((int)OrderStatus.TeilweiseGeliefert)">
+                Teilweise geliefert
+            </option>
+
+            <option value="@((int)OrderStatus.Versendet)">
+                Versendet
+            </option>
+
+            <option value="@((int)OrderStatus.Abgeschlossen)">
+                Abgeschlossen
+            </option>
+
+            <option value="@((int)OrderStatus.Storniert)">
+                Storniert
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="stock-summary-grid">
+
+        <div class="stock-summary-card">
+
+            <span>Bestellungen</span>
+
+            <strong>
+                @Orders.Count
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Offen</span>
+
+            <strong>
+                @OpenCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>In Bearbeitung</span>
+
+            <strong>
+                @ProcessingCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Abgeschlossen</span>
+
+            <strong>
+                @CompletedCount
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Bestellungen
+                </strong>
+
+                <span>
+                    @Orders.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Bestellungen werden geladen...
+            </div>
+        }
+        else if (Orders.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    ☷
+                </div>
+
+                <h3>
+                    Keine Bestellungen gefunden
+                </h3>
+
+                <p>
+                    Für die aktuelle Suche wurden keine Bestellungen gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Bestellung</th>
+
+                            <th>Datum</th>
+
+                            <th>Kunde</th>
+
+                            <th>Positionen</th>
+
+                            <th>Status</th>
+
+                            <th>Gesamt</th>
+
+                            <th>Aktionen</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var order in Orders)
+                        {
+                            <tr>
+
+                                <!-- =================================================
+                                     ORDER NUMBER
+                                     ================================================= -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            #
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @order.OrderNumber
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                order.ReferenceNumber))
+                                            {
+                                                <small>
+                                                    Ref: @order.ReferenceNumber
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     DATE
+                                     ================================================= -->
+
+                                <td>
+
+                                    <div class="movement-date">
+
+                                        <strong>
+                                            @order.OrderDate
+                                        </strong>
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     CUSTOMER
+                                     ================================================= -->
+
+                                <td>
+
+                                    @if (order.Customer != null)
+                                    {
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+                                                @GetInitials(
+                                                    order.Customer.CompanyName)
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @order.Customer.CompanyName
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    order.Customer.CustomerNumber))
+                                                {
+                                                    <small>
+                                                        @order.Customer.CustomerNumber
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     ITEMS
+                                     ================================================= -->
+
+                                <td>
+
+                                    <span>
+                                        @order.Items.Count
+                                        @(order.Items.Count == 1
+                                            ? "Position"
+                                            : "Positionen")
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     STATUS
+                                     ================================================= -->
+
+                                <td>
+
+                                    <span class="@GetStatusClass(order.Status)">
+                                        @GetStatusText(order.Status)
+                                    </span>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     TOTAL
+                                     ================================================= -->
+
+                                <td>
+
+                                    <strong>
+                                        @order.Total.ToString("N2") €
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     ACTIONS
+                                     ================================================= -->
+
+                                <td>
+
+                                    <div class="product-actions">
+                                        <button type="button"
+                                                class="action-button"
+                                                title="Bestellung duplizieren"
+                                                @onclick="() => DuplicateOrder(order)"
+                                                disabled="@IsDuplicating">
+
+                                            ⧉
+
+                                        </button>
+                                        <a href="/orders/details/@order.Id"
+                                           class="action-button"
+                                           title="Details">
+
+                                            👁
+
+                                        </a>
+
+
+                                        <a href="/orders/edit/@order.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
+
+                                            ✎
+
+                                        </a>
+
+                                        @if (order.Status == OrderStatus.Entwurf)
+                                        {
+                                            <a href="/orders/confirm/@order.Id"
+                                               class="action-button"
+                                               title="Bestellung bestätigen">
+                                                ✓
+                                            </a>
+                                        }
+                                        @if (order.Status != OrderStatus.Storniert)
+                                        {
+                                            <button type="button"
+                                                    class="action-button delete-button"
+                                                    title="Stornieren"
+                                                    @onclick="() => CancelOrder(order)">
+
+                                                🗑
+
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<Order> Orders = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedStatus;
+    private bool IsDuplicating;
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private int OpenCount =>
+        Orders.Count(x =>
+            x.Status == OrderStatus.Entwurf ||
+            x.Status == OrderStatus.Bestätigt);
+
+
+    private int ProcessingCount =>
+        Orders.Count(x =>
+            x.Status == OrderStatus.InBearbeitung ||
+            x.Status == OrderStatus.TeilweiseGeliefert);
+
+
+    private int CompletedCount =>
+        Orders.Count(x =>
+            x.Status == OrderStatus.Abgeschlossen);
+
+
+    // =========================================================
+    // INIT
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrders();
+    }
+
+    private async Task DuplicateOrder(Order order)
+    {
+        if (IsDuplicating)
+            return;
+
+        IsDuplicating = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =====================================================
+            // ORIGINAL ORDER
+            // =====================================================
+
+            var original =
+                await db.Orders
+
+                    .Include(x => x.Items)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == order.Id);
+
+
+            if (original == null)
+                return;
+
+
+            // =====================================================
+            // NEW ORDER NUMBER
+            // =====================================================
+
+            var prefix =
+                $"ORD-{DateTime.Now:yyyy}-";
+
+
+            var existingNumbers =
+                await db.Orders
+
+                    .Where(x =>
+                        x.OrderNumber.StartsWith(prefix))
+
+                    .Select(x =>
+                        x.OrderNumber)
+
+                    .ToListAsync();
+
+
+            var maxNumber = 0;
+
+
+            foreach (var number in existingNumbers)
+            {
+                var part =
+                    number.Substring(
+                        prefix.Length);
+
+
+                if (int.TryParse(
+                    part,
+                    out var value))
+                {
+                    if (value > maxNumber)
+                        maxNumber = value;
+                }
+            }
+
+
+            var newOrderNumber =
+                $"{prefix}{maxNumber + 1:0000}";
+
+
+            // =====================================================
+            // CREATE NEW ORDER
+            // =====================================================
+
+            var newOrder =
+                new Order
+                {
+                    OrderNumber =
+                        newOrderNumber,
+
+                    CustomerId =
+                        original.CustomerId,
+
+                    OrderDate =
+                        DateTime.Now,
+
+                    Status =
+                        OrderStatus.Entwurf,
+
+                    ReferenceNumber =
+                        original.ReferenceNumber,
+
+                    DeliveryStreet =
+                        original.DeliveryStreet,
+
+                    DeliveryPostalCode =
+                        original.DeliveryPostalCode,
+
+                    DeliveryCity =
+                        original.DeliveryCity,
+
+                    DeliveryCountry =
+                        original.DeliveryCountry,
+
+                    Note =
+                        original.Note,
+
+                    Total =
+                        original.Total,
+
+                    CreatedAt =
+                        DateTime.UtcNow,
+
+                    UpdatedAt =
+                        DateTime.UtcNow
+                };
+
+
+            // =====================================================
+            // COPY ITEMS
+            // =====================================================
+
+            foreach (var item in original.Items)
+            {
+                newOrder.Items.Add(
+                    new OrderItem
+                    {
+                        ProductId =
+                            item.ProductId,
+
+                        Quantity =
+                            item.Quantity,
+
+                        UnitPrice =
+                            item.UnitPrice,
+
+                        // VERY IMPORTANT:
+                        // New order is Entwurf,
+                        // therefore it has NO reservation.
+                        WarehouseLocationId =
+                            null
+                    });
+            }
+
+
+            // =====================================================
+            // SAVE
+            // =====================================================
+
+            db.Orders.Add(newOrder);
+
+            await db.SaveChangesAsync();
+
+
+            // =====================================================
+            // OPEN NEW ORDER
+            // =====================================================
+
+            Navigation.NavigateTo(
+                $"/orders/edit/{newOrder.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Duplizieren: {ex}");
+        }
+        finally
+        {
+            IsDuplicating = false;
+        }
+    }
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    private async Task LoadOrders()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var query =
+                db.Orders
+
+                    .Include(x =>
+                        x.Customer)
+
+                    .Include(x =>
+                        x.Items)
+
+                    .AsQueryable();
+
+
+            // =====================================================
+            // SEARCH
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+
+                query =
+                    query.Where(x =>
+
+                        x.OrderNumber.Contains(search)
+
+                        ||
+
+                        (
+                            x.ReferenceNumber != null &&
+                            x.ReferenceNumber.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Customer != null &&
+                            x.Customer.CompanyName.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Customer != null &&
+                            x.Customer.CustomerNumber != null &&
+                            x.Customer.CustomerNumber.Contains(search)
+                        )
+                    );
+            }
+
+
+            // =====================================================
+            // STATUS
+            // =====================================================
+
+            if (SelectedStatus > 0)
+            {
+                var status =
+                    (OrderStatus)SelectedStatus;
+
+
+                query =
+                    query.Where(x =>
+                        x.Status == status);
+            }
+
+
+            // =====================================================
+            // LOAD
+            // =====================================================
+
+            Orders =
+                await query
+
+                    .OrderByDescending(x =>
+                        x.OrderDate)
+
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private async Task SearchChanged()
+    {
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private async Task FilterChanged()
+    {
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // CANCEL ORDER
+    // =========================================================
+
+    private async Task CancelOrder(Order order)
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var entity =
+            await db.Orders
+                .FirstOrDefaultAsync(
+                    x => x.Id == order.Id);
+
+
+        if (entity == null)
+            return;
+
+
+        entity.Status =
+            OrderStatus.Storniert;
+
+
+        entity.UpdatedAt =
+            DateTime.UtcNow;
+
+
+        await db.SaveChangesAsync();
+
+
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "Entwurf",
+
+            OrderStatus.Bestätigt =>
+                "Bestätigt",
+
+            OrderStatus.InBearbeitung =>
+                "In Bearbeitung",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            OrderStatus.Versendet =>
+                "Versendet",
+
+            OrderStatus.Abgeschlossen =>
+                "Abgeschlossen",
+
+            OrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
+    }
+
+
+    // =========================================================
+    // STATUS CSS
+    // =========================================================
+
+    private string GetStatusClass(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "status-badge status-low",
+
+            OrderStatus.Bestätigt =>
+                "status-badge status-active",
+
+            OrderStatus.InBearbeitung =>
+                "status-badge status-active",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "status-badge status-active",
+
+            OrderStatus.Versendet =>
+                "status-badge status-active",
+
+            OrderStatus.Abgeschlossen =>
+                "status-badge status-active",
+
+            OrderStatus.Storniert =>
+                "status-badge status-low",
+
+            _ =>
+                "status-badge"
+        };
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

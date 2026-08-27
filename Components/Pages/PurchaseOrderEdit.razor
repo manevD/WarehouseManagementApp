@@ -1,0 +1,1564 @@
+﻿@page "/purchase-orders/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung bearbeiten</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Bestellung wird geladen...
+    </div>
+}
+else if (Order == null)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>Bestellung nicht gefunden</h3>
+
+        <a href="/purchase-orders"
+           class="btn-primary">
+
+            Zurück zu Bestellungen
+
+        </a>
+
+    </div>
+}
+else if (Order.Status != PurchaseOrderStatus.Entwurf)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            🔒
+        </div>
+
+        <h3>Bestellung kann nicht bearbeitet werden</h3>
+
+        <p>
+            Diese Bestellung hat bereits den Status
+            <strong>@GetStatusText(Order.Status)</strong>.
+        </p>
+
+        <a href="/purchase-orders/details/@Order.Id"
+           class="btn-primary">
+
+            Zur Bestellung
+
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Bestellung bearbeiten</h1>
+
+                <p>
+                    @Order.OrderNumber
+                    -
+                    @(Order.Supplier?.CompanyName ?? "-")
+                </p>
+
+            </div>
+
+            <a href="/purchase-orders/details/@Order.Id"
+               class="btn-secondary">
+
+                ← Zurück
+
+            </a>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdatePurchaseOrder"
+                      FormName="PurchaseOrderEditForm">
+
+                <DataAnnotationsValidator />
+
+
+                <!-- =================================================
+                     BESTELLUNG
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Bestellung</h2>
+
+                        <p>
+                            Lieferant und Bestelldaten bearbeiten.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <!-- SUPPLIER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Lieferant <span>*</span>
+                            </label>
+
+                            <select class="form-control"
+                                    value="@Model.SupplierId"
+                                    @onchange="SupplierChanged">
+
+                                <option value="0">
+                                    Lieferant auswählen
+                                </option>
+
+                                @foreach (var supplier in Suppliers)
+                                {
+                                    <option value="@supplier.Id">
+
+                                        @supplier.CompanyName
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            supplier.SupplierNumber))
+                                        {
+                                            @($" ({supplier.SupplierNumber})")
+                                        }
+
+                                    </option>
+                                }
+
+                            </select>
+
+                            @if (Model.SupplierId <= 0)
+                            {
+                                <div class="form-error">
+                                    Bitte einen Lieferanten auswählen.
+                                </div>
+                            }
+
+                        </div>
+
+
+                        <!-- ORDER NUMBER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Bestellnummer <span>*</span>
+                            </label>
+
+                            <InputText @bind-Value="Model.OrderNumber"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Bestelldatum <span>*</span>
+                            </label>
+
+                            <InputDate @bind-Value="Model.OrderDate"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <!-- REFERENCE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Referenznummer
+                            </label>
+
+                            <InputText @bind-Value="Model.ReferenceNumber"
+                                       class="form-control"
+                                       placeholder="Referenznummer" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ITEMS
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <div class="section-title-row">
+
+                            <div>
+
+                                <h2>
+                                    Bestellpositionen
+                                </h2>
+
+                                <p>
+                                    Produkte, Mengen und Preise bearbeiten.
+                                </p>
+
+                            </div>
+
+
+                            <button type="button"
+                                    class="btn-primary"
+                                    @onclick="AddItem">
+
+                                + Produkt hinzufügen
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model.Items.Count == 0)
+                    {
+                        <div class="empty-products">
+
+                            <div class="empty-products-icon">
+                                📦
+                            </div>
+
+                            <h3>
+                                Keine Positionen
+                            </h3>
+
+                            <p>
+                                Fügen Sie mindestens ein Produkt hinzu.
+                            </p>
+
+                            <button type="button"
+                                    class="btn-primary"
+                                    @onclick="AddItem">
+
+                                + Produkt hinzufügen
+
+                            </button>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="order-items-table-wrapper">
+
+                            <table class="products-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Produkt
+                                        </th>
+
+                                        <th>
+                                            Menge
+                                        </th>
+
+                                        <th>
+                                            Einzelpreis
+                                        </th>
+
+                                        <th>
+                                            Gesamt
+                                        </th>
+
+                                        <th>
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr>
+
+                                            <!-- =================================
+                                                 PRODUCT
+                                                 ================================= -->
+
+                                            <td>
+
+                                                <select class="form-control"
+                                                        value="@item.ProductId"
+                                                        @onchange="(e) => ProductChanged(item, e)">
+
+                                                    <option value="0">
+                                                        Produkt auswählen
+                                                    </option>
+
+                                                    @foreach (var product in GetAvailableProducts(item))
+                                                    {
+                                                        <option value="@product.Id">
+
+                                                            @product.SKU -
+                                                            @product.Name
+
+                                                        </option>
+                                                    }
+
+                                                </select>
+
+
+                                                @if (item.ProductId <= 0)
+                                                {
+                                                    <div class="form-error">
+                                                        Produkt auswählen.
+                                                    </div>
+                                                }
+
+                                            </td>
+
+
+                                            <!-- =================================
+                                                 QUANTITY
+                                                 ================================= -->
+
+                                            <td>
+
+                                                <InputNumber @bind-Value="item.Quantity"
+                                                             class="form-control"
+                                                             step="0.01"
+                                                             min="0.01" />
+
+                                                @if (item.ProductId > 0 &&
+                                                     item.Quantity <= 0)
+                                                {
+                                                    <div class="form-error">
+                                                        Menge muss größer als 0 sein.
+                                                    </div>
+                                                }
+
+
+                                                @if (item.DeliveredQuantity > 0)
+                                                {
+                                                    <small class="form-help">
+
+                                                        Bereits geliefert:
+                                                        <strong>
+                                                            @item.DeliveredQuantity.ToString("N2")
+                                                        </strong>
+
+                                                    </small>
+                                                }
+
+                                            </td>
+
+
+                                            <!-- =================================
+                                                 UNIT PRICE
+                                                 ================================= -->
+
+                                            <td>
+
+                                                <InputNumber @bind-Value="item.UnitPrice"
+                                                             class="form-control"
+                                                             step="0.01"
+                                                             min="0" />
+
+                                                @if (item.ProductId > 0 &&
+                                                     item.UnitPrice < 0)
+                                                {
+                                                    <div class="form-error">
+                                                        Preis darf nicht negativ sein.
+                                                    </div>
+                                                }
+
+                                            </td>
+
+
+                                            <!-- =================================
+                                                 TOTAL
+                                                 ================================= -->
+
+                                            <td>
+
+                                                <strong>
+
+                                                    @(
+                                                        (
+                                                            item.Quantity *
+                                                            item.UnitPrice
+                                                        ).ToString("N2")
+                                                    )
+
+                                                    €
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <!-- =================================
+                                                 DELETE
+                                                 ================================= -->
+
+                                            <td>
+
+                                                @if (item.DeliveredQuantity <= 0)
+                                                {
+                                                    <button type="button"
+                                                            class="action-button delete-button"
+                                                            title="Position entfernen"
+                                                            @onclick="() => RemoveItem(item)">
+
+                                                        🗑
+
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <span title="Bereits gelieferte Position kann nicht gelöscht werden">
+
+                                                        🔒
+
+                                                    </span>
+                                                }
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+
+                </div>
+
+
+                <!-- =================================================
+                     TOTAL
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="order-total-box">
+
+                        <span>
+                            Gesamt
+                        </span>
+
+                        <strong>
+                            @CalculateTotal().ToString("N2") €
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     NOTE
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>
+                            Notiz
+                        </h2>
+
+                        <p>
+                            Optionale Informationen zur Bestellung.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <InputTextArea @bind-Value="Model.Note"
+                                       class="form-control textarea"
+                                       rows="5"
+                                       placeholder="Notiz..." />
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ERROR
+                     ================================================= -->
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+
+                        @ErrorMessage
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     ACTIONS
+                     ================================================= -->
+
+                <div class="form-actions">
+
+                    <a href="/purchase-orders/details/@Order.Id"
+                       class="btn-secondary">
+
+                        Abbrechen
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Änderungen speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private PurchaseOrder? Order;
+
+    private List<Supplier> Suppliers = new();
+
+    private List<Product> Products = new();
+
+
+    // =========================================================
+    // MODEL
+    // =========================================================
+
+    private PurchaseOrderEditModel Model = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // SUPPLIERS
+        // =====================================================
+
+        Suppliers =
+            await db.Suppliers
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.CompanyName)
+
+                .ToListAsync();
+
+
+        // =====================================================
+        // PRODUCTS
+        // =====================================================
+
+        Products =
+            await db.Products
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        // =====================================================
+        // ORDER
+        // =====================================================
+
+        Order =
+            await db.PurchaseOrders
+
+                .Include(x =>
+                    x.Supplier)
+
+                .Include(x =>
+                    x.Items)
+
+                .FirstOrDefaultAsync(x =>
+                    x.Id == Id);
+
+
+        if (Order != null)
+        {
+            Model.SupplierId =
+                Order.SupplierId;
+
+            Model.OrderNumber =
+                Order.OrderNumber;
+
+            Model.OrderDate =
+                Order.OrderDate;
+
+            Model.ReferenceNumber =
+                Order.ReferenceNumber;
+
+            Model.Note =
+                Order.Note;
+
+
+            foreach (var item in Order.Items)
+            {
+                Model.Items.Add(
+                    new PurchaseOrderItemModel
+                    {
+                        Id =
+                            item.Id,
+
+                        ProductId =
+                            item.ProductId,
+
+                        Quantity =
+                            item.Quantity,
+
+                        UnitPrice =
+                            item.UnitPrice,
+
+                        DeliveredQuantity =
+                            item.DeliveredQuantity
+                    });
+            }
+        }
+
+
+        IsLoading = false;
+    }
+
+
+    // =========================================================
+    // SUPPLIER CHANGED
+    // =========================================================
+
+    private Task SupplierChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+
+        if (int.TryParse(
+                e.Value?.ToString(),
+                out var supplierId))
+        {
+            Model.SupplierId =
+                supplierId;
+        }
+        else
+        {
+            Model.SupplierId =
+                0;
+        }
+
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // ADD ITEM
+    // =========================================================
+
+    private void AddItem()
+    {
+        ErrorMessage = null;
+
+
+        // =====================================================
+        // CHECK IF ALL PRODUCTS ARE ALREADY USED
+        // =====================================================
+
+        var availableProductExists =
+            Products.Any(product =>
+                !Model.Items.Any(item =>
+                    item.ProductId ==
+                    product.Id));
+
+
+        if (!availableProductExists)
+        {
+            ErrorMessage =
+                "Alle verfügbaren Produkte wurden bereits hinzugefügt.";
+
+            return;
+        }
+
+
+        Model.Items.Add(
+            new PurchaseOrderItemModel());
+    }
+
+
+    // =========================================================
+    // AVAILABLE PRODUCTS
+    // =========================================================
+
+    private IEnumerable<Product> GetAvailableProducts(
+        PurchaseOrderItemModel currentItem)
+    {
+        var selectedProductIds =
+            Model.Items
+
+                .Where(item =>
+                    item != currentItem
+
+                    &&
+
+                    item.ProductId > 0)
+
+                .Select(item =>
+                    item.ProductId)
+
+                .ToHashSet();
+
+
+        return Products.Where(product =>
+
+            // Current selected product must remain visible
+            product.Id ==
+                currentItem.ProductId
+
+            ||
+
+            // Other selected products are hidden
+            !selectedProductIds.Contains(
+                product.Id)
+
+        );
+    }
+
+
+    // =========================================================
+    // PRODUCT CHANGED
+    // =========================================================
+
+    private Task ProductChanged(
+        PurchaseOrderItemModel item,
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            item.ProductId =
+                0;
+
+            item.Quantity =
+                0;
+
+            item.UnitPrice =
+                0;
+
+            return Task.CompletedTask;
+        }
+
+
+        // =====================================================
+        // CLEAR PRODUCT
+        // =====================================================
+
+        if (productId <= 0)
+        {
+            item.ProductId =
+                0;
+
+            item.Quantity =
+                0;
+
+            item.UnitPrice =
+                0;
+
+            return Task.CompletedTask;
+        }
+
+
+        // =====================================================
+        // DUPLICATE CHECK
+        // =====================================================
+
+        var duplicate =
+            Model.Items.Any(x =>
+                x != item
+
+                &&
+
+                x.ProductId ==
+                    productId);
+
+
+        if (duplicate)
+        {
+            ErrorMessage =
+                "Dieses Produkt wurde bereits als Bestellposition hinzugefügt.";
+
+            return Task.CompletedTask;
+        }
+
+
+        // =====================================================
+        // DELIVERED ITEM PROTECTION
+        // =====================================================
+
+        if (item.DeliveredQuantity > 0 &&
+            item.ProductId != 0 &&
+            item.ProductId != productId)
+        {
+            ErrorMessage =
+                "Das Produkt einer bereits gelieferten Position kann nicht geändert werden.";
+
+            return Task.CompletedTask;
+        }
+
+
+        // =====================================================
+        // SET PRODUCT
+        // =====================================================
+
+        item.ProductId =
+            productId;
+
+
+        // =====================================================
+        // DEFAULT PURCHASE PRICE
+        // =====================================================
+
+        var product =
+            Products.FirstOrDefault(x =>
+                x.Id == productId);
+
+
+        if (product != null &&
+            item.UnitPrice <= 0)
+        {
+            item.UnitPrice =
+                product.PurchasePrice;
+        }
+
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // REMOVE ITEM
+    // =========================================================
+
+    private void RemoveItem(
+        PurchaseOrderItemModel item)
+    {
+        ErrorMessage = null;
+
+
+        // =====================================================
+        // DELIVERED PROTECTION
+        // =====================================================
+
+        if (item.DeliveredQuantity > 0)
+        {
+            ErrorMessage =
+                "Eine bereits gelieferte Position kann nicht entfernt werden.";
+
+            return;
+        }
+
+
+        Model.Items.Remove(item);
+    }
+
+
+    // =========================================================
+    // CALCULATE TOTAL
+    // =========================================================
+
+    private decimal CalculateTotal()
+    {
+        return Model.Items.Sum(item =>
+            item.Quantity *
+            item.UnitPrice);
+    }
+
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
+    private async Task UpdatePurchaseOrder()
+    {
+        if (Order == null ||
+            IsSaving)
+        {
+            return;
+        }
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            // =================================================
+            // STATUS
+            // =================================================
+
+            if (Order.Status !=
+                PurchaseOrderStatus.Entwurf)
+            {
+                ErrorMessage =
+                    "Diese Bestellung kann nicht mehr bearbeitet werden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SUPPLIER
+            // =================================================
+
+            if (Model.SupplierId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte einen Lieferanten auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ORDER NUMBER
+            // =================================================
+
+            var orderNumber =
+                Model.OrderNumber?.Trim();
+
+
+            if (string.IsNullOrWhiteSpace(
+                orderNumber))
+            {
+                ErrorMessage =
+                    "Bestellnummer ist erforderlich.";
+
+                return;
+            }
+
+
+            if (orderNumber.Length > 50)
+            {
+                ErrorMessage =
+                    "Die Bestellnummer darf maximal 50 Zeichen lang sein.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ITEMS
+            // =================================================
+
+            if (Model.Items.Count == 0)
+            {
+                ErrorMessage =
+                    "Bitte mindestens ein Produkt hinzufügen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // DUPLICATE PRODUCTS
+            // =================================================
+
+            var selectedProductIds =
+                new HashSet<int>();
+
+
+            foreach (var item in Model.Items)
+            {
+                // =============================================
+                // PRODUCT
+                // =============================================
+
+                if (item.ProductId <= 0)
+                {
+                    ErrorMessage =
+                        "Bitte für jede Position ein Produkt auswählen.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // DUPLICATE
+                // =============================================
+
+                if (!selectedProductIds.Add(
+                    item.ProductId))
+                {
+                    ErrorMessage =
+                        "Ein Produkt darf nur einmal als Bestellposition vorhanden sein.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // QUANTITY
+                // =============================================
+
+                if (item.Quantity <= 0)
+                {
+                    ErrorMessage =
+                        "Menge muss größer als 0 sein.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // UNIT PRICE
+                // =============================================
+
+                if (item.UnitPrice < 0)
+                {
+                    ErrorMessage =
+                        "Preis darf nicht negativ sein.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // DELIVERED QUANTITY
+                // =============================================
+
+                if (item.DeliveredQuantity >
+                    item.Quantity)
+                {
+                    ErrorMessage =
+                        "Die gelieferte Menge darf nicht größer als die Bestellmenge sein.";
+
+                    return;
+                }
+            }
+
+
+            // =================================================
+            // DATABASE
+            // =================================================
+
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // LOAD ACTUAL ORDER
+            // =================================================
+
+            var order =
+                await db.PurchaseOrders
+
+                    .Include(x =>
+                        x.Items)
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+
+
+            if (order == null)
+            {
+                ErrorMessage =
+                    "Bestellung nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // DATABASE STATUS CHECK
+            // =================================================
+
+            if (order.Status !=
+                PurchaseOrderStatus.Entwurf)
+            {
+                ErrorMessage =
+                    "Diese Bestellung wurde inzwischen bestätigt und kann nicht mehr bearbeitet werden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SUPPLIER EXISTS
+            // =================================================
+
+            var supplierExists =
+                await db.Suppliers
+
+                    .AnyAsync(x =>
+                        x.Id ==
+                            Model.SupplierId
+
+                        &&
+
+                        x.IsActive);
+
+
+            if (!supplierExists)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ORDER NUMBER UNIQUE
+            // =================================================
+
+            var duplicateNumber =
+                await db.PurchaseOrders
+
+                    .AnyAsync(x =>
+
+                        x.Id != Id
+
+                        &&
+
+                        x.OrderNumber ==
+                            orderNumber
+
+                    );
+
+
+            if (duplicateNumber)
+            {
+                ErrorMessage =
+                    "Diese Bestellnummer existiert bereits.";
+
+                return;
+            }
+
+
+            // =================================================
+            // PRODUCTS EXIST
+            // =================================================
+
+            var validProductIds =
+                await db.Products
+
+                    .Where(x =>
+
+                        selectedProductIds.Contains(
+                            x.Id)
+
+                        &&
+
+                        x.IsActive)
+
+                    .Select(x =>
+                        x.Id)
+
+                    .ToListAsync();
+
+
+            if (validProductIds.Count !=
+                selectedProductIds.Count)
+            {
+                ErrorMessage =
+                    "Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.";
+
+                return;
+            }
+
+
+            // =================================================
+            // EXISTING ITEMS
+            // =================================================
+
+            var existingItems =
+                order.Items.ToList();
+
+
+            // =================================================
+            // ITEMS FROM FORM
+            // =================================================
+
+            var incomingExistingIds =
+                Model.Items
+
+                    .Where(x =>
+                        x.Id > 0)
+
+                    .Select(x =>
+                        x.Id)
+
+                    .ToHashSet();
+
+
+            // =================================================
+            // DELETE REMOVED ITEMS
+            // =================================================
+
+            foreach (var existingItem in existingItems)
+            {
+                if (incomingExistingIds.Contains(
+                    existingItem.Id))
+                {
+                    continue;
+                }
+
+
+                // =============================================
+                // NEVER DELETE DELIVERED ITEM
+                // =============================================
+
+                if (existingItem.DeliveredQuantity > 0)
+                {
+                    ErrorMessage =
+                        "Eine bereits gelieferte Position kann nicht entfernt werden.";
+
+                    return;
+                }
+
+
+                db.PurchaseOrderItems.Remove(
+                    existingItem);
+            }
+
+
+            // =================================================
+            // UPDATE / ADD
+            // =================================================
+
+            foreach (var itemModel in Model.Items)
+            {
+                // =================================================
+                // EXISTING ITEM
+                // =================================================
+
+                if (itemModel.Id > 0)
+                {
+                    var existingItem =
+                        existingItems.FirstOrDefault(x =>
+                            x.Id ==
+                            itemModel.Id);
+
+
+                    if (existingItem == null)
+                    {
+                        ErrorMessage =
+                            "Eine Bestellposition wurde nicht gefunden.";
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // PRODUCT CHANGE PROTECTION
+                    // =============================================
+
+                    if (existingItem.DeliveredQuantity > 0 &&
+                        existingItem.ProductId !=
+                            itemModel.ProductId)
+                    {
+                        ErrorMessage =
+                            "Das Produkt einer bereits gelieferten Position kann nicht geändert werden.";
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // QUANTITY PROTECTION
+                    // =============================================
+
+                    if (itemModel.Quantity <
+                        existingItem.DeliveredQuantity)
+                    {
+                        ErrorMessage =
+                            "Die Bestellmenge darf nicht kleiner als die bereits gelieferte Menge sein.";
+
+                        return;
+                    }
+
+
+                    existingItem.ProductId =
+                        itemModel.ProductId;
+
+
+                    existingItem.Quantity =
+                        itemModel.Quantity;
+
+
+                    existingItem.UnitPrice =
+                        itemModel.UnitPrice;
+                }
+
+                // =================================================
+                // NEW ITEM
+                // =================================================
+                else
+                {
+                    var newItem =
+                        new PurchaseOrderItem
+                        {
+                            PurchaseOrderId =
+                                order.Id,
+
+                            ProductId =
+                                itemModel.ProductId,
+
+                            Quantity =
+                                itemModel.Quantity,
+
+                            UnitPrice =
+                                itemModel.UnitPrice,
+
+                            DeliveredQuantity =
+                                0
+                        };
+
+
+                    db.PurchaseOrderItems.Add(
+                        newItem);
+                }
+            }
+
+
+            // =================================================
+            // UPDATE HEADER
+            // =================================================
+
+            order.SupplierId =
+                Model.SupplierId;
+
+
+            order.OrderNumber =
+                orderNumber;
+
+
+            order.OrderDate =
+                Model.OrderDate;
+
+
+            order.ReferenceNumber =
+                string.IsNullOrWhiteSpace(
+                    Model.ReferenceNumber)
+
+                    ? null
+
+                    : Model.ReferenceNumber.Trim();
+
+
+            order.Note =
+                string.IsNullOrWhiteSpace(
+                    Model.Note)
+
+                    ? null
+
+                    : Model.Note.Trim();
+
+
+            order.Total =
+                CalculateTotal();
+
+
+            order.UpdatedAt =
+                DateTime.UtcNow;
+
+
+            // =================================================
+            // SAVE
+            // =================================================
+
+            await db.SaveChangesAsync();
+
+
+            // =================================================
+            // DETAILS
+            // =================================================
+
+            Navigation.NavigateTo(
+                $"/purchase-orders/details/{order.Id}");
+        }
+        catch (DbUpdateException)
+        {
+            ErrorMessage =
+                "Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Daten.";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(
+        PurchaseOrderStatus status)
+    {
+        return status switch
+        {
+            PurchaseOrderStatus.Entwurf =>
+                "Entwurf",
+
+            PurchaseOrderStatus.Bestellt =>
+                "Bestellt",
+
+            PurchaseOrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            PurchaseOrderStatus.Geliefert =>
+                "Geliefert",
+
+            PurchaseOrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
+    }
+
+
+    // =========================================================
+    // EDIT MODEL
+    // =========================================================
+
+    private class PurchaseOrderEditModel
+    {
+        public int SupplierId { get; set; }
+
+        public string OrderNumber { get; set; }
+            = string.Empty;
+
+        public DateTime OrderDate { get; set; }
+            = DateTime.Today;
+
+        public string? ReferenceNumber { get; set; }
+
+        public string? Note { get; set; }
+
+        public List<PurchaseOrderItemModel> Items { get; set; }
+            = new();
+    }
+
+
+    // =========================================================
+    // ITEM MODEL
+    // =========================================================
+
+    private class PurchaseOrderItemModel
+    {
+        public int Id { get; set; }
+
+        public int ProductId { get; set; }
+
+        public decimal Quantity { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public decimal DeliveredQuantity { get; set; }
+    }
+
+}

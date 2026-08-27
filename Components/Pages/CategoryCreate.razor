@@ -1,0 +1,244 @@
+﻿@page "/categories/create"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+@using Microsoft.EntityFrameworkCore
+
+@inject ApplicationDbContext Db
+@inject NavigationManager Navigation
+
+<PageTitle>Neue Kategorie</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Neue Kategorie</h1>
+            <p>Neue Produktkategorie anlegen.</p>
+        </div>
+
+        <a href="/categories"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@SaveCategory"
+                  FormName="CategoryCreateForm">
+
+            <DataAnnotationsValidator />
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Kategorieinformationen</h2>
+
+                    <p>
+                        Grundlegende Informationen zur Kategorie.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- NAME -->
+                    <div class="form-group">
+
+                        <label>
+                            Name <span>*</span>
+                        </label>
+
+                        <InputText @bind-Value="Model.Name"
+                                   class="form-control"
+                                   placeholder="z.B. Getränke" />
+
+                        <ValidationMessage For="@(() => Model.Name)" />
+
+                    </div>
+
+
+                    <!-- ACTIVE -->
+                    <div class="form-group checkbox-group">
+
+                        <label class="checkbox-label">
+
+                            <InputCheckbox @bind-Value="Model.IsActive" />
+
+                            <span>
+                                Kategorie ist aktiv
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Beschreibung</h2>
+
+                    <p>
+                        Optionale Beschreibung der Kategorie.
+                    </p>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Description"
+                                   class="form-control textarea"
+                                   placeholder="Beschreibung..."
+                                   rows="5" />
+
+                    <ValidationMessage For="@(() => Model.Description)" />
+
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <div class="form-actions">
+
+                <a href="/categories"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Kategorie speichern")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private CategoryModel Model = new();
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    private async Task SaveCategory()
+    {
+        if (IsSaving)
+            return;
+
+        IsSaving = true;
+        ErrorMessage = null;
+
+        try
+        {
+            var name = Model.Name.Trim();
+
+
+            var exists = await Db.Categories
+                .AnyAsync(x =>
+                    x.Name.ToLower() == name.ToLower());
+
+            if (exists)
+            {
+                ErrorMessage =
+                    "Diese Kategorie existiert bereits.";
+
+                return;
+            }
+
+
+            var category = new Category
+            {
+                Name = name,
+
+                Description =
+                    string.IsNullOrWhiteSpace(Model.Description)
+                        ? null
+                        : Model.Description.Trim(),
+
+                IsActive = Model.IsActive
+            };
+
+
+            Db.Categories.Add(category);
+
+            await Db.SaveChangesAsync();
+
+            Navigation.NavigateTo("/categories");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class CategoryModel
+    {
+        [Required(
+            ErrorMessage =
+                "Name ist erforderlich.")]
+
+        [MaxLength(100)]
+
+        public string Name { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(500)]
+
+        public string? Description { get; set; }
+
+
+        public bool IsActive { get; set; }
+            = true;
+    }
+}

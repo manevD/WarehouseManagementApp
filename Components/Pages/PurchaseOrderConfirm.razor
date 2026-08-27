@@ -1,0 +1,898 @@
+﻿@page "/purchase-orders/confirm/{Id:int}"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung bestätigen</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Bestellung wird geladen...
+    </div>
+}
+else if (Order == null)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>Bestellung nicht gefunden</h3>
+
+        <a href="/purchase-orders"
+           class="btn-primary">
+
+            Zurück zu Bestellungen
+
+        </a>
+
+    </div>
+}
+else if (Order.Status != PurchaseOrderStatus.Entwurf)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            🔒
+        </div>
+
+        <h3>Bestellung kann nicht bestätigt werden</h3>
+
+        <p>
+            Diese Bestellung hat bereits den Status
+            <strong>@GetStatusText(Order.Status)</strong>.
+        </p>
+
+        <a href="/purchase-orders/details/@Order.Id"
+           class="btn-primary">
+
+            Zur Bestellung
+
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Bestellung bestätigen</h1>
+
+                <p>
+                    @Order.OrderNumber
+                    -
+                    @(Order.Supplier?.CompanyName ?? "-")
+                </p>
+
+            </div>
+
+            <a href="/purchase-orders/details/@Order.Id"
+               class="btn-secondary">
+
+                ← Zurück
+
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             WARNING
+             ===================================================== -->
+
+        <div class="confirm-warning">
+
+            <div class="confirm-warning-icon">
+                ⚠
+            </div>
+
+            <div>
+
+                <strong>
+                    Bestellung wirklich bestätigen?
+                </strong>
+
+                <p>
+
+                    Nach der Bestätigung kann die Bestellung
+                    nicht mehr bearbeitet werden.
+
+                    Der Lagerbestand wird bei der Bestätigung
+                    <strong>nicht</strong> verändert.
+
+                    Der Bestand wird erst beim Wareneingang
+                    aktualisiert.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <!-- =================================================
+                 BESTELLUNG
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Bestelldaten
+                    </h2>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- =============================================
+                         ORDER NUMBER
+                         ============================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestellnummer
+                        </label>
+
+                        <input class="form-control"
+                               value="@Order.OrderNumber"
+                               disabled />
+
+                    </div>
+
+
+                    <!-- =============================================
+                         SUPPLIER
+                         ============================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lieferant
+                        </label>
+
+                        <input class="form-control"
+                               value="@(
+                               Order.Supplier?.CompanyName
+                               ?? "-"
+                                                   )"
+                               disabled />
+
+                    </div>
+
+
+                    <!-- =============================================
+                         DATE
+                         ============================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestelldatum
+                        </label>
+
+                        <input class="form-control"
+                               value="@Order.OrderDate.Date"
+                               disabled />
+
+                    </div>
+
+
+                    <!-- =============================================
+                         REFERENCE
+                         ============================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <input class="form-control"
+                               value="@(Order.ReferenceNumber ?? "-")"
+                               disabled />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUPPLIER
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Lieferant
+                    </h2>
+
+                </div>
+
+
+                @if (Order.Supplier != null)
+                {
+                    <div class="supplier-detail-card">
+
+                        <div class="product-avatar">
+
+                            @GetInitials(
+                                Order.Supplier.CompanyName)
+
+                        </div>
+
+
+                        <div class="supplier-detail-content">
+
+                            <strong>
+                                @Order.Supplier.CompanyName
+                            </strong>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.SupplierNumber))
+                            {
+                                <span>
+
+                                    Lieferantennummer:
+                                    @Order.Supplier.SupplierNumber
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.ContactPerson))
+                            {
+                                <span>
+
+                                    Ansprechpartner:
+                                    @Order.Supplier.ContactPerson
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.Email))
+                            {
+                                <span>
+
+                                    @Order.Supplier.Email
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.Phone))
+                            {
+                                <span>
+
+                                    @Order.Supplier.Phone
+
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =================================================
+                 ITEMS
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Bestellpositionen
+                    </h2>
+
+                    <p>
+                        Diese Positionen werden mit der Bestellung
+                        an den Lieferanten übermittelt.
+                    </p>
+
+                </div>
+
+
+                @if (Order.Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <div class="empty-products-icon">
+                            📦
+                        </div>
+
+                        <h3>
+                            Keine Positionen
+                        </h3>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="products-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Produkt
+                                    </th>
+
+                                    <th>
+                                        SKU
+                                    </th>
+
+                                    <th>
+                                        Menge
+                                    </th>
+
+                                    <th>
+                                        Einzelpreis
+                                    </th>
+
+                                    <th>
+                                        Gesamt
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var item in Order.Items)
+                                {
+                                    <tr>
+
+                                        <!-- PRODUCT -->
+
+                                        <td>
+
+                                            <div class="product-name">
+
+                                                <div class="product-avatar">
+
+                                                    @GetInitials(
+                                                        item.Product?.Name)
+
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+
+                                                        @(item.Product?.Name
+                                                            ?? "-")
+
+                                                    </strong>
+
+                                                    @if (!string.IsNullOrWhiteSpace(
+                                                        item.Product?.Barcode))
+                                                    {
+                                                        <small>
+
+                                                            @item.Product.Barcode
+
+                                                        </small>
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- SKU -->
+
+                                        <td>
+
+                                            @(item.Product?.SKU ?? "-")
+
+                                        </td>
+
+
+                                        <!-- QUANTITY -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @item.Quantity.ToString("N2")
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- UNIT PRICE -->
+
+                                        <td>
+
+                                            @item.UnitPrice.ToString("N2")
+                                            €
+
+                                        </td>
+
+
+                                        <!-- TOTAL -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @(
+                                                    (
+                                                        item.Quantity *
+                                                        item.UnitPrice
+                                                    )
+                                                    .ToString("N2")
+                                                )
+                                                €
+
+                                            </strong>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =================================================
+                 SUMMARY
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="stock-summary-grid">
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Positionen
+                        </span>
+
+                        <strong>
+                            @Order.Items.Count
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Gesamtmenge
+                        </span>
+
+                        <strong>
+                            @TotalQuantity.ToString("N2")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Bestellwert
+                        </span>
+
+                        <strong>
+                            @Order.Total.ToString("N2") €
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NOTE
+                 ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(
+                            Order.Note))
+            {
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>
+                            Notiz
+                        </h2>
+
+                    </div>
+
+                    <div class="note-box">
+
+                        @Order.Note
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =================================================
+                 ERROR
+                 ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+
+                    @ErrorMessage
+
+                </div>
+            }
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="form-actions">
+
+                <a href="/purchase-orders/details/@Order.Id"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+
+                <button type="button"
+                        class="btn-primary"
+                        disabled="@IsSaving"
+                        @onclick="ConfirmOrder">
+
+                    @(IsSaving
+                        ? "Wird bestätigt..."
+                        : "✓ Bestellung bestätigen")
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private PurchaseOrder? Order;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private decimal TotalQuantity =>
+        Order?.Items.Sum(x =>
+            x.Quantity) ?? 0;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrder();
+    }
+
+
+    // =========================================================
+    // LOAD ORDER
+    // =========================================================
+
+    private async Task LoadOrder()
+    {
+        IsLoading = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Order =
+                await db.PurchaseOrders
+
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Supplier)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // CONFIRM
+    // =========================================================
+
+    private async Task ConfirmOrder()
+    {
+        if (Order == null ||
+            IsSaving)
+        {
+            return;
+        }
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // LOAD ACTUAL ORDER
+            // =================================================
+
+            var order =
+                await db.PurchaseOrders
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+
+
+            if (order == null)
+            {
+                ErrorMessage =
+                    "Bestellung wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // STATUS CHECK
+            // =================================================
+
+            if (order.Status !=
+                PurchaseOrderStatus.Entwurf)
+            {
+                ErrorMessage =
+                    "Diese Bestellung wurde bereits verarbeitet.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SUPPLIER CHECK
+            // =================================================
+
+            var supplierExists =
+                await db.Suppliers
+
+                    .AnyAsync(x =>
+                        x.Id ==
+                        order.SupplierId
+
+                        &&
+
+                        x.IsActive);
+
+
+            if (!supplierExists)
+            {
+                ErrorMessage =
+                    "Der Lieferant wurde nicht gefunden oder ist deaktiviert.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ITEMS CHECK
+            // =================================================
+
+            var itemsExist =
+                await db.PurchaseOrderItems
+
+                    .AnyAsync(x =>
+                        x.PurchaseOrderId ==
+                        order.Id);
+
+
+            if (!itemsExist)
+            {
+                ErrorMessage =
+                    "Eine Bestellung ohne Positionen kann nicht bestätigt werden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // CONFIRM
+            // =================================================
+
+            order.Status =
+                PurchaseOrderStatus.Bestellt;
+
+
+            order.UpdatedAt =
+                DateTime.UtcNow;
+
+
+            await db.SaveChangesAsync();
+
+
+            // =================================================
+            // GO TO DETAILS
+            // =================================================
+
+            Navigation.NavigateTo(
+                $"/purchase-orders/details/{order.Id}");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Bestätigen: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(
+        PurchaseOrderStatus status)
+    {
+        return status switch
+        {
+            PurchaseOrderStatus.Entwurf =>
+                "Entwurf",
+
+            PurchaseOrderStatus.Bestellt =>
+                "Bestellt",
+
+            PurchaseOrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            PurchaseOrderStatus.Geliefert =>
+                "Geliefert",
+
+            PurchaseOrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

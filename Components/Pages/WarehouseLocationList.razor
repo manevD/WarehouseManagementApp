@@ -1,0 +1,574 @@
+﻿@page "/locations"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Lagerplätze</PageTitle>
+
+<div class="categories-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Lagerplätze</h1>
+            <p>Verwalten Sie Ihre Lagerplätze.</p>
+        </div>
+
+        <a href="/locations/create"
+           class="btn-primary">
+
+            <span>+</span>
+            Neuer Lagerplatz
+
+        </a>
+
+    </div>
+
+
+    <!-- FILTER -->
+
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   placeholder="Code, Name oder Lager suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedWarehouseId"
+                @bind:after="FilterChanged">
+
+            <option value="0">
+                Alle Lager
+            </option>
+
+            @foreach (var warehouse in Warehouses)
+            {
+                <option value="@warehouse.Id">
+                    @warehouse.Name
+                </option>
+            }
+
+        </select>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus"
+                @bind:after="FilterChanged">
+
+            <option value="all">
+                Alle Status
+            </option>
+
+            <option value="active">
+                Aktiv
+            </option>
+
+            <option value="inactive">
+                Inaktiv
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>Lagerplatzliste</strong>
+
+                <span>
+                    @Locations.Count Lagerplätze
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Lagerplätze werden geladen...
+            </div>
+        }
+        else if (Locations.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    📍
+                </div>
+
+                <h3>Keine Lagerplätze gefunden</h3>
+
+                <p>
+                    Für die aktuellen Filter wurden keine Lagerplätze gefunden.
+                </p>
+
+                <a href="/locations/create"
+                   class="btn-primary">
+
+                    + Neuer Lagerplatz
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Lager</th>
+                            <th>Beschreibung</th>
+                            <th>Bestand</th>
+                            <th>Status</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var location in Locations)
+                        {
+                            <tr>
+
+                                <!-- CODE -->
+
+                                <td>
+
+                                    <span class="product-sku">
+                                        @location.Code
+                                    </span>
+
+                                </td>
+
+
+                                <!-- NAME -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            @GetInitials(
+                                                location.Name ??
+                                                location.Code)
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @(string.IsNullOrWhiteSpace(
+                                                    location.Name)
+                                                    ? location.Code
+                                                    : location.Name)
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- WAREHOUSE -->
+
+                                <td>
+
+                                    @location.Warehouse?.Name
+
+                                </td>
+
+
+                                <!-- DESCRIPTION -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        location.Description))
+                                    {
+                                        @location.Description
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- STOCK -->
+
+                                <td>
+
+                                    <span class="category-count">
+                                        @location.Stocks.Count
+                                    </span>
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (location.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <a href="/locations/edit/@location.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
+
+                                            ✎
+
+                                        </a>
+
+                                        <button class="action-button delete-button"
+                                                title="Deaktivieren"
+                                                @onclick="() => ConfirmDelete(location)">
+
+                                            🗑
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- DELETE MODAL -->
+    @if (ShowDeleteModal && LocationToDelete != null)
+    {
+        <div class="delete-modal-backdrop">
+
+            <div class="delete-modal">
+
+                <div class="delete-modal-icon">
+                    🗑
+                </div>
+
+                <h3>Lagerplatz deaktivieren?</h3>
+
+                <p>
+
+                    Möchten Sie
+                    <strong>
+                        @LocationToDelete.Code
+                    </strong>
+                    wirklich deaktivieren?
+
+                </p>
+
+                @if (LocationToDelete.Stocks.Any(
+                    x => x.Quantity > 0))
+                {
+                    <div class="form-error">
+
+                        Dieser Lagerplatz enthält noch Bestand.
+
+                        Bitte verschieben Sie den Bestand zuerst.
+
+                    </div>
+                }
+                else
+                {
+                    <small>
+                        Der Lagerplatz wird nicht gelöscht.
+                        Er wird nur als inaktiv markiert.
+                    </small>
+                }
+
+
+                <div class="delete-modal-actions">
+
+                    <button class="btn-secondary"
+                            @onclick="CancelDelete">
+
+                        Abbrechen
+
+                    </button>
+
+
+                    @if (!LocationToDelete.Stocks.Any(
+                        x => x.Quantity > 0))
+                    {
+                        <button class="btn-danger"
+                                @onclick="DeleteConfirmed">
+
+                            Deaktivieren
+
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<WarehouseLocation> Locations = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedWarehouseId;
+
+    private string SelectedStatus = "all";
+
+    private bool IsLoading = true;
+
+    private WarehouseLocation? LocationToDelete;
+
+    private bool ShowDeleteModal;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWarehouses();
+
+        await LoadLocations();
+    }
+
+
+    private async Task LoadWarehouses()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+        Warehouses = await db.Warehouses
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+
+    private async Task LoadLocations()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var query = db.WarehouseLocations
+                .Include(x => x.Warehouse)
+                .Include(x => x.Stocks)
+                .AsQueryable();
+
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+                query = query.Where(x =>
+                    x.Code.Contains(search) ||
+                    (x.Name != null &&
+                     x.Name.Contains(search)) ||
+                    (x.Description != null &&
+                     x.Description.Contains(search)) ||
+                    (x.Warehouse != null &&
+                     x.Warehouse.Name.Contains(search)));
+            }
+
+
+            if (SelectedWarehouseId > 0)
+            {
+                query = query.Where(x =>
+                    x.WarehouseId ==
+                    SelectedWarehouseId);
+            }
+
+
+            if (SelectedStatus == "active")
+            {
+                query = query.Where(x =>
+                    x.IsActive);
+            }
+            else if (SelectedStatus == "inactive")
+            {
+                query = query.Where(x =>
+                    !x.IsActive);
+            }
+
+
+            Locations = await query
+                .OrderBy(x => x.Warehouse!.Name)
+                .ThenBy(x => x.Code)
+                .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task SearchChanged()
+    {
+        await LoadLocations();
+    }
+
+
+    private async Task FilterChanged()
+    {
+        await LoadLocations();
+    }
+
+
+    private void ConfirmDelete(
+        WarehouseLocation location)
+    {
+        LocationToDelete = location;
+        ShowDeleteModal = true;
+    }
+
+
+    private void CancelDelete()
+    {
+        LocationToDelete = null;
+        ShowDeleteModal = false;
+    }
+
+
+    private async Task DeleteConfirmed()
+    {
+        if (LocationToDelete == null)
+            return;
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var location =
+            await db.WarehouseLocations
+                .Include(x => x.Stocks)
+                .FirstOrDefaultAsync(x =>
+                    x.Id ==
+                    LocationToDelete.Id);
+
+
+        if (location == null)
+            return;
+
+
+        if (location.Stocks.Any(
+            x => x.Quantity > 0))
+        {
+            return;
+        }
+
+
+        location.IsActive = false;
+
+
+        await db.SaveChangesAsync();
+
+
+        LocationToDelete = null;
+
+        ShowDeleteModal = false;
+
+
+        await LoadLocations();
+    }
+
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words = name.Split(
+            ' ',
+            StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(2, words[0].Length))
+                .ToUpper();
+        }
+
+
+        return $"{words[0][0]}{words[1][0]}"
+            .ToUpper();
+    }
+
+}

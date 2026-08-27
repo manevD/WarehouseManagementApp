@@ -1,0 +1,1247 @@
+﻿@page "/stock/outgoing"
+
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Warenausgang</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Warenausgang</h1>
+
+            <p>
+                Ware aus dem Lagerbestand ausbuchen.
+            </p>
+
+        </div>
+
+        <a href="/stock"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@BookOutgoing"
+                  FormName="StockOutgoingForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =====================================================
+                 WARENAUSGANG
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Warenausgang</h2>
+
+                    <p>
+                        Wählen Sie Produkt, Lager, Lagerplatz und Menge.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- =================================================
+                         PRODUKT
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Produkt <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.ProductId"
+                                @onchange="OnProductChanged">
+
+                            <option value="0">
+                                Produkt auswählen
+                            </option>
+
+                            @foreach (var product in Products)
+                            {
+                                <option value="@product.Id">
+                                    @product.SKU - @product.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        @if (Model.ProductId <= 0 &&
+                             ShowProductValidation)
+                        {
+                            <div class="validation-message">
+
+                                Bitte ein Produkt auswählen.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LAGER
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lager <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.WarehouseId"
+                                @onchange="OnWarehouseChanged"
+                                disabled="@(Model.ProductId <= 0)">
+
+                            <option value="0">
+                                Lager auswählen
+                            </option>
+
+                            @foreach (var warehouse in Warehouses)
+                            {
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        @if (Model.WarehouseId <= 0 &&
+                             ShowWarehouseValidation)
+                        {
+                            <div class="validation-message">
+
+                                Bitte ein Lager auswählen.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LAGERPLATZ
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lagerplatz <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.WarehouseLocationId"
+                                @onchange="OnLocationChanged"
+                                disabled="@(Model.WarehouseId <= 0)">
+
+                            <option value="0">
+                                Lagerplatz auswählen
+                            </option>
+
+                            @foreach (var location in Locations)
+                            {
+                                <option value="@location.Id">
+
+                                    @location.Code
+
+                                    @if (!string.IsNullOrWhiteSpace(location.Name))
+                                    {
+                                        @($" - {location.Name}")
+                                    }
+
+                                </option>
+                            }
+
+                        </select>
+
+
+                        @if (Locations.Count == 0 &&
+                             Model.WarehouseId > 0)
+                        {
+                            <div class="form-hint">
+
+                                Für dieses Produkt ist in diesem Lager
+                                kein verfügbarer Bestand vorhanden.
+
+                            </div>
+                        }
+
+
+                        @if (Model.WarehouseLocationId <= 0 &&
+                             ShowLocationValidation)
+                        {
+                            <div class="validation-message">
+
+                                Bitte einen Lagerplatz auswählen.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VERFÜGBARER BESTAND
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Verfügbarer Bestand
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@AvailableQuantity.ToString("N2")"
+                               readonly />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MENGE
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Menge <span>*</span>
+                        </label>
+
+                        <InputNumber @bind-Value="Model.Quantity"
+                                     class="form-control"
+                                     step="0.01"
+                                     min="0.01"
+                                     disabled="@(Model.WarehouseLocationId <= 0)" />
+
+                        @if (Model.Quantity <= 0 &&
+                             ShowQuantityValidation)
+                        {
+                            <div class="validation-message">
+
+                                Die Menge muss größer als 0 sein.
+
+                            </div>
+                        }
+
+
+                        @if (Model.Quantity > AvailableQuantity &&
+                             Model.WarehouseLocationId > 0 &&
+                             Model.Quantity > 0)
+                        {
+                            <div class="form-error">
+
+                                Die Menge darf den verfügbaren Bestand
+                                von @AvailableQuantity.ToString("N2")
+                                nicht überschreiten.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REFERENZNUMMER
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <InputText @bind-Value="Model.ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="z.B. WA-2026-0001" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTIZ
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Notiz</h2>
+
+                    <p>
+                        Optionale Informationen zum Warenausgang.
+                    </p>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="4"
+                                   placeholder="Notiz..." />
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ERROR
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 SUCCESS
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+            {
+                <div class="form-success">
+                    @SuccessMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/stock"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Wird gebucht..."
+                        : "Warenausgang buchen")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "purchaseOrderId")]
+    public int? QueryPurchaseOrderId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "productId")]
+    public int? QueryProductId { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private OutgoingModel Model = new();
+
+    private List<Product> Products = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private List<WarehouseLocation> Locations = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private decimal AvailableQuantity;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+    private string? SuccessMessage;
+
+    private bool ShowProductValidation;
+
+    private bool ShowWarehouseValidation;
+
+    private bool ShowLocationValidation;
+
+    private bool ShowQuantityValidation;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // PRODUCTS
+        // =====================================================
+
+        Products =
+            await db.Products
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        Warehouses.Clear();
+        Locations.Clear();
+
+
+        // =====================================================
+        // OPEN PURCHASE ORDER / PRODUCT FROM QUERY STRING
+        // =====================================================
+
+        if (QueryPurchaseOrderId.HasValue &&
+            QueryPurchaseOrderId.Value > 0 &&
+            QueryProductId.HasValue &&
+            QueryProductId.Value > 0)
+        {
+            var purchaseOrder =
+                await db.PurchaseOrders
+                    .Include(x => x.Items)
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == QueryPurchaseOrderId.Value);
+
+            if (purchaseOrder != null)
+            {
+                var orderItem =
+                    purchaseOrder.Items
+                        .FirstOrDefault(x =>
+                            x.ProductId == QueryProductId.Value &&
+                            x.Quantity > x.DeliveredQuantity);
+
+                if (orderItem != null)
+                {
+                    Model.ProductId =
+                        orderItem.ProductId;
+
+                    // Preselect the still-open quantity.
+                    Model.Quantity =
+                        Math.Max(
+                            0,
+                            orderItem.Quantity -
+                            orderItem.DeliveredQuantity);
+
+                    // Only warehouses with available stock
+                    // for this product are shown.
+                    Warehouses =
+                        await db.Warehouses
+                            .Where(warehouse =>
+                                warehouse.IsActive &&
+                                db.WarehouseLocations.Any(location =>
+                                    location.WarehouseId == warehouse.Id &&
+                                    location.IsActive &&
+                                    db.Stocks.Any(stock =>
+                                        stock.ProductId == Model.ProductId &&
+                                        stock.WarehouseLocationId == location.Id &&
+                                        stock.Quantity > stock.ReservedQuantity)))
+                            .OrderBy(warehouse => warehouse.Name)
+                            .ToListAsync();
+                }
+            }
+        }
+    }
+
+
+    // =========================================================
+    // PRODUCT CHANGED
+    // =========================================================
+
+    private async Task OnProductChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+        ShowProductValidation = false;
+
+        ShowWarehouseValidation = false;
+
+        ShowLocationValidation = false;
+
+        ShowQuantityValidation = false;
+
+
+        // =====================================================
+        // PRODUCT ID
+        // =====================================================
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            productId = 0;
+        }
+
+
+        Model.ProductId =
+            productId;
+
+
+        // =====================================================
+        // RESET EVERYTHING BELOW PRODUCT
+        // =====================================================
+
+        Model.WarehouseId = 0;
+
+        Model.WarehouseLocationId = 0;
+
+        Model.Quantity = 0;
+
+        AvailableQuantity = 0;
+
+        Locations.Clear();
+
+        Warehouses.Clear();
+
+
+        // =====================================================
+        // NO PRODUCT
+        // =====================================================
+
+        if (Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // WAREHOUSES
+        //
+        // ONLY warehouses where this product has at least
+        // one active location with available stock.
+        // =====================================================
+
+        Warehouses =
+            await db.Warehouses
+
+                .Where(warehouse =>
+
+                    warehouse.IsActive
+
+                    &&
+
+                    db.WarehouseLocations.Any(location =>
+
+                        location.WarehouseId ==
+                            warehouse.Id
+
+                        &&
+
+                        location.IsActive
+
+                        &&
+
+                        db.Stocks.Any(stock =>
+
+                            stock.ProductId ==
+                                Model.ProductId
+
+                            &&
+
+                            stock.WarehouseLocationId ==
+                                location.Id
+
+                            &&
+
+                            stock.Quantity >
+                                stock.ReservedQuantity
+
+                        )
+
+                    )
+
+                )
+
+                .OrderBy(warehouse =>
+                    warehouse.Name)
+
+                .ToListAsync();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // WAREHOUSE CHANGED
+    // =========================================================
+
+    private async Task OnWarehouseChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+        ShowWarehouseValidation = false;
+
+        ShowLocationValidation = false;
+
+
+        // =====================================================
+        // WAREHOUSE ID
+        // =====================================================
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var warehouseId))
+        {
+            warehouseId = 0;
+        }
+
+
+        Model.WarehouseId =
+            warehouseId;
+
+
+        // Do not keep a warehouse that is not available
+        // for the selected product.
+        if (warehouseId > 0 &&
+            Model.ProductId > 0 &&
+            !Warehouses.Any(x => x.Id == warehouseId))
+        {
+            Model.WarehouseId = 0;
+            warehouseId = 0;
+        }
+
+
+        // =====================================================
+        // RESET LOCATION
+        // =====================================================
+
+        Model.WarehouseLocationId = 0;
+
+        Model.Quantity = 0;
+
+        AvailableQuantity = 0;
+
+        Locations.Clear();
+
+
+        if (warehouseId <= 0 ||
+            Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // LOCATIONS
+        //
+        // ONLY locations in selected warehouse where the
+        // selected product has available stock.
+        // =====================================================
+
+        Locations =
+            await db.WarehouseLocations
+
+                .Where(location =>
+
+                    location.IsActive
+
+                    &&
+
+                    location.WarehouseId ==
+                        warehouseId
+
+                    &&
+
+                    db.Stocks.Any(stock =>
+
+                        stock.ProductId ==
+                            Model.ProductId
+
+                        &&
+
+                        stock.WarehouseLocationId ==
+                            location.Id
+
+                        &&
+
+                        stock.Quantity >
+                            stock.ReservedQuantity
+
+                    )
+
+                )
+
+                .OrderBy(location =>
+                    location.Code)
+
+                .ToListAsync();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // LOCATION CHANGED
+    // =========================================================
+
+    private async Task OnLocationChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+        ShowLocationValidation = false;
+
+
+        // =====================================================
+        // LOCATION ID
+        // =====================================================
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var locationId))
+        {
+            locationId = 0;
+        }
+
+
+        // Only allow a location currently offered for the
+        // selected warehouse and product.
+        if (locationId > 0 &&
+            !Locations.Any(x => x.Id == locationId))
+        {
+            locationId = 0;
+        }
+
+        Model.WarehouseLocationId =
+            locationId;
+
+
+        Model.Quantity =
+            0;
+
+
+        AvailableQuantity =
+            0;
+
+
+        if (locationId <= 0 ||
+            Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await LoadAvailableStock();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // LOAD AVAILABLE STOCK
+    // =========================================================
+
+    private async Task LoadAvailableStock()
+    {
+        AvailableQuantity = 0;
+
+
+        if (Model.ProductId <= 0 ||
+            Model.WarehouseLocationId <= 0)
+        {
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var stock =
+            await db.Stocks
+
+                .FirstOrDefaultAsync(x =>
+
+                    x.ProductId ==
+                        Model.ProductId
+
+                    &&
+
+                    x.WarehouseLocationId ==
+                        Model.WarehouseLocationId
+
+                );
+
+
+        if (stock == null)
+        {
+            AvailableQuantity = 0;
+
+            return;
+        }
+
+
+        AvailableQuantity =
+            stock.AvailableQuantity;
+    }
+
+
+    // =========================================================
+    // BOOK OUTGOING
+    // =========================================================
+
+    private async Task BookOutgoing()
+    {
+        if (IsSaving)
+            return;
+
+
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+        ShowProductValidation = false;
+
+        ShowWarehouseValidation = false;
+
+        ShowLocationValidation = false;
+
+        ShowQuantityValidation = false;
+
+
+        // =====================================================
+        // PRODUCT
+        // =====================================================
+
+        if (Model.ProductId <= 0)
+        {
+            ShowProductValidation = true;
+
+            ErrorMessage =
+                "Bitte ein Produkt auswählen.";
+
+            return;
+        }
+
+
+        // =====================================================
+        // WAREHOUSE
+        // =====================================================
+
+        if (Model.WarehouseId <= 0)
+        {
+            ShowWarehouseValidation = true;
+
+            ErrorMessage =
+                "Bitte ein Lager auswählen.";
+
+            return;
+        }
+
+
+        // =====================================================
+        // LOCATION
+        // =====================================================
+
+        if (Model.WarehouseLocationId <= 0)
+        {
+            ShowLocationValidation = true;
+
+            ErrorMessage =
+                "Bitte einen Lagerplatz auswählen.";
+
+            return;
+        }
+
+
+        // =====================================================
+        // QUANTITY
+        // =====================================================
+
+        if (Model.Quantity <= 0)
+        {
+            ShowQuantityValidation = true;
+
+            ErrorMessage =
+                "Die Menge muss größer als 0 sein.";
+
+            return;
+        }
+
+
+        IsSaving = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // PRODUCT VALIDATION
+            // =================================================
+
+            var product =
+                await db.Products
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.Id ==
+                            Model.ProductId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (product == null)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Produkt wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // WAREHOUSE VALIDATION
+            // =================================================
+
+            var warehouse =
+                await db.Warehouses
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.Id ==
+                            Model.WarehouseId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (warehouse == null)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Lager wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // LOCATION VALIDATION
+            // =================================================
+
+            var location =
+                await db.WarehouseLocations
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.Id ==
+                            Model.WarehouseLocationId
+
+                        &&
+
+                        x.WarehouseId ==
+                            Model.WarehouseId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (location == null)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Lagerplatz wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // STOCK
+            // =================================================
+
+            var stock =
+                await db.Stocks
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.ProductId ==
+                            Model.ProductId
+
+                        &&
+
+                        x.WarehouseLocationId ==
+                            Model.WarehouseLocationId
+
+                    );
+
+
+            if (stock == null)
+            {
+                ErrorMessage =
+                    "Für dieses Produkt existiert an diesem Lagerplatz kein Bestand.";
+
+                return;
+            }
+
+
+            // =================================================
+            // AVAILABLE STOCK
+            // =================================================
+
+            var available =
+                stock.AvailableQuantity;
+
+
+            if (available <= 0)
+            {
+                ErrorMessage =
+                    "An diesem Lagerplatz ist kein verfügbarer Bestand vorhanden.";
+
+                return;
+            }
+
+
+            if (Model.Quantity > available)
+            {
+                ErrorMessage =
+                    $"Nicht genügend verfügbarer Bestand. " +
+                    $"Verfügbar: {available:N2}.";
+
+                return;
+            }
+
+
+            // =================================================
+            // TRANSACTION
+            // =================================================
+
+            await using var transaction =
+                await db.Database
+                    .BeginTransactionAsync();
+
+
+            try
+            {
+                // =============================================
+                // REDUCE STOCK
+                // =============================================
+
+                stock.Quantity -=
+                    Model.Quantity;
+
+
+                stock.UpdatedAt =
+                    DateTime.UtcNow;
+
+
+                // =============================================
+                // MOVEMENT
+                // =============================================
+
+                var movement =
+                    new StockMovement
+                    {
+                        ProductId =
+                            Model.ProductId,
+
+                        Quantity =
+                            Model.Quantity,
+
+                        Type =
+                            StockMovementType.Warenausgang,
+
+                        FromWarehouseLocationId =
+                            Model.WarehouseLocationId,
+
+                        ToWarehouseLocationId =
+                            null,
+
+                        ReferenceNumber =
+                            string.IsNullOrWhiteSpace(
+                                Model.ReferenceNumber)
+
+                                ? null
+
+                                : Model.ReferenceNumber.Trim(),
+
+                        Note =
+                            string.IsNullOrWhiteSpace(
+                                Model.Note)
+
+                                ? null
+
+                                : Model.Note.Trim(),
+
+                        UserId =
+                            null,
+
+                        CreatedAt =
+                            DateTime.UtcNow
+                    };
+
+
+                db.StockMovements.Add(
+                    movement);
+
+
+                // =============================================
+                // SAVE
+                // =============================================
+
+                await db.SaveChangesAsync();
+
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+
+                throw;
+            }
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            var bookedQuantity =
+                Model.Quantity;
+
+
+            SuccessMessage =
+                $"Warenausgang von {bookedQuantity:N2} Stück wurde erfolgreich gebucht.";
+
+
+            // =================================================
+            // UPDATE DISPLAYED STOCK
+            // =================================================
+
+            AvailableQuantity =
+                stock.AvailableQuantity;
+
+
+            Model.Quantity =
+                0;
+
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Buchen: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // MODEL
+    // =========================================================
+
+    private class OutgoingModel
+    {
+        public int ProductId { get; set; }
+
+        public int WarehouseId { get; set; }
+
+        public int WarehouseLocationId { get; set; }
+
+        public decimal Quantity { get; set; }
+
+        public string? ReferenceNumber { get; set; }
+
+        public string? Note { get; set; }
+    }
+
+}

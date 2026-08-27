@@ -1,0 +1,1384 @@
+﻿@page "/stock/transfer"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Umlagerung</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Umlagerung</h1>
+
+            <p>
+                Ware von einem Lagerplatz auf einen anderen verschieben.
+            </p>
+
+        </div>
+
+        <a href="/stock"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@BookTransfer"
+                  FormName="StockTransferForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =====================================================
+                 UMLAGERUNG
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Umlagerung</h2>
+
+                    <p>
+                        Wählen Sie Produkt, Quell- und Ziellagerplatz.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- =================================================
+                         PRODUKT
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Produkt <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.ProductId"
+                                @onchange="OnProductChanged">
+
+                            <option value="0">
+                                Produkt auswählen
+                            </option>
+
+                            @foreach (var product in Products)
+                            {
+                                <option value="@product.Id">
+                                    @product.SKU - @product.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        <ValidationMessage For="@(() => Model.ProductId)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VON LAGER
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Von Lager <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.FromWarehouseId"
+                                @onchange="OnFromWarehouseChanged"
+                                disabled="@(Model.ProductId <= 0)">
+
+                            <option value="0">
+                                Lager auswählen
+                            </option>
+
+                            @foreach (var warehouse in FromWarehouses)
+                            {
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        <ValidationMessage For="@(() => Model.FromWarehouseId)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VON LAGERPLATZ
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Von Lagerplatz <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.FromWarehouseLocationId"
+                                @onchange="OnFromLocationChanged"
+                                disabled="@(Model.FromWarehouseId <= 0)">
+
+                            <option value="0">
+                                Lagerplatz auswählen
+                            </option>
+
+                            @foreach (var location in FromLocations)
+                            {
+                                <option value="@location.Id">
+
+                                    @location.Code
+
+                                    @if (!string.IsNullOrWhiteSpace(location.Name))
+                                    {
+                                        @($" - {location.Name}")
+                                    }
+
+                                </option>
+                            }
+
+                        </select>
+
+                        @if (Model.FromWarehouseId > 0 &&
+                             FromLocations.Count == 0)
+                        {
+                            <div class="form-hint">
+
+                                Für dieses Produkt ist in diesem Lager
+                                kein verfügbarer Bestand vorhanden.
+
+                            </div>
+                        }
+
+                        <ValidationMessage For="@(() => Model.FromWarehouseLocationId)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         VERFÜGBARER BESTAND
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Verfügbarer Bestand
+                        </label>
+
+                        <input class="form-control"
+                               value="@AvailableStock.ToString("N2")"
+                               readonly />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MENGE
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Menge <span>*</span>
+                        </label>
+
+                        <InputNumber @bind-Value="Model.Quantity"
+                                     class="form-control"
+                                     step="0.01"
+                                     min="0.01"
+                                     disabled="@(Model.FromWarehouseLocationId <= 0)" />
+
+                        <ValidationMessage For="@(() => Model.Quantity)" />
+
+                        @if (Model.Quantity > AvailableStock &&
+                             Model.FromWarehouseLocationId > 0)
+                        {
+                            <div class="form-error">
+
+                                Die Menge überschreitet den verfügbaren Bestand.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         NACH LAGER
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nach Lager <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.ToWarehouseId"
+                                @onchange="OnToWarehouseChanged"
+                                disabled="@(Model.ProductId <= 0)">
+
+                            <option value="0">
+                                Lager auswählen
+                            </option>
+
+                            @foreach (var warehouse in Warehouses)
+                            {
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        <ValidationMessage For="@(() => Model.ToWarehouseId)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         NACH LAGERPLATZ
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nach Lagerplatz <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.ToWarehouseLocationId"
+                                @onchange="OnToLocationChanged"
+                                disabled="@(Model.ToWarehouseId <= 0)">
+
+                            <option value="0">
+                                Lagerplatz auswählen
+                            </option>
+
+                            @foreach (var location in ToLocations)
+                            {
+                                <option value="@location.Id">
+
+                                    @location.Code
+
+                                    @if (!string.IsNullOrWhiteSpace(location.Name))
+                                    {
+                                        @($" - {location.Name}")
+                                    }
+
+                                </option>
+                            }
+
+                        </select>
+
+                        <ValidationMessage For="@(() => Model.ToWarehouseLocationId)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REFERENZ
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <InputText @bind-Value="Model.ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="z.B. UL-2026-0001" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTE
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Notiz</h2>
+
+                    <p>
+                        Optionale Informationen zur Umlagerung.
+                    </p>
+
+                </div>
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="4"
+                                   placeholder="Notiz..." />
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ERROR
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 SUCCESS
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+            {
+                <div class="form-success">
+                    @SuccessMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/stock"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Wird gebucht..."
+                        : "Umlagerung buchen")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private TransferModel Model = new();
+
+    private List<Product> Products = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private List<Warehouse> FromWarehouses = new();
+
+    private List<WarehouseLocation> FromLocations = new();
+
+    private List<WarehouseLocation> ToLocations = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private decimal AvailableStock;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+    private string? SuccessMessage;
+
+
+    // =========================================================
+    // INITIAL LOAD
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Products =
+            await db.Products
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        // Destination Lager
+        // werden erst nach Produktauswahl geladen.
+
+        Warehouses.Clear();
+
+        FromWarehouses.Clear();
+
+        FromLocations.Clear();
+
+        ToLocations.Clear();
+    }
+
+
+    // =========================================================
+    // PRODUCT CHANGED
+    // =========================================================
+
+    private async Task OnProductChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+        AvailableStock = 0;
+
+
+        // =====================================================
+        // PRODUCT ID
+        // =====================================================
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            productId = 0;
+        }
+
+
+        Model.ProductId =
+            productId;
+
+
+        // =====================================================
+        // RESET VON
+        // =====================================================
+
+        Model.FromWarehouseId =
+            0;
+
+        Model.FromWarehouseLocationId =
+            0;
+
+
+        // =====================================================
+        // RESET NACH
+        // =====================================================
+
+        Model.ToWarehouseId =
+            0;
+
+        Model.ToWarehouseLocationId =
+            0;
+
+
+        Model.Quantity =
+            0;
+
+
+        FromWarehouses.Clear();
+
+        FromLocations.Clear();
+
+        Warehouses.Clear();
+
+        ToLocations.Clear();
+
+
+        // =====================================================
+        // NO PRODUCT
+        // =====================================================
+
+        if (Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // VON LAGER
+        //
+        // Nur Lager, in denen der ausgewählte Artikel
+        // mindestens einen aktiven Lagerplatz mit
+        // verfügbarem Bestand besitzt.
+        // =====================================================
+
+        FromWarehouses =
+            await db.Warehouses
+
+                .Where(warehouse =>
+
+                    warehouse.IsActive
+
+                    &&
+
+                    db.WarehouseLocations.Any(location =>
+
+                        location.IsActive
+
+                        &&
+
+                        location.WarehouseId ==
+                            warehouse.Id
+
+                        &&
+
+                        db.Stocks.Any(stock =>
+
+                            stock.ProductId ==
+                                Model.ProductId
+
+                            &&
+
+                            stock.WarehouseLocationId ==
+                                location.Id
+
+                            &&
+
+                            stock.Quantity >
+                                stock.ReservedQuantity
+
+                        )
+
+                    )
+
+                )
+
+                .OrderBy(warehouse =>
+                    warehouse.Name)
+
+                .ToListAsync();
+
+
+        // =====================================================
+        // NACH LAGER
+        //
+        // Für das Ziellager können alle aktiven Lager
+        // ausgewählt werden.
+        // =====================================================
+
+        Warehouses =
+            await db.Warehouses
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // VON LAGER CHANGED
+    // =========================================================
+
+    private async Task OnFromWarehouseChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var warehouseId))
+        {
+            warehouseId = 0;
+        }
+
+
+        Model.FromWarehouseId =
+            warehouseId;
+
+
+        Model.FromWarehouseLocationId =
+            0;
+
+
+        AvailableStock =
+            0;
+
+
+        Model.Quantity =
+            0;
+
+
+        FromLocations.Clear();
+
+
+        if (warehouseId <= 0 ||
+            Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // VON LAGERPLÄTZE
+        //
+        // Nur Lagerplätze, an denen der ausgewählte Artikel
+        // tatsächlich verfügbaren Bestand besitzt.
+        // =====================================================
+
+        FromLocations =
+            await db.WarehouseLocations
+
+                .Where(location =>
+
+                    location.IsActive
+
+                    &&
+
+                    location.WarehouseId ==
+                        warehouseId
+
+                    &&
+
+                    db.Stocks.Any(stock =>
+
+                        stock.ProductId ==
+                            Model.ProductId
+
+                        &&
+
+                        stock.WarehouseLocationId ==
+                            location.Id
+
+                        &&
+
+                        stock.Quantity >
+                            stock.ReservedQuantity
+
+                    )
+
+                )
+
+                .OrderBy(location =>
+                    location.Code)
+
+                .ToListAsync();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // VON LAGERPLATZ CHANGED
+    // =========================================================
+
+    private async Task OnFromLocationChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var locationId))
+        {
+            locationId = 0;
+        }
+
+
+        Model.FromWarehouseLocationId =
+            locationId;
+
+
+        AvailableStock =
+            0;
+
+
+        Model.Quantity =
+            0;
+
+
+        if (locationId <= 0 ||
+            Model.ProductId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await LoadAvailableStock();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // NACH LAGER CHANGED
+    // =========================================================
+
+    private async Task OnToWarehouseChanged(
+        ChangeEventArgs e)
+    {
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var warehouseId))
+        {
+            warehouseId = 0;
+        }
+
+
+        Model.ToWarehouseId =
+            warehouseId;
+
+
+        Model.ToWarehouseLocationId =
+            0;
+
+
+        ToLocations.Clear();
+
+
+        if (warehouseId <= 0)
+        {
+            StateHasChanged();
+
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // ALLE AKTIVEN ZIEL-LAGERPLÄTZE
+        // =====================================================
+
+        ToLocations =
+            await db.WarehouseLocations
+
+                .Where(location =>
+
+                    location.IsActive
+
+                    &&
+
+                    location.WarehouseId ==
+                        warehouseId
+
+                )
+
+                .OrderBy(location =>
+                    location.Code)
+
+                .ToListAsync();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // NACH LAGERPLATZ CHANGED
+    // =========================================================
+
+    private Task OnToLocationChanged(
+        ChangeEventArgs e)
+    {
+        if (int.TryParse(
+                e.Value?.ToString(),
+                out var locationId))
+        {
+            Model.ToWarehouseLocationId =
+                locationId;
+        }
+        else
+        {
+            Model.ToWarehouseLocationId =
+                0;
+        }
+
+
+        StateHasChanged();
+
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // LOAD AVAILABLE STOCK
+    // =========================================================
+
+    private async Task LoadAvailableStock()
+    {
+        AvailableStock =
+            0;
+
+
+        if (Model.ProductId <= 0 ||
+            Model.FromWarehouseLocationId <= 0)
+        {
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var stock =
+            await db.Stocks
+
+                .FirstOrDefaultAsync(x =>
+
+                    x.ProductId ==
+                        Model.ProductId
+
+                    &&
+
+                    x.WarehouseLocationId ==
+                        Model.FromWarehouseLocationId
+
+                );
+
+
+        if (stock != null)
+        {
+            AvailableStock =
+                stock.AvailableQuantity;
+        }
+    }
+
+
+    // =========================================================
+    // BOOK TRANSFER
+    // =========================================================
+
+    private async Task BookTransfer()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+
+        try
+        {
+            // =================================================
+            // PRODUCT
+            // =================================================
+
+            if (Model.ProductId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte ein Produkt auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SOURCE WAREHOUSE
+            // =================================================
+
+            if (Model.FromWarehouseId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte ein Quelllager auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SOURCE LOCATION
+            // =================================================
+
+            if (Model.FromWarehouseLocationId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte einen Quelllagerplatz auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // TARGET WAREHOUSE
+            // =================================================
+
+            if (Model.ToWarehouseId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte ein Ziellager auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // TARGET LOCATION
+            // =================================================
+
+            if (Model.ToWarehouseLocationId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte einen Ziellagerplatz auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SAME LOCATION
+            // =================================================
+
+            if (Model.FromWarehouseLocationId ==
+                Model.ToWarehouseLocationId)
+            {
+                ErrorMessage =
+                    "Quell- und Ziellagerplatz dürfen nicht identisch sein.";
+
+                return;
+            }
+
+
+            // =================================================
+            // QUANTITY
+            // =================================================
+
+            if (Model.Quantity <= 0)
+            {
+                ErrorMessage =
+                    "Die Menge muss größer als 0 sein.";
+
+                return;
+            }
+
+
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // SOURCE STOCK
+            // =================================================
+
+            var sourceStock =
+                await db.Stocks
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.ProductId ==
+                            Model.ProductId
+
+                        &&
+
+                        x.WarehouseLocationId ==
+                            Model.FromWarehouseLocationId
+
+                    );
+
+
+            if (sourceStock == null)
+            {
+                ErrorMessage =
+                    "Am Quelllagerplatz ist kein Bestand vorhanden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // AVAILABLE STOCK
+            // =================================================
+
+            var available =
+                sourceStock.AvailableQuantity;
+
+
+            if (available <= 0)
+            {
+                ErrorMessage =
+                    "Am Quelllagerplatz ist kein verfügbarer Bestand vorhanden.";
+
+                return;
+            }
+
+
+            if (Model.Quantity > available)
+            {
+                ErrorMessage =
+                    $"Nicht genügend verfügbarer Bestand. " +
+                    $"Verfügbar: {available:N2}.";
+
+                return;
+            }
+
+
+            // =================================================
+            // SOURCE LOCATION
+            // =================================================
+
+            var fromLocation =
+                await db.WarehouseLocations
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.Id ==
+                            Model.FromWarehouseLocationId
+
+                        &&
+
+                        x.WarehouseId ==
+                            Model.FromWarehouseId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (fromLocation == null)
+            {
+                ErrorMessage =
+                    "Der Quelllagerplatz wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // TARGET LOCATION
+            // =================================================
+
+            var toLocation =
+                await db.WarehouseLocations
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.Id ==
+                            Model.ToWarehouseLocationId
+
+                        &&
+
+                        x.WarehouseId ==
+                            Model.ToWarehouseId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (toLocation == null)
+            {
+                ErrorMessage =
+                    "Der Ziellagerplatz wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // TARGET STOCK
+            // =================================================
+
+            var targetStock =
+                await db.Stocks
+
+                    .FirstOrDefaultAsync(x =>
+
+                        x.ProductId ==
+                            Model.ProductId
+
+                        &&
+
+                        x.WarehouseLocationId ==
+                            Model.ToWarehouseLocationId
+
+                    );
+
+
+            // =================================================
+            // TRANSACTION
+            // =================================================
+
+            await using var transaction =
+                await db.Database
+                    .BeginTransactionAsync();
+
+
+            try
+            {
+                // =============================================
+                // REMOVE FROM SOURCE
+                // =============================================
+
+                sourceStock.Quantity -=
+                    Model.Quantity;
+
+                sourceStock.UpdatedAt =
+                    DateTime.UtcNow;
+
+
+                // =============================================
+                // ADD TO TARGET
+                // =============================================
+
+                if (targetStock == null)
+                {
+                    targetStock =
+                        new Stock
+                        {
+                            ProductId =
+                                Model.ProductId,
+
+                            WarehouseLocationId =
+                                Model.ToWarehouseLocationId,
+
+                            Quantity =
+                                Model.Quantity,
+
+                            ReservedQuantity =
+                                0,
+
+                            UpdatedAt =
+                                DateTime.UtcNow
+                        };
+
+                    db.Stocks.Add(
+                        targetStock);
+                }
+                else
+                {
+                    targetStock.Quantity +=
+                        Model.Quantity;
+
+                    targetStock.UpdatedAt =
+                        DateTime.UtcNow;
+                }
+
+
+                // =============================================
+                // STOCK MOVEMENT
+                // =============================================
+
+                var movement =
+                    new StockMovement
+                    {
+                        ProductId =
+                            Model.ProductId,
+
+                        Quantity =
+                            Model.Quantity,
+
+                        Type =
+                            StockMovementType.Umlagerung,
+
+                        FromWarehouseLocationId =
+                            Model.FromWarehouseLocationId,
+
+                        ToWarehouseLocationId =
+                            Model.ToWarehouseLocationId,
+
+                        ReferenceNumber =
+                            string.IsNullOrWhiteSpace(
+                                Model.ReferenceNumber)
+
+                                ? null
+
+                                : Model.ReferenceNumber.Trim(),
+
+                        Note =
+                            string.IsNullOrWhiteSpace(
+                                Model.Note)
+
+                                ? null
+
+                                : Model.Note.Trim(),
+
+                        UserId =
+                            null,
+
+                        CreatedAt =
+                            DateTime.UtcNow
+                    };
+
+
+                db.StockMovements.Add(
+                    movement);
+
+
+                // =============================================
+                // SAVE
+                // =============================================
+
+                await db.SaveChangesAsync();
+
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+
+                throw;
+            }
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            var movedQuantity =
+                Model.Quantity;
+
+
+            SuccessMessage =
+                $"Umlagerung von {movedQuantity:N2} Stück wurde erfolgreich gebucht.";
+
+
+            // =================================================
+            // RESET FORM
+            // =================================================
+
+            Model =
+                new TransferModel();
+
+
+            FromWarehouses.Clear();
+
+            FromLocations.Clear();
+
+            ToLocations.Clear();
+
+            Warehouses.Clear();
+
+            AvailableStock =
+                0;
+
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Buchen: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // MODEL
+    // =========================================================
+
+    private class TransferModel
+    {
+        public int ProductId { get; set; }
+
+        public int FromWarehouseId { get; set; }
+
+        public int FromWarehouseLocationId { get; set; }
+
+        public int ToWarehouseId { get; set; }
+
+        public int ToWarehouseLocationId { get; set; }
+
+        public decimal Quantity { get; set; }
+
+        public string? ReferenceNumber { get; set; }
+
+        public string? Note { get; set; }
+    }
+
+}

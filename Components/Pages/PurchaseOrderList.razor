@@ -1,0 +1,946 @@
+﻿@page "/purchase-orders"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellungen</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Bestellungen</h1>
+
+            <p>
+                Übersicht über alle Bestellungen bei Lieferanten.
+            </p>
+
+        </div>
+
+        <a href="/purchase-orders/create"
+           class="btn-primary">
+
+            + Bestellung erstellen
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <!-- SEARCH -->
+
+      
+
+
+            <input type="text"
+                   class="form-control"
+                   placeholder="Bestellnummer, Lieferant oder Referenz suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+       
+
+
+        <!-- STATUS -->
+
+        <select class="filter-select form-control"
+                @bind="SelectedStatus"
+                @bind:after="FilterChanged">
+
+            <option value="0">
+                Alle Status
+            </option>
+
+            <option value="@((int)PurchaseOrderStatus.Entwurf)">
+                Entwurf
+            </option>
+
+            <option value="@((int)PurchaseOrderStatus.Bestellt)">
+                Bestellt
+            </option>
+
+            <option value="@((int)PurchaseOrderStatus.TeilweiseGeliefert)">
+                Teilweise geliefert
+            </option>
+
+            <option value="@((int)PurchaseOrderStatus.Geliefert)">
+                Geliefert
+            </option>
+
+            <option value="@((int)PurchaseOrderStatus.Storniert)">
+                Storniert
+            </option>
+
+        </select>
+
+        <!-- SUPPLIER -->
+        <select class="filter-select form-control"
+                @bind="SelectedSupplierId"
+                @bind:after="FilterChanged">
+
+            <option value="0">
+                Alle Lieferanten
+            </option>
+
+            @foreach (var supplier in Suppliers)
+            {
+                <option value="@supplier.Id">
+
+                    @supplier.CompanyName
+
+                    @if (!string.IsNullOrWhiteSpace(
+                        supplier.SupplierNumber))
+                    {
+                        @($" ({supplier.SupplierNumber})")
+                    }
+
+                </option>
+            }
+
+        </select>
+
+
+        <!-- FROM DATE -->
+        <!-- FROM DATE -->
+
+        <div class="filter-date-group filter-date-aligned">
+
+            <label>
+                Von
+            </label>
+
+            <input type="date"
+                   class="form-control"
+                   @bind="FromDate"
+                   @bind:after="FilterChanged" />
+
+        </div>
+
+
+        <!-- TO DATE -->
+
+        <div class="filter-date-group filter-date-aligned">
+
+            <label>
+                Bis
+            </label>
+
+            <input type="date"
+                   class="form-control"
+                   @bind="ToDate"
+                   @bind:after="FilterChanged" />
+
+        </div>
+
+        <!-- RESET -->
+
+        <button type="button"
+                class="btn-secondary form-control"
+                @onclick="ResetFilters">
+
+            Filter zurücksetzen
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="stock-summary-grid">
+
+        <div class="stock-summary-card">
+
+            <span>
+                Bestellungen
+            </span>
+
+            <strong>
+                @Orders.Count
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>
+                Entwürfe
+            </span>
+
+            <strong>
+                @DraftCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>
+                Bestellt
+            </span>
+
+            <strong>
+                @OrderedCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>
+                Teilweise geliefert
+            </span>
+
+            <strong>
+                @PartialCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>
+                Gesamtwert
+            </span>
+
+            <strong>
+                @TotalValue.ToString("N2") €
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Lieferantenbestellungen
+                </strong>
+
+                <span>
+                    @Orders.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+
+                Bestellungen werden geladen...
+
+            </div>
+        }
+        else if (Orders.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    📋
+                </div>
+
+                <h3>
+                    Keine Bestellungen gefunden
+                </h3>
+
+                <p>
+                    Für die gewählten Filter wurden keine
+                    Bestellungen gefunden.
+                </p>
+
+                <a href="/purchase-orders/create"
+                   class="btn-primary">
+
+                    + Erste Bestellung erstellen
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Bestellnummer
+                            </th>
+
+                            <th>
+                                Lieferant
+                            </th>
+
+                            <th>
+                                Datum
+                            </th>
+
+                            <th>
+                                Positionen
+                            </th>
+
+                            <th>
+                                Gesamt
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Referenz
+                            </th>
+
+                            <th>
+                                Aktionen
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var order in Orders)
+                        {
+                            <tr>
+
+                                <!-- =====================================
+                                     ORDER NUMBER
+                                     ===================================== -->
+
+                                <td>
+
+                                    <a href="/purchase-orders/details/@order.Id"
+                                       class="order-number-link">
+
+                                        @order.OrderNumber
+
+                                    </a>
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     SUPPLIER
+                                     ===================================== -->
+
+                                <td>
+
+                                    @if (order.Supplier != null)
+                                    {
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+
+                                                @GetInitials(
+                                                    order.Supplier.CompanyName)
+
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+
+                                                    @order.Supplier.CompanyName
+
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    order.Supplier.SupplierNumber))
+                                                {
+                                                    <small>
+
+                                                        @order.Supplier.SupplierNumber
+
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     DATE
+                                     ===================================== -->
+
+                                <td>
+
+                                    @order.OrderDate.ToString("dd.MM.yyyy")
+                                </td>
+
+
+                                <!-- =====================================
+                                     ITEMS
+                                     ===================================== -->
+
+                                <td>
+
+                                    @order.Items.Count
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     TOTAL
+                                     ===================================== -->
+
+                                <td>
+
+                                    <strong>
+
+                                        @order.Total.ToString("N2") €
+
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     STATUS
+                                     ===================================== -->
+
+                                <td>
+
+                                    @switch (order.Status)
+                                    {
+                                        case PurchaseOrderStatus.Entwurf:
+
+                                            <span class="status-badge status-draft">
+
+                                                Entwurf
+
+                                            </span>
+
+                                            break;
+
+
+                                        case PurchaseOrderStatus.Bestellt:
+
+                                            <span class="status-badge status-warning">
+
+                                                Bestellt
+
+                                            </span>
+
+                                            break;
+
+
+                                        case PurchaseOrderStatus.TeilweiseGeliefert:
+
+                                            <span class="status-badge status-warning">
+
+                                                Teilweise geliefert
+
+                                            </span>
+
+                                            break;
+
+
+                                        case PurchaseOrderStatus.Geliefert:
+
+                                            <span class="status-badge status-active">
+
+                                                Geliefert
+
+                                            </span>
+
+                                            break;
+
+
+                                        case PurchaseOrderStatus.Storniert:
+
+                                            <span class="status-badge status-low">
+
+                                                Storniert
+
+                                            </span>
+
+                                            break;
+
+
+                                        default:
+
+                                            <span class="status-badge">
+
+                                                @order.Status
+
+                                            </span>
+
+                                            break;
+                                    }
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     REFERENCE
+                                     ===================================== -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        order.ReferenceNumber))
+                                    {
+                                        @order.ReferenceNumber
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- =====================================
+                                     ACTIONS
+                                     ===================================== -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <a href="/purchase-orders/details/@order.Id"
+                                           class="action-button"
+                                           title="Details">
+
+                                            👁
+
+                                        </a>
+
+
+                                        @if (order.Status ==
+                                             PurchaseOrderStatus.Entwurf)
+                                        {
+                                            <a href="/purchase-orders/edit/@order.Id"
+                                               class="action-button"
+                                               title="Bearbeiten">
+
+                                                ✎
+
+                                            </a>
+                                        }
+
+
+                                        @if (order.Status ==
+                                             PurchaseOrderStatus.Entwurf)
+                                        {
+                                            <a href="/purchase-orders/confirm/@order.Id"
+                                               class="action-button"
+                                               title="Bestätigen">
+
+                                                ✓
+
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<PurchaseOrder> Orders = new();
+
+    private List<Supplier> Suppliers = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedStatus;
+
+    private int SelectedSupplierId;
+
+    private DateTime? FromDate;
+
+    private DateTime? ToDate;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private int DraftCount =>
+        Orders.Count(x =>
+            x.Status ==
+            PurchaseOrderStatus.Entwurf);
+
+
+    private int OrderedCount =>
+        Orders.Count(x =>
+            x.Status ==
+            PurchaseOrderStatus.Bestellt);
+
+
+    private int PartialCount =>
+        Orders.Count(x =>
+            x.Status ==
+            PurchaseOrderStatus.TeilweiseGeliefert);
+
+
+    private decimal TotalValue =>
+        Orders.Sum(x =>
+            x.Total);
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSuppliers();
+
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // LOAD SUPPLIERS
+    // =========================================================
+
+    private async Task LoadSuppliers()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Suppliers =
+            await db.Suppliers
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.CompanyName)
+
+                .ToListAsync();
+    }
+
+
+    // =========================================================
+    // LOAD ORDERS
+    // =========================================================
+
+    private async Task LoadOrders()
+    {
+        IsLoading = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var query =
+                db.PurchaseOrders
+
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Supplier)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .AsQueryable();
+
+
+            // =================================================
+            // SEARCH
+            // =================================================
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+
+                query =
+                    query.Where(x =>
+
+                        x.OrderNumber.Contains(search)
+
+                        ||
+
+                        (
+                            x.ReferenceNumber != null
+                            &&
+                            x.ReferenceNumber.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Supplier != null
+                            &&
+                            x.Supplier.CompanyName.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Supplier != null
+                            &&
+                            x.Supplier.SupplierNumber != null
+                            &&
+                            x.Supplier.SupplierNumber.Contains(search)
+                        )
+
+                    );
+            }
+
+
+            // =================================================
+            // STATUS
+            // =================================================
+
+            if (SelectedStatus > 0)
+            {
+                var status =
+                    (PurchaseOrderStatus)SelectedStatus;
+
+
+                query =
+                    query.Where(x =>
+                        x.Status == status);
+            }
+
+
+            // =================================================
+            // SUPPLIER
+            // =================================================
+
+            if (SelectedSupplierId > 0)
+            {
+                query =
+                    query.Where(x =>
+                        x.SupplierId ==
+                        SelectedSupplierId);
+            }
+
+
+            // =================================================
+            // FROM DATE
+            // =================================================
+
+            if (FromDate.HasValue)
+            {
+                var from =
+                    FromDate.Value.Date;
+
+
+                query =
+                    query.Where(x =>
+                        x.OrderDate >= from);
+            }
+
+
+            // =================================================
+            // TO DATE
+            // =================================================
+
+            if (ToDate.HasValue)
+            {
+                var to =
+                    ToDate.Value.Date.AddDays(1);
+
+
+                query =
+                    query.Where(x =>
+                        x.OrderDate < to);
+            }
+
+
+            // =================================================
+            // LOAD
+            // =================================================
+
+            Orders =
+                await query
+
+                    .OrderByDescending(x =>
+                        x.OrderDate)
+
+                    .ThenByDescending(x =>
+                        x.Id)
+
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private async Task SearchChanged()
+    {
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private async Task FilterChanged()
+    {
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // RESET
+    // =========================================================
+
+    private async Task ResetFilters()
+    {
+        SearchTerm =
+            string.Empty;
+
+        SelectedStatus =
+            0;
+
+        SelectedSupplierId =
+            0;
+
+        FromDate =
+            null;
+
+        ToDate =
+            null;
+
+
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

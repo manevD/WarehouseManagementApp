@@ -1,0 +1,1256 @@
+﻿@page "/purchase-orders/create"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung erstellen</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Bestellung erstellen</h1>
+
+            <p>
+                Neue Bestellung bei einem Lieferanten erstellen.
+            </p>
+
+        </div>
+
+        <a href="/purchase-orders"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@CreatePurchaseOrder"
+                  FormName="PurchaseOrderCreateForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =====================================================
+                 BESTELLUNG
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Bestellung</h2>
+
+                    <p>
+                        Lieferant und Bestelldaten.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- =================================================
+                         LIEFERANT
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lieferant <span>*</span>
+                        </label>
+
+                        <select class="form-control"
+                                value="@Model.SupplierId"
+                                @onchange="OnSupplierChanged">
+
+                            <option value="0">
+                                Lieferant auswählen
+                            </option>
+
+                            @foreach (var supplier in Suppliers)
+                            {
+                                <option value="@supplier.Id">
+
+                                    @supplier.CompanyName
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.SupplierNumber))
+                                    {
+                                        @($" ({supplier.SupplierNumber})")
+                                    }
+
+                                </option>
+                            }
+
+                        </select>
+
+                        @if (Model.SupplierId <= 0 &&
+                             SupplierTouched)
+                        {
+                            <div class="form-error">
+                                Bitte einen Lieferanten auswählen.
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =================================================
+                         BESTELLNUMMER
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestellnummer <span>*</span>
+                        </label>
+
+                        <InputText @bind-Value="Model.OrderNumber"
+                                   class="form-control"
+                                   placeholder="PO-2026-0001" />
+
+                        <ValidationMessage For="@(() => Model.OrderNumber)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         BESTELLDATUM
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestelldatum <span>*</span>
+                        </label>
+
+                        <InputDate @bind-Value="Model.OrderDate"
+                                   class="form-control" />
+
+                        <ValidationMessage For="@(() => Model.OrderDate)" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REFERENZ
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <InputText @bind-Value="Model.ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="z.B. Ihre Referenz" />
+
+                        <ValidationMessage For="@(() => Model.ReferenceNumber)" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 POSITIONEN
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div class="section-title-row">
+
+                        <div>
+
+                            <h2>
+                                Bestellpositionen
+                            </h2>
+
+                            <p>
+                                Produkte und Mengen hinzufügen.
+                            </p>
+
+                        </div>
+
+
+                        <button type="button"
+                                class="btn-primary"
+                                @onclick="AddItem">
+
+                            + Produkt hinzufügen
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                @if (Model.Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <div class="empty-products-icon">
+                            📦
+                        </div>
+
+                        <h3>
+                            Keine Positionen
+                        </h3>
+
+                        <p>
+                            Fügen Sie mindestens ein Produkt hinzu.
+                        </p>
+
+                        <button type="button"
+                                class="btn-primary"
+                                @onclick="AddItem">
+
+                            + Produkt hinzufügen
+
+                        </button>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="order-items-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Produkt
+                                    </th>
+
+                                    <th>
+                                        Menge
+                                    </th>
+
+                                    <th>
+                                        Einzelpreis
+                                    </th>
+
+                                    <th>
+                                        Gesamt
+                                    </th>
+
+                                    <th>
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @for (int i = 0;
+                                      i < Model.Items.Count;
+                                      i++)
+                                {
+                                    var item =
+                                        Model.Items[i];
+
+
+                                    <tr>
+
+                                        <!-- =================================
+                                             PRODUCT
+                                             ================================= -->
+
+                                        <td>
+
+                                            <select class="form-control"
+                                                    value="@item.ProductId"
+                                                    @onchange="(e) => ProductChanged(item, e)">
+
+                                                <option value="0">
+                                                    Produkt auswählen
+                                                </option>
+
+                                                @foreach (var product in GetAvailableProducts(item))
+                                                {
+                                                    <option value="@product.Id">
+
+                                                        @product.SKU -
+                                                        @product.Name
+
+                                                    </option>
+                                                }
+
+                                            </select>
+
+
+                                            @if (item.ProductId <= 0 &&
+                                                 item.ProductTouched)
+                                            {
+                                                <div class="form-error">
+
+                                                    Produkt auswählen.
+
+                                                </div>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- =================================
+                                             QUANTITY
+                                             ================================= -->
+
+                                        <td>
+
+                                            <InputNumber @bind-Value="item.Quantity"
+                                                         class="form-control"
+                                                         step="0.01"
+                                                         min="0.01" />
+
+
+                                            @if (item.ProductId > 0 &&
+                                                 item.Quantity <= 0)
+                                            {
+                                                <div class="form-error">
+
+                                                    Menge muss größer als 0 sein.
+
+                                                </div>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- =================================
+                                             UNIT PRICE
+                                             ================================= -->
+
+                                        <td>
+
+                                            <InputNumber @bind-Value="item.UnitPrice"
+                                                         class="form-control"
+                                                         step="0.01"
+                                                         min="0" />
+
+
+                                            @if (item.ProductId > 0 &&
+                                                 item.UnitPrice < 0)
+                                            {
+                                                <div class="form-error">
+
+                                                    Einzelpreis darf nicht
+                                                    negativ sein.
+
+                                                </div>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- =================================
+                                             TOTAL
+                                             ================================= -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @(
+                                                    (
+                                                        item.Quantity *
+                                                        item.UnitPrice
+                                                    )
+                                                    .ToString("N2")
+                                                )
+
+                                                €
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- =================================
+                                             DELETE
+                                             ================================= -->
+
+                                        <td>
+
+                                            <button type="button"
+                                                    class="action-button delete-button"
+                                                    title="Position entfernen"
+                                                    @onclick="() => RemoveItem(item)">
+
+                                                🗑
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =====================================================
+                 TOTAL
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="order-total-box">
+
+                    <span>
+                        Gesamt
+                    </span>
+
+                    <strong>
+
+                        @CalculateTotal().ToString("N2") €
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTE
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Notiz
+                    </h2>
+
+                    <p>
+                        Optionale Informationen zur Bestellung.
+                    </p>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="5"
+                                   placeholder="Notiz..." />
+
+                    <ValidationMessage For="@(() => Model.Note)" />
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ERROR
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+
+                    @ErrorMessage
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/purchase-orders"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Wird gespeichert..."
+                        : "Bestellung erstellen")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private PurchaseOrderCreateModel Model = new();
+
+    private List<Supplier> Suppliers = new();
+
+    private List<Product> Products = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsSaving;
+
+    private bool SupplierTouched;
+
+    private string? ErrorMessage;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        // =====================================================
+        // SUPPLIERS
+        // =====================================================
+
+        Suppliers =
+            await db.Suppliers
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.CompanyName)
+
+                .ToListAsync();
+
+
+        // =====================================================
+        // PRODUCTS
+        // =====================================================
+
+        Products =
+            await db.Products
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        // =====================================================
+        // DEFAULT ORDER NUMBER
+        // =====================================================
+
+        Model.OrderNumber =
+            await GenerateOrderNumber();
+
+
+        // =====================================================
+        // DEFAULT DATE
+        // =====================================================
+
+        Model.OrderDate =
+            DateTime.Today;
+    }
+
+
+    // =========================================================
+    // GENERATE ORDER NUMBER
+    // =========================================================
+
+    private async Task<string> GenerateOrderNumber()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var year =
+            DateTime.UtcNow.Year;
+
+
+        var prefix =
+            $"PO-{year}-";
+
+
+        var existingNumbers =
+            await db.PurchaseOrders
+
+                .AsNoTracking()
+
+                .Where(x =>
+                    x.OrderNumber.StartsWith(prefix))
+
+                .Select(x =>
+                    x.OrderNumber)
+
+                .ToListAsync();
+
+
+        var maxNumber =
+            0;
+
+
+        foreach (var number in existingNumbers)
+        {
+            if (number.Length <= prefix.Length)
+                continue;
+
+
+            var part =
+                number.Substring(prefix.Length);
+
+
+            if (int.TryParse(
+                    part,
+                    out var value))
+            {
+                if (value > maxNumber)
+                {
+                    maxNumber =
+                        value;
+                }
+            }
+        }
+
+
+        return
+            $"{prefix}{maxNumber + 1:D4}";
+    }
+
+
+    // =========================================================
+    // SUPPLIER CHANGED
+    // =========================================================
+
+    private Task OnSupplierChanged(
+        ChangeEventArgs e)
+    {
+        SupplierTouched =
+            true;
+
+
+        if (int.TryParse(
+                e.Value?.ToString(),
+                out var supplierId))
+        {
+            Model.SupplierId =
+                supplierId;
+        }
+        else
+        {
+            Model.SupplierId =
+                0;
+        }
+
+
+        ErrorMessage =
+            null;
+
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // ADD ITEM
+    // =========================================================
+
+    private void AddItem()
+    {
+        Model.Items.Add(
+            new PurchaseOrderItemModel());
+    }
+
+
+    // =========================================================
+    // AVAILABLE PRODUCTS
+    // =========================================================
+
+    private IEnumerable<Product> GetAvailableProducts(
+        PurchaseOrderItemModel currentItem)
+    {
+        var selectedProductIds =
+            Model.Items
+
+                .Where(x =>
+                    x != currentItem &&
+                    x.ProductId > 0)
+
+                .Select(x =>
+                    x.ProductId)
+
+                .ToHashSet();
+
+
+        return Products.Where(x =>
+            x.Id == currentItem.ProductId
+            ||
+            !selectedProductIds.Contains(x.Id));
+    }
+
+
+    // =========================================================
+    // PRODUCT CHANGED
+    // =========================================================
+
+    private Task ProductChanged(
+        PurchaseOrderItemModel item,
+        ChangeEventArgs e)
+    {
+        item.ProductTouched =
+            true;
+
+
+        ErrorMessage =
+            null;
+
+
+        if (int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            // ==============================================
+            // DUPLICATE PROTECTION
+            // ==============================================
+
+            var alreadySelected =
+                Model.Items.Any(x =>
+                    x != item
+                    &&
+                    x.ProductId ==
+                        productId);
+
+
+            if (productId > 0 &&
+                alreadySelected)
+            {
+                ErrorMessage =
+                    "Dieses Produkt wurde bereits als Position hinzugefügt.";
+
+                return Task.CompletedTask;
+            }
+
+
+            item.ProductId =
+                productId;
+
+
+            // ==============================================
+            // DEFAULT PURCHASE PRICE
+            // ==============================================
+
+            var product =
+                Products.FirstOrDefault(x =>
+                    x.Id == productId);
+
+
+            if (product != null)
+            {
+                // Only automatically set the price
+                // when the item has no price yet.
+
+                if (item.UnitPrice <= 0)
+                {
+                    item.UnitPrice =
+                        product.PurchasePrice;
+                }
+            }
+        }
+        else
+        {
+            item.ProductId =
+                0;
+
+            item.Quantity =
+                0;
+
+            item.UnitPrice =
+                0;
+        }
+
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // REMOVE ITEM
+    // =========================================================
+
+    private void RemoveItem(
+        PurchaseOrderItemModel item)
+    {
+        Model.Items.Remove(item);
+
+        ErrorMessage =
+            null;
+    }
+
+
+    // =========================================================
+    // CALCULATE TOTAL
+    // =========================================================
+
+    private decimal CalculateTotal()
+    {
+        return Model.Items.Sum(x =>
+            x.Quantity *
+            x.UnitPrice);
+    }
+
+
+    // =========================================================
+    // CREATE PURCHASE ORDER
+    // =========================================================
+
+    private async Task CreatePurchaseOrder()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving =
+            true;
+
+        ErrorMessage =
+            null;
+
+
+        try
+        {
+            // =================================================
+            // SUPPLIER
+            // =================================================
+
+            if (Model.SupplierId <= 0)
+            {
+                SupplierTouched =
+                    true;
+
+                ErrorMessage =
+                    "Bitte einen Lieferanten auswählen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ORDER NUMBER
+            // =================================================
+
+            var orderNumber =
+                Model.OrderNumber?.Trim();
+
+
+            if (string.IsNullOrWhiteSpace(
+                orderNumber))
+            {
+                ErrorMessage =
+                    "Bitte eine Bestellnummer eingeben.";
+
+                return;
+            }
+
+
+            if (orderNumber.Length > 50)
+            {
+                ErrorMessage =
+                    "Die Bestellnummer darf maximal 50 Zeichen lang sein.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ITEMS
+            // =================================================
+
+            if (Model.Items.Count == 0)
+            {
+                ErrorMessage =
+                    "Bitte mindestens ein Produkt hinzufügen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // PRODUCT VALIDATION
+            // =================================================
+
+            var selectedProductIds =
+                new HashSet<int>();
+
+
+            foreach (var item in Model.Items)
+            {
+                // =============================================
+                // PRODUCT
+                // =============================================
+
+                if (item.ProductId <= 0)
+                {
+                    item.ProductTouched =
+                        true;
+
+                    ErrorMessage =
+                        "Bitte für jede Position ein Produkt auswählen.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // DUPLICATE PRODUCT
+                // =============================================
+
+                if (!selectedProductIds.Add(
+                    item.ProductId))
+                {
+                    ErrorMessage =
+                        "Ein Produkt darf nur einmal als Bestellposition vorhanden sein.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // QUANTITY
+                // =============================================
+
+                if (item.Quantity <= 0)
+                {
+                    ErrorMessage =
+                        "Die Menge muss größer als 0 sein.";
+
+                    return;
+                }
+
+
+                // =============================================
+                // UNIT PRICE
+                // =============================================
+
+                if (item.UnitPrice < 0)
+                {
+                    ErrorMessage =
+                        "Der Einzelpreis darf nicht negativ sein.";
+
+                    return;
+                }
+            }
+
+
+            // =================================================
+            // DATABASE
+            // =================================================
+
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // SUPPLIER EXISTS
+            // =================================================
+
+            var supplierExists =
+                await db.Suppliers
+
+                    .AnyAsync(x =>
+
+                        x.Id ==
+                            Model.SupplierId
+
+                        &&
+
+                        x.IsActive
+
+                    );
+
+
+            if (!supplierExists)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ORDER NUMBER UNIQUE
+            // =================================================
+
+            var orderNumberExists =
+                await db.PurchaseOrders
+
+                    .AnyAsync(x =>
+                        x.OrderNumber ==
+                        orderNumber);
+
+
+            if (orderNumberExists)
+            {
+                ErrorMessage =
+                    "Diese Bestellnummer existiert bereits.";
+
+                return;
+            }
+
+
+            // =================================================
+            // PRODUCTS EXIST
+            // =================================================
+
+            var products =
+                await db.Products
+
+                    .Where(x =>
+                        selectedProductIds.Contains(
+                            x.Id)
+
+                        &&
+
+                        x.IsActive)
+
+                    .ToDictionaryAsync(
+                        x => x.Id);
+
+
+            if (products.Count !=
+                selectedProductIds.Count)
+            {
+                ErrorMessage =
+                    "Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.";
+
+                return;
+            }
+
+
+            // =================================================
+            // CREATE ORDER
+            // =================================================
+
+            var purchaseOrder =
+                new PurchaseOrder
+                {
+                    OrderNumber =
+                        orderNumber,
+
+                    SupplierId =
+                        Model.SupplierId,
+
+                    OrderDate =
+                        Model.OrderDate,
+
+                    Status =
+                        PurchaseOrderStatus.Entwurf,
+
+                    ReferenceNumber =
+                        string.IsNullOrWhiteSpace(
+                            Model.ReferenceNumber)
+
+                            ? null
+
+                            : Model.ReferenceNumber.Trim(),
+
+                    Note =
+                        string.IsNullOrWhiteSpace(
+                            Model.Note)
+
+                            ? null
+
+                            : Model.Note.Trim(),
+
+                    Total =
+                        CalculateTotal(),
+
+                    CreatedAt =
+                        DateTime.UtcNow
+                };
+
+
+            db.PurchaseOrders.Add(
+                purchaseOrder);
+
+
+            // =================================================
+            // CREATE ITEMS
+            // =================================================
+
+            foreach (var item in Model.Items)
+            {
+                var orderItem =
+                    new PurchaseOrderItem
+                    {
+                        PurchaseOrder =
+                            purchaseOrder,
+
+                        ProductId =
+                            item.ProductId,
+
+                        Quantity =
+                            item.Quantity,
+
+                        UnitPrice =
+                            item.UnitPrice,
+
+                        DeliveredQuantity =
+                            0
+                    };
+
+
+                purchaseOrder.Items.Add(
+                    orderItem);
+            }
+
+
+            // =================================================
+            // SAVE
+            // =================================================
+
+            await db.SaveChangesAsync();
+
+
+            // =================================================
+            // DETAILS
+            // =================================================
+
+            Navigation.NavigateTo(
+                $"/purchase-orders/details/{purchaseOrder.Id}");
+        }
+        catch (DbUpdateException)
+        {
+            ErrorMessage =
+                "Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Bestellnummer und die Daten.";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Erstellen der Bestellung: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving =
+                false;
+        }
+    }
+
+
+    // =========================================================
+    // CREATE MODEL
+    // =========================================================
+
+    private class PurchaseOrderCreateModel
+    {
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte einen Lieferanten auswählen.")]
+        public int SupplierId { get; set; }
+
+
+        [Required(
+            ErrorMessage =
+                "Bestellnummer ist erforderlich.")]
+        [MaxLength(50)]
+        public string OrderNumber { get; set; } =
+            string.Empty;
+
+
+        [Required]
+        public DateTime OrderDate { get; set; } =
+            DateTime.Today;
+
+
+        [MaxLength(100)]
+        public string? ReferenceNumber { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+
+
+        public List<PurchaseOrderItemModel> Items { get; set; }
+            = new();
+    }
+
+
+    // =========================================================
+    // ITEM MODEL
+    // =========================================================
+
+    private class PurchaseOrderItemModel
+    {
+        public int ProductId { get; set; }
+
+        public decimal Quantity { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public bool ProductTouched { get; set; }
+    }
+
+}

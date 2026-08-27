@@ -1,0 +1,1022 @@
+﻿@page "/purchase-orders/details/{Id:int}"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung Details</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Bestellung wird geladen...
+    </div>
+}
+else if (Order == null)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>Bestellung nicht gefunden</h3>
+
+        <a href="/purchase-orders"
+           class="btn-primary">
+
+            Zurück zu Bestellungen
+
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>
+                    @Order.OrderNumber
+                </h1>
+
+                <p>
+                    Lieferantenbestellung
+                    @if (Order.Supplier != null)
+                    {
+                        <span>
+                            - @Order.Supplier.CompanyName
+                        </span>
+                    }
+                </p>
+
+            </div>
+
+
+            <div class="page-header-actions">
+
+                <a href="/purchase-orders"
+                   class="btn-secondary">
+
+                    ← Zurück
+
+                </a>
+
+
+                @if (Order.Status == PurchaseOrderStatus.Entwurf)
+                {
+                    <a href="/purchase-orders/edit/@Order.Id"
+                       class="btn-secondary">
+
+                        ✎ Bearbeiten
+
+                    </a>
+
+
+                    <a href="/purchase-orders/confirm/@Order.Id"
+                       class="btn-primary">
+
+                        ✓ Bestellung bestätigen
+
+                    </a>
+                }
+                else if (
+                    Order.Status == PurchaseOrderStatus.Bestellt
+                    ||
+                    Order.Status == PurchaseOrderStatus.TeilweiseGeliefert)
+                {
+                    @if (TotalRemaining > 0)
+                    {
+                        <a href="/stock/incoming?purchaseOrderId=@Order.Id"
+                           class="btn-primary">
+
+                            + Wareneingang buchen
+
+                        </a>
+                    }
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STATUS HEADER
+             ===================================================== -->
+
+        <div class="order-status-header">
+
+            <div>
+
+                <span class="detail-label">
+                    Status
+                </span>
+
+                <div class="detail-value">
+
+                    @switch (Order.Status)
+                    {
+                        case PurchaseOrderStatus.Entwurf:
+
+                            <span class="status-badge status-draft">
+                                Entwurf
+                            </span>
+
+                            break;
+
+
+                        case PurchaseOrderStatus.Bestellt:
+
+                            <span class="status-badge status-warning">
+                                Bestellt
+                            </span>
+
+                            break;
+
+
+                        case PurchaseOrderStatus.TeilweiseGeliefert:
+
+                            <span class="status-badge status-warning">
+                                Teilweise geliefert
+                            </span>
+
+                            break;
+
+
+                        case PurchaseOrderStatus.Geliefert:
+
+                            <span class="status-badge status-active">
+                                Geliefert
+                            </span>
+
+                            break;
+
+
+                        case PurchaseOrderStatus.Storniert:
+
+                            <span class="status-badge status-low">
+                                Storniert
+                            </span>
+
+                            break;
+
+
+                        default:
+
+                            <span class="status-badge">
+                                @Order.Status
+                            </span>
+
+                            break;
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <span class="detail-label">
+                    Bestelldatum
+                </span>
+
+                <strong class="detail-value">
+
+                    @Order.OrderDate.Date
+
+                </strong>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Order.ReferenceNumber))
+            {
+                <div>
+
+                    <span class="detail-label">
+                        Referenz
+                    </span>
+
+                    <strong class="detail-value">
+
+                        @Order.ReferenceNumber
+
+                    </strong>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             SUPPLIER
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Lieferant
+                    </h2>
+
+                    <p>
+                        Lieferant dieser Bestellung.
+                    </p>
+
+                </div>
+
+
+                @if (Order.Supplier != null)
+                {
+                    <div class="supplier-detail-card">
+
+                        <div class="product-avatar">
+
+                            @GetInitials(
+                                Order.Supplier.CompanyName)
+
+                        </div>
+
+
+                        <div class="supplier-detail-content">
+
+                            <strong>
+                                @Order.Supplier.CompanyName
+                            </strong>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.SupplierNumber))
+                            {
+                                <span>
+
+                                    Lieferantennummer:
+                                    @Order.Supplier.SupplierNumber
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.ContactPerson))
+                            {
+                                <span>
+
+                                    Ansprechpartner:
+                                    @Order.Supplier.ContactPerson
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.Email))
+                            {
+                                <span>
+
+                                    @Order.Supplier.Email
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.Phone))
+                            {
+                                <span>
+
+                                    @Order.Supplier.Phone
+
+                                </span>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Supplier.Street)
+                                ||
+                                !string.IsNullOrWhiteSpace(
+                                    Order.Supplier.PostalCode)
+                                ||
+                                !string.IsNullOrWhiteSpace(
+                                    Order.Supplier.City))
+                            {
+                                <span>
+
+                                    @Order.Supplier.Street
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        Order.Supplier.PostalCode)
+                                        ||
+                                        !string.IsNullOrWhiteSpace(
+                                            Order.Supplier.City))
+                                    {
+                                        <br />
+
+                                        @Order.Supplier.PostalCode
+                                        @(" ")
+                                        @Order.Supplier.City
+                                    }
+
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="form-error">
+
+                        Lieferant nicht gefunden.
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =================================================
+                 ITEMS
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Bestellpositionen
+                    </h2>
+
+                    <p>
+                        Übersicht über bestellte und gelieferte Mengen.
+                    </p>
+
+                </div>
+
+
+                @if (Order.Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <div class="empty-products-icon">
+                            📦
+                        </div>
+
+                        <h3>
+                            Keine Positionen
+                        </h3>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="products-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Produkt
+                                    </th>
+
+                                    <th>
+                                        SKU
+                                    </th>
+
+                                    <th>
+                                        Bestellt
+                                    </th>
+
+                                    <th>
+                                        Geliefert
+                                    </th>
+
+                                    <th>
+                                        Offen
+                                    </th>
+
+                                    <th>
+                                        Einzelpreis
+                                    </th>
+
+                                    <th>
+                                        Gesamt
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Aktion
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var item in Order.Items)
+                                {
+                                    var remaining =
+                                        Math.Max(
+                                            0,
+                                            item.Quantity -
+                                            item.DeliveredQuantity);
+
+
+                                    <tr>
+
+                                        <!-- PRODUCT -->
+
+                                        <td>
+
+                                            <div class="product-name">
+
+                                                <div class="product-avatar">
+
+                                                    @GetInitials(
+                                                        item.Product?.Name)
+
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+
+                                                        @(item.Product?.Name
+                                                            ?? "-")
+
+                                                    </strong>
+
+
+                                                    @if (!string.IsNullOrWhiteSpace(
+                                                        item.Product?.Barcode))
+                                                    {
+                                                        <small>
+
+                                                            @item.Product.Barcode
+
+                                                        </small>
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- SKU -->
+
+                                        <td>
+
+                                            @(item.Product?.SKU ?? "-")
+
+                                        </td>
+
+
+                                        <!-- ORDERED -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @item.Quantity
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- DELIVERED -->
+
+                                        <td>
+
+                                            @item.DeliveredQuantity
+
+                                        </td>
+
+
+                                        <!-- REMAINING -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @remaining
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- UNIT PRICE -->
+
+                                        <td>
+
+                                            @item.UnitPrice.ToString("N2")
+                                            €
+
+                                        </td>
+
+
+                                        <!-- TOTAL -->
+
+                                        <td>
+
+                                            <strong>
+
+                                                @(
+                                                    (
+                                                        item.Quantity *
+                                                        item.UnitPrice
+                                                    )
+                                                    .ToString("N2")
+                                                )
+                                                €
+
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+
+                                            @if (item.DeliveredQuantity <= 0)
+                                            {
+                                                <span class="status-badge status-draft">
+
+                                                    Offen
+
+                                                </span>
+                                            }
+                                            else if (remaining > 0)
+                                            {
+                                                <span class="status-badge status-warning">
+
+                                                    Teilweise
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge status-active">
+
+                                                    Geliefert
+
+                                                </span>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- ACTION -->
+
+                                        <td>
+
+                                            @if (
+                                                remaining > 0
+                                                &&
+                                                (
+                                                    Order.Status ==
+                                                        PurchaseOrderStatus.Bestellt
+
+                                                    ||
+
+                                                    Order.Status ==
+                                                        PurchaseOrderStatus.TeilweiseGeliefert
+                                                ))
+                                            {
+                                                <a href="/stock/incoming?purchaseOrderId=@Order.Id&productId=@item.ProductId"
+                                                   class="btn-secondary">
+
+                                                    + Eingang
+
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    —
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =====================================================
+                 DELIVERY SUMMARY
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Lieferstatus
+                    </h2>
+
+                    <p>
+                        Übersicht über den aktuellen Lieferfortschritt.
+                    </p>
+
+                </div>
+
+
+                <div class="stock-summary-grid">
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Bestellte Menge
+                        </span>
+
+                        <strong>
+                            @TotalOrdered.ToString("N2")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Gelieferte Menge
+                        </span>
+
+                        <strong>
+                            @TotalDelivered.ToString("N2")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Offene Menge
+                        </span>
+
+                        <strong>
+                            @TotalRemaining.ToString("N2")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Positionen
+                        </span>
+
+                        <strong>
+                            @Order.Items.Count
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stock-summary-card">
+
+                        <span>
+                            Bestellwert
+                        </span>
+
+                        <strong>
+                            @Order.Total.ToString("N2") €
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 DELIVERY ACTION
+                 ===================================================== -->
+            @if (
+                            TotalRemaining > 0
+
+                            &&
+
+                            (
+                                Order.Status ==
+                                    PurchaseOrderStatus.Bestellt
+
+                                ||
+
+                                Order.Status ==
+                                    PurchaseOrderStatus.TeilweiseGeliefert
+                            ))
+            {
+                <div class="form-section">
+
+                    <div class="confirm-warning">
+
+                        <div class="confirm-warning-icon">
+                            📦
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                @TotalRemaining.ToString("N2")
+                                Einheiten noch offen
+                            </strong>
+
+                            <p>
+
+                                Die noch offene Ware kann über
+                                den Wareneingang ins Lager gebucht werden.
+
+                            </p>
+
+                        </div>
+
+
+                        <a href="/stock/incoming?purchaseOrderId=@Order.Id"
+                           class="btn-primary">
+
+                            Wareneingang buchen
+
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+
+            @if (Order.Status ==
+                PurchaseOrderStatus.Geliefert)
+            {
+                <div class="form-section">
+
+                    <div class="form-success">
+
+                        ✓ Diese Bestellung wurde vollständig geliefert.
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 NOTE
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(
+                            Order.Note))
+            {
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>
+                            Notiz
+                        </h2>
+
+                    </div>
+
+
+                    <div class="note-box">
+
+                        @Order.Note
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 FOOTER ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/purchase-orders"
+                   class="btn-secondary">
+
+                    ← Zurück zu Bestellungen
+
+                </a>
+
+
+                @if (Order.Status ==
+                    PurchaseOrderStatus.Entwurf)
+                {
+                    <a href="/purchase-orders/edit/@Order.Id"
+                       class="btn-secondary">
+
+                        ✎ Bearbeiten
+
+                    </a>
+
+
+                    <a href="/purchase-orders/confirm/@Order.Id"
+                       class="btn-primary">
+
+                        ✓ Bestellung bestätigen
+
+                    </a>
+                }
+                else if (
+                    Order.Status ==
+                        PurchaseOrderStatus.Bestellt
+
+                    ||
+
+                    Order.Status ==
+                        PurchaseOrderStatus.TeilweiseGeliefert)
+                {
+                    @if (TotalRemaining > 0)
+                    {
+                        <a href="/stock/incoming?purchaseOrderId=@Order.Id"
+                           class="btn-primary">
+
+                            + Wareneingang buchen
+
+                        </a>
+                    }
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private PurchaseOrder? Order;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private decimal TotalOrdered =>
+        Order?.Items.Sum(x =>
+            x.Quantity) ?? 0;
+
+
+    private decimal TotalDelivered =>
+        Order?.Items.Sum(x =>
+            x.DeliveredQuantity) ?? 0;
+
+
+    private decimal TotalRemaining =>
+        Order?.Items.Sum(x =>
+            Math.Max(
+                0,
+                x.Quantity -
+                x.DeliveredQuantity)) ?? 0;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrder();
+    }
+
+
+    // =========================================================
+    // LOAD ORDER
+    // =========================================================
+
+    private async Task LoadOrder()
+    {
+        IsLoading = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Order =
+                await db.PurchaseOrders
+
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Supplier)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

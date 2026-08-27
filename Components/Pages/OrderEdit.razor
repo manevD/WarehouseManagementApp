@@ -1,0 +1,1428 @@
+﻿@page "/orders/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung bearbeiten</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Bestellung bearbeiten</h1>
+
+            @if (Order != null)
+            {
+                <p>
+                    @Order.OrderNumber
+                </p>
+            }
+
+        </div>
+
+        <a href="/orders"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Bestellung wird geladen...
+        </div>
+    }
+    else if (Order == null)
+    {
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                ☷
+            </div>
+
+            <h3>
+                Bestellung nicht gefunden
+            </h3>
+
+            <a href="/orders"
+               class="btn-secondary">
+
+                Zurück zu Bestellungen
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdateOrder"
+                      FormName="OrderEditForm">
+
+                <DataAnnotationsValidator />
+
+
+                <!-- =====================================================
+                     BESTELLINFORMATIONEN
+                     ===================================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Bestellinformationen</h2>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- ORDER NUMBER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Bestellnummer
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Model.OrderNumber"
+                                   readonly />
+
+                        </div>
+
+
+                        <!-- CUSTOMER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Kunde <span>*</span>
+                            </label>
+
+                            <InputSelect @bind-Value="Model.CustomerId"
+                                         class="form-control"
+                                         @bind:after="CustomerChanged">
+
+                                <option value="0">
+                                    Kunde auswählen
+                                </option>
+
+                                @foreach (var customer in Customers)
+                                {
+                                    <option value="@customer.Id">
+                                        @customer.CustomerNumber -
+                                        @customer.CompanyName
+                                    </option>
+                                }
+
+                            </InputSelect>
+
+                            <ValidationMessage For="@(() => Model.CustomerId)" />
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Bestelldatum
+                            </label>
+
+                            <InputDate @bind-Value="Model.OrderDate"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Status
+                            </label>
+
+                            <InputSelect @bind-Value="Model.Status"
+                                         class="form-control">
+
+                                <option value="@OrderStatus.Entwurf">
+                                    Entwurf
+                                </option>
+
+                                <option value="@OrderStatus.Bestätigt">
+                                    Bestätigt
+                                </option>
+
+                                <option value="@OrderStatus.InBearbeitung">
+                                    In Bearbeitung
+                                </option>
+
+                                <option value="@OrderStatus.TeilweiseGeliefert">
+                                    Teilweise geliefert
+                                </option>
+
+                                <option value="@OrderStatus.Versendet">
+                                    Versendet
+                                </option>
+
+                                <option value="@OrderStatus.Abgeschlossen">
+                                    Abgeschlossen
+                                </option>
+
+                                <option value="@OrderStatus.Storniert">
+                                    Storniert
+                                </option>
+
+                            </InputSelect>
+
+                        </div>
+
+
+                        <!-- REFERENCE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Referenznummer
+                            </label>
+
+                            <InputText @bind-Value="Model.ReferenceNumber"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     LIEFERADRESSE
+                     ===================================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Lieferadresse</h2>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Straße
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryStreet"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                PLZ
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryPostalCode"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Ort
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryCity"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Land
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryCountry"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     BESTELLPOSITIONEN
+                     ===================================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Bestellpositionen</h2>
+
+                        <p>
+                            Produkte und Mengen bearbeiten.
+                        </p>
+
+                        @if (Order.Status == OrderStatus.Bestätigt)
+                        {
+                            <div class="form-info"
+                                 style="margin-top:10px;">
+
+                                Die Bestellung ist bestätigt.
+                                Änderungen an Mengen und das Löschen
+                                von Positionen werden automatisch mit
+                                dem reservierten Bestand synchronisiert.
+                                Neue Positionen können bei einer
+                                bestätigten Bestellung nicht hinzugefügt
+                                werden.
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- ADD ITEM -->
+                    <!-- ADD ITEM -->
+                    <div class="order-add-item">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Produkt
+                                </label>
+
+                                <select class="form-control"
+                                        value="@NewItem.ProductId"
+                                        @onchange="OnProductChanged"
+                                        disabled="@(Order.Status == OrderStatus.Bestätigt)">
+
+                                    <option value="0">
+                                        Produkt auswählen
+                                    </option>
+
+                                    @foreach (var product in Products)
+                                    {
+                                        <option value="@product.Id">
+                                            @product.SKU - @product.Name
+                                        </option>
+                                    }
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    &nbsp;
+                                </label>
+
+                                <button type="button"
+                                        class="btn-primary"
+                                        @onclick="AddItem"
+                                        disabled="@(NewItem.ProductId <= 0 ||
+                                                                    Order.Status == OrderStatus.Bestätigt)">
+
+                                    + Produkt hinzufügen
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        @if (!string.IsNullOrWhiteSpace(ItemError))
+                        {
+                            <div class="form-error">
+                                @ItemError
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- ITEMS -->
+                    @if (Items.Count == 0)
+                    {
+                        <div class="empty-products">
+
+                            <h3>
+                                Keine Positionen
+                            </h3>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="products-table-wrapper">
+
+                            <table class="products-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Produkt</th>
+
+                                        <th>SKU</th>
+
+                                        <th>Menge</th>
+
+                                        <th>Einzelpreis</th>
+
+                                        <th>Gesamt</th>
+
+                                        <th></th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    @foreach (var item in Items)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    @item.ProductName
+                                                </strong>
+                                            </td>
+
+                                            <td>
+
+                                                <span class="product-sku">
+                                                    @item.SKU
+                                                </span>
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number"
+                                                       class="form-control"
+                                                       min="0.01"
+                                                       step="0.01"
+                                                       value="@item.Quantity"
+                                                       @onchange="(e) => ChangeQuantity(item, e)" />
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number"
+                                                       class="form-control"
+                                                       min="0"
+                                                       step="0.01"
+                                                       value="@item.UnitPrice"
+                                                       @onchange="(e) => ChangePrice(item, e)" />
+
+                                            </td>
+
+                                            <td>
+
+                                                <strong>
+                                                    @item.Total.ToString("N2") €
+                                                </strong>
+
+                                            </td>
+
+                                            <td>
+
+                                                <button type="button"
+                                                        class="action-button delete-button"
+                                                        @onclick="() => RemoveItem(item)">
+
+                                                    🗑
+
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+
+
+                    <!-- TOTAL -->
+
+                    <div class="order-total-box">
+
+                        <span>
+                            Gesamt
+                        </span>
+
+                        <strong>
+                            @GrandTotal.ToString("N2") €
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     NOTE
+                     ===================================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Notiz</h2>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <InputTextArea @bind-Value="Model.Note"
+                                       class="form-control textarea"
+                                       rows="5" />
+
+                    </div>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    <a href="/orders"
+                       class="btn-secondary">
+
+                        Abbrechen
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Änderungen speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    private Order? Order;
+
+    private OrderEditModel Model = new();
+
+    private List<Customer> Customers = new();
+
+    private List<Product> Products = new();
+
+    private List<OrderItemModel> Items = new();
+
+    private OrderItemModel NewItem = new();
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+    private string? ItemError;
+
+
+    private decimal GrandTotal =>
+        Items.Sum(x => x.Total);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Customers =
+                await db.Customers
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.CompanyName)
+                    .ToListAsync();
+
+
+            Products =
+                await db.Products
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            Order =
+                await db.Orders
+                    .Include(x => x.Customer)
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.Product)
+                    .FirstOrDefaultAsync(x => x.Id == Id);
+
+
+            if (Order == null)
+                return;
+
+
+            Model =
+                new OrderEditModel
+                {
+                    OrderNumber =
+                        Order.OrderNumber,
+
+                    CustomerId =
+                        Order.CustomerId,
+
+                    OrderDate =
+                        Order.OrderDate,
+
+                    Status =
+                        Order.Status,
+
+                    ReferenceNumber =
+                        Order.ReferenceNumber,
+
+                    DeliveryStreet =
+                        Order.DeliveryStreet,
+
+                    DeliveryPostalCode =
+                        Order.DeliveryPostalCode,
+
+                    DeliveryCity =
+                        Order.DeliveryCity,
+
+                    DeliveryCountry =
+                        Order.DeliveryCountry,
+
+                    Note =
+                        Order.Note
+                };
+
+
+            Items =
+                Order.Items
+                    .Select(x =>
+                        new OrderItemModel
+                        {
+                            Id = x.Id,
+
+                            ProductId =
+                                x.ProductId,
+
+                            ProductName =
+                                x.Product?.Name ?? "-",
+
+                            SKU =
+                                x.Product?.SKU ?? "-",
+
+                            Quantity =
+                                x.Quantity,
+
+                            UnitPrice =
+                                x.UnitPrice,
+
+                            WarehouseLocationId =
+                                x.WarehouseLocationId
+                        })
+                    .ToList();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task CustomerChanged()
+    {
+        var customer =
+            Customers.FirstOrDefault(
+                x => x.Id == Model.CustomerId);
+
+
+        if (customer == null)
+            return;
+
+
+        Model.DeliveryStreet =
+            customer.Street;
+
+        Model.DeliveryPostalCode =
+            customer.PostalCode;
+
+        Model.DeliveryCity =
+            customer.City;
+
+        Model.DeliveryCountry =
+            customer.Country;
+
+
+        await Task.CompletedTask;
+    }
+
+
+    private void OnProductChanged(ChangeEventArgs e)
+    {
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            productId = 0;
+        }
+
+
+        NewItem.ProductId =
+            productId;
+
+        NewItem.UnitPrice =
+            0;
+
+
+        var product =
+            Products.FirstOrDefault(
+                x => x.Id == productId);
+
+
+        if (product != null)
+        {
+            NewItem.UnitPrice =
+                product.SalePrice;
+        }
+    }
+
+
+    private void AddItem()
+    {
+        ItemError = null;
+
+        // Produkt mora da bide izbran
+        if (NewItem.ProductId <= 0)
+        {
+            ItemError =
+                "Bitte ein Produkt auswählen.";
+
+            return;
+        }
+
+        // Bei bestätigter Bestellung keine neuen Positionen
+        if (Order?.Status == OrderStatus.Bestätigt)
+        {
+            ItemError =
+                "Bei einer bestätigten Bestellung können keine neuen Positionen hinzugefügt werden.";
+
+            return;
+        }
+
+        var product =
+            Products.FirstOrDefault(
+                x => x.Id == NewItem.ProductId);
+
+        if (product == null)
+        {
+            ItemError =
+                "Das ausgewählte Produkt wurde nicht gefunden.";
+
+            return;
+        }
+
+        // Prüfen ob Produkt bereits vorhanden ist
+        var existing =
+            Items.FirstOrDefault(
+                x => x.ProductId == NewItem.ProductId);
+
+        if (existing != null)
+        {
+            // Wenn schon vorhanden -> Menge um 1 erhöhen
+            existing.Quantity += 1;
+        }
+        else
+        {
+            // Neues Produkt mit Menge 1 hinzufügen
+            Items.Add(
+                new OrderItemModel
+                {
+                    Id = 0,
+
+                    ProductId =
+                        product.Id,
+
+                    ProductName =
+                        product.Name,
+
+                    SKU =
+                        product.SKU,
+
+                    Quantity =
+                        1,
+
+                    UnitPrice =
+                        product.SalePrice,
+
+                    WarehouseLocationId =
+                        null
+                });
+        }
+
+        // Auswahl zurücksetzen
+        NewItem =
+            new OrderItemModel();
+
+        StateHasChanged();
+    }
+
+
+    private void RemoveItem(
+        OrderItemModel item)
+    {
+        Items.Remove(item);
+
+        StateHasChanged();
+    }
+
+
+    private void ChangeQuantity(
+        OrderItemModel item,
+        ChangeEventArgs e)
+    {
+        if (decimal.TryParse(
+            e.Value?.ToString(),
+            out var quantity))
+        {
+            if (quantity > 0)
+            {
+                item.Quantity =
+                    quantity;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+
+    private void ChangePrice(
+        OrderItemModel item,
+        ChangeEventArgs e)
+    {
+        if (decimal.TryParse(
+            e.Value?.ToString(),
+            out var price))
+        {
+            if (price >= 0)
+            {
+                item.UnitPrice =
+                    price;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // UPDATE ORDER
+    // =========================================================
+
+    private async Task UpdateOrder()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            if (Model.CustomerId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte einen Kunden auswählen.";
+
+                return;
+            }
+
+
+            if (Items.Count == 0)
+            {
+                ErrorMessage =
+                    "Die Bestellung muss mindestens eine Position enthalten.";
+
+                return;
+            }
+
+
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var entity =
+                await db.Orders
+
+                    .Include(x => x.Items)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
+
+            if (entity == null)
+            {
+                ErrorMessage =
+                    "Bestellung wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            var customer =
+                await db.Customers
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id ==
+                            Model.CustomerId &&
+
+                        x.IsActive);
+
+
+            if (customer == null)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Kunde wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =====================================================
+            // CONFIRMED ORDER
+            // =====================================================
+
+            if (entity.Status ==
+                OrderStatus.Bestätigt)
+            {
+                if (Model.Status !=
+                    OrderStatus.Bestätigt)
+                {
+                    ErrorMessage =
+                        "Eine bestätigte Bestellung kann hier nicht auf einen anderen Status geändert werden.";
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // EXISTING + DELETED ITEMS
+                // -------------------------------------------------
+
+                foreach (var existingItem in
+                    entity.Items.ToList())
+                {
+                    var editedItem =
+                        Items.FirstOrDefault(
+                            x => x.Id ==
+                                existingItem.Id);
+
+
+                    // =============================================
+                    // ITEM DELETED
+                    // =============================================
+
+                    if (editedItem == null)
+                    {
+                        if (existingItem
+                            .WarehouseLocationId
+                            .HasValue)
+                        {
+                            var stock =
+                                await db.Stocks
+
+                                    .FirstOrDefaultAsync(x =>
+                                        x.ProductId ==
+                                            existingItem.ProductId &&
+
+                                        x.WarehouseLocationId ==
+                                            existingItem
+                                                .WarehouseLocationId
+                                                .Value);
+
+
+                            if (stock != null)
+                            {
+                                stock.ReservedQuantity =
+                                    Math.Max(
+                                        0,
+                                        stock.ReservedQuantity -
+                                        existingItem.Quantity);
+
+                                stock.UpdatedAt =
+                                    DateTime.UtcNow;
+                            }
+                        }
+
+
+                        db.OrderItems.Remove(
+                            existingItem);
+
+                        continue;
+                    }
+
+
+                    // =============================================
+                    // PRODUCT CHANGE NOT ALLOWED
+                    // =============================================
+
+                    if (existingItem.ProductId !=
+                        editedItem.ProductId)
+                    {
+                        ErrorMessage =
+                            $"Das Produkt der Position '{editedItem.ProductName}' kann bei einer bestätigten Bestellung nicht geändert werden.";
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // LOCATION REQUIRED
+                    // =============================================
+
+                    if (!existingItem
+                        .WarehouseLocationId
+                        .HasValue)
+                    {
+                        ErrorMessage =
+                            $"Für '{editedItem.ProductName}' ist kein Lagerplatz für die Reservierung hinterlegt.";
+
+                        return;
+                    }
+
+
+                    var stockForItem =
+                        await db.Stocks
+
+                            .FirstOrDefaultAsync(x =>
+                                x.ProductId ==
+                                    existingItem.ProductId &&
+
+                                x.WarehouseLocationId ==
+                                    existingItem
+                                        .WarehouseLocationId
+                                        .Value);
+
+
+                    if (stockForItem == null)
+                    {
+                        ErrorMessage =
+                            $"Der reservierte Stock für '{editedItem.ProductName}' wurde nicht gefunden.";
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // QUANTITY DIFFERENCE
+                    // =============================================
+
+                    var difference =
+                        editedItem.Quantity -
+                        existingItem.Quantity;
+
+
+                    // ---------------------------------------------
+                    // QUANTITY INCREASED
+                    // ---------------------------------------------
+
+                    if (difference > 0)
+                    {
+                        var availableForIncrease =
+                            stockForItem.Quantity -
+                            stockForItem.ReservedQuantity;
+
+
+                        if (availableForIncrease <
+                            difference)
+                        {
+                            ErrorMessage =
+                                $"Nicht genügend verfügbarer Bestand für '{editedItem.ProductName}'. " +
+                                $"Zusätzlich benötigt: {difference:N2}, " +
+                                $"verfügbar: {availableForIncrease:N2}.";
+
+                            return;
+                        }
+
+
+                        stockForItem.ReservedQuantity +=
+                            difference;
+                    }
+
+
+                    // ---------------------------------------------
+                    // QUANTITY REDUCED
+                    // ---------------------------------------------
+
+                    else if (difference < 0)
+                    {
+                        stockForItem.ReservedQuantity =
+                            Math.Max(
+                                0,
+                                stockForItem.ReservedQuantity +
+                                difference);
+                    }
+
+
+                    stockForItem.UpdatedAt =
+                        DateTime.UtcNow;
+
+
+                    existingItem.Quantity =
+                        editedItem.Quantity;
+
+                    existingItem.UnitPrice =
+                        editedItem.UnitPrice;
+                }
+
+
+                // =============================================
+                // NO NEW ITEMS
+                // =============================================
+
+                if (Items.Any(x => x.Id == 0))
+                {
+                    ErrorMessage =
+                        "Bei einer bestätigten Bestellung können keine neuen Positionen hinzugefügt werden.";
+
+                    return;
+                }
+            }
+            else
+            {
+                // =================================================
+                // UNCONFIRMED ORDER
+                // =================================================
+
+                foreach (var existingItem in
+                    entity.Items.ToList())
+                {
+                    var editedItem =
+                        Items.FirstOrDefault(
+                            x => x.Id ==
+                                existingItem.Id);
+
+
+                    if (editedItem == null)
+                    {
+                        db.OrderItems.Remove(
+                            existingItem);
+
+                        continue;
+                    }
+
+
+                    existingItem.ProductId =
+                        editedItem.ProductId;
+
+                    existingItem.Quantity =
+                        editedItem.Quantity;
+
+                    existingItem.UnitPrice =
+                        editedItem.UnitPrice;
+                }
+
+
+                // -------------------------------------------------
+                // NEW ITEMS
+                // -------------------------------------------------
+
+                foreach (var editedItem in
+                    Items.Where(x => x.Id == 0))
+                {
+                    var productExists =
+                        await db.Products
+
+                            .AnyAsync(x =>
+                                x.Id ==
+                                    editedItem.ProductId &&
+
+                                x.IsActive);
+
+
+                    if (!productExists)
+                    {
+                        ErrorMessage =
+                            $"Produkt '{editedItem.ProductName}' wurde nicht gefunden.";
+
+                        return;
+                    }
+
+
+                    db.OrderItems.Add(
+                        new OrderItem
+                        {
+                            OrderId =
+                                entity.Id,
+
+                            ProductId =
+                                editedItem.ProductId,
+
+                            Quantity =
+                                editedItem.Quantity,
+
+                            UnitPrice =
+                                editedItem.UnitPrice,
+
+                            WarehouseLocationId =
+                                null
+                        });
+                }
+            }
+
+
+            // =====================================================
+            // ORDER DATA
+            // =====================================================
+
+            entity.CustomerId =
+                Model.CustomerId;
+
+            entity.OrderDate =
+                Model.OrderDate;
+
+            entity.Status =
+                Model.Status;
+
+            entity.ReferenceNumber =
+                string.IsNullOrWhiteSpace(
+                    Model.ReferenceNumber)
+
+                    ? null
+
+                    : Model.ReferenceNumber.Trim();
+
+
+            entity.DeliveryStreet =
+                string.IsNullOrWhiteSpace(
+                    Model.DeliveryStreet)
+
+                    ? null
+
+                    : Model.DeliveryStreet.Trim();
+
+
+            entity.DeliveryPostalCode =
+                string.IsNullOrWhiteSpace(
+                    Model.DeliveryPostalCode)
+
+                    ? null
+
+                    : Model.DeliveryPostalCode.Trim();
+
+
+            entity.DeliveryCity =
+                string.IsNullOrWhiteSpace(
+                    Model.DeliveryCity)
+
+                    ? null
+
+                    : Model.DeliveryCity.Trim();
+
+
+            entity.DeliveryCountry =
+                string.IsNullOrWhiteSpace(
+                    Model.DeliveryCountry)
+
+                    ? null
+
+                    : Model.DeliveryCountry.Trim();
+
+
+            entity.Note =
+                string.IsNullOrWhiteSpace(
+                    Model.Note)
+
+                    ? null
+
+                    : Model.Note.Trim();
+
+
+            entity.Total =
+                GrandTotal;
+
+
+            entity.UpdatedAt =
+                DateTime.UtcNow;
+
+
+            await db.SaveChangesAsync();
+
+
+            Navigation.NavigateTo(
+                "/orders");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // MODELS
+    // =========================================================
+
+    private class OrderEditModel
+    {
+        public string OrderNumber { get; set; }
+            = string.Empty;
+
+
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte einen Kunden auswählen.")]
+        public int CustomerId { get; set; }
+
+
+        public DateTime OrderDate { get; set; }
+
+
+        public OrderStatus Status { get; set; }
+
+
+        [MaxLength(100)]
+        public string? ReferenceNumber { get; set; }
+
+
+        [MaxLength(300)]
+        public string? DeliveryStreet { get; set; }
+
+
+        [MaxLength(20)]
+        public string? DeliveryPostalCode { get; set; }
+
+
+        [MaxLength(100)]
+        public string? DeliveryCity { get; set; }
+
+
+        [MaxLength(100)]
+        public string? DeliveryCountry { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+    }
+
+
+    private class OrderItemModel
+    {
+        public int Id { get; set; }
+
+
+        public int ProductId { get; set; }
+
+
+        public string ProductName { get; set; }
+            = string.Empty;
+
+
+        public string SKU { get; set; }
+            = string.Empty;
+
+
+        public decimal Quantity { get; set; }
+
+
+        public decimal UnitPrice { get; set; }
+
+
+        public int? WarehouseLocationId { get; set; }
+
+
+        public decimal Total =>
+            Quantity * UnitPrice;
+    }
+
+}

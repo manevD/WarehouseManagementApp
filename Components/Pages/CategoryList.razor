@@ -1,0 +1,419 @@
+﻿@page "/categories"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Kategorien</PageTitle>
+
+<div class="categories-page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+
+        <div>
+            <h1>Kategorien</h1>
+            <p>Verwalten Sie Ihre Produktkategorien.</p>
+        </div>
+
+        <a href="/categories/create" class="btn-primary">
+            <span>+</span>
+            Neue Kategorie
+        </a>
+
+    </div>
+
+
+    <!-- FILTER -->
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   placeholder="Kategorie suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus"
+                @bind:after="SearchChanged">
+
+            <option value="all">Alle Status</option>
+            <option value="active">Aktiv</option>
+            <option value="inactive">Inaktiv</option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+                <strong>Kategorienliste</strong>
+
+                <span>
+                    @Categories.Count Kategorien
+                </span>
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Kategorien werden geladen...
+            </div>
+        }
+        else if (Categories.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    📁
+                </div>
+
+                <h3>Keine Kategorien gefunden</h3>
+
+                <p>
+                    Es wurden noch keine Kategorien angelegt.
+                </p>
+
+                <a href="/categories/create"
+                   class="btn-primary">
+
+                    + Neue Kategorie
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Produkte</th>
+                            <th>Status</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var category in Categories)
+                        {
+                            <tr>
+
+                                <!-- NAME -->
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            @GetInitials(category.Name)
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @category.Name
+                                            </strong>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DESCRIPTION -->
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(category.Description))
+                                    {
+                                        <span>
+                                            @category.Description
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- PRODUCTS COUNT -->
+                                <td>
+
+                                    <span class="category-count">
+                                        @category.Products.Count
+                                    </span>
+
+                                </td>
+
+
+                                <!-- STATUS -->
+                                <td>
+
+                                    @if (category.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+                                <td>
+
+                                    <div class="product-actions">
+                                        
+                                        <a href="/categories/edit/@category.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
+                                            ✎
+                                        </a>
+                                        @if (category.IsActive)
+                                        {
+                                            <button class="action-button delete-button"
+                                                    title="Deaktivieren"
+                                                    @onclick="() => ConfirmDelete(category)">
+                                                🗑
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- DELETE MODAL -->
+    @if (ShowDeleteModal && CategoryToDelete != null)
+    {
+        <div class="delete-modal-backdrop">
+
+            <div class="delete-modal">
+
+                <div class="delete-modal-icon">
+                    🗑
+                </div>
+
+                <h3>Kategorie deaktivieren?</h3>
+
+                <p>
+                    Möchten Sie
+                    <strong>@CategoryToDelete.Name</strong>
+                    wirklich deaktivieren?
+                </p>
+
+                <small>
+                    Die Kategorie wird nicht gelöscht.
+                    Sie wird nur als inaktiv markiert.
+                </small>
+
+                @if (CategoryToDelete.Products.Any())
+                {
+                    <div class="form-error">
+                        Diese Kategorie enthält
+                        @CategoryToDelete.Products.Count Produkt(e).
+                        Die Kategorie kann trotzdem deaktiviert werden.
+                    </div>
+                }
+
+                <div class="delete-modal-actions">
+
+                    <button class="btn-secondary"
+                            @onclick="CancelDelete">
+
+                        Abbrechen
+
+                    </button>
+
+                    <button class="btn-danger"
+                            @onclick="DeleteConfirmed">
+
+                        Deaktivieren
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<Category> Categories = new();
+
+    private string SearchTerm = string.Empty;
+
+    private string SelectedStatus = "all";
+
+    private bool IsLoading = true;
+
+    private Category? CategoryToDelete;
+
+    private bool ShowDeleteModal;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+
+    private async Task LoadCategories()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+
+            var query = db.Categories
+                .Include(x => x.Products)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search = SearchTerm.Trim();
+
+                query = query.Where(x =>
+                    x.Name.Contains(search) ||
+                    (x.Description != null &&
+                     x.Description.Contains(search)));
+            }
+
+            if (SelectedStatus == "active")
+            {
+                query = query.Where(x => x.IsActive);
+            }
+            else if (SelectedStatus == "inactive")
+            {
+                query = query.Where(x => !x.IsActive);
+            }
+
+            Categories = await query
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task SearchChanged()
+    {
+        await LoadCategories();
+    }
+
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+        var words = name
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(2, words[0].Length))
+                .ToUpper();
+        }
+
+        return $"{words[0][0]}{words[1][0]}"
+            .ToUpper();
+    }
+
+
+    private void ConfirmDelete(Category category)
+    {
+        CategoryToDelete = category;
+        ShowDeleteModal = true;
+    }
+
+
+    private void CancelDelete()
+    {
+        CategoryToDelete = null;
+        ShowDeleteModal = false;
+    }
+
+    
+    private async Task DeleteConfirmed()
+    {
+        if (CategoryToDelete == null)
+            return;
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+        var category = await db.Categories
+            .FirstOrDefaultAsync(x =>
+                x.Id == CategoryToDelete.Id);
+
+        if (category != null)
+        {
+            category.IsActive = false;
+
+            await db.SaveChangesAsync();
+        }
+
+        CategoryToDelete = null;
+        ShowDeleteModal = false;
+
+        await LoadCategories();
+    }
+}

@@ -1,0 +1,484 @@
+﻿@page "/products"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+@inject ApplicationDbContext Db
+@inject NavigationManager Navigation
+
+<PageTitle>Produkte</PageTitle>
+
+<div class="products-page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+
+        <div>
+            <h1>Produkte</h1>
+            <p>Verwalten Sie Ihre Produkte und Artikel.</p>
+        </div>
+
+        <a href="/products/create" class="btn-primary">
+            <span>+</span>
+            Neuer Artikel
+        </a>
+
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-card">
+
+            <input type="text"
+                   placeholder="Produkt suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+
+        <select
+            class="filter-select"
+            @bind="SelectedCategoryId">
+
+            <option value="0">Alle Kategorien</option>
+
+            @foreach (var category in Categories)
+            {
+                <option value="@category.Id">
+                    @category.Name
+                </option>
+            }
+
+        </select>
+
+        <select
+            class="filter-select"
+            @bind="SelectedStatus">
+
+            <option value="all">Alle Status</option>
+            <option value="active">Aktiv</option>
+            <option value="inactive">Inaktiv</option>
+
+        </select>
+
+    </div>
+
+
+    <!-- PRODUCT TABLE -->
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+                <strong>Produktliste</strong>
+
+                <span>
+                    @Products.Count Produkte
+                </span>
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Produkte werden geladen...
+            </div>
+        }
+        else if (Products.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    📦
+                </div>
+
+                <h3>Keine Produkte gefunden</h3>
+
+                <p>
+                    Es wurden noch keine Produkte angelegt.
+                </p>
+
+                <a
+                    href="/products/create"
+                    class="btn-primary">
+
+                    + Neuer Artikel
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>SKU</th>
+
+                            <th>Produkt</th>
+
+                            <th>Kategorie</th>
+
+                            <th>Barcode</th>
+
+                            <th>Verkaufspreis</th>
+
+                            <th>Mindestbestand</th>
+
+                            <th>Status</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var product in Products)
+                        {
+                            <tr>
+
+                                <!-- SKU -->
+                                <td>
+
+                                    <span class="product-sku">
+                                        @product.SKU
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PRODUCT -->
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            @GetInitials(product.Name)
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @product.Name
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(product.Description))
+                                            {
+                                                <small>
+                                                    @product.Description
+                                                </small>
+                                            }
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- CATEGORY -->
+                                <td>
+
+                                    @if (product.Category != null)
+                                    {
+                                        <span class="category-badge">
+                                            @product.Category.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- BARCODE -->
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(product.Barcode))
+                                    {
+                                        <span class="barcode">
+                                            @product.Barcode
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- PRICE -->
+                                <td>
+
+                                    <strong>
+                                        @product.SalePrice.ToString("N2") €
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- MINIMUM STOCK -->
+                                <td>
+
+                                    @product.MinimumStock.ToString("N0")
+
+                                </td>
+
+
+                                <!-- STATUS -->
+                                <td>
+
+                                    @if (product.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <a
+                                            href="/products/edit/@product.Id"
+                                            class="action-button"
+                                            title="Bearbeiten">
+
+                                            ✎
+
+                                        </a>
+
+                                        <button class="action-button delete-button"
+                                                title="Löschen"
+                                                @onclick="() => ConfirmDelete(product)">
+
+                                            🗑
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+    @if (ShowDeleteModal && ProductToDelete != null)
+    {
+        <div class="delete-modal-backdrop">
+
+            <div class="delete-modal">
+
+                <div class="delete-modal-icon">
+                    🗑
+                </div>
+
+                <h3>Produkt deaktivieren?</h3>
+
+                <p>
+                    Möchten Sie
+                    <strong>@ProductToDelete.Name</strong>
+                    wirklich deaktivieren?
+                </p>
+
+                <small>
+                    Der Artikel wird nicht gelöscht.
+                    Er wird nur als inaktiv markiert.
+                </small>
+
+                <div class="delete-modal-actions">
+
+                    <button class="btn-secondary"
+                            @onclick="CancelDelete">
+
+                        Abbrechen
+
+                    </button>
+
+                    <button class="btn-danger"
+                            @onclick="DeleteConfirmed">
+
+                        Deaktivieren
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+</div>
+
+
+@code {
+
+    private List<Product> Products = new();
+
+    private List<Category> Categories = new();
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedCategoryId = 0;
+
+    private string SelectedStatus = "all";
+
+    private bool IsLoading = true;
+    private Product? ProductToDelete;
+
+    private bool ShowDeleteModal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await Db.Categories
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+
+        await LoadProducts();
+    }
+
+
+    private async Task LoadProducts()
+    {
+        IsLoading = true;
+
+        var query = Db.Products
+            .Include(x => x.Category)
+            .AsQueryable();
+
+
+        // SEARCH
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            var search = SearchTerm.Trim();
+
+            query = query.Where(x =>
+                x.Name.Contains(search) ||
+                x.SalePrice.ToString().Contains(search) ||
+                x.PurchasePrice.ToString().Contains(search) ||
+                x.SKU.Contains(search) ||
+                (x.Barcode != null &&
+                 x.Barcode.Contains(search)));
+        }
+
+
+        // CATEGORY
+        if (SelectedCategoryId > 0)
+        {
+            query = query.Where(x =>
+                x.CategoryId == SelectedCategoryId);
+        }
+
+
+        // STATUS
+        if (SelectedStatus == "active")
+        {
+            query = query.Where(x => x.IsActive);
+        }
+        else if (SelectedStatus == "inactive")
+        {
+            query = query.Where(x => !x.IsActive);
+        }
+
+
+        Products = await query
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+
+        IsLoading = false;
+    }
+
+
+    private async Task DeleteProduct(Product product)
+    {
+        var confirmed = await Task.FromResult(true);
+
+        if (!confirmed)
+            return;
+
+        product.IsActive = false;
+
+        await Db.SaveChangesAsync();
+
+        await LoadProducts();
+    }
+    private async Task SearchChanged()
+    {
+        await LoadProducts();
+    }
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+        var words = name
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 1)
+            return words[0]
+                .Substring(0, Math.Min(2, words[0].Length))
+                .ToUpper();
+
+        return $"{words[0][0]}{words[1][0]}".ToUpper();
+    }
+    private void ConfirmDelete(Product product)
+    {
+        ProductToDelete = product;
+        ShowDeleteModal = true;
+    }
+
+    private void CancelDelete()
+    {
+        ProductToDelete = null;
+        ShowDeleteModal = false;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (ProductToDelete == null)
+            return;
+
+        ProductToDelete.IsActive = false;
+
+        await Db.SaveChangesAsync();
+
+        ProductToDelete = null;
+        ShowDeleteModal = false;
+
+        await LoadProducts();
+    }
+}

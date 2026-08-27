@@ -1,0 +1,433 @@
+﻿@page "/products/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject ApplicationDbContext Db
+@inject NavigationManager Navigation
+
+<PageTitle>Produkt bearbeiten</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Produkt wird geladen...
+    </div>
+}
+else if (Product == null)
+{
+    <div class="empty-products">
+        <div class="empty-products-icon">⚠</div>
+        <h3>Produkt nicht gefunden</h3>
+        <a href="/products" class="btn-primary">
+            Zurück zu Produkte
+        </a>
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Produkt bearbeiten</h1>
+                <p>@Product.Name</p>
+            </div>
+
+            <a href="/products" class="btn-secondary">
+                ← Zurück
+            </a>
+
+        </div>
+
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdateProduct"
+                      FormName="ProductEditForm">
+
+                <DataAnnotationsValidator />
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        <h2>Produktinformationen</h2>
+                        <p>Produktdaten bearbeiten.</p>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- SKU -->
+                        <div class="form-group">
+
+                            <label>
+                                SKU <span>*</span>
+                            </label>
+
+                            <InputText @bind-Value="Model.SKU"
+                                       class="form-control" />
+
+                            <ValidationMessage For="@(() => Model.SKU)" />
+
+                        </div>
+
+
+                        <!-- NAME -->
+                        <div class="form-group">
+
+                            <label>
+                                Produktname <span>*</span>
+                            </label>
+
+                            <InputText @bind-Value="Model.Name"
+                                       class="form-control" />
+
+                            <ValidationMessage For="@(() => Model.Name)" />
+
+                        </div>
+
+
+                        <!-- CATEGORY -->
+                        <div class="form-group">
+
+                            <label>Kategorie</label>
+
+                            <InputSelect @bind-Value="Model.CategoryId"
+                                         class="form-control">
+
+                                <option value="">
+                                    Keine Kategorie
+                                </option>
+
+                                @foreach (var category in Categories)
+                                {
+                                    <option value="@category.Id">
+                                        @category.Name
+                                    </option>
+                                }
+
+                            </InputSelect>
+
+                        </div>
+
+
+                        <!-- BARCODE -->
+                        <div class="form-group">
+
+                            <label>Barcode</label>
+
+                            <InputText @bind-Value="Model.Barcode"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <!-- PURCHASE PRICE -->
+                        <div class="form-group">
+
+                            <label>Einkaufspreis</label>
+
+                            <div class="input-with-suffix">
+
+                                <InputNumber @bind-Value="Model.PurchasePrice"
+                                             class="form-control"
+                                             step="0.01" />
+
+                                <span>€</span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SALE PRICE -->
+                        <div class="form-group">
+
+                            <label>Verkaufspreis</label>
+
+                            <div class="input-with-suffix">
+
+                                <InputNumber @bind-Value="Model.SalePrice"
+                                             class="form-control"
+                                             step="0.01" />
+
+                                <span>€</span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- MINIMUM STOCK -->
+                        <div class="form-group">
+
+                            <label>Mindestbestand</label>
+
+                            <InputNumber @bind-Value="Model.MinimumStock"
+                                         class="form-control"
+                                         step="1" />
+
+                        </div>
+
+
+                        <!-- ACTIVE -->
+                        <div class="form-group checkbox-group">
+
+                            <label class="checkbox-label">
+
+                                <InputCheckbox @bind-Value="Model.IsActive" />
+
+                                <span>
+                                    Artikel ist aktiv
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Beschreibung</h2>
+
+                        <p>
+                            Optionale Beschreibung des Artikels.
+                        </p>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <InputTextArea @bind-Value="Model.Description"
+                                       class="form-control textarea"
+                                       rows="5" />
+
+                    </div>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    <a href="/products"
+                       class="btn-secondary">
+                        Abbrechen
+                    </a>
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Änderungen speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Product? Product;
+
+    private List<Category> Categories = new();
+
+    private ProductModel Model = new();
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await Db.Categories
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+
+        Product = await Db.Products
+            .FirstOrDefaultAsync(x => x.Id == Id);
+
+        if (Product != null)
+        {
+            Model = new ProductModel
+            {
+                SKU = Product.SKU,
+                Name = Product.Name,
+                CategoryId = Product.CategoryId,
+                Barcode = Product.Barcode,
+                PurchasePrice = Product.PurchasePrice,
+                SalePrice = Product.SalePrice,
+                MinimumStock = Product.MinimumStock,
+                Description = Product.Description,
+                IsActive = Product.IsActive
+            };
+        }
+
+        IsLoading = false;
+    }
+
+
+    private async Task UpdateProduct()
+    {
+        if (Product == null || IsSaving)
+            return;
+
+        IsSaving = true;
+        ErrorMessage = null;
+
+        try
+        {
+            var sku = Model.SKU.Trim();
+            var name = Model.Name.Trim();
+
+            var skuExists = await Db.Products
+                .AnyAsync(x =>
+                    x.Id != Id &&
+                    x.SKU == sku);
+
+            if (skuExists)
+            {
+                ErrorMessage =
+                    "Diese SKU ist bereits vorhanden.";
+
+                return;
+            }
+
+
+            if (!string.IsNullOrWhiteSpace(Model.Barcode))
+            {
+                var barcode = Model.Barcode.Trim();
+
+                var barcodeExists = await Db.Products
+                    .AnyAsync(x =>
+                        x.Id != Id &&
+                        x.Barcode == barcode);
+
+                if (barcodeExists)
+                {
+                    ErrorMessage =
+                        "Dieser Barcode ist bereits vorhanden.";
+
+                    return;
+                }
+            }
+
+
+            Product.SKU = sku;
+            Product.Name = name;
+
+            Product.Description =
+                string.IsNullOrWhiteSpace(Model.Description)
+                    ? null
+                    : Model.Description.Trim();
+
+            Product.Barcode =
+                string.IsNullOrWhiteSpace(Model.Barcode)
+                    ? null
+                    : Model.Barcode.Trim();
+
+            Product.CategoryId = Model.CategoryId;
+
+            Product.PurchasePrice =
+                Model.PurchasePrice;
+
+            Product.SalePrice =
+                Model.SalePrice;
+
+            Product.MinimumStock =
+                Model.MinimumStock;
+
+            Product.IsActive =
+                Model.IsActive;
+
+
+            await Db.SaveChangesAsync();
+
+            Navigation.NavigateTo("/products");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class ProductModel
+    {
+        [Required(
+            ErrorMessage = "SKU ist erforderlich.")]
+        [MaxLength(50)]
+        public string SKU { get; set; } = string.Empty;
+
+
+        [Required(
+            ErrorMessage = "Produktname ist erforderlich.")]
+        [MaxLength(200)]
+        public string Name { get; set; } = string.Empty;
+
+
+        public int? CategoryId { get; set; }
+
+
+        [MaxLength(100)]
+        public string? Barcode { get; set; }
+
+
+        [Range(0, double.MaxValue)]
+        public decimal PurchasePrice { get; set; }
+
+
+        [Range(0, double.MaxValue)]
+        public decimal SalePrice { get; set; }
+
+
+        [Range(0, double.MaxValue)]
+        public decimal MinimumStock { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+
+        public bool IsActive { get; set; } = true;
+    }
+}

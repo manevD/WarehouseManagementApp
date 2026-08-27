@@ -1,0 +1,354 @@
+﻿@page "/stock/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestand bearbeiten</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="loading-state">
+        Bestand wird geladen...
+    </div>
+}
+else if (Stock == null)
+{
+    <div class="empty-products">
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>Bestand nicht gefunden</h3>
+
+        <a href="/stock" class="btn-primary">
+            Zurück zu Bestand
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="product-form-page">
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>Bestand bearbeiten</h1>
+
+                <p>
+                    @Stock.Product?.Name
+                    -
+                    @Stock.WarehouseLocation?.Code
+                </p>
+
+            </div>
+
+            <a href="/stock"
+               class="btn-secondary">
+
+                ← Zurück
+
+            </a>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdateStock"
+                      FormName="StockEditForm">
+
+                <DataAnnotationsValidator />
+
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Bestandskorrektur</h2>
+
+                        <p>
+                            Ändern Sie die aktuelle Bestandsmenge.
+                            Eine Korrekturbewegung wird automatisch erstellt.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <!-- PRODUCT -->
+
+                        <div class="form-group">
+
+                            <label>Produkt</label>
+
+                            <input class="form-control"
+                                   value="@Stock.Product?.Name"
+                                   disabled />
+
+                        </div>
+
+
+                        <!-- LOCATION -->
+
+                        <div class="form-group">
+
+                            <label>Lagerplatz</label>
+
+                            <input class="form-control"
+                                   value="@($"{Stock.WarehouseLocation?.Code} - {Stock.WarehouseLocation?.Name}")"
+                                   disabled />
+
+                        </div>
+
+
+                        <!-- CURRENT -->
+
+                        <div class="form-group">
+
+                            <label>Aktueller Bestand</label>
+
+                            <input class="form-control"
+                                   value="@Stock.Quantity.ToString("N2")"
+                                   disabled />
+
+                        </div>
+
+
+                        <!-- NEW -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Neuer Bestand <span>*</span>
+                            </label>
+
+                            <InputNumber @bind-Value="Model.Quantity"
+                                         class="form-control"
+                                         step="0.01"
+                                         min="0" />
+
+                            <ValidationMessage For="@(() => Model.Quantity)" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Begründung</h2>
+
+                        <p>
+                            Grund für die Bestandskorrektur.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Notiz</label>
+
+                        <InputTextArea @bind-Value="Model.Note"
+                                       class="form-control textarea"
+                                       rows="4"
+                                       placeholder="Grund der Korrektur..." />
+
+                    </div>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    <a href="/stock"
+                       class="btn-secondary">
+
+                        Abbrechen
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Bestand speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Stock? Stock;
+
+    private StockEditModel Model = new();
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+        Stock = await db.Stocks
+            .Include(x => x.Product)
+            .Include(x => x.WarehouseLocation)
+            .FirstOrDefaultAsync(x => x.Id == Id);
+
+
+        if (Stock != null)
+        {
+            Model.Quantity = Stock.Quantity;
+        }
+
+        IsLoading = false;
+    }
+
+
+    private async Task UpdateStock()
+    {
+        if (Stock == null || IsSaving)
+            return;
+
+        IsSaving = true;
+        ErrorMessage = null;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var stock = await db.Stocks
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (stock == null)
+            {
+                ErrorMessage =
+                    "Bestand nicht gefunden.";
+
+                return;
+            }
+
+
+            var oldQuantity = stock.Quantity;
+
+            var newQuantity = Model.Quantity;
+
+            var difference =
+                newQuantity - oldQuantity;
+
+
+            if (difference != 0)
+            {
+                var movement = new StockMovement
+                {
+                    ProductId = stock.ProductId,
+
+                    Quantity = Math.Abs(difference),
+
+                    Type = StockMovementType.Korrektur,
+
+                    FromWarehouseLocationId =
+                        difference < 0
+                            ? stock.WarehouseLocationId
+                            : null,
+
+                    ToWarehouseLocationId =
+                        difference > 0
+                            ? stock.WarehouseLocationId
+                            : null,
+
+                    Note = string.IsNullOrWhiteSpace(Model.Note)
+                        ? "Manuelle Bestandskorrektur."
+                        : Model.Note.Trim(),
+
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                db.StockMovements.Add(movement);
+            }
+
+
+            stock.Quantity = newQuantity;
+
+            if (stock.ReservedQuantity > stock.Quantity)
+            {
+                stock.ReservedQuantity =
+                    stock.Quantity;
+            }
+
+            stock.UpdatedAt = DateTime.UtcNow;
+
+
+            await db.SaveChangesAsync();
+
+            Navigation.NavigateTo("/stock");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class StockEditModel
+    {
+        [Range(
+            0,
+            double.MaxValue,
+            ErrorMessage =
+                "Bestand darf nicht negativ sein.")]
+        public decimal Quantity { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+    }
+}

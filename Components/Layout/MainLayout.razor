@@ -1,0 +1,369 @@
+﻿@inherits LayoutComponentBase
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <span>W</span>
+            </div>
+
+            <div class="brand-text">
+                <strong>Warehouse</strong>
+                <small>Management</small>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <!-- =================================================
+                 ÜBERSICHT
+                 ================================================= -->
+
+            <div class="nav-section">
+                <span>ÜBERSICHT</span>
+            </div>
+
+            <NavLink href="/"
+                     Match="NavLinkMatch.All"
+                     class="nav-item">
+
+                <span class="nav-icon">⌂</span>
+
+                <span>Dashboard</span>
+
+            </NavLink>
+
+
+            <!-- =================================================
+                 LAGER
+                 ================================================= -->
+
+            <div class="nav-section">
+                <span>LAGER</span>
+            </div>
+
+
+            <NavLink href="/products"
+                     class="nav-item">
+
+                <span class="nav-icon">▦</span>
+
+                <span>Produkte</span>
+
+            </NavLink>
+
+
+            <NavLink href="/categories"
+                     class="nav-item">
+
+                <span class="nav-icon">▤</span>
+
+                <span>Kategorien</span>
+
+            </NavLink>
+
+
+            <NavLink href="/warehouses"
+                     class="nav-item">
+
+                <span class="nav-icon">▥</span>
+
+                <span>Lager</span>
+
+            </NavLink>
+
+
+            <NavLink href="/locations"
+                     class="nav-item">
+
+                <span class="nav-icon">⌖</span>
+
+                <span>Lagerplätze</span>
+
+            </NavLink>
+
+
+            <!-- =================================================
+                 BESTAND
+                 ================================================= -->
+
+            <div class="nav-section">
+                <span>BESTAND</span>
+            </div>
+
+
+            <NavLink href="/stock"
+                     class="nav-item">
+
+                <span class="nav-icon">▣</span>
+
+                <span>Bestand</span>
+
+            </NavLink>
+
+
+            <NavLink href="/stock/incoming"
+                     class="nav-item">
+
+                <span class="nav-icon">↓</span>
+
+                <span>Wareneingang</span>
+
+            </NavLink>
+
+
+            <NavLink href="/stock/outgoing"
+                     class="nav-item">
+
+                <span class="nav-icon">↑</span>
+
+                <span>Warenausgang</span>
+
+            </NavLink>
+
+
+            <NavLink href="/stock/transfer"
+                     class="nav-item">
+
+                <span class="nav-icon">↔</span>
+
+                <span>Umlagerung</span>
+
+            </NavLink>
+
+
+            <NavLink href="/stock/movements"
+                     class="nav-item">
+
+                <span class="nav-icon">↕</span>
+
+                <span>Bewegungen</span>
+
+            </NavLink>
+
+
+            <!-- =================================================
+                 VERWALTUNG
+                 ================================================= -->
+
+            <div class="nav-section">
+                <span>VERWALTUNG</span>
+            </div>
+
+
+            <NavLink href="/suppliers"
+                     class="nav-item">
+
+                <span class="nav-icon">♙</span>
+
+                <span>Lieferanten</span>
+
+            </NavLink>
+
+
+            <NavLink href="/customers"
+                     class="nav-item">
+
+                <span class="nav-icon">♙</span>
+
+                <span>Kunden</span>
+
+            </NavLink>
+
+
+            <NavLink href="/orders"
+                     class="nav-item">
+
+                <span class="nav-icon">☷</span>
+
+                <span>Bestellungen</span>
+
+            </NavLink>
+
+            <NavLink href="/purchase-orders"
+                     class="nav-item">
+
+                <span class="nav-icon">☷</span>
+
+                <span>Lieferant-Bestellungen</span>
+
+            </NavLink>
+
+            <!-- =================================================
+                 ANALYSE
+                 ================================================= -->
+
+            <div class="nav-section">
+                <span>ANALYSE</span>
+            </div>
+
+
+            <NavLink href="/inventory"
+                     class="nav-item">
+
+                <span class="nav-icon">✓</span>
+
+                <span>Inventur</span>
+
+            </NavLink>
+
+
+            <NavLink href="/reports"
+                     class="nav-item">
+
+                <span class="nav-icon">▥</span>
+
+                <span>Berichte</span>
+
+            </NavLink>
+
+        </nav>
+
+
+        <!-- =================================================
+             SIDEBAR BOTTOM
+             ================================================= -->
+
+        <div class="sidebar-bottom">
+
+            <NavLink href="/settings"
+                     class="nav-item">
+
+                <span class="nav-icon">⚙</span>
+
+                <span>Einstellungen</span>
+
+            </NavLink>
+
+           
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <div class="main-area">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="mobile-menu-button">
+                    ☰
+                </button>
+
+
+                <div class="page-search">
+
+                    <span>⌕</span>
+
+                    <input type="text"
+                           placeholder="Suchen..." />
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+
+                <!-- NOTIFICATIONS -->
+
+                <button class="topbar-button">
+
+                    🔔
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+
+                <!-- LANGUAGE -->
+
+                <div class="language-selector">
+
+                    🇩🇪
+
+                    <span>DE</span>
+
+                    <span>⌄</span>
+
+                </div>
+
+
+                <!-- USER -->
+
+                <div class="user-menu">
+
+                    <div class="user-avatar">
+                        A
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            Admin
+                        </strong>
+
+                        <small>
+                            Administrator
+                        </small>
+
+                    </div>
+
+                    <span class="user-arrow">
+                        ⌄
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <main class="content-area">
+
+            @Body
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- ERROR -->
+
+<div id="blazor-error-ui"
+     data-nosnippet>
+
+    An unhandled error has occurred.
+
+    <a href="."
+       class="reload">
+
+        Reload
+
+    </a>
+
+    <span class="dismiss">
+        🗙
+    </span>
+
+</div>

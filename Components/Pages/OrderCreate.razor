@@ -1,0 +1,1201 @@
+﻿@page "/orders/create"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Neue Bestellung</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Neue Bestellung</h1>
+
+            <p>
+                Neue Bestellung erfassen.
+            </p>
+
+        </div>
+
+        <a href="/orders"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@SaveOrder"
+                  FormName="OrderCreateForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =====================================================
+                 BESTELLUNG
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Bestellinformationen</h2>
+
+                    <p>
+                        Grundlegende Informationen zur Bestellung.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- BESTELLNUMMER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestellnummer
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.OrderNumber"
+                               readonly />
+
+                    </div>
+
+
+                    <!-- CUSTOMER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Kunde <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.CustomerId"
+                                     class="form-control"
+                                     @bind:after="CustomerChanged">
+
+                            <option value="0">
+                                Kunde auswählen
+                            </option>
+
+                            @foreach (var customer in Customers)
+                            {
+                                <option value="@customer.Id">
+
+                                    @customer.CustomerNumber
+                                    -
+                                    @customer.CompanyName
+
+                                </option>
+                            }
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => Model.CustomerId)" />
+
+                    </div>
+
+
+                    <!-- DATUM -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestelldatum <span>*</span>
+                        </label>
+
+                        <InputDate @bind-Value="Model.OrderDate"
+                                   class="form-control" />
+
+                        <ValidationMessage For="@(() => Model.OrderDate)" />
+
+                    </div>
+
+
+                    <!-- REFERENZ -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <InputText @bind-Value="Model.ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="z.B. Kundenbestellung 12345" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 CUSTOMER ADDRESS
+                 ===================================================== -->
+            @if (SelectedCustomer != null)
+            {
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Lieferadresse</h2>
+
+                        <p>
+                            Lieferadresse des ausgewählten Kunden.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Straße
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryStreet"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                PLZ
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryPostalCode"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Ort
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryCity"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Land
+                            </label>
+
+                            <InputText @bind-Value="Model.DeliveryCountry"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 POSITIONEN
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div>
+
+                        <h2>Bestellpositionen</h2>
+
+                        <p>
+                            Produkte zur Bestellung hinzufügen.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ADD ITEM
+                     ================================================= -->
+
+                <div class="order-add-item">
+
+                    <div class="form-grid">
+
+
+                        <!-- PRODUCT -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Produkt
+                            </label>
+
+                            <select class="form-control"
+                                    value="@NewItem.ProductId"
+                                    @onchange="OnProductChanged">
+
+                                <option value="0">
+                                    Produkt auswählen
+                                </option>
+
+                                @foreach (var product in Products)
+                                {
+                                    <option value="@product.Id">
+
+                                        @product.SKU
+                                        -
+                                        @product.Name
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- QUANTITY -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Menge
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   min="0.01"
+                                   step="0.01"
+                                   @bind="NewItem.Quantity" />
+
+                        </div>
+
+
+                        <!-- UNIT PRICE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Einzelpreis
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   min="0"
+                                   step="0.01"
+                                   @bind="NewItem.UnitPrice" />
+
+                        </div>
+
+
+                        <!-- ADD -->
+
+                        <div class="form-group">
+
+                            <label>
+                                &nbsp;
+                            </label>
+
+                            <button type="button"
+                                    class="btn-primary"
+                                    @onclick="AddItem">
+
+                                + Produkt hinzufügen
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (!string.IsNullOrWhiteSpace(ItemError))
+                    {
+                        <div class="form-error">
+                            @ItemError
+                        </div>
+                    }
+
+                </div>
+
+
+                <!-- =================================================
+                     ITEMS TABLE
+                     ================================================= -->
+                @if (Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <div class="empty-products-icon">
+                            ☷
+                        </div>
+
+                        <h3>
+                            Noch keine Produkte
+                        </h3>
+
+                        <p>
+                            Wählen Sie ein Produkt und fügen Sie es zur Bestellung hinzu.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="products-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Produkt</th>
+
+                                    <th>SKU</th>
+
+                                    <th>Menge</th>
+
+                                    <th>Einzelpreis</th>
+
+                                    <th>Gesamt</th>
+
+                                    <th></th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var item in Items)
+                                {
+                                    <tr>
+
+                                        <!-- PRODUCT -->
+
+                                        <td>
+
+                                            <strong>
+                                                @item.ProductName
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- SKU -->
+
+                                        <td>
+
+                                            <span class="product-sku">
+                                                @item.SKU
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- QUANTITY -->
+
+                                        <td>
+
+                                            @item.Quantity.ToString("N2")
+
+                                        </td>
+
+
+                                        <!-- UNIT PRICE -->
+
+                                        <td>
+
+                                            @item.UnitPrice.ToString("N2") €
+
+                                        </td>
+
+
+                                        <!-- TOTAL -->
+
+                                        <td>
+
+                                            <strong>
+                                                @item.Total.ToString("N2") €
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- DELETE -->
+
+                                        <td>
+
+                                            <button type="button"
+                                                    class="action-button delete-button"
+                                                    title="Position entfernen"
+                                                    @onclick="() => RemoveItem(item)">
+
+                                                🗑
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     TOTAL
+                     ================================================= -->
+
+                <div class="order-total-box">
+
+                    <span>
+                        Gesamt
+                    </span>
+
+                    <strong>
+                        @GrandTotal.ToString("N2") €
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTE
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Notiz</h2>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="5"
+                                   placeholder="Optionale Notiz..." />
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ERROR
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/orders"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Bestellung speichern")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<Customer> Customers = new();
+
+    private List<Product> Products = new();
+
+    private List<OrderItemModel> Items = new();
+
+
+    // =========================================================
+    // MODEL
+    // =========================================================
+
+    private OrderCreateModel Model = new();
+
+
+    private OrderItemModel NewItem = new();
+
+
+    // =========================================================
+    // CUSTOMER
+    // =========================================================
+
+    private Customer? SelectedCustomer;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+    private string? ItemError;
+
+
+    // =========================================================
+    // TOTAL
+    // =========================================================
+
+    private decimal GrandTotal =>
+        Items.Sum(x => x.Total);
+
+
+    // =========================================================
+    // INIT
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Customers =
+            await db.Customers
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.CompanyName)
+
+                .ToListAsync();
+
+
+        Products =
+            await db.Products
+
+                .Where(x =>
+                    x.IsActive)
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+
+
+        Model.OrderNumber =
+            await GenerateOrderNumber();
+
+
+        Model.OrderDate =
+            DateTime.Now;
+    }
+
+
+    // =========================================================
+    // GENERATE ORDER NUMBER
+    // =========================================================
+
+    private async Task<string> GenerateOrderNumber()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var prefix =
+            $"ORD-{DateTime.Now:yyyy}-";
+
+
+        var numbers =
+            await db.Orders
+
+                .Where(x =>
+                    x.OrderNumber.StartsWith(prefix))
+
+                .Select(x =>
+                    x.OrderNumber)
+
+                .ToListAsync();
+
+
+        var maxNumber = 0;
+
+
+        foreach (var number in numbers)
+        {
+            var part =
+                number.Substring(prefix.Length);
+
+
+            if (int.TryParse(
+                part,
+                out var value))
+            {
+                if (value > maxNumber)
+                    maxNumber = value;
+            }
+        }
+
+
+        return
+            $"{prefix}{maxNumber + 1:0000}";
+    }
+
+
+    // =========================================================
+    // CUSTOMER CHANGED
+    // =========================================================
+
+    private async Task CustomerChanged()
+    {
+        SelectedCustomer =
+            Customers.FirstOrDefault(
+                x => x.Id == Model.CustomerId);
+
+
+        if (SelectedCustomer == null)
+            return;
+
+
+        Model.DeliveryStreet =
+            SelectedCustomer.Street;
+
+
+        Model.DeliveryPostalCode =
+            SelectedCustomer.PostalCode;
+
+
+        Model.DeliveryCity =
+            SelectedCustomer.City;
+
+
+        Model.DeliveryCountry =
+            SelectedCustomer.Country;
+
+
+        await Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // PRODUCT CHANGED
+    // =========================================================
+
+    private void OnProductChanged(ChangeEventArgs e)
+    {
+        if (!int.TryParse(
+                e.Value?.ToString(),
+                out var productId))
+        {
+            productId = 0;
+        }
+
+
+        NewItem.ProductId =
+            productId;
+
+
+        NewItem.UnitPrice =
+            0;
+
+
+        if (productId <= 0)
+            return;
+
+
+        var product =
+            Products.FirstOrDefault(
+                x => x.Id == productId);
+
+
+        if (product == null)
+            return;
+
+
+        /*
+         * Hier nehmen wir den normalen Verkaufspreis.
+         *
+         * Falls dein Product Model anders heißt,
+         * z.B. PriceWithTax, Price oder Verkaufspreis,
+         * hier entsprechend anpassen.
+         */
+
+        NewItem.UnitPrice =
+            product.SalePrice;
+    }
+
+
+    // =========================================================
+    // ADD ITEM
+    // =========================================================
+
+    private void AddItem()
+    {
+        ItemError = null;
+
+
+        if (NewItem.ProductId <= 0)
+        {
+            ItemError =
+                "Bitte ein Produkt auswählen.";
+
+            return;
+        }
+
+
+        if (NewItem.Quantity <= 0)
+        {
+            ItemError =
+                "Die Menge muss größer als 0 sein.";
+
+            return;
+        }
+
+
+        if (NewItem.UnitPrice < 0)
+        {
+            ItemError =
+                "Der Einzelpreis darf nicht negativ sein.";
+
+            return;
+        }
+
+
+        var product =
+            Products.FirstOrDefault(
+                x => x.Id == NewItem.ProductId);
+
+
+        if (product == null)
+        {
+            ItemError =
+                "Das Produkt wurde nicht gefunden.";
+
+            return;
+        }
+
+
+        // =====================================================
+        // IF PRODUCT ALREADY EXISTS
+        // =====================================================
+
+        var existing =
+            Items.FirstOrDefault(
+                x => x.ProductId ==
+                    NewItem.ProductId);
+
+
+        if (existing != null)
+        {
+            existing.Quantity +=
+                NewItem.Quantity;
+
+            existing.UnitPrice =
+                NewItem.UnitPrice;
+        }
+        else
+        {
+            Items.Add(
+                new OrderItemModel
+                {
+                    ProductId =
+                        product.Id,
+
+                    ProductName =
+                        product.Name,
+
+                    SKU =
+                        product.SKU,
+
+                    Quantity =
+                        NewItem.Quantity,
+
+                    UnitPrice =
+                        NewItem.UnitPrice
+                });
+        }
+
+
+        // Reset
+
+        NewItem =
+            new OrderItemModel();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // REMOVE ITEM
+    // =========================================================
+
+    private void RemoveItem(OrderItemModel item)
+    {
+        Items.Remove(item);
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // SAVE
+    // =========================================================
+
+    private async Task SaveOrder()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            // -------------------------------------------------
+            // CUSTOMER
+            // -------------------------------------------------
+
+            if (Model.CustomerId <= 0)
+            {
+                ErrorMessage =
+                    "Bitte einen Kunden auswählen.";
+
+                return;
+            }
+
+
+            // -------------------------------------------------
+            // ITEMS
+            // -------------------------------------------------
+
+            if (Items.Count == 0)
+            {
+                ErrorMessage =
+                    "Bitte mindestens ein Produkt hinzufügen.";
+
+                return;
+            }
+
+
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // -------------------------------------------------
+            // CUSTOMER EXISTS
+            // -------------------------------------------------
+
+            var customer =
+                await db.Customers
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id ==
+                            Model.CustomerId &&
+
+                        x.IsActive);
+
+
+            if (customer == null)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Kunde wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // -------------------------------------------------
+            // ORDER NUMBER
+            // -------------------------------------------------
+
+            var orderNumberExists =
+                await db.Orders.AnyAsync(x =>
+                    x.OrderNumber ==
+                        Model.OrderNumber);
+
+
+            if (orderNumberExists)
+            {
+                Model.OrderNumber =
+                    await GenerateOrderNumber();
+            }
+
+
+            // -------------------------------------------------
+            // ORDER
+            // -------------------------------------------------
+
+            var order =
+                new Order
+                {
+                    OrderNumber =
+                        Model.OrderNumber,
+
+                    CustomerId =
+                        Model.CustomerId,
+
+                    OrderDate =
+                        Model.OrderDate,
+
+                    Status =
+                        OrderStatus.Entwurf,
+
+                    ReferenceNumber =
+                        string.IsNullOrWhiteSpace(
+                            Model.ReferenceNumber)
+                            ? null
+                            : Model.ReferenceNumber.Trim(),
+
+                    DeliveryStreet =
+                        string.IsNullOrWhiteSpace(
+                            Model.DeliveryStreet)
+                            ? null
+                            : Model.DeliveryStreet.Trim(),
+
+                    DeliveryPostalCode =
+                        string.IsNullOrWhiteSpace(
+                            Model.DeliveryPostalCode)
+                            ? null
+                            : Model.DeliveryPostalCode.Trim(),
+
+                    DeliveryCity =
+                        string.IsNullOrWhiteSpace(
+                            Model.DeliveryCity)
+                            ? null
+                            : Model.DeliveryCity.Trim(),
+
+                    DeliveryCountry =
+                        string.IsNullOrWhiteSpace(
+                            Model.DeliveryCountry)
+                            ? null
+                            : Model.DeliveryCountry.Trim(),
+
+                    Note =
+                        string.IsNullOrWhiteSpace(
+                            Model.Note)
+                            ? null
+                            : Model.Note.Trim(),
+
+                    Total =
+                        GrandTotal,
+
+                    CreatedAt =
+                        DateTime.UtcNow
+                };
+
+
+            // -------------------------------------------------
+            // ITEMS
+            // -------------------------------------------------
+
+            foreach (var item in Items)
+            {
+                var product =
+                    await db.Products
+
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                item.ProductId &&
+
+                            x.IsActive);
+
+
+                if (product == null)
+                {
+                    ErrorMessage =
+                        $"Produkt '{item.ProductName}' wurde nicht gefunden.";
+
+                    return;
+                }
+
+
+                order.Items.Add(
+                    new OrderItem
+                    {
+                        ProductId =
+                            item.ProductId,
+
+                        Quantity =
+                            item.Quantity,
+
+                        UnitPrice =
+                            item.UnitPrice
+                    });
+            }
+
+
+            // -------------------------------------------------
+            // SAVE
+            // -------------------------------------------------
+
+            db.Orders.Add(order);
+
+
+            await db.SaveChangesAsync();
+
+
+            // -------------------------------------------------
+            // REDIRECT
+            // -------------------------------------------------
+
+            Navigation.NavigateTo(
+                "/orders");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // ORDER MODEL
+    // =========================================================
+
+    private class OrderCreateModel
+    {
+        public string OrderNumber { get; set; }
+            = string.Empty;
+
+
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte einen Kunden auswählen.")]
+        public int CustomerId { get; set; }
+
+
+        [Required]
+        public DateTime OrderDate { get; set; }
+
+
+        [MaxLength(100)]
+        public string? ReferenceNumber { get; set; }
+
+
+        [MaxLength(300)]
+        public string? DeliveryStreet { get; set; }
+
+
+        [MaxLength(20)]
+        public string? DeliveryPostalCode { get; set; }
+
+
+        [MaxLength(100)]
+        public string? DeliveryCity { get; set; }
+
+
+        [MaxLength(100)]
+        public string? DeliveryCountry { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+    }
+
+
+    // =========================================================
+    // ITEM MODEL
+    // =========================================================
+
+    private class OrderItemModel
+    {
+        public int ProductId { get; set; }
+
+        public string ProductName { get; set; }
+            = string.Empty;
+
+        public string SKU { get; set; }
+            = string.Empty;
+
+        public decimal Quantity { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public decimal Total =>
+            Quantity * UnitPrice;
+    }
+
+}

@@ -1,0 +1,647 @@
+﻿@page "/customers/edit/{Id:int}"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Kunde bearbeiten</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Kunde bearbeiten</h1>
+
+            @if (Customer != null)
+            {
+                <p>
+                    @Customer.CompanyName
+                </p>
+            }
+
+        </div>
+
+        <a href="/customers"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Kunde wird geladen...
+        </div>
+    }
+    else if (Customer == null)
+    {
+        <div class="empty-products">
+
+            <h3>
+                Kunde nicht gefunden
+            </h3>
+
+            <a href="/customers"
+               class="btn-secondary">
+
+                Zurück zu Kunden
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="form-card">
+
+            <EditForm Model="@Model"
+                      OnValidSubmit="@UpdateCustomer"
+                      FormName="CustomerEditForm">
+
+                <DataAnnotationsValidator />
+
+
+                <!-- =================================================
+                     INFORMATIONEN
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Kundeninformationen</h2>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Firmenname <span>*</span>
+                            </label>
+
+                            <InputText @bind-Value="Model.CompanyName"
+                                       class="form-control" />
+
+                            <ValidationMessage For="@(() => Model.CompanyName)" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Kundennummer
+                            </label>
+
+                            <InputText @bind-Value="Model.CustomerNumber"
+                                       class="form-control" />
+
+                            <ValidationMessage For="@(() => Model.CustomerNumber)" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Ansprechpartner
+                            </label>
+
+                            <InputText @bind-Value="Model.ContactPerson"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                USt-IdNr.
+                            </label>
+
+                            <InputText @bind-Value="Model.VatNumber"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     KONTAKT
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Kontakt</h2>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                E-Mail
+                            </label>
+
+                            <InputText @bind-Value="Model.Email"
+                                       class="form-control"
+                                       type="email" />
+
+                            <ValidationMessage For="@(() => Model.Email)" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Telefon
+                            </label>
+
+                            <InputText @bind-Value="Model.Phone"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ADRESSE
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Adresse</h2>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Straße
+                            </label>
+
+                            <InputText @bind-Value="Model.Street"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                PLZ
+                            </label>
+
+                            <InputText @bind-Value="Model.PostalCode"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Ort
+                            </label>
+
+                            <InputText @bind-Value="Model.City"
+                                       class="form-control" />
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Land
+                            </label>
+
+                            <InputText @bind-Value="Model.Country"
+                                       class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     NOTE
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>Notiz</h2>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <InputTextArea @bind-Value="Model.Note"
+                                       class="form-control textarea"
+                                       rows="5" />
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     STATUS
+                     ================================================= -->
+
+                <div class="form-section">
+
+                    <div class="form-group checkbox-group">
+
+                        <label class="checkbox-label">
+
+                            <InputCheckbox @bind-Value="Model.IsActive" />
+
+                            <span>
+                                Kunde ist aktiv
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="form-error">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    <a href="/customers"
+                       class="btn-secondary">
+
+                        Abbrechen
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn-primary"
+                            disabled="@IsSaving">
+
+                        @(IsSaving
+                            ? "Speichern..."
+                            : "Änderungen speichern")
+
+                    </button>
+
+                </div>
+
+            </EditForm>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    private Customer? Customer;
+
+    private CustomerEditModel Model = new();
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomer();
+    }
+
+
+    private async Task LoadCustomer()
+    {
+        IsLoading = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Customer =
+                await db.Customers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
+
+            if (Customer == null)
+                return;
+
+
+            Model =
+                new CustomerEditModel
+                {
+                    CompanyName =
+                        Customer.CompanyName,
+
+                    CustomerNumber =
+                        Customer.CustomerNumber,
+
+                    ContactPerson =
+                        Customer.ContactPerson,
+
+                    Email =
+                        Customer.Email,
+
+                    Phone =
+                        Customer.Phone,
+
+                    Street =
+                        Customer.Street,
+
+                    PostalCode =
+                        Customer.PostalCode,
+
+                    City =
+                        Customer.City,
+
+                    Country =
+                        Customer.Country,
+
+                    VatNumber =
+                        Customer.VatNumber,
+
+                    Note =
+                        Customer.Note,
+
+                    IsActive =
+                        Customer.IsActive
+                };
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task UpdateCustomer()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var entity =
+                await db.Customers
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
+
+            if (entity == null)
+            {
+                ErrorMessage =
+                    "Kunde wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // Kundennummer prüfen
+
+            if (!string.IsNullOrWhiteSpace(
+                Model.CustomerNumber))
+            {
+                var number =
+                    Model.CustomerNumber.Trim();
+
+
+                var exists =
+                    await db.Customers
+                        .AnyAsync(x =>
+                            x.Id != Id &&
+                            x.CustomerNumber == number);
+
+
+                if (exists)
+                {
+                    ErrorMessage =
+                        "Diese Kundennummer existiert bereits.";
+
+                    return;
+                }
+            }
+
+
+            entity.CompanyName =
+                Model.CompanyName.Trim();
+
+
+            entity.CustomerNumber =
+                string.IsNullOrWhiteSpace(
+                    Model.CustomerNumber)
+                    ? null
+                    : Model.CustomerNumber.Trim();
+
+
+            entity.ContactPerson =
+                string.IsNullOrWhiteSpace(
+                    Model.ContactPerson)
+                    ? null
+                    : Model.ContactPerson.Trim();
+
+
+            entity.Email =
+                string.IsNullOrWhiteSpace(
+                    Model.Email)
+                    ? null
+                    : Model.Email.Trim();
+
+
+            entity.Phone =
+                string.IsNullOrWhiteSpace(
+                    Model.Phone)
+                    ? null
+                    : Model.Phone.Trim();
+
+
+            entity.Street =
+                string.IsNullOrWhiteSpace(
+                    Model.Street)
+                    ? null
+                    : Model.Street.Trim();
+
+
+            entity.PostalCode =
+                string.IsNullOrWhiteSpace(
+                    Model.PostalCode)
+                    ? null
+                    : Model.PostalCode.Trim();
+
+
+            entity.City =
+                string.IsNullOrWhiteSpace(
+                    Model.City)
+                    ? null
+                    : Model.City.Trim();
+
+
+            entity.Country =
+                string.IsNullOrWhiteSpace(
+                    Model.Country)
+                    ? null
+                    : Model.Country.Trim();
+
+
+            entity.VatNumber =
+                string.IsNullOrWhiteSpace(
+                    Model.VatNumber)
+                    ? null
+                    : Model.VatNumber.Trim();
+
+
+            entity.Note =
+                string.IsNullOrWhiteSpace(
+                    Model.Note)
+                    ? null
+                    : Model.Note.Trim();
+
+
+            entity.IsActive =
+                Model.IsActive;
+
+
+            await db.SaveChangesAsync();
+
+
+            Navigation.NavigateTo("/customers");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class CustomerEditModel
+    {
+        [Required(
+            ErrorMessage =
+                "Firmenname ist erforderlich.")]
+        [MaxLength(200)]
+        public string CompanyName { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(100)]
+        public string? CustomerNumber { get; set; }
+
+
+        [MaxLength(150)]
+        public string? ContactPerson { get; set; }
+
+
+        [EmailAddress(
+            ErrorMessage =
+                "Ungültige E-Mail-Adresse.")]
+        [MaxLength(200)]
+        public string? Email { get; set; }
+
+
+        [MaxLength(50)]
+        public string? Phone { get; set; }
+
+
+        [MaxLength(300)]
+        public string? Street { get; set; }
+
+
+        [MaxLength(20)]
+        public string? PostalCode { get; set; }
+
+
+        [MaxLength(100)]
+        public string? City { get; set; }
+
+
+        [MaxLength(100)]
+        public string? Country { get; set; }
+
+
+        [MaxLength(50)]
+        public string? VatNumber { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+
+
+        public bool IsActive { get; set; }
+    }
+
+}

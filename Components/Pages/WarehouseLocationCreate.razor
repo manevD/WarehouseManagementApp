@@ -1,0 +1,336 @@
+﻿@page "/locations/create"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Neuer Lagerplatz</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Neuer Lagerplatz</h1>
+            <p>Neuen Lagerplatz in einem Lager anlegen.</p>
+        </div>
+
+        <a href="/locations"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@SaveLocation"
+                  FormName="WarehouseLocationCreateForm">
+
+            <DataAnnotationsValidator />
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Lagerplatzinformationen</h2>
+
+                    <p>
+                        Geben Sie die Position des Lagerplatzes an.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- WAREHOUSE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lager <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.WarehouseId"
+                                     class="form-control">
+
+                            <option value="0">
+                                Lager auswählen
+                            </option>
+
+                            @foreach (var warehouse in Warehouses)
+                            {
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
+                            }
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => Model.WarehouseId)" />
+
+                    </div>
+
+
+                    <!-- CODE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Code <span>*</span>
+                        </label>
+
+                        <InputText @bind-Value="Model.Code"
+                                   class="form-control"
+                                   placeholder="z.B. A-01-01" />
+
+                        <ValidationMessage For="@(() => Model.Code)" />
+
+                    </div>
+
+
+                    <!-- NAME -->
+
+                    <div class="form-group">
+
+                        <label>Name</label>
+
+                        <InputText @bind-Value="Model.Name"
+                                   class="form-control"
+                                   placeholder="z.B. Regal A - Fach 01" />
+
+                    </div>
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="form-group checkbox-group">
+
+                        <label class="checkbox-label">
+
+                            <InputCheckbox @bind-Value="Model.IsActive" />
+
+                            <span>
+                                Lagerplatz ist aktiv
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Beschreibung</h2>
+
+                </div>
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Description"
+                                   class="form-control textarea"
+                                   rows="5"
+                                   placeholder="Beschreibung..." />
+
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <div class="form-actions">
+
+                <a href="/locations"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Lagerplatz speichern")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private LocationModel Model = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+        Warehouses = await db.Warehouses
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+
+    private async Task SaveLocation()
+    {
+        if (IsSaving)
+            return;
+
+        IsSaving = true;
+        ErrorMessage = null;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var code =
+                Model.Code.Trim().ToUpper();
+
+
+            // Prüfen ob Lager existiert
+
+            var warehouseExists =
+                await db.Warehouses.AnyAsync(x =>
+                    x.Id == Model.WarehouseId &&
+                    x.IsActive);
+
+            if (!warehouseExists)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Lager wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // Code muss innerhalb eines Lagers eindeutig sein
+
+            var codeExists =
+                await db.WarehouseLocations.AnyAsync(x =>
+                    x.WarehouseId ==
+                        Model.WarehouseId &&
+                    x.Code == code);
+
+            if (codeExists)
+            {
+                ErrorMessage =
+                    "Dieser Lagerplatz-Code existiert in diesem Lager bereits.";
+
+                return;
+            }
+
+
+            var location = new WarehouseLocation
+            {
+                WarehouseId =
+                    Model.WarehouseId,
+
+                Code = code,
+
+                Name =
+                    string.IsNullOrWhiteSpace(Model.Name)
+                        ? null
+                        : Model.Name.Trim(),
+
+                Description =
+                    string.IsNullOrWhiteSpace(Model.Description)
+                        ? null
+                        : Model.Description.Trim(),
+
+                IsActive =
+                    Model.IsActive
+            };
+
+
+            db.WarehouseLocations.Add(location);
+
+            await db.SaveChangesAsync();
+
+            Navigation.NavigateTo("/locations");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class LocationModel
+    {
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte ein Lager auswählen.")]
+        public int WarehouseId { get; set; }
+
+
+        [Required(
+            ErrorMessage =
+                "Code ist erforderlich.")]
+        [MaxLength(50)]
+        public string Code { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(200)]
+        public string? Name { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+
+        public bool IsActive { get; set; } = true;
+    }
+
+}

@@ -1,0 +1,576 @@
+﻿@page "/suppliers"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Lieferanten</PageTitle>
+
+<div class="product-list-page">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Lieferanten</h1>
+            <p>Verwalten Sie Ihre Lieferanten.</p>
+        </div>
+
+        <a href="/suppliers/create"
+           class="btn-primary">
+            + Neuer Lieferant
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH / FILTER -->
+
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   class="search-input"
+                   placeholder="Lieferant, Ansprechpartner, E-Mail oder Telefonnummer suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus"
+                @bind:after="FilterChanged">
+
+            <option value="all">
+                Alle Lieferanten
+            </option>
+
+            <option value="active">
+                Nur aktive
+            </option>
+
+            <option value="inactive">
+                Nur inaktive
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="stock-summary-grid">
+
+        <div class="stock-summary-card">
+
+            <span>Lieferanten</span>
+
+            <strong>
+                @Suppliers.Count
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Aktiv</span>
+
+            <strong>
+                @ActiveCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Inaktiv</span>
+
+            <strong>
+                @InactiveCount
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Lieferantenliste
+                </strong>
+
+                <span>
+                    @Suppliers.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Lieferanten werden geladen...
+            </div>
+        }
+        else if (Suppliers.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    🏢
+                </div>
+
+                <h3>
+                    Keine Lieferanten gefunden
+                </h3>
+
+                <p>
+                    Für die aktuelle Suche wurden keine Lieferanten gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Nr.</th>
+
+                            <th>Firma</th>
+
+                            <th>Ansprechpartner</th>
+
+                            <th>E-Mail</th>
+
+                            <th>Telefon</th>
+
+                            <th>Ort</th>
+
+                            <th>USt-IdNr.</th>
+
+                            <th>Status</th>
+
+                            <th>Aktionen</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var supplier in Suppliers)
+                        {
+                            <tr>
+
+                                <!-- NUMMER -->
+
+                                <td>
+
+                                    <span class="product-sku">
+                                        @(string.IsNullOrWhiteSpace(
+                                            supplier.SupplierNumber)
+                                            ? $"#{supplier.Id}"
+                                            : supplier.SupplierNumber)
+                                    </span>
+
+                                </td>
+
+
+                                <!-- FIRMA -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            @GetInitials(
+                                                supplier.CompanyName)
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @supplier.CompanyName
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                supplier.Street))
+                                            {
+                                                <small>
+                                                    @supplier.Street
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ANSPRECHPARTNER -->
+
+                                <td>
+
+                                    @(string.IsNullOrWhiteSpace(
+                                        supplier.ContactPerson)
+                                        ? "-"
+                                        : supplier.ContactPerson)
+
+                                </td>
+
+
+                                <!-- EMAIL -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.Email))
+                                    {
+                                        <a href="mailto:@supplier.Email">
+                                            @supplier.Email
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                </td>
+
+
+                                <!-- TELEFON -->
+
+                                <td>
+
+                                    @(string.IsNullOrWhiteSpace(
+                                        supplier.Phone)
+                                        ? "-"
+                                        : supplier.Phone)
+
+                                </td>
+
+
+                                <!-- ORT -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.PostalCode) ||
+                                        !string.IsNullOrWhiteSpace(
+                                            supplier.City))
+                                    {
+                                        @($"{supplier.PostalCode} {supplier.City}")
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                </td>
+
+
+                                <!-- VAT -->
+
+                                <td>
+
+                                    @(string.IsNullOrWhiteSpace(
+                                        supplier.VatNumber)
+                                        ? "-"
+                                        : supplier.VatNumber)
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (supplier.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-low">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <a href="/suppliers/edit/@supplier.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
+
+                                            ✎
+
+                                        </a>
+
+
+                                        <button type="button"
+                                                class="action-button delete-button"
+                                                title="Löschen"
+                                                @onclick="() => DeleteSupplier(supplier)">
+
+                                            🗑
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private List<Supplier> Suppliers = new();
+
+    private string SearchTerm = string.Empty;
+
+    private string SelectedStatus = "all";
+
+    private bool IsLoading = true;
+
+
+    private int ActiveCount =>
+        Suppliers.Count(x => x.IsActive);
+
+
+    private int InactiveCount =>
+        Suppliers.Count(x => !x.IsActive);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSuppliers();
+    }
+
+
+    private async Task LoadSuppliers()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var query =
+                db.Suppliers.AsQueryable();
+
+
+            // SEARCH
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+
+                query =
+                    query.Where(x =>
+
+                        x.CompanyName.Contains(search)
+
+                        ||
+
+                        (
+                            x.ContactPerson != null &&
+                            x.ContactPerson.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Email != null &&
+                            x.Email.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Phone != null &&
+                            x.Phone.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.City != null &&
+                            x.City.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.SupplierNumber != null &&
+                            x.SupplierNumber.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.VatNumber != null &&
+                            x.VatNumber.Contains(search)
+                        )
+                    );
+            }
+
+
+            // STATUS
+
+            if (SelectedStatus == "active")
+            {
+                query =
+                    query.Where(x => x.IsActive);
+            }
+            else if (SelectedStatus == "inactive")
+            {
+                query =
+                    query.Where(x => !x.IsActive);
+            }
+
+
+            Suppliers =
+                await query
+                    .OrderBy(x => x.CompanyName)
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task SearchChanged()
+    {
+        await LoadSuppliers();
+    }
+
+
+    private async Task FilterChanged()
+    {
+        await LoadSuppliers();
+    }
+
+
+    private async Task DeleteSupplier(Supplier supplier)
+    {
+        var confirmed =
+            await Task.FromResult(
+                true);
+
+        if (!confirmed)
+            return;
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var entity =
+            await db.Suppliers
+                .FirstOrDefaultAsync(
+                    x => x.Id == supplier.Id);
+
+
+        if (entity == null)
+            return;
+
+
+        // Soft delete
+        entity.IsActive = false;
+
+
+        await db.SaveChangesAsync();
+
+
+        await LoadSuppliers();
+    }
+
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+            .ToUpper();
+    }
+
+}

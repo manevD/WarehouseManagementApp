@@ -1,0 +1,592 @@
+﻿@page "/orders/details/{Id:int}"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung Details</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Bestellung Details</h1>
+
+            @if (Order != null)
+            {
+                <p>
+                    @Order.OrderNumber
+                </p>
+            }
+
+        </div>
+
+
+        <div style="display:flex; gap:10px;">
+
+            <a href="/orders"
+               class="btn-secondary">
+
+                ← Zurück
+
+            </a>
+
+            @if (Order != null)
+            {
+                <a href="/orders/edit/@Order.Id"
+                   class="btn-primary">
+
+                    ✎ Bearbeiten
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Bestellung wird geladen...
+        </div>
+    }
+    else if (Order == null)
+    {
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                ☷
+            </div>
+
+            <h3>
+                Bestellung nicht gefunden
+            </h3>
+
+            <a href="/orders"
+               class="btn-secondary">
+
+                Zurück zu Bestellungen
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+
+        <!-- =====================================================
+             ORDER HEADER
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        @Order.OrderNumber
+                    </h2>
+
+                    <p>
+                        Erstellt am
+                        @Order.CreatedAt
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- CUSTOMER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Kunde
+                        </label>
+
+                        <div class="readonly-value">
+
+                            <strong>
+                                @(Order.Customer?.CompanyName ?? "-")
+                            </strong>
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                Order.Customer?.CustomerNumber))
+                            {
+                                <small>
+                                    @Order.Customer.CustomerNumber
+                                </small>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestelldatum
+                        </label>
+
+                        <div class="readonly-value">
+
+                            @Order.OrderDate
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <div>
+
+                            <span class="@GetStatusClass(Order.Status)">
+                                @GetStatusText(Order.Status)
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REFERENCE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <div class="readonly-value">
+
+                            @(string.IsNullOrWhiteSpace(
+                                Order.ReferenceNumber)
+                                ? "-"
+                                : Order.ReferenceNumber)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 DELIVERY ADDRESS
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Lieferadresse
+                    </h2>
+
+                </div>
+
+
+                <div class="readonly-address">
+
+                    @if (!string.IsNullOrWhiteSpace(
+                        Order.DeliveryStreet))
+                    {
+                        <strong>
+                            @Order.DeliveryStreet &nbsp;,
+                        </strong>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(
+                        Order.DeliveryPostalCode) ||
+                        !string.IsNullOrWhiteSpace(
+                            Order.DeliveryCity))
+                    {
+                        <span>
+                            @Order.DeliveryPostalCode
+                            @Order.DeliveryCity
+                        </span>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(
+                        Order.DeliveryCountry))
+                    {
+                      
+                        <span>
+                            &nbsp;,
+                            @Order.DeliveryCountry
+                        </span>
+                    }
+
+                    @if (string.IsNullOrWhiteSpace(
+                        Order.DeliveryStreet) &&
+                        string.IsNullOrWhiteSpace(
+                            Order.DeliveryCity) &&
+                        string.IsNullOrWhiteSpace(
+                            Order.DeliveryCountry))
+                    {
+                        <span class="text-muted">
+                            Keine Lieferadresse hinterlegt.
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ITEMS
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Bestellpositionen
+                    </h2>
+
+                    <p>
+                        @Order.Items.Count
+                        @(Order.Items.Count == 1
+                            ? "Position"
+                            : "Positionen")
+                    </p>
+
+                </div>
+
+
+                <div class="products-table-wrapper">
+
+                    <table class="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Produkt</th>
+
+                                <th>SKU</th>
+
+                                <th>Menge</th>
+
+                                <th>Einzelpreis</th>
+
+                                <th>Gesamt</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Order.Items)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+
+                                                @GetInitials(
+                                                    item.Product?.Name)
+
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @(item.Product?.Name ?? "-")
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="product-sku">
+
+                                            @(item.Product?.SKU ?? "-")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @item.Quantity.ToString("N2")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @item.UnitPrice.ToString("N2") €
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <strong>
+
+                                            @item.Total.ToString("N2") €
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div class="order-total-box">
+
+                    <span>
+                        Gesamt
+                    </span>
+
+                    <strong>
+                        @Order.Total.ToString("N2") €
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTE
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(Order.Note))
+            {
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <h2>
+                            Notiz
+                        </h2>
+
+                    </div>
+
+                    <div class="readonly-note">
+
+                        @Order.Note
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 FOOTER
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/orders"
+                   class="btn-secondary">
+
+                    ← Zurück
+
+                </a>
+
+                <a href="/orders/edit/@Order.Id"
+                   class="btn-primary">
+
+                    ✎ Bestellung bearbeiten
+
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    private Order? Order;
+
+    private bool IsLoading = true;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrder();
+    }
+
+
+    private async Task LoadOrder()
+    {
+        IsLoading = true;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Order =
+                await db.Orders
+
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Customer)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private string GetStatusText(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "Entwurf",
+
+            OrderStatus.Bestätigt =>
+                "Bestätigt",
+
+            OrderStatus.InBearbeitung =>
+                "In Bearbeitung",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            OrderStatus.Versendet =>
+                "Versendet",
+
+            OrderStatus.Abgeschlossen =>
+                "Abgeschlossen",
+
+            OrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
+    }
+
+
+    private string GetStatusClass(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "status-badge status-low",
+
+            OrderStatus.Bestätigt =>
+                "status-badge status-active",
+
+            OrderStatus.InBearbeitung =>
+                "status-badge status-active",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "status-badge status-active",
+
+            OrderStatus.Versendet =>
+                "status-badge status-active",
+
+            OrderStatus.Abgeschlossen =>
+                "status-badge status-active",
+
+            OrderStatus.Storniert =>
+                "status-badge status-low",
+
+            _ =>
+                "status-badge"
+        };
+    }
+
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

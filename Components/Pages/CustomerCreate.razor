@@ -1,0 +1,521 @@
+﻿@page "/customers/create"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Neuer Kunde</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Neuer Kunde</h1>
+            <p>Neuen Kunden anlegen.</p>
+        </div>
+
+        <a href="/customers"
+           class="btn-secondary">
+            ← Zurück
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@SaveCustomer"
+                  FormName="CustomerCreateForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =====================================================
+                 KUNDENINFORMATIONEN
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Kundeninformationen</h2>
+
+                    <p>
+                        Grundlegende Informationen zum Kunden.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Firmenname <span>*</span>
+                        </label>
+
+                        <InputText @bind-Value="Model.CompanyName"
+                                   class="form-control"
+                                   placeholder="z.B. Muster GmbH" />
+
+                        <ValidationMessage For="@(() => Model.CompanyName)" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Kundennummer
+                        </label>
+
+                        <InputText @bind-Value="Model.CustomerNumber"
+                                   class="form-control"
+                                   placeholder="z.B. K-0001" />
+
+                        <ValidationMessage For="@(() => Model.CustomerNumber)" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Ansprechpartner
+                        </label>
+
+                        <InputText @bind-Value="Model.ContactPerson"
+                                   class="form-control"
+                                   placeholder="z.B. Max Mustermann" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            USt-IdNr.
+                        </label>
+
+                        <InputText @bind-Value="Model.VatNumber"
+                                   class="form-control"
+                                   placeholder="z.B. DE123456789" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 KONTAKT
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Kontakt</h2>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            E-Mail
+                        </label>
+
+                        <InputText @bind-Value="Model.Email"
+                                   class="form-control"
+                                   type="email"
+                                   placeholder="info@firma.de" />
+
+                        <ValidationMessage For="@(() => Model.Email)" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Telefon
+                        </label>
+
+                        <InputText @bind-Value="Model.Phone"
+                                   class="form-control"
+                                   placeholder="+49 123 456789" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ADRESSE
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Adresse</h2>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Straße
+                        </label>
+
+                        <InputText @bind-Value="Model.Street"
+                                   class="form-control"
+                                   placeholder="Musterstraße 1" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            PLZ
+                        </label>
+
+                        <InputText @bind-Value="Model.PostalCode"
+                                   class="form-control"
+                                   placeholder="12345" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Ort
+                        </label>
+
+                        <InputText @bind-Value="Model.City"
+                                   class="form-control"
+                                   placeholder="Berlin" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Land
+                        </label>
+
+                        <InputText @bind-Value="Model.Country"
+                                   class="form-control"
+                                   placeholder="Deutschland" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 NOTIZ
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Notiz</h2>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="5"
+                                   placeholder="Optionale Notiz..." />
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 STATUS
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-group checkbox-group">
+
+                    <label class="checkbox-label">
+
+                        <InputCheckbox @bind-Value="Model.IsActive" />
+
+                        <span>
+                            Kunde ist aktiv
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <div class="form-actions">
+
+                <a href="/customers"
+                   class="btn-secondary">
+                    Abbrechen
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Kunde speichern")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private CustomerModel Model = new();
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    private async Task SaveCustomer()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            if (!string.IsNullOrWhiteSpace(
+                Model.CustomerNumber))
+            {
+                var number =
+                    Model.CustomerNumber.Trim();
+
+
+                var exists =
+                    await db.Customers
+                        .AnyAsync(x =>
+                            x.CustomerNumber == number);
+
+
+                if (exists)
+                {
+                    ErrorMessage =
+                        "Diese Kundennummer existiert bereits.";
+
+                    return;
+                }
+            }
+
+
+            var customer =
+                new Customer
+                {
+                    CompanyName =
+                        Model.CompanyName.Trim(),
+
+                    CustomerNumber =
+                        string.IsNullOrWhiteSpace(
+                            Model.CustomerNumber)
+                            ? null
+                            : Model.CustomerNumber.Trim(),
+
+                    ContactPerson =
+                        string.IsNullOrWhiteSpace(
+                            Model.ContactPerson)
+                            ? null
+                            : Model.ContactPerson.Trim(),
+
+                    Email =
+                        string.IsNullOrWhiteSpace(
+                            Model.Email)
+                            ? null
+                            : Model.Email.Trim(),
+
+                    Phone =
+                        string.IsNullOrWhiteSpace(
+                            Model.Phone)
+                            ? null
+                            : Model.Phone.Trim(),
+
+                    Street =
+                        string.IsNullOrWhiteSpace(
+                            Model.Street)
+                            ? null
+                            : Model.Street.Trim(),
+
+                    PostalCode =
+                        string.IsNullOrWhiteSpace(
+                            Model.PostalCode)
+                            ? null
+                            : Model.PostalCode.Trim(),
+
+                    City =
+                        string.IsNullOrWhiteSpace(
+                            Model.City)
+                            ? null
+                            : Model.City.Trim(),
+
+                    Country =
+                        string.IsNullOrWhiteSpace(
+                            Model.Country)
+                            ? null
+                            : Model.Country.Trim(),
+
+                    VatNumber =
+                        string.IsNullOrWhiteSpace(
+                            Model.VatNumber)
+                            ? null
+                            : Model.VatNumber.Trim(),
+
+                    Note =
+                        string.IsNullOrWhiteSpace(
+                            Model.Note)
+                            ? null
+                            : Model.Note.Trim(),
+
+                    IsActive =
+                        Model.IsActive,
+
+                    CreatedAt =
+                        DateTime.UtcNow
+                };
+
+
+            db.Customers.Add(customer);
+
+            await db.SaveChangesAsync();
+
+
+            Navigation.NavigateTo("/customers");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Speichern: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private class CustomerModel
+    {
+        [Required(
+            ErrorMessage =
+                "Firmenname ist erforderlich.")]
+        [MaxLength(200)]
+        public string CompanyName { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(100)]
+        public string? CustomerNumber { get; set; }
+
+
+        [MaxLength(150)]
+        public string? ContactPerson { get; set; }
+
+
+        [EmailAddress(
+            ErrorMessage =
+                "Ungültige E-Mail-Adresse.")]
+        [MaxLength(200)]
+        public string? Email { get; set; }
+
+
+        [MaxLength(50)]
+        public string? Phone { get; set; }
+
+
+        [MaxLength(300)]
+        public string? Street { get; set; }
+
+
+        [MaxLength(20)]
+        public string? PostalCode { get; set; }
+
+
+        [MaxLength(100)]
+        public string? City { get; set; }
+
+
+        [MaxLength(100)]
+        public string? Country { get; set; }
+
+
+        [MaxLength(50)]
+        public string? VatNumber { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+
+
+        public bool IsActive { get; set; } = true;
+    }
+
+}

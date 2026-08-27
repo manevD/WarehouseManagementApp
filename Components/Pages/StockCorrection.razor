@@ -1,0 +1,799 @@
+﻿@page "/stock/correction"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestandskorrektur</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Bestandskorrektur</h1>
+            <p>Bestand eines Produkts korrigieren.</p>
+        </div>
+
+        <a href="/stock"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <EditForm Model="@Model"
+                  OnValidSubmit="@SaveCorrection"
+                  FormName="StockCorrectionForm">
+
+            <DataAnnotationsValidator />
+
+
+            <!-- =================================================
+                 BESTAND
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Bestand korrigieren</h2>
+
+                    <p>
+                        Wählen Sie Produkt und Lagerplatz.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- PRODUCT -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Produkt <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.ProductId"
+                                     class="form-control"
+                                     @bind:after="SelectionChanged">
+
+                            <option value="0">
+                                Produkt auswählen
+                            </option>
+
+                            @foreach (var product in Products)
+                            {
+                                <option value="@product.Id">
+                                    @product.SKU - @product.Name
+                                </option>
+                            }
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => Model.ProductId)" />
+
+                    </div>
+
+
+                    <!-- WAREHOUSE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lager <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.WarehouseId"
+                                     class="form-control"
+                                     @bind:after="WarehouseChanged">
+
+                            <option value="0">
+                                Lager auswählen
+                            </option>
+
+                            @foreach (var warehouse in Warehouses)
+                            {
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
+                            }
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => Model.WarehouseId)" />
+
+                    </div>
+
+
+                    <!-- LOCATION -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Lagerplatz <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.WarehouseLocationId"
+                                     class="form-control"
+                                     @bind:after="SelectionChanged">
+
+                            <option value="0">
+                                Lagerplatz auswählen
+                            </option>
+
+                            @foreach (var location in Locations)
+                            {
+                                <option value="@location.Id">
+
+                                    @location.Code
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        location.Name))
+                                    {
+                                        @($" - {location.Name}")
+                                    }
+
+                                </option>
+                            }
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() =>
+                                                        Model.WarehouseLocationId)" />
+
+                    </div>
+
+
+                    <!-- CURRENT STOCK -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Aktueller Bestand
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@CurrentQuantity.ToString("N2")"
+                               readonly />
+
+                    </div>
+
+
+                    <!-- NEW STOCK -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Neuer Bestand <span>*</span>
+                        </label>
+
+                        <InputNumber @bind-Value="Model.NewQuantity"
+                                     class="form-control"
+                                     step="0.01"
+                                     min="0" />
+
+                        <ValidationMessage For="@(() => Model.NewQuantity)" />
+
+                    </div>
+
+
+                    <!-- DIFFERENCE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Differenz
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@DifferenceText"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 REFERENCE
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Referenz</h2>
+
+                    <p>
+                        Grund und Referenz der Korrektur.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Grund <span>*</span>
+                        </label>
+
+                        <InputSelect @bind-Value="Model.Reason"
+                                     class="form-control">
+
+                            <option value="">
+                                Grund auswählen
+                            </option>
+
+                            <option value="Inventur">
+                                Inventur
+                            </option>
+
+                            <option value="Beschädigung">
+                                Beschädigung
+                            </option>
+
+                            <option value="Verlust">
+                                Verlust
+                            </option>
+
+                            <option value="Fund">
+                                Fund
+                            </option>
+
+                            <option value="Zählfehler">
+                                Zählfehler
+                            </option>
+
+                            <option value="Sonstiges">
+                                Sonstiges
+                            </option>
+
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => Model.Reason)" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Referenznummer
+                        </label>
+
+                        <InputText @bind-Value="Model.ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="z.B. INV-2026-0001" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Notiz</label>
+
+                    <InputTextArea @bind-Value="Model.Note"
+                                   class="form-control textarea"
+                                   rows="4"
+                                   placeholder="Optionale Notiz..." />
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGES -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+            {
+                <div class="form-success">
+                    @SuccessMessage
+                </div>
+            }
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <a href="/stock"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+                <button type="submit"
+                        class="btn-primary"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Wird gespeichert..."
+                        : "Bestand korrigieren")
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private CorrectionModel Model = new();
+
+    private List<Product> Products = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private List<WarehouseLocation> Locations = new();
+
+    private decimal CurrentQuantity;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+    private string? SuccessMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Products = await db.Products
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+
+
+        Warehouses = await db.Warehouses
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+
+    private async Task WarehouseChanged()
+    {
+        Model.WarehouseLocationId = 0;
+
+        Locations.Clear();
+
+        CurrentQuantity = 0;
+
+
+        if (Model.WarehouseId <= 0)
+            return;
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        Locations = await db.WarehouseLocations
+            .Where(x =>
+                x.IsActive &&
+                x.WarehouseId ==
+                    Model.WarehouseId)
+            .OrderBy(x => x.Code)
+            .ToListAsync();
+    }
+
+
+    private async Task SelectionChanged()
+    {
+        CurrentQuantity = 0;
+
+
+        if (Model.ProductId <= 0 ||
+            Model.WarehouseLocationId <= 0)
+        {
+            return;
+        }
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var stock =
+            await db.Stocks
+                .FirstOrDefaultAsync(x =>
+                    x.ProductId ==
+                        Model.ProductId &&
+                    x.WarehouseLocationId ==
+                        Model.WarehouseLocationId);
+
+
+        if (stock != null)
+        {
+            CurrentQuantity =
+                stock.Quantity;
+        }
+
+
+        Model.NewQuantity =
+            CurrentQuantity;
+    }
+
+
+    private string DifferenceText
+    {
+        get
+        {
+            var difference =
+                Model.NewQuantity -
+                CurrentQuantity;
+
+
+            if (difference > 0)
+                return $"+{difference:N2}";
+
+            return difference.ToString("N2");
+        }
+    }
+
+
+    private async Task SaveCorrection()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+        SuccessMessage = null;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // PRODUCT
+            // =================================================
+
+            var product =
+                await db.Products
+                    .FirstOrDefaultAsync(x =>
+                        x.Id ==
+                            Model.ProductId &&
+                        x.IsActive);
+
+
+            if (product == null)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Produkt wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // WAREHOUSE
+            // =================================================
+
+            var warehouse =
+                await db.Warehouses
+                    .FirstOrDefaultAsync(x =>
+                        x.Id ==
+                            Model.WarehouseId &&
+                        x.IsActive);
+
+
+            if (warehouse == null)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Lager wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // LOCATION
+            // =================================================
+
+            var location =
+                await db.WarehouseLocations
+                    .FirstOrDefaultAsync(x =>
+                        x.Id ==
+                            Model.WarehouseLocationId &&
+                        x.WarehouseId ==
+                            Model.WarehouseId &&
+                        x.IsActive);
+
+
+            if (location == null)
+            {
+                ErrorMessage =
+                    "Der ausgewählte Lagerplatz wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // STOCK
+            // =================================================
+
+            var stock =
+                await db.Stocks
+                    .FirstOrDefaultAsync(x =>
+                        x.ProductId ==
+                            Model.ProductId &&
+                        x.WarehouseLocationId ==
+                            Model.WarehouseLocationId);
+
+
+            var oldQuantity =
+                stock?.Quantity ?? 0;
+
+
+            var newQuantity =
+                Model.NewQuantity;
+
+
+            var difference =
+                newQuantity -
+                oldQuantity;
+
+
+            // =================================================
+            // NOTHING CHANGED
+            // =================================================
+
+            if (difference == 0)
+            {
+                ErrorMessage =
+                    "Der neue Bestand entspricht bereits dem aktuellen Bestand.";
+
+                return;
+            }
+
+
+            // =================================================
+            // STOCK
+            // =================================================
+
+            if (stock == null)
+            {
+                stock = new Stock
+                {
+                    ProductId =
+                        Model.ProductId,
+
+                    WarehouseLocationId =
+                        Model.WarehouseLocationId,
+
+                    Quantity =
+                        newQuantity,
+
+                    ReservedQuantity = 0,
+
+                    UpdatedAt =
+                        DateTime.UtcNow
+                };
+
+                db.Stocks.Add(stock);
+            }
+            else
+            {
+                if (newQuantity <
+                    stock.ReservedQuantity)
+                {
+                    ErrorMessage =
+                        "Der neue Bestand kann nicht kleiner als die reservierte Menge sein.";
+
+                    return;
+                }
+
+
+                stock.Quantity =
+                    newQuantity;
+
+                stock.UpdatedAt =
+                    DateTime.UtcNow;
+            }
+
+
+            // =================================================
+            // MOVEMENT
+            // =================================================
+
+            var movementQuantity =
+                Math.Abs(difference);
+
+
+            var movement = new StockMovement
+            {
+                ProductId =
+                    Model.ProductId,
+
+                Quantity =
+                    movementQuantity,
+
+                Type =
+                    StockMovementType.Korrektur,
+
+                FromWarehouseLocationId =
+                    difference < 0
+                        ? Model.WarehouseLocationId
+                        : null,
+
+                ToWarehouseLocationId =
+                    difference > 0
+                        ? Model.WarehouseLocationId
+                        : null,
+
+                Note =
+                    BuildNote(),
+
+                UserId = null,
+
+                CreatedAt =
+                    DateTime.UtcNow
+            };
+
+
+            db.StockMovements.Add(movement);
+
+
+            // =================================================
+            // SAVE
+            // =================================================
+
+            await db.SaveChangesAsync();
+
+
+            SuccessMessage =
+                $"Bestand erfolgreich von {oldQuantity:N2} auf {newQuantity:N2} korrigiert.";
+
+
+            CurrentQuantity =
+                newQuantity;
+
+            Model.NewQuantity =
+                newQuantity;
+
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler bei der Bestandskorrektur: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    private string BuildNote()
+    {
+        var parts =
+            new List<string>();
+
+
+        if (!string.IsNullOrWhiteSpace(
+            Model.ReferenceNumber))
+        {
+            parts.Add(
+                $"Referenz: {Model.ReferenceNumber.Trim()}");
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(
+            Model.Reason))
+        {
+            parts.Add(
+                $"Grund: {Model.Reason.Trim()}");
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(
+            Model.Note))
+        {
+            parts.Add(
+                Model.Note.Trim());
+        }
+
+
+        return string.Join(
+            " | ",
+            parts);
+    }
+
+
+    private class CorrectionModel
+    {
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte ein Produkt auswählen.")]
+        public int ProductId { get; set; }
+
+
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte ein Lager auswählen.")]
+        public int WarehouseId { get; set; }
+
+
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage =
+                "Bitte einen Lagerplatz auswählen.")]
+        public int WarehouseLocationId { get; set; }
+
+
+        [Range(
+            0,
+            double.MaxValue,
+            ErrorMessage =
+                "Der Bestand darf nicht negativ sein.")]
+        public decimal NewQuantity { get; set; }
+
+
+        [Required(
+            ErrorMessage =
+                "Bitte einen Grund auswählen.")]
+        public string Reason { get; set; }
+            = string.Empty;
+
+
+        [MaxLength(100)]
+        public string? ReferenceNumber { get; set; }
+
+
+        [MaxLength(500)]
+        public string? Note { get; set; }
+    }
+
+}

@@ -1,0 +1,551 @@
+﻿@page "/customers"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Kunden</PageTitle>
+
+<div class="product-list-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Kunden</h1>
+            <p>Verwalten Sie Ihre Kunden.</p>
+        </div>
+
+        <a href="/customers/create"
+           class="btn-primary">
+            + Neuer Kunde
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH / FILTER -->
+
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   class="search-input"
+                   placeholder="Kunde, Ansprechpartner, E-Mail oder Telefonnummer suchen..."
+                   @bind="SearchTerm"
+                   @bind:event="oninput"
+                   @bind:after="SearchChanged" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus"
+                @bind:after="FilterChanged">
+
+            <option value="all">
+                Alle Kunden
+            </option>
+
+            <option value="active">
+                Nur aktive
+            </option>
+
+            <option value="inactive">
+                Nur inaktive
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="stock-summary-grid">
+
+        <div class="stock-summary-card">
+
+            <span>Kunden</span>
+
+            <strong>
+                @Customers.Count
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Aktiv</span>
+
+            <strong>
+                @ActiveCount
+            </strong>
+
+        </div>
+
+
+        <div class="stock-summary-card">
+
+            <span>Inaktiv</span>
+
+            <strong>
+                @InactiveCount
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Kundenliste
+                </strong>
+
+                <span>
+                    @Customers.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+                Kunden werden geladen...
+            </div>
+        }
+        else if (Customers.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    👤
+                </div>
+
+                <h3>
+                    Keine Kunden gefunden
+                </h3>
+
+                <p>
+                    Für die aktuelle Suche wurden keine Kunden gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Nr.</th>
+
+                            <th>Firma</th>
+
+                            <th>Ansprechpartner</th>
+
+                            <th>E-Mail</th>
+
+                            <th>Telefon</th>
+
+                            <th>Ort</th>
+
+                            <th>USt-IdNr.</th>
+
+                            <th>Status</th>
+
+                            <th>Aktionen</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var customer in Customers)
+                        {
+                            <tr>
+
+                                <!-- NUMMER -->
+
+                                <td>
+
+                                    <span class="product-sku">
+                                        @(string.IsNullOrWhiteSpace(
+                                            customer.CustomerNumber)
+                                            ? $"#{customer.Id}"
+                                            : customer.CustomerNumber)
+                                    </span>
+
+                                </td>
+
+
+                                <!-- FIRMA -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+                                            @GetInitials(
+                                                customer.CompanyName)
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @customer.CompanyName
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                customer.Street))
+                                            {
+                                                <small>
+                                                    @customer.Street
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ANSPRECHPARTNER -->
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(
+                                        customer.ContactPerson)
+                                        ? "-"
+                                        : customer.ContactPerson)
+                                </td>
+
+
+                                <!-- EMAIL -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        customer.Email))
+                                    {
+                                        <a href="mailto:@customer.Email">
+                                            @customer.Email
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                </td>
+
+
+                                <!-- TELEFON -->
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(
+                                        customer.Phone)
+                                        ? "-"
+                                        : customer.Phone)
+                                </td>
+
+
+                                <!-- ORT -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        customer.PostalCode) ||
+                                        !string.IsNullOrWhiteSpace(
+                                            customer.City))
+                                    {
+                                        @($"{customer.PostalCode} {customer.City}")
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                </td>
+
+
+                                <!-- VAT -->
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(
+                                        customer.VatNumber)
+                                        ? "-"
+                                        : customer.VatNumber)
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (customer.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-low">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <a href="/customers/edit/@customer.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
+                                            ✎
+                                        </a>
+
+
+                                        <button type="button"
+                                                class="action-button delete-button"
+                                                title="Deaktivieren"
+                                                @onclick="() => DeactivateCustomer(customer)">
+                                            🗑
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private List<Customer> Customers = new();
+
+    private string SearchTerm = string.Empty;
+
+    private string SelectedStatus = "all";
+
+    private bool IsLoading = true;
+
+
+    private int ActiveCount =>
+        Customers.Count(x => x.IsActive);
+
+
+    private int InactiveCount =>
+        Customers.Count(x => !x.IsActive);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomers();
+    }
+
+
+    private async Task LoadCustomers()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            var query =
+                db.Customers.AsQueryable();
+
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+
+                query =
+                    query.Where(x =>
+
+                        x.CompanyName.Contains(search)
+
+                        ||
+
+                        (
+                            x.ContactPerson != null &&
+                            x.ContactPerson.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Email != null &&
+                            x.Email.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.Phone != null &&
+                            x.Phone.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.City != null &&
+                            x.City.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.CustomerNumber != null &&
+                            x.CustomerNumber.Contains(search)
+                        )
+
+                        ||
+
+                        (
+                            x.VatNumber != null &&
+                            x.VatNumber.Contains(search)
+                        )
+                    );
+            }
+
+
+            if (SelectedStatus == "active")
+            {
+                query =
+                    query.Where(x => x.IsActive);
+            }
+            else if (SelectedStatus == "inactive")
+            {
+                query =
+                    query.Where(x => !x.IsActive);
+            }
+
+
+            Customers =
+                await query
+                    .OrderBy(x => x.CompanyName)
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task SearchChanged()
+    {
+        await LoadCustomers();
+    }
+
+
+    private async Task FilterChanged()
+    {
+        await LoadCustomers();
+    }
+
+
+    private async Task DeactivateCustomer(Customer customer)
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        var entity =
+            await db.Customers
+                .FirstOrDefaultAsync(
+                    x => x.Id == customer.Id);
+
+
+        if (entity == null)
+            return;
+
+
+        entity.IsActive = false;
+
+
+        await db.SaveChangesAsync();
+
+
+        await LoadCustomers();
+    }
+
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+            .ToUpper();
+    }
+
+}

@@ -1,0 +1,1075 @@
+﻿@page "/orders/confirm/{Id:int}"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>Bestellung bestätigen</PageTitle>
+
+<div class="product-form-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Bestellung bestätigen</h1>
+
+            @if (Order != null)
+            {
+                <p>
+                    @Order.OrderNumber
+                </p>
+            }
+        </div>
+
+        <a href="/orders/details/@Id"
+           class="btn-secondary">
+            ← Zurück
+        </a>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Bestellung wird geladen...
+        </div>
+    }
+    else if (Order == null)
+    {
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                ☷
+            </div>
+
+            <h3>
+                Bestellung nicht gefunden
+            </h3>
+
+            <a href="/orders"
+               class="btn-secondary">
+                Zurück zu Bestellungen
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="form-card">
+
+            <!-- =====================================================
+                 ORDER INFORMATION
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Bestellung @Order.OrderNumber
+                    </h2>
+
+                    <p>
+                        Bitte wählen Sie für jede Position den
+                        Lagerplatz aus, aus dem die Ware reserviert
+                        werden soll.
+                    </p>
+
+                </div>
+
+
+                <!-- CUSTOMER -->
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Kunde
+                        </label>
+
+                        <div class="readonly-value">
+
+                            <strong>
+                                @(Order.Customer?.CompanyName ?? "-")
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Bestelldatum
+                        </label>
+
+                        <div class="readonly-value">
+
+                            @Order.OrderDate.Date
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <div>
+
+                            <span class="@GetStatusClass(Order.Status)">
+                                @GetStatusText(Order.Status)
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Gesamt
+                        </label>
+
+                        <div class="readonly-value">
+
+                            <strong>
+                                @Order.Total.ToString("N2") €
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 ORDER ITEMS
+                 ===================================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        Lagerreservierung
+                    </h2>
+
+                    <p>
+                        Verfügbaren Bestand prüfen und Lagerplatz
+                        auswählen.
+                    </p>
+
+                </div>
+
+
+                @if (Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <h3>
+                            Keine Positionen vorhanden
+                        </h3>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="products-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Produkt</th>
+
+                                    <th>SKU</th>
+
+                                    <th>Bestellt</th>
+
+                                    <th>Verfügbar</th>
+
+                                    <th>Lager</th>
+
+                                    <th>Lagerplatz *</th>
+
+                                    <th>Reservierbar</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var item in Items)
+                                {
+                                    <tr>
+
+                                        <!-- PRODUCT -->
+
+                                        <td>
+
+                                            <strong>
+                                                @item.ProductName
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- SKU -->
+
+                                        <td>
+
+                                            <span class="product-sku">
+                                                @item.SKU
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- ORDERED -->
+
+                                        <td>
+
+                                            <strong>
+                                                @item.Quantity.ToString("N2")
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- AVAILABLE -->
+
+                                        <td>
+
+                                            @if (item.AvailableQuantity >= item.Quantity)
+                                            {
+                                                <span class="status-badge status-active">
+
+                                                    @item.AvailableQuantity.ToString("N2")
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge status-low">
+
+                                                    @item.AvailableQuantity.ToString("N2")
+
+                                                </span>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- WAREHOUSE -->
+
+                                        <td>
+
+                                            <select class="form-control"
+                                                    value="@item.WarehouseId"
+                                                    @onchange="(e) => WarehouseChanged(item, e)">
+
+                                                <option value="0">
+                                                    Lager auswählen
+                                                </option>
+
+                                                @foreach (var warehouse in item.Warehouses)
+                                                {
+                                                    <option value="@warehouse.Id">
+
+                                                        @warehouse.Name
+
+                                                    </option>
+                                                }
+
+                                            </select>
+
+                                        </td>
+
+
+                                        <!-- LOCATION -->
+
+                                        <td>
+
+                                            <select class="form-control"
+                                                    value="@item.WarehouseLocationId"
+                                                    @onchange="(e) => LocationChanged(item, e)"
+                                                    disabled="@(item.WarehouseId <= 0)">
+
+                                                <option value="0">
+                                                    Lagerplatz auswählen
+                                                </option>
+
+                                                @foreach (var location in item.Locations)
+                                                {
+                                                    <option value="@location.Id">
+
+                                                        @location.Code
+
+                                                        @if (!string.IsNullOrWhiteSpace(location.Name))
+                                                        {
+                                                            @($" - {location.Name}")
+                                                        }
+
+                                                    </option>
+                                                }
+
+                                            </select>
+
+                                        </td>
+
+
+                                        <!-- RESERVABLE -->
+
+                                        <td>
+
+                                            @if (item.WarehouseLocationId > 0)
+                                            {
+                                                @if (item.LocationAvailableQuantity >= item.Quantity)
+                                                {
+                                                    <span class="status-badge status-active">
+                                                        Ja
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-badge status-low">
+                                                        Nicht genug
+                                                    </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    -
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =====================================================
+                 WARNING
+                 ===================================================== -->
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="form-error">
+                    @ErrorMessage
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 ACTIONS
+                 ===================================================== -->
+
+            <div class="form-actions">
+
+                <a href="/orders/details/@Id"
+                   class="btn-secondary">
+
+                    Abbrechen
+
+                </a>
+
+
+                @if (Order.Status == OrderStatus.Entwurf)
+                {
+                    <button type="button"
+                            class="btn-primary"
+                            disabled="@IsSaving"
+                            @onclick="ConfirmOrder">
+
+                        @(IsSaving
+                            ? "Wird bestätigt..."
+                            : "Bestellung bestätigen")
+
+                    </button>
+                }
+                else
+                {
+                    <span class="status-badge status-active">
+                        Bestellung bereits bestätigt
+                    </span>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private Order? Order;
+
+    private List<OrderConfirmItem> Items = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    // =========================================================
+    // INIT
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrder();
+    }
+
+
+    // =========================================================
+    // LOAD ORDER
+    // =========================================================
+
+    private async Task LoadOrder()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Order =
+                await db.Orders
+
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Customer)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
+
+            if (Order == null)
+                return;
+
+
+            await LoadItems();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // LOAD STOCK ITEMS
+    // =========================================================
+
+    private async Task LoadItems()
+    {
+        Items = new();
+
+
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+
+        foreach (var orderItem in Order!.Items)
+        {
+            var item =
+                new OrderConfirmItem
+                {
+                    OrderItemId =
+                        orderItem.Id,
+
+                    ProductId =
+                        orderItem.ProductId,
+
+                    ProductName =
+                        orderItem.Product?.Name ?? "-",
+
+                    SKU =
+                        orderItem.Product?.SKU ?? "-",
+
+                    Quantity =
+                        orderItem.Quantity
+                };
+
+
+            // =================================================
+            // WAREHOUSES / LOCATIONS
+            // =================================================
+
+            var stocks =
+                await db.Stocks
+
+                    .Include(x =>
+                        x.WarehouseLocation)
+
+                        .ThenInclude(x =>
+                            x.Warehouse)
+
+                    .Where(x =>
+
+                        x.ProductId ==
+                            orderItem.ProductId
+
+                        &&
+
+                        x.WarehouseLocation != null
+
+                        &&
+
+                        x.WarehouseLocation.IsActive
+
+                        &&
+
+                        x.WarehouseLocation.Warehouse != null
+
+                        &&
+
+                        x.WarehouseLocation.Warehouse.IsActive
+
+                        &&
+
+                        x.Quantity >
+                            x.ReservedQuantity
+
+                    )
+
+                    .ToListAsync();
+
+
+            item.StockEntries =
+                stocks;
+
+
+            item.Warehouses =
+                stocks
+
+                    .Where(x =>
+                        x.WarehouseLocation?.Warehouse != null)
+
+                    .Select(x =>
+                        x.WarehouseLocation!.Warehouse!)
+
+                    .GroupBy(x =>
+                        x.Id)
+
+                    .Select(x =>
+                        x.First())
+
+                    .OrderBy(x =>
+                        x.Name)
+
+                    .ToList();
+
+
+            Items.Add(item);
+        }
+    }
+
+
+    // =========================================================
+    // WAREHOUSE CHANGED
+    // =========================================================
+
+    private void WarehouseChanged(
+        OrderConfirmItem item,
+        ChangeEventArgs e)
+    {
+        if (!int.TryParse(
+            e.Value?.ToString(),
+            out var warehouseId))
+        {
+            warehouseId = 0;
+        }
+
+
+        item.WarehouseId =
+            warehouseId;
+
+
+        item.WarehouseLocationId =
+            0;
+
+
+        item.Locations =
+            item.StockEntries
+
+                .Where(x =>
+
+                    x.WarehouseLocation != null
+
+                    &&
+
+                    x.WarehouseLocation.WarehouseId ==
+                        warehouseId
+
+                    &&
+
+                    x.WarehouseLocation.IsActive
+
+                    &&
+
+                    x.Quantity >
+                        x.ReservedQuantity
+
+                )
+
+                .Select(x =>
+                    x.WarehouseLocation!)
+
+                .GroupBy(x =>
+                    x.Id)
+
+                .Select(x =>
+                    x.First())
+
+                .OrderBy(x =>
+                    x.Code)
+
+                .ToList();
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // LOCATION CHANGED
+    // =========================================================
+
+    private void LocationChanged(
+        OrderConfirmItem item,
+        ChangeEventArgs e)
+    {
+        if (!int.TryParse(
+            e.Value?.ToString(),
+            out var locationId))
+        {
+            locationId = 0;
+        }
+
+
+        item.WarehouseLocationId =
+            locationId;
+
+
+        var stock =
+            item.StockEntries
+
+                .FirstOrDefault(x =>
+                    x.WarehouseLocationId ==
+                        locationId);
+
+
+        if (stock != null)
+        {
+            item.LocationAvailableQuantity =
+                stock.AvailableQuantity;
+        }
+        else
+        {
+            item.LocationAvailableQuantity =
+                0;
+        }
+
+
+        StateHasChanged();
+    }
+
+
+    // =========================================================
+    // CONFIRM
+    // =========================================================
+
+    private async Task ConfirmOrder()
+    {
+        if (IsSaving)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =================================================
+            // LOAD ORDER AGAIN
+            // =================================================
+
+            var order =
+                await db.Orders
+
+                    .Include(x =>
+                        x.Items)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
+
+            if (order == null)
+            {
+                ErrorMessage =
+                    "Bestellung wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // STATUS CHECK
+            // =================================================
+
+            if (order.Status !=
+                OrderStatus.Entwurf)
+            {
+                ErrorMessage =
+                    "Diese Bestellung kann nicht mehr bestätigt werden.";
+
+                return;
+            }
+
+
+            // =================================================
+            // ITEMS CHECK
+            // =================================================
+
+            if (Items.Count == 0)
+            {
+                ErrorMessage =
+                    "Die Bestellung enthält keine Positionen.";
+
+                return;
+            }
+
+
+            // =================================================
+            // VALIDATE ALL LOCATIONS
+            // =================================================
+
+            foreach (var item in Items)
+            {
+                if (item.WarehouseLocationId <= 0)
+                {
+                    ErrorMessage =
+                        $"Bitte einen Lagerplatz für '{item.ProductName}' auswählen.";
+
+                    return;
+                }
+
+
+                var stock =
+                    await db.Stocks
+
+                        .Include(x =>
+                            x.WarehouseLocation)
+
+                        .FirstOrDefaultAsync(x =>
+
+                            x.ProductId ==
+                                item.ProductId
+
+                            &&
+
+                            x.WarehouseLocationId ==
+                                item.WarehouseLocationId
+
+                        );
+
+
+                if (stock == null)
+                {
+                    ErrorMessage =
+                        $"Kein Stock für '{item.ProductName}' auf dem ausgewählten Lagerplatz gefunden.";
+
+                    return;
+                }
+
+
+                var available =
+                    stock.Quantity -
+                    stock.ReservedQuantity;
+
+
+                if (available < item.Quantity)
+                {
+                    ErrorMessage =
+                        $"Nicht genügend verfügbarer Bestand für '{item.ProductName}'. " +
+                        $"Verfügbar: {available:N2}, benötigt: {item.Quantity:N2}.";
+
+                    return;
+                }
+            }
+
+
+            // =================================================
+            // RESERVE STOCK
+            // =================================================
+
+            foreach (var item in Items)
+            {
+                var stock =
+                    await db.Stocks
+
+                        .FirstOrDefaultAsync(x =>
+
+                            x.ProductId ==
+                                item.ProductId
+
+                            &&
+
+                            x.WarehouseLocationId ==
+                                item.WarehouseLocationId
+
+                        );
+
+
+                if (stock == null)
+                    continue;
+
+
+                stock.ReservedQuantity +=
+                    item.Quantity;
+
+
+                stock.UpdatedAt =
+                    DateTime.UtcNow;
+
+
+                // -------------------------------------------------
+                // SAVE LOCATION TO ORDER ITEM
+                // -------------------------------------------------
+
+                var orderItem =
+                    order.Items
+
+                        .FirstOrDefault(x =>
+                            x.Id ==
+                                item.OrderItemId);
+
+
+                if (orderItem != null)
+                {
+                    orderItem.WarehouseLocationId =
+                        item.WarehouseLocationId;
+                }
+            }
+
+
+            // =================================================
+            // CHANGE ORDER STATUS
+            // =================================================
+
+            order.Status =
+                OrderStatus.Bestätigt;
+
+
+            order.UpdatedAt =
+                DateTime.UtcNow;
+
+
+            // =================================================
+            // SAVE
+            // =================================================
+
+            await db.SaveChangesAsync();
+
+
+            // =================================================
+            // REDIRECT
+            // =================================================
+
+            Navigation.NavigateTo(
+                $"/orders/details/{Id}");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Fehler beim Bestätigen: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(
+        OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "Entwurf",
+
+            OrderStatus.Bestätigt =>
+                "Bestätigt",
+
+            OrderStatus.InBearbeitung =>
+                "In Bearbeitung",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            OrderStatus.Versendet =>
+                "Versendet",
+
+            OrderStatus.Abgeschlossen =>
+                "Abgeschlossen",
+
+            OrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
+    }
+
+
+    // =========================================================
+    // STATUS CSS
+    // =========================================================
+
+    private string GetStatusClass(
+        OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Entwurf =>
+                "status-badge status-low",
+
+            OrderStatus.Bestätigt =>
+                "status-badge status-active",
+
+            OrderStatus.InBearbeitung =>
+                "status-badge status-active",
+
+            OrderStatus.TeilweiseGeliefert =>
+                "status-badge status-active",
+
+            OrderStatus.Versendet =>
+                "status-badge status-active",
+
+            OrderStatus.Abgeschlossen =>
+                "status-badge status-active",
+
+            OrderStatus.Storniert =>
+                "status-badge status-low",
+
+            _ =>
+                "status-badge"
+        };
+    }
+
+
+    // =========================================================
+    // ITEM MODEL
+    // =========================================================
+
+    private class OrderConfirmItem
+    {
+        public int OrderItemId { get; set; }
+
+        public int ProductId { get; set; }
+
+        public string ProductName { get; set; }
+            = string.Empty;
+
+        public string SKU { get; set; }
+            = string.Empty;
+
+        public decimal Quantity { get; set; }
+
+
+        public int WarehouseId { get; set; }
+
+        public int WarehouseLocationId { get; set; }
+
+
+        public decimal LocationAvailableQuantity { get; set; }
+
+
+        public List<Warehouse> Warehouses { get; set; }
+            = new();
+
+
+        public List<WarehouseLocation> Locations { get; set; }
+            = new();
+
+
+        public List<Stock> StockEntries { get; set; }
+            = new();
+
+
+        public decimal AvailableQuantity =>
+            StockEntries.Sum(x =>
+                x.AvailableQuantity);
+    }
+
+}
