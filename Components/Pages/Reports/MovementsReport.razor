@@ -1,0 +1,1195 @@
+﻿@page "/reports/movements"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Bericht Warenbewegungen</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Warenbewegungen</h1>
+
+            <p>
+                Übersicht und Historie aller Lagerbewegungen.
+            </p>
+        </div>
+
+        <div class="page-header-actions">
+
+            <a href="/reports"
+               class="btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Berichte
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="filter-main-row">
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       placeholder="Produkt, SKU, Barcode, Lieferant oder Referenz suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput" />
+
+            </div>
+
+
+            <!-- TYPE -->
+
+            <select class="filter-select"
+                    @bind="SelectedType">
+
+                <option value="0">
+                    Alle Bewegungen
+                </option>
+
+                <option value="@((int)StockMovementType.Wareneingang)">
+                    Wareneingang
+                </option>
+
+                <option value="@((int)StockMovementType.Warenausgang)">
+                    Warenausgang
+                </option>
+
+                <option value="@((int)StockMovementType.Umlagerung)">
+                    Umlagerung
+                </option>
+
+                <option value="@((int)StockMovementType.Inventur)">
+                    Inventur
+                </option>
+
+                <option value="@((int)StockMovementType.Korrektur)">
+                    Korrektur
+                </option>
+
+            </select>
+
+
+            <!-- WAREHOUSE -->
+
+            <select class="filter-select"
+                    @bind="SelectedWarehouseId">
+
+                <option value="0">
+                    Alle Lager
+                </option>
+
+                @foreach (var warehouse in Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- LOCATION -->
+
+            <select class="filter-select"
+                    @bind="SelectedLocationId">
+
+                <option value="0">
+                    Alle Lagerplätze
+                </option>
+
+                @foreach (var location in Locations)
+                {
+                    <option value="@location.Id">
+                        @location.Code
+                        @if (!string.IsNullOrWhiteSpace(location.Name))
+                        {
+                            @($" - {location.Name}")
+                        }
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+
+        <!-- DATE FILTER -->
+
+        <div class="filter-date-row">
+
+            <div class="filter-date-group">
+
+                <label>
+                    Von
+                </label>
+
+                <input type="date"
+                       class="form-control"
+                       @bind="FromDate" />
+
+            </div>
+
+
+            <div class="filter-date-group">
+
+                <label>
+                    Bis
+                </label>
+
+                <input type="date"
+                       class="form-control"
+                       @bind="ToDate" />
+
+            </div>
+
+
+            @if (HasActiveFilters)
+            {
+                <button type="button"
+                        class="btn-secondary filter-reset"
+                        @onclick="ResetFilters">
+
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                    Filter zurücksetzen
+
+                </button>
+            }
+
+        </div>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Bewegungen werden geladen...
+        </div>
+    }
+    else
+    {
+
+        <!-- =====================================================
+             SUMMARY
+             ===================================================== -->
+
+        <div class="stock-summary-grid">
+
+            <!-- TOTAL -->
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Bewegungen
+                </span>
+
+                <strong>
+                    @FilteredMovements.Count
+                </strong>
+
+            </div>
+
+
+            <!-- INCOMING -->
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Wareneingänge
+                </span>
+
+                <strong>
+                    @IncomingCount
+                </strong>
+
+            </div>
+
+
+            <!-- OUTGOING -->
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Warenausgänge
+                </span>
+
+                <strong>
+                    @OutgoingCount
+                </strong>
+
+            </div>
+
+
+            <!-- TRANSFERS -->
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Umlagerungen
+                </span>
+
+                <strong>
+                    @TransferCount
+                </strong>
+
+            </div>
+
+
+            <!-- INVENTORY -->
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Inventur
+                </span>
+
+                <strong>
+                    @InventoryCount
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TABLE
+             ===================================================== -->
+
+        <div class="products-card">
+
+            <div class="products-card-header">
+
+                <div>
+
+                    <strong>
+                        Bewegungshistorie
+                    </strong>
+
+                    <span>
+                        @FilteredMovements.Count Einträge
+                    </span>
+
+                </div>
+
+
+                <!-- LIVE SEARCH INSIDE TABLE -->
+
+                <div class="search-box">
+
+                    <span class="search-icon">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input type="text"
+                           placeholder="Bewegungshistorie durchsuchen..."
+                           @bind="TableSearchTerm"
+                           @bind:event="oninput" />
+
+                </div>
+
+            </div>
+
+
+            @if (FilteredMovements.Count == 0)
+            {
+                <div class="empty-products">
+
+                    <div class="empty-products-icon">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+
+                    <h3>
+                        Keine Bewegungen gefunden
+                    </h3>
+
+                    <p>
+                        Für die gewählten Filter wurden keine
+                        Bewegungen gefunden.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+
+                <div class="products-table-wrapper">
+
+                    <table class="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Datum
+                                </th>
+
+                                <th>
+                                    Produkt
+                                </th>
+
+                                <th>
+                                    Typ
+                                </th>
+
+                                <th>
+                                    Menge
+                                </th>
+
+                                <th>
+                                    Von
+                                </th>
+
+                                <th>
+                                    Nach
+                                </th>
+
+                                <th>
+                                    Lieferant
+                                </th>
+
+                                <th>
+                                    Referenz
+                                </th>
+
+                                <th>
+                                    Notiz
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var movement in FilteredMovements)
+                            {
+                                <tr>
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        <div class="movement-date">
+
+                                            <strong>
+                                                @(movement.CreatedAt
+                                                    .ToLocalTime()
+                                                    .ToString("dd.MM.yyyy"))
+                                            </strong>
+
+                                            <small>
+                                                @(movement.CreatedAt
+                                                    .ToLocalTime()
+                                                    .ToString("HH:mm"))
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- PRODUCT -->
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+
+                                                @GetInitials(
+                                                    movement.Product?.Name)
+
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @(movement.Product?.Name ?? "-")
+                                                </strong>
+
+                                                <small>
+                                                    @(movement.Product?.SKU ?? "-")
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- TYPE -->
+
+                                    <td>
+
+                                        @switch (movement.Type)
+                                        {
+                                            case StockMovementType.Wareneingang:
+
+                                                <span class="movement-badge movement-in">
+                                                    <i class="bi bi-arrow-down-circle me-1"></i>
+                                                    Wareneingang
+                                                </span>
+
+                                                break;
+
+
+                                            case StockMovementType.Warenausgang:
+
+                                                <span class="movement-badge movement-out">
+                                                    <i class="bi bi-arrow-up-circle me-1"></i>
+                                                    Warenausgang
+                                                </span>
+
+                                                break;
+
+
+                                            case StockMovementType.Umlagerung:
+
+                                                <span class="movement-badge movement-transfer">
+                                                    <i class="bi bi-arrow-left-right me-1"></i>
+                                                    Umlagerung
+                                                </span>
+
+                                                break;
+
+
+                                            case StockMovementType.Inventur:
+
+                                                <span class="movement-badge movement-inventory">
+                                                    <i class="bi bi-clipboard-check me-1"></i>
+                                                    Inventur
+                                                </span>
+
+                                                break;
+
+
+                                            case StockMovementType.Korrektur:
+
+                                                <span class="movement-badge movement-correction">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Korrektur
+                                                </span>
+
+                                                break;
+
+
+                                            default:
+
+                                                <span class="movement-badge">
+                                                    @movement.Type
+                                                </span>
+
+                                                break;
+                                        }
+
+                                    </td>
+
+
+                                    <!-- QUANTITY -->
+
+                                    <td>
+
+                                        <strong>
+
+                                            @if (movement.Type ==
+                                                StockMovementType.Warenausgang)
+                                            {
+                                                <span>
+                                                    −@movement.Quantity.ToString("N2")
+                                                </span>
+                                            }
+                                            else if (movement.Type ==
+                                                     StockMovementType.Wareneingang)
+                                            {
+                                                <span>
+                                                    +@movement.Quantity.ToString("N2")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span>
+                                                    @movement.Quantity.ToString("N2")
+                                                </span>
+                                            }
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- FROM -->
+
+                                    <td>
+
+                                        @if (movement.FromWarehouseLocation != null)
+                                        {
+                                            <div class="movement-location">
+
+                                                <strong>
+                                                    @movement.FromWarehouseLocation.Code
+                                                </strong>
+
+                                                @if (movement.FromWarehouseLocation.Warehouse != null)
+                                                {
+                                                    <small>
+                                                        @movement.FromWarehouseLocation.Warehouse.Name
+                                                    </small>
+                                                }
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- TO -->
+
+                                    <td>
+
+                                        @if (movement.ToWarehouseLocation != null)
+                                        {
+                                            <div class="movement-location">
+
+                                                <strong>
+                                                    @movement.ToWarehouseLocation.Code
+                                                </strong>
+
+                                                @if (movement.ToWarehouseLocation.Warehouse != null)
+                                                {
+                                                    <small>
+                                                        @movement.ToWarehouseLocation.Warehouse.Name
+                                                    </small>
+                                                }
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- SUPPLIER -->
+
+                                    <td>
+
+                                        @if (movement.Supplier != null)
+                                        {
+                                            <div class="movement-location">
+
+                                                <strong>
+                                                    @movement.Supplier.CompanyName
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    movement.Supplier.SupplierNumber))
+                                                {
+                                                    <small>
+                                                        @movement.Supplier.SupplierNumber
+                                                    </small>
+                                                }
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- REFERENCE -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            movement.ReferenceNumber))
+                                        {
+                                            <span>
+                                                @movement.ReferenceNumber
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- NOTE -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            movement.Note))
+                                        {
+                                            <span class="movement-note">
+                                                @movement.Note
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            }
+
+        </div>
+
+    }
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<StockMovement> Movements = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private List<WarehouseLocation> Locations = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm = string.Empty;
+
+    private string TableSearchTerm = string.Empty;
+
+    private int SelectedType;
+
+    private int SelectedWarehouseId;
+
+    private int SelectedLocationId;
+
+    private DateTime? FromDate;
+
+    private DateTime? ToDate;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTERED MOVEMENTS
+    // =========================================================
+
+    private List<StockMovement> FilteredMovements =>
+        Movements
+            .Where(MatchesSearch)
+            .Where(MatchesTableSearch)
+            .Where(MatchesType)
+            .Where(MatchesWarehouse)
+            .Where(MatchesLocation)
+            .Where(MatchesDate)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToList();
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private int IncomingCount =>
+        FilteredMovements.Count(x =>
+            x.Type == StockMovementType.Wareneingang);
+
+
+    private int OutgoingCount =>
+        FilteredMovements.Count(x =>
+            x.Type == StockMovementType.Warenausgang);
+
+
+    private int TransferCount =>
+        FilteredMovements.Count(x =>
+            x.Type == StockMovementType.Umlagerung);
+
+
+    private int InventoryCount =>
+        FilteredMovements.Count(x =>
+            x.Type == StockMovementType.Inventur);
+
+
+    // =========================================================
+    // ACTIVE FILTERS
+    // =========================================================
+
+    private bool HasActiveFilters =>
+        !string.IsNullOrWhiteSpace(SearchTerm)
+        ||
+        !string.IsNullOrWhiteSpace(TableSearchTerm)
+        ||
+        SelectedType > 0
+        ||
+        SelectedWarehouseId > 0
+        ||
+        SelectedLocationId > 0
+        ||
+        FromDate.HasValue
+        ||
+        ToDate.HasValue;
+
+
+    // =========================================================
+    // MAIN SEARCH
+    // =========================================================
+
+    private bool MatchesSearch(StockMovement movement)
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+            return true;
+
+        var search = SearchTerm.Trim();
+
+        return
+            (
+                movement.Product != null
+                &&
+                movement.Product.Name.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Product != null
+                &&
+                movement.Product.SKU.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Product != null
+                &&
+                !string.IsNullOrWhiteSpace(
+                    movement.Product.Barcode)
+                &&
+                movement.Product.Barcode.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Supplier != null
+                &&
+                movement.Supplier.CompanyName.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Supplier != null
+                &&
+                !string.IsNullOrWhiteSpace(
+                    movement.Supplier.SupplierNumber)
+                &&
+                movement.Supplier.SupplierNumber.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                !string.IsNullOrWhiteSpace(
+                    movement.ReferenceNumber)
+                &&
+                movement.ReferenceNumber.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                !string.IsNullOrWhiteSpace(
+                    movement.Note)
+                &&
+                movement.Note.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            );
+    }
+
+
+    // =========================================================
+    // TABLE LIVE SEARCH
+    // =========================================================
+
+    private bool MatchesTableSearch(StockMovement movement)
+    {
+        if (string.IsNullOrWhiteSpace(TableSearchTerm))
+            return true;
+
+        var search = TableSearchTerm.Trim();
+
+        return
+            (
+                movement.Product != null
+                &&
+                movement.Product.Name.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Product != null
+                &&
+                movement.Product.SKU.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Product != null
+                &&
+                !string.IsNullOrWhiteSpace(
+                    movement.Product.Barcode)
+                &&
+                movement.Product.Barcode.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Supplier != null
+                &&
+                movement.Supplier.CompanyName.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                movement.Supplier != null
+                &&
+                !string.IsNullOrWhiteSpace(
+                    movement.Supplier.SupplierNumber)
+                &&
+                movement.Supplier.SupplierNumber.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                !string.IsNullOrWhiteSpace(
+                    movement.ReferenceNumber)
+                &&
+                movement.ReferenceNumber.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            (
+                !string.IsNullOrWhiteSpace(
+                    movement.Note)
+                &&
+                movement.Note.Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            ||
+            movement.Quantity.ToString("N2")
+                .Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase)
+            ||
+            movement.Type.ToString()
+                .Contains(
+                    search,
+                    StringComparison.OrdinalIgnoreCase);
+    }
+
+
+    // =========================================================
+    // TYPE
+    // =========================================================
+
+    private bool MatchesType(StockMovement movement)
+    {
+        if (SelectedType == 0)
+            return true;
+
+        return movement.Type ==
+            (StockMovementType)SelectedType;
+    }
+
+
+    // =========================================================
+    // WAREHOUSE
+    // =========================================================
+
+    private bool MatchesWarehouse(StockMovement movement)
+    {
+        if (SelectedWarehouseId == 0)
+            return true;
+
+        return
+            (
+                movement.FromWarehouseLocation != null
+                &&
+                movement.FromWarehouseLocation.WarehouseId ==
+                    SelectedWarehouseId
+            )
+            ||
+            (
+                movement.ToWarehouseLocation != null
+                &&
+                movement.ToWarehouseLocation.WarehouseId ==
+                    SelectedWarehouseId
+            );
+    }
+
+
+    // =========================================================
+    // LOCATION
+    // =========================================================
+
+    private bool MatchesLocation(StockMovement movement)
+    {
+        if (SelectedLocationId == 0)
+            return true;
+
+        return
+            (
+                movement.FromWarehouseLocation != null
+                &&
+                movement.FromWarehouseLocation.Id ==
+                    SelectedLocationId
+            )
+            ||
+            (
+                movement.ToWarehouseLocation != null
+                &&
+                movement.ToWarehouseLocation.Id ==
+                    SelectedLocationId
+            );
+    }
+
+
+    // =========================================================
+    // DATE
+    // =========================================================
+
+    private bool MatchesDate(StockMovement movement)
+    {
+        var date =
+            movement.CreatedAt.ToLocalTime().Date;
+
+        if (FromDate.HasValue &&
+            date < FromDate.Value.Date)
+        {
+            return false;
+        }
+
+        if (ToDate.HasValue &&
+            date > ToDate.Value.Date)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =====================================================
+            // WAREHOUSES
+            // =====================================================
+
+            Warehouses =
+                await db.Warehouses
+                    .AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // LOCATIONS
+            // =====================================================
+
+            Locations =
+                await db.WarehouseLocations
+                    .AsNoTracking()
+                    .Include(x => x.Warehouse)
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Code)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // MOVEMENTS
+            // =====================================================
+
+            Movements =
+                await db.StockMovements
+                    .AsNoTracking()
+
+                    .Include(x =>
+                        x.Product)
+
+                    .Include(x =>
+                        x.Supplier)
+
+                    .Include(x =>
+                        x.FromWarehouseLocation)
+                        .ThenInclude(x =>
+                            x.Warehouse)
+
+                    .Include(x =>
+                        x.ToWarehouseLocation)
+                        .ThenInclude(x =>
+                            x.Warehouse)
+
+                    .OrderByDescending(x =>
+                        x.CreatedAt)
+
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // RESET FILTERS
+    // =========================================================
+
+    private void ResetFilters()
+    {
+        SearchTerm = string.Empty;
+
+        TableSearchTerm = string.Empty;
+
+        SelectedType = 0;
+
+        SelectedWarehouseId = 0;
+
+        SelectedLocationId = 0;
+
+        FromDate = null;
+
+        ToDate = null;
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

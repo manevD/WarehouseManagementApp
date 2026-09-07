@@ -1,0 +1,741 @@
+﻿@page "/reports/inventory"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Inventurbericht</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Inventurbericht</h1>
+
+            <p>
+                Übersicht über durchgeführte Inventuren und
+                Bestandsabweichungen.
+            </p>
+        </div>
+
+        <div class="page-header-actions">
+
+            <a href="/reports"
+               class="btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Berichte
+            </a>
+
+        </div>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Inventuren werden geladen...
+        </div>
+    }
+    else
+    {
+
+        <!-- =====================================================
+             FILTER
+             ===================================================== -->
+
+        <div class="filter-card">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       placeholder="Lager oder Notiz suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput" />
+
+            </div>
+
+
+            <select class="filter-select"
+                    @bind="SelectedWarehouseId">
+
+                <option value="0">
+                    Alle Lager
+                </option>
+
+                @foreach (var warehouse in Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+
+            <select class="filter-select"
+                    @bind="SelectedStatus">
+
+                <option value="all">
+                    Alle Status
+                </option>
+
+                <option value="Entwurf">
+                    Entwurf
+                </option>
+
+                <option value="InBearbeitung">
+                    In Bearbeitung
+                </option>
+
+                <option value="Abgeschlossen">
+                    Abgeschlossen
+                </option>
+
+            </select>
+
+
+            @if (HasActiveFilters)
+            {
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="ResetFilters">
+
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                    Filter zurücksetzen
+
+                </button>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             SUMMARY
+             ===================================================== -->
+
+        <div class="stock-summary-grid">
+
+            <!-- INVENTUREN -->
+            <div class="stock-summary-card">
+
+                <span>
+                    Inventuren
+                </span>
+
+                <strong>
+                    @FilteredInventories.Count
+                </strong>
+
+            </div>
+
+
+            <!-- ABGESCHLOSSEN -->
+            <div class="stock-summary-card">
+
+                <span>
+                    Abgeschlossen
+                </span>
+
+                <strong>
+                    @CompletedCount
+                </strong>
+
+            </div>
+
+
+            <!-- POSITIONEN -->
+            <div class="stock-summary-card">
+
+                <span>
+                    Positionen
+                </span>
+
+                <strong>
+                    @TotalItems
+                </strong>
+
+            </div>
+
+
+            <!-- ABWEICHENDE POSITIONEN -->
+            <div class="stock-summary-card">
+
+                <span>
+                    Abweichende Positionen
+                </span>
+
+                <strong>
+                    @DifferenceCount
+                </strong>
+
+            </div>
+
+
+            <!-- GESAMTDIFFERENZ -->
+            <div class="stock-summary-card">
+
+                <span>
+                    Gesamtdifferenz
+                </span>
+
+                <strong>
+                    @FormatDifference(TotalDifference)
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TABLE
+             ===================================================== -->
+
+        <div class="stock-table-card">
+
+            @if (FilteredInventories.Count == 0)
+            {
+                <div class="empty-products">
+
+                    <div class="empty-products-icon">
+                        <i class="bi bi-clipboard-x"></i>
+                    </div>
+
+                    <h3>
+                        Keine Inventuren gefunden
+                    </h3>
+
+                    <p>
+                        Für die aktuellen Filter wurden keine
+                        Inventuren gefunden.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="products-table-wrapper">
+
+                    <table class="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Inventur
+                                </th>
+
+                                <th>
+                                    Lager
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Positionen
+                                </th>
+
+                                <th>
+                                    Systembestand
+                                </th>
+
+                                <th>
+                                    Gezählt
+                                </th>
+
+                                <th>
+                                    Differenz
+                                </th>
+
+                                <th>
+                                    Erstellt am
+                                </th>
+
+                                <th>
+                                    Abgeschlossen am
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var inventory in FilteredInventories)
+                            {
+                                var systemQuantity =
+                                    inventory.Items?.Sum(x => x.SystemQuantity) ?? 0;
+
+                                var countedQuantity =
+                                    inventory.Items?
+                                        .Where(x => x.CountedQuantity.HasValue)
+                                        .Sum(x => x.CountedQuantity!.Value) ?? 0;
+
+                                var difference =
+                                    inventory.Items?.Sum(x => x.Difference) ?? 0;
+
+                                <tr>
+
+                                    <!-- INVENTORY -->
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+                                                @GetInitials(
+                                                    inventory.Warehouse?.Name)
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    Inventur #@inventory.Id
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    inventory.Note))
+                                                {
+                                                    <small>
+                                                        @inventory.Note
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- WAREHOUSE -->
+
+                                    <td>
+                                        @(inventory.Warehouse?.Name ?? "-")
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        @if (inventory.Status ==
+                                            InventoryStatus.Entwurf)
+                                        {
+                                            <span class="status-badge status-draft">
+                                                <i class="bi bi-pencil me-1"></i>
+                                                Entwurf
+                                            </span>
+                                        }
+                                        else if (inventory.Status ==
+                                                 InventoryStatus.InBearbeitung)
+                                        {
+                                            <span class="status-badge status-warning">
+                                                <i class="bi bi-arrow-repeat me-1"></i>
+                                                In Bearbeitung
+                                            </span>
+                                        }
+                                        else if (inventory.Status ==
+                                                 InventoryStatus.Abgeschlossen)
+                                        {
+                                            <span class="status-badge status-active">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Abgeschlossen
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- ITEMS -->
+
+                                    <td>
+                                        @(inventory.Items?.Count ?? 0)
+                                    </td>
+
+
+                                    <!-- SYSTEM -->
+
+                                    <td>
+                                        <strong>
+                                            @systemQuantity.ToString("N2")
+                                        </strong>
+                                    </td>
+
+
+                                    <!-- COUNTED -->
+
+                                    <td>
+                                        <strong>
+                                            @countedQuantity.ToString("N2")
+                                        </strong>
+                                    </td>
+
+
+                                    <!-- DIFFERENCE -->
+
+                                    <td>
+
+                                        @if (difference > 0)
+                                        {
+                                            <span class="status-badge status-active">
+                                                +@difference.ToString("N2")
+                                            </span>
+                                        }
+                                        else if (difference < 0)
+                                        {
+                                            <span class="status-badge status-low">
+                                                @difference.ToString("N2")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge">
+                                                0,00
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- CREATED -->
+
+                                    <td>
+
+                                        <div class="movement-date">
+
+                                            <strong>
+                                                @(inventory.CreatedAt
+                                                    .ToLocalTime()
+                                                    .ToString("dd.MM.yyyy"))
+                                            </strong>
+
+                                            <small>
+                                                @(inventory.CreatedAt
+                                                    .ToLocalTime()
+                                                    .ToString("HH:mm"))
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- COMPLETED -->
+
+                                    <td>
+
+                                        @if (inventory.CompletedAt.HasValue)
+                                        {
+                                            <div class="movement-date">
+
+                                                <strong>
+                                                    @(inventory.CompletedAt.Value
+                                                        .ToLocalTime()
+                                                        .ToString("dd.MM.yyyy"))
+                                                </strong>
+
+                                                <small>
+                                                    @(inventory.CompletedAt.Value
+                                                        .ToLocalTime()
+                                                        .ToString("HH:mm"))
+                                                </small>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    }
+
+</div>
+
+
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<WarehouseManagement.Models.Inventory> Inventories = new();
+
+    private List<Warehouse> Warehouses = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedWarehouseId;
+
+    private string SelectedStatus = "all";
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTERED INVENTORIES
+    // =========================================================
+
+    private List<WarehouseManagement.Models.Inventory> FilteredInventories =>
+        Inventories
+
+            // WAREHOUSE
+            .Where(x =>
+                SelectedWarehouseId == 0
+                ||
+                x.WarehouseId == SelectedWarehouseId)
+
+            // STATUS
+            .Where(x =>
+                SelectedStatus == "all"
+                ||
+                (
+                    SelectedStatus == "Entwurf"
+                    &&
+                    x.Status == InventoryStatus.Entwurf
+                )
+                ||
+                (
+                    SelectedStatus == "InBearbeitung"
+                    &&
+                    x.Status == InventoryStatus.InBearbeitung
+                )
+                ||
+                (
+                    SelectedStatus == "Abgeschlossen"
+                    &&
+                    x.Status == InventoryStatus.Abgeschlossen
+                ))
+
+            // SEARCH
+            .Where(x =>
+                string.IsNullOrWhiteSpace(SearchTerm)
+                ||
+                (
+                    x.Warehouse != null
+                    &&
+                    x.Warehouse.Name.Contains(
+                        SearchTerm,
+                        StringComparison.OrdinalIgnoreCase)
+                )
+                ||
+                (
+                    !string.IsNullOrWhiteSpace(x.Note)
+                    &&
+                    x.Note.Contains(
+                        SearchTerm,
+                        StringComparison.OrdinalIgnoreCase)
+                ))
+
+            // NEWEST FIRST
+            .OrderByDescending(x => x.CreatedAt)
+
+            .ToList();
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private int CompletedCount =>
+        FilteredInventories.Count(x =>
+            x.Status == InventoryStatus.Abgeschlossen);
+
+
+    private int TotalItems =>
+        FilteredInventories.Sum(x =>
+            x.Items?.Count ?? 0);
+
+
+    private int DifferenceCount =>
+        FilteredInventories
+            .SelectMany(x =>
+                x.Items ?? new List<InventoryItem>())
+            .Count(x =>
+                x.CountedQuantity.HasValue
+                &&
+                x.Difference != 0);
+
+
+    private decimal TotalDifference =>
+        FilteredInventories
+            .SelectMany(x =>
+                x.Items ?? new List<InventoryItem>())
+            .Where(x =>
+                x.CountedQuantity.HasValue)
+            .Sum(x =>
+                x.Difference);
+
+
+    private bool HasActiveFilters =>
+        !string.IsNullOrWhiteSpace(SearchTerm)
+        ||
+        SelectedWarehouseId > 0
+        ||
+        SelectedStatus != "all";
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =====================================================
+            // WAREHOUSES
+            // =====================================================
+
+            Warehouses =
+                await db.Warehouses
+                    .AsNoTracking()
+                    .Where(x =>
+                        x.IsActive)
+                    .OrderBy(x =>
+                        x.Name)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // INVENTORIES
+            // =====================================================
+
+            Inventories =
+                await db.Inventories
+                    .AsNoTracking()
+                    .Include(x =>
+                        x.Warehouse)
+                    .Include(x =>
+                        x.Items)
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // RESET
+    // =========================================================
+
+    private void ResetFilters()
+    {
+        SearchTerm = string.Empty;
+
+        SelectedWarehouseId = 0;
+
+        SelectedStatus = "all";
+    }
+
+
+    // =========================================================
+    // DIFFERENCE
+    // =========================================================
+
+    private string FormatDifference(decimal difference)
+    {
+        if (difference > 0)
+            return $"+{difference:N2}";
+
+        return difference.ToString("N2");
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

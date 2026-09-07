@@ -1,0 +1,592 @@
+﻿@page "/inventory/create"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Models
+@using WarehouseManagement.Data
+
+@inject ApplicationDbContext Db
+@inject NavigationManager Navigation
+
+<PageTitle>Neue Inventur</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Neue Inventur</h1>
+
+            <p>
+                Neue Inventur für ein Lager erstellen.
+            </p>
+
+        </div>
+
+
+        <a href="/inventory"
+           class="btn-secondary">
+
+            ← Zurück
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================================================
+         FORM
+         ========================================================= -->
+
+    <div class="form-card">
+
+        <!-- =====================================================
+             INVENTUR INFORMATIONEN
+             ===================================================== -->
+
+        <div class="form-section">
+
+            <div class="form-section-title">
+
+                <div>
+
+                    <h2>Inventurinformationen</h2>
+
+                    <p>
+                        Wählen Sie das Lager aus und hinterlegen Sie
+                        bei Bedarf eine Notiz.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <!-- LAGER -->
+
+                <div class="form-group">
+
+                    <label>
+                        Lager <span>*</span>
+                    </label>
+
+                    <select class="form-control"
+                            @bind="SelectedWarehouseId">
+
+                        <option value="0">
+                            Lager auswählen
+                        </option>
+
+                        @foreach (var warehouse in Warehouses)
+                        {
+                            <option value="@warehouse.Id">
+
+                                @warehouse.Name
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    warehouse.City))
+                                {
+                                    @($" - {warehouse.City}")
+                                }
+
+                            </option>
+                        }
+
+                    </select>
+
+
+                    @if (SelectedWarehouseId > 0)
+                    {
+                        var selectedWarehouse =
+                            Warehouses.FirstOrDefault(
+                                x => x.Id == SelectedWarehouseId);
+
+                        if (selectedWarehouse != null)
+                        {
+                            <div class="form-help">
+
+                                <i class="bi bi-info-circle me-1"></i>
+
+                                @selectedWarehouse.Locations.Count
+                                aktive Lagerplätze
+
+                            </div>
+                        }
+                    }
+
+                </div>
+
+
+                <!-- NOTIZ -->
+
+                <div class="form-group">
+
+                    <label>
+                        Notiz
+                    </label>
+
+                    <textarea class="form-control"
+                              rows="4"
+                              maxlength="500"
+                              placeholder="Optionale Notiz zur Inventur..."
+                              @bind="Note">
+                    </textarea>
+
+                    <div class="form-help">
+                        Maximal 500 Zeichen.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             INFORMATION
+             ===================================================== -->
+
+        <div class="form-section">
+
+            <div class="form-section-title">
+
+                <div>
+
+                    <h2>So funktioniert die Inventur</h2>
+
+                    <p>
+                        Die vorhandenen Bestände werden automatisch
+                        als Systembestand übernommen.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-info-box">
+
+                <div class="form-info-icon">
+
+                    <i class="bi bi-info-circle"></i>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Was passiert beim Start?
+                    </strong>
+
+                    <p>
+                        Für das ausgewählte Lager werden automatisch
+                        die vorhandenen Lagerbestände als
+                        <strong>Systembestand</strong> übernommen.
+                        Danach können die tatsächlich gezählten
+                        Mengen eingetragen werden.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEPS -->
+
+            <div class="form-steps">
+
+                <!-- STEP 1 -->
+
+                <div class="form-step">
+
+                    <div class="form-step-number">
+                        1
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Lager auswählen
+                        </strong>
+
+                        <p>
+                            Wählen Sie das Lager aus,
+                            das gezählt werden soll.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 2 -->
+
+                <div class="form-step">
+
+                    <div class="form-step-number">
+                        2
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Bestand zählen
+                        </strong>
+
+                        <p>
+                            Tragen Sie später die tatsächlich
+                            gezählte Menge ein.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 3 -->
+
+                <div class="form-step">
+
+                    <div class="form-step-number">
+                        3
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Inventur abschließen
+                        </strong>
+
+                        <p>
+                            Differenzen werden anschließend
+                            automatisch im Lagerbestand korrigiert.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ERROR
+             ===================================================== -->
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <div class="form-error">
+
+                <i class="bi bi-exclamation-triangle me-1"></i>
+
+                @ErrorMessage
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             ACTIONS
+             ===================================================== -->
+
+        <div class="form-actions">
+
+            <a href="/inventory"
+               class="btn-secondary">
+
+                Abbrechen
+
+            </a>
+
+
+            <button type="button"
+                    class="btn-primary"
+                    disabled="@IsSaving"
+                    @onclick="StartInventory">
+
+                @if (IsSaving)
+                {
+                    <span class="spinner-border spinner-border-sm me-2">
+                    </span>
+
+                    <span>
+                        Wird erstellt...
+                    </span>
+                }
+                else
+                {
+                    <i class="bi bi-play-fill me-1"></i>
+
+                    <span>
+                        Inventur starten
+                    </span>
+                }
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<Warehouse> Warehouses = new();
+
+
+    // =========================================================
+    // FORM
+    // =========================================================
+
+    private int SelectedWarehouseId;
+
+    private string? Note;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsSaving;
+
+    private string? ErrorMessage;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWarehouses();
+    }
+
+
+    // =========================================================
+    // LOAD WAREHOUSES
+    // =========================================================
+
+    private async Task LoadWarehouses()
+    {
+        Warehouses =
+            await Db.Warehouses
+
+                .Where(x =>
+                    x.IsActive)
+
+                .Include(x =>
+                    x.Locations
+                        .Where(l =>
+                            l.IsActive))
+
+                .AsNoTracking()
+
+                .OrderBy(x =>
+                    x.Name)
+
+                .ToListAsync();
+    }
+
+
+    // =========================================================
+    // START INVENTORY
+    // =========================================================
+
+    private async Task StartInventory()
+    {
+        ErrorMessage = null;
+
+
+        if (SelectedWarehouseId <= 0)
+        {
+            ErrorMessage =
+                "Bitte wählen Sie ein Lager aus.";
+
+            return;
+        }
+
+
+        IsSaving = true;
+
+
+        try
+        {
+            var warehouse =
+                await Db.Warehouses
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == SelectedWarehouseId &&
+                        x.IsActive);
+
+
+            if (warehouse == null)
+            {
+                ErrorMessage =
+                    "Das ausgewählte Lager wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // =====================================================
+            // AKTIVE LAGERPLÄTZE
+            // =====================================================
+
+            var locationIds =
+                await Db.WarehouseLocations
+
+                    .Where(x =>
+                        x.WarehouseId == SelectedWarehouseId &&
+                        x.IsActive)
+
+                    .Select(x =>
+                        x.Id)
+
+                    .ToListAsync();
+
+
+            if (!locationIds.Any())
+            {
+                ErrorMessage =
+                    "Für dieses Lager sind keine aktiven Lagerplätze vorhanden.";
+
+                return;
+            }
+
+
+            // =====================================================
+            // AKTUELLE BESTÄNDE
+            // =====================================================
+
+            var stocks =
+                await Db.Stocks
+
+                    .Include(x =>
+                        x.Product)
+
+                    .Where(x =>
+                        locationIds.Contains(
+                            x.WarehouseLocationId)
+
+                        &&
+
+                        x.Product != null
+
+                        &&
+
+                        x.Product.IsActive)
+
+                    .AsNoTracking()
+
+                    .ToListAsync();
+
+
+            if (!stocks.Any())
+            {
+                ErrorMessage =
+                    "Für dieses Lager wurden keine Artikelbestände gefunden.";
+
+                return;
+            }
+
+
+            // =====================================================
+            // INVENTUR ERSTELLEN
+            // =====================================================
+
+            var inventory =
+                new Inventory
+                {
+                    WarehouseId =
+                        SelectedWarehouseId,
+
+                    Status =
+                        InventoryStatus.InBearbeitung,
+
+                    Note =
+                        string.IsNullOrWhiteSpace(Note)
+                            ? null
+                            : Note.Trim(),
+
+                    CreatedAt =
+                        DateTime.UtcNow
+                };
+
+
+            // =====================================================
+            // INVENTUR POSITIONEN
+            // =====================================================
+
+            foreach (var stock in stocks)
+            {
+                var item =
+                    new InventoryItem
+                    {
+                        Inventory =
+                            inventory,
+
+                        ProductId =
+                            stock.ProductId,
+
+                        WarehouseLocationId =
+                            stock.WarehouseLocationId,
+
+                        SystemQuantity =
+                            stock.Quantity,
+
+                        CountedQuantity =
+                            null,
+
+                        Difference =
+                            0
+                    };
+
+
+                inventory.Items.Add(item);
+            }
+
+
+            // =====================================================
+            // SAVE
+            // =====================================================
+
+            Db.Inventories.Add(
+                inventory);
+
+            await Db.SaveChangesAsync();
+
+
+            // =====================================================
+            // DETAILS
+            // =====================================================
+
+            Navigation.NavigateTo(
+                $"/inventory/details/{inventory.Id}");
+        }
+        catch (Exception ex)
+        {
+    ErrorMessage = $"Die Inventur konnte nicht erstellt werden: {ex.GetBaseException().Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+}

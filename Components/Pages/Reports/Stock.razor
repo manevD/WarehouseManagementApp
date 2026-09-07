@@ -1,0 +1,850 @@
+﻿@page "/reports/stock"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Bestandsbericht</PageTitle>
+
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Bestandsbericht</h1>
+
+            <p>
+                Aktueller Lagerbestand nach Produkt und Lagerplatz.
+            </p>
+        </div>
+
+        <div class="page-header-actions">
+
+            <a href="/reports"
+               class="btn-secondary">
+                ← Berichte
+            </a>
+
+        </div>
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="loading-state">
+            Bestand wird geladen...
+        </div>
+    }
+    else
+    {
+
+        <!-- =====================================================
+             FILTER
+             ===================================================== -->
+
+        <div class="filter-card">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input type="text"
+                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput"
+                       @bind:after="SearchChanged" />
+
+            </div>
+
+
+            <select class="filter-select"
+                    @bind="SelectedWarehouseId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lager
+                </option>
+
+                @foreach (var warehouse in Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+
+            <select class="filter-select"
+                    @bind="SelectedLocationId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lagerplätze
+                </option>
+
+                @foreach (var location in FilteredLocations)
+                {
+                    <option value="@location.Id">
+                        @location.Code
+
+                        @if (!string.IsNullOrWhiteSpace(location.Name))
+                        {
+                            @($" - {location.Name}")
+                        }
+                    </option>
+                }
+
+            </select>
+
+
+            <select class="filter-select"
+                    @bind="SelectedStatus"
+                    @bind:after="FilterChanged">
+
+                <option value="all">
+                    Alle Bestände
+                </option>
+
+                <option value="ok">
+                    Bestand OK
+                </option>
+
+                <option value="low">
+                    Niedrigbestand
+                </option>
+
+                <option value="empty">
+                    Kein Bestand
+                </option>
+
+            </select>
+
+
+            @if (HasActiveFilters)
+            {
+                <button type="button"
+                        class="btn-secondary filter-reset"
+                        @onclick="ResetFilters">
+
+                    Filter zurücksetzen
+
+                </button>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             SUMMARY
+             ===================================================== -->
+
+        <div class="stock-summary-grid">
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Positionen
+                </span>
+
+                <strong>
+                    @FilteredStocks.Count
+                </strong>
+
+            </div>
+
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Gesamtbestand
+                </span>
+
+                <strong>
+                    @TotalQuantity.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Reserviert
+                </span>
+
+                <strong>
+                    @TotalReserved.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Verfügbar
+                </span>
+
+                <strong>
+                    @TotalAvailable.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="stock-summary-card">
+
+                <span>
+                    Niedrigbestand
+                </span>
+
+                <strong>
+                    @LowStockCount
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TABLE
+             ===================================================== -->
+
+        <div class="stock-table-card">
+
+            @if (FilteredStocks.Count == 0)
+            {
+                <div class="empty-products">
+
+                    <div class="empty-products-icon">
+                        📦
+                    </div>
+
+                    <h3>
+                        Keine Bestände gefunden
+                    </h3>
+
+                    <p>
+                        Für die aktuellen Filter wurden keine
+                        Bestandsdaten gefunden.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="products-table-wrapper">
+
+                    <table class="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Produkt
+                                </th>
+
+                                <th>
+                                    SKU
+                                </th>
+
+                                <th>
+                                    Lager
+                                </th>
+
+                                <th>
+                                    Lagerplatz
+                                </th>
+
+                                <th>
+                                    Bestand
+                                </th>
+
+                                <th>
+                                    Reserviert
+                                </th>
+
+                                <th>
+                                    Verfügbar
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var stock in FilteredStocks)
+                            {
+                                <tr>
+
+                                    <!-- PRODUCT -->
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+                                                @GetInitials(stock.ProductName)
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @stock.ProductName
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(stock.Barcode))
+                                                {
+                                                    <small>
+                                                        @stock.Barcode
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- SKU -->
+
+                                    <td>
+                                        @stock.SKU
+                                    </td>
+
+
+                                    <!-- WAREHOUSE -->
+
+                                    <td>
+                                        @stock.WarehouseName
+                                    </td>
+
+
+                                    <!-- LOCATION -->
+
+                                    <td>
+
+                                        <div class="movement-location">
+
+                                            <strong>
+                                                @stock.LocationCode
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(stock.LocationName))
+                                            {
+                                                <small>
+                                                    @stock.LocationName
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- QUANTITY -->
+
+                                    <td>
+
+                                        <strong>
+                                            @stock.Quantity.ToString("N2")
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- RESERVED -->
+
+                                    <td>
+
+                                        @if (stock.ReservedQuantity > 0)
+                                        {
+                                            <span class="stock-reserved">
+                                                @stock.ReservedQuantity.ToString("N2")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                0,00
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- AVAILABLE -->
+
+                                    <td>
+
+                                        <strong>
+                                            @stock.AvailableQuantity.ToString("N2")
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        @if (stock.Quantity <= 0)
+                                        {
+                                            <span class="status-badge status-low">
+                                                Kein Bestand
+                                            </span>
+                                        }
+                                        else if (stock.Quantity < stock.MinimumStock)
+                                        {
+                                            <span class="status-badge status-warning">
+                                                Niedrig
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-active">
+                                                OK
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    }
+
+</div>
+
+
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<StockRow> Stocks = new();
+
+    private List<Warehouse> Warehouses = new();
+
+    private List<WarehouseLocation> Locations = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm = string.Empty;
+
+    private int SelectedWarehouseId;
+
+    private int SelectedLocationId;
+
+    private string SelectedStatus = "all";
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTERED LOCATIONS
+    // =========================================================
+
+    private IEnumerable<WarehouseLocation> FilteredLocations =>
+        SelectedWarehouseId == 0
+            ? Locations
+            : Locations.Where(x =>
+                x.WarehouseId == SelectedWarehouseId);
+
+
+    // =========================================================
+    // FILTERED STOCK
+    // =========================================================
+
+    private List<StockRow> FilteredStocks =>
+        Stocks
+            .Where(x =>
+                SelectedWarehouseId == 0
+                ||
+                x.WarehouseId == SelectedWarehouseId)
+
+            .Where(x =>
+                SelectedLocationId == 0
+                ||
+                x.WarehouseLocationId == SelectedLocationId)
+
+            .Where(x =>
+                string.IsNullOrWhiteSpace(SearchTerm)
+                ||
+                x.ProductName.Contains(
+                    SearchTerm,
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                x.SKU.Contains(
+                    SearchTerm,
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                (
+                    !string.IsNullOrWhiteSpace(x.Barcode)
+                    &&
+                    x.Barcode.Contains(
+                        SearchTerm,
+                        StringComparison.OrdinalIgnoreCase)
+                ))
+
+            .Where(x =>
+                SelectedStatus == "all"
+                ||
+                (
+                    SelectedStatus == "ok"
+                    &&
+                    x.Quantity >= x.MinimumStock
+                    &&
+                    x.Quantity > 0
+                )
+                ||
+                (
+                    SelectedStatus == "low"
+                    &&
+                    x.Quantity > 0
+                    &&
+                    x.Quantity < x.MinimumStock
+                )
+                ||
+                (
+                    SelectedStatus == "empty"
+                    &&
+                    x.Quantity <= 0
+                ))
+
+            .OrderBy(x => x.WarehouseName)
+            .ThenBy(x => x.LocationCode)
+            .ThenBy(x => x.ProductName)
+            .ToList();
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private decimal TotalQuantity =>
+        FilteredStocks.Sum(x =>
+            x.Quantity);
+
+
+    private decimal TotalReserved =>
+        FilteredStocks.Sum(x =>
+            x.ReservedQuantity);
+
+
+    private decimal TotalAvailable =>
+        FilteredStocks.Sum(x =>
+            x.AvailableQuantity);
+
+
+    private int LowStockCount =>
+        FilteredStocks.Count(x =>
+            x.Quantity > 0 &&
+            x.Quantity < x.MinimumStock);
+
+
+    private bool HasActiveFilters =>
+        !string.IsNullOrWhiteSpace(SearchTerm)
+        ||
+        SelectedWarehouseId > 0
+        ||
+        SelectedLocationId > 0
+        ||
+        SelectedStatus != "all";
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    // =========================================================
+    // LOAD DATA
+    // =========================================================
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =====================================================
+            // WAREHOUSES
+            // =====================================================
+
+            Warehouses =
+                await db.Warehouses
+                    .AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // LOCATIONS
+            // =====================================================
+
+            Locations =
+                await db.WarehouseLocations
+                    .AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Code)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // STOCK
+            // =====================================================
+
+            Stocks =
+                await db.Stocks
+                    .AsNoTracking()
+                    .Include(x => x.Product)
+                    .Include(x => x.WarehouseLocation)
+                        .ThenInclude(x => x.Warehouse)
+                    .Select(x => new StockRow
+                    {
+                        Id = x.Id,
+
+                        ProductId = x.ProductId,
+
+                        WarehouseLocationId =
+                            x.WarehouseLocationId,
+
+                        WarehouseId =
+                            x.WarehouseLocation != null
+                                ? x.WarehouseLocation.WarehouseId
+                                : 0,
+
+                        ProductName =
+                            x.Product != null
+                                ? x.Product.Name
+                                : "-",
+
+                        SKU =
+                            x.Product != null
+                                ? x.Product.SKU
+                                : "-",
+
+                        Barcode =
+                            x.Product != null
+                                ? x.Product.Barcode
+                                : null,
+
+                        MinimumStock =
+                            x.Product != null
+                                ? x.Product.MinimumStock
+                                : 0,
+
+                        WarehouseName =
+                            x.WarehouseLocation != null &&
+                            x.WarehouseLocation.Warehouse != null
+                                ? x.WarehouseLocation.Warehouse.Name
+                                : "-",
+
+                        LocationCode =
+                            x.WarehouseLocation != null
+                                ? x.WarehouseLocation.Code
+                                : "-",
+
+                        LocationName =
+                            x.WarehouseLocation != null
+                                ? x.WarehouseLocation.Name
+                                : null,
+
+                        Quantity =
+                            x.Quantity,
+
+                        ReservedQuantity =
+                            x.ReservedQuantity,
+
+                        AvailableQuantity =
+                            x.AvailableQuantity
+                    })
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private Task SearchChanged()
+    {
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private async Task FilterChanged()
+    {
+        if (SelectedWarehouseId > 0 &&
+            SelectedLocationId > 0)
+        {
+            var location =
+                Locations.FirstOrDefault(x =>
+                    x.Id == SelectedLocationId);
+
+            if (location != null &&
+                location.WarehouseId != SelectedWarehouseId)
+            {
+                SelectedLocationId = 0;
+            }
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
+    // RESET
+    // =========================================================
+
+    private async Task ResetFilters()
+    {
+        SearchTerm = string.Empty;
+
+        SelectedWarehouseId = 0;
+
+        SelectedLocationId = 0;
+
+        SelectedStatus = "all";
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+            .ToUpper();
+    }
+
+
+    // =========================================================
+    // VIEW MODEL
+    // =========================================================
+
+    private class StockRow
+    {
+        public int Id { get; set; }
+
+        public int ProductId { get; set; }
+
+        public int WarehouseId { get; set; }
+
+        public int WarehouseLocationId { get; set; }
+
+
+        public string ProductName { get; set; }
+            = string.Empty;
+
+        public string SKU { get; set; }
+            = string.Empty;
+
+        public string? Barcode { get; set; }
+
+
+        public string WarehouseName { get; set; }
+            = string.Empty;
+
+        public string LocationCode { get; set; }
+            = string.Empty;
+
+        public string? LocationName { get; set; }
+
+
+        public decimal Quantity { get; set; }
+
+        public decimal ReservedQuantity { get; set; }
+
+        public decimal AvailableQuantity { get; set; }
+
+        public decimal MinimumStock { get; set; }
+    }
+}

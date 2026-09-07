@@ -38,6 +38,10 @@ namespace WarehouseManagement.Data
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+
+        public DbSet<Inventory> Inventories { get; set; }
+
+        public DbSet<InventoryItem> InventoryItems { get; set; }
         // =========================================================
         // Model Configuration
         // =========================================================
@@ -390,6 +394,91 @@ namespace WarehouseManagement.Data
                     .WithMany()
                     .HasForeignKey(x => x.UserId)
                     .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // =========================================================
+            // INVENTORY
+            // =========================================================
+
+            builder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Status)
+                    .IsRequired();
+
+                entity.Property(x => x.Note)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.UserId)
+                    .HasMaxLength(450);
+
+                entity.Property(x => x.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+
+                // Inventory → Warehouse
+                entity.HasOne(x => x.Warehouse)
+                    .WithMany()
+                    .HasForeignKey(x => x.WarehouseId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+
+                // Inventory → Items
+                entity.HasMany(x => x.Items)
+                    .WithOne(x => x.Inventory)
+                    .HasForeignKey(x => x.InventoryId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            // =========================================================
+            // INVENTORY ITEM
+            // =========================================================
+
+            builder.Entity<InventoryItem>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.SystemQuantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(x => x.CountedQuantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(x => x.Difference)
+                    .HasPrecision(18, 3);
+
+
+                // InventoryItem → Product
+                entity.HasOne(x => x.Product)
+                    .WithMany()
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+
+                // InventoryItem → WarehouseLocation
+                entity.HasOne(x => x.WarehouseLocation)
+                    .WithMany()
+                    .HasForeignKey(x => x.WarehouseLocationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+
+                // InventoryItem → Inventory
+                entity.HasOne(x => x.Inventory)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.InventoryId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+
+                // Same product/location only once in one inventory
+                entity.HasIndex(x => new
+                {
+                    x.InventoryId,
+                    x.ProductId,
+                    x.WarehouseLocationId
+                })
+                .IsUnique();
             });
         }
     }

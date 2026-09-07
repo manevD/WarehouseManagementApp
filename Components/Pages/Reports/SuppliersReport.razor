@@ -1,0 +1,1090 @@
+﻿@page "/reports/suppliers"
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Data
+@using WarehouseManagement.Models
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Lieferantenbericht</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Lieferanten</h1>
+
+            <p>
+                Übersicht der Lieferanten und Warenbewegungen
+            </p>
+        </div>
+
+        <div class="page-header-actions">
+
+            <a href="/suppliers/create"
+               class="btn-primary">
+
+                <i class="bi bi-plus-lg me-1"></i>
+
+                Neuer Lieferant
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="filter-main-row"
+             style="display:flex; flex-direction:row; align-items:center; gap:12px; flex-wrap:nowrap;">
+
+            <!-- SEARCH -->
+
+            <div class="search-box"
+                 style="flex:1 1 auto; min-width:0;">
+
+                <span class="search-icon">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       placeholder="Lieferant, Nummer, Kontakt oder E-Mail suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput" />
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <select class="filter-select"
+                    style="flex:0 0 220px; width:220px;"
+                    @bind="StatusFilter">
+
+                <option value="Alle">
+                    Alle Lieferanten
+                </option>
+
+                <option value="Aktiv">
+                    Aktive Lieferanten
+                </option>
+
+                <option value="Inaktiv">
+                    Inaktive Lieferanten
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="stock-summary-grid">
+
+        <!-- LIEFERANTEN -->
+
+        <div class="stock-summary-card">
+
+            <span>
+                Lieferanten
+            </span>
+
+            <strong>
+                @FilteredSuppliers.Count
+            </strong>
+
+            <small>
+                Gefilterte Lieferanten
+            </small>
+
+        </div>
+
+
+        <!-- AKTIV -->
+
+        <div class="stock-summary-card">
+
+            <span>
+                Aktiv
+            </span>
+
+            <strong>
+                @ActiveCount
+            </strong>
+
+            <small>
+                Aktive Lieferanten
+            </small>
+
+        </div>
+
+
+        <!-- WARENEINGÄNGE -->
+
+        <div class="stock-summary-card">
+
+            <span>
+                Wareneingänge
+            </span>
+
+            <strong>
+                @IncomingCount
+            </strong>
+
+            <small>
+                Bewegungen
+            </small>
+
+        </div>
+
+
+        <!-- MENGE -->
+
+        <div class="stock-summary-card">
+
+            <span>
+                Eingegangene Menge
+            </span>
+
+            <strong>
+                @(IncomingQuantity.ToString("N2"))
+            </strong>
+
+            <small>
+                Gesamtmenge
+            </small>
+
+        </div>
+
+
+        <!-- BESTELLUNGEN -->
+
+        <div class="stock-summary-card">
+
+            <span>
+                Bestellungen
+            </span>
+
+            <strong>
+                @PurchaseOrderCount
+            </strong>
+
+            <small>
+                Zugeordnete Bestellungen
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUPPLIER TABLE
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Lieferantenübersicht
+                </strong>
+
+                <span>
+                    @FilteredSuppliers.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+
+                Lieferanten werden geladen...
+
+            </div>
+        }
+        else if (PagedSuppliers.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    <i class="bi bi-truck"></i>
+                </div>
+
+                <h3>
+                    Keine Lieferanten gefunden
+                </h3>
+
+                <p>
+                    Für die aktuelle Suche wurden keine Lieferanten gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+
+            <!-- =====================================================
+                 TABLE
+                 ===================================================== -->
+
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Lieferant
+                            </th>
+
+                            <th>
+                                Lieferantennummer
+                            </th>
+
+                            <th>
+                                Ansprechpartner
+                            </th>
+
+                            <th>
+                                Kontakt
+                            </th>
+
+                            <th>
+                                Adresse
+                            </th>
+
+                            <th>
+                                Wareneingänge
+                            </th>
+
+                            <th>
+                                Menge
+                            </th>
+
+                            <th>
+                                Bestellungen
+                            </th>
+
+                            <th>
+                                Letzte Bewegung
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var supplier in PagedSuppliers)
+                        {
+                            var supplierMovements = Movements
+                                .Where(x => x.SupplierId == supplier.Id)
+                                .ToList();
+
+                            var incomingMovements = supplierMovements
+                                .Where(x =>
+                                    x.Type == StockMovementType.Wareneingang)
+                                .ToList();
+
+                            var purchaseOrders = supplierMovements
+                                .Where(x => x.PurchaseOrderId.HasValue)
+                                .Select(x => x.PurchaseOrderId)
+                                .Distinct()
+                                .Count();
+
+                            var lastMovement = supplierMovements
+                                .OrderByDescending(x => x.CreatedAt)
+                                .FirstOrDefault();
+
+
+                            <tr>
+
+                                <!-- COMPANY -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+
+                                            @GetInitials(
+                                                supplier.CompanyName)
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @supplier.CompanyName
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                supplier.VatNumber))
+                                            {
+                                                <small>
+                                                    @supplier.VatNumber
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- SUPPLIER NUMBER -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.SupplierNumber))
+                                    {
+                                        @supplier.SupplierNumber
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- CONTACT PERSON -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.ContactPerson))
+                                    {
+                                        @supplier.ContactPerson
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- CONTACT -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.Email))
+                                    {
+                                        <div>
+                                            @supplier.Email
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.Phone))
+                                    {
+                                        <small class="text-muted">
+                                            @supplier.Phone
+                                        </small>
+                                    }
+
+                                    @if (string.IsNullOrWhiteSpace(
+                                        supplier.Email)
+                                        &&
+                                        string.IsNullOrWhiteSpace(
+                                            supplier.Phone))
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ADDRESS -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.Street))
+                                    {
+                                        <div>
+                                            @supplier.Street
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.PostalCode)
+                                        ||
+                                        !string.IsNullOrWhiteSpace(
+                                            supplier.City))
+                                    {
+                                        <div>
+                                            @supplier.PostalCode
+                                            @supplier.City
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        supplier.Country))
+                                    {
+                                        <small class="text-muted">
+                                            @supplier.Country
+                                        </small>
+                                    }
+
+                                    @if (string.IsNullOrWhiteSpace(
+                                        supplier.Street)
+                                        &&
+                                        string.IsNullOrWhiteSpace(
+                                            supplier.PostalCode)
+                                        &&
+                                        string.IsNullOrWhiteSpace(
+                                            supplier.City)
+                                        &&
+                                        string.IsNullOrWhiteSpace(
+                                            supplier.Country))
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- INCOMING -->
+
+                                <td>
+
+                                    <strong>
+                                        @incomingMovements.Count
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- QUANTITY -->
+
+                                <td>
+
+                                    <strong>
+                                        @(incomingMovements
+                                            .Sum(x => x.Quantity)
+                                            .ToString("N2"))
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- PURCHASE ORDERS -->
+
+                                <td>
+
+                                    @purchaseOrders
+
+                                </td>
+
+
+                                <!-- LAST MOVEMENT -->
+
+                                <td>
+
+                                    @if (lastMovement != null)
+                                    {
+                                        <div class="movement-date">
+
+                                            <strong>
+                                                @(lastMovement.CreatedAt
+                                                    .ToLocalTime()
+                                                    .ToString("dd.MM.yyyy"))
+                                            </strong>
+
+                                            <small>
+                                                @GetMovementTypeName(
+                                                    lastMovement.Type)
+                                            </small>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (supplier.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- EDIT -->
+
+                                <td>
+
+                                    <a href="@($"/suppliers/edit/{supplier.Id}")"
+                                       class="btn-secondary">
+
+                                        <i class="bi bi-pencil me-1"></i>
+
+                                        Bearbeiten
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PAGINATION
+                 ===================================================== -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination-container">
+
+                    <div class="pagination-info">
+
+                        Zeige
+
+                        <strong>
+                            @PaginationStart
+                        </strong>
+
+                        -
+
+                        <strong>
+                            @PaginationEnd
+                        </strong>
+
+                        von
+
+                        <strong>
+                            @FilteredSuppliers.Count
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pagination-buttons">
+
+                        <button type="button"
+                                class="btn-secondary"
+                                disabled="@(CurrentPage == 1)"
+                                @onclick="PreviousPage">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </button>
+
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+
+                        <button type="button"
+                                class="btn-secondary"
+                                disabled="@(CurrentPage == TotalPages)"
+                                @onclick="NextPage">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<Supplier> Suppliers = new();
+
+    private List<StockMovement> Movements = new();
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string _searchTerm = string.Empty;
+
+    private string SearchTerm
+    {
+        get => _searchTerm;
+
+        set
+        {
+            if (_searchTerm == value)
+                return;
+
+            _searchTerm = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    private string _statusFilter = "Alle";
+
+    private string StatusFilter
+    {
+        get => _statusFilter;
+
+        set
+        {
+            if (_statusFilter == value)
+                return;
+
+            _statusFilter = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTERED SUPPLIERS
+    // =========================================================
+
+    private List<Supplier> FilteredSuppliers
+    {
+        get
+        {
+            var query = Suppliers.AsEnumerable();
+
+
+            // =====================================================
+            // SEARCH
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search = SearchTerm.Trim();
+
+                query = query.Where(s =>
+                    s.CompanyName.Contains(
+                        search,
+                        StringComparison.OrdinalIgnoreCase)
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.SupplierNumber)
+
+                        &&
+
+                        s.SupplierNumber.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.ContactPerson)
+
+                        &&
+
+                        s.ContactPerson.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.Email)
+
+                        &&
+
+                        s.Email.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.Phone)
+
+                        &&
+
+                        s.Phone.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.City)
+
+                        &&
+
+                        s.City.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+
+                    ||
+
+                    (
+                        !string.IsNullOrWhiteSpace(
+                            s.VatNumber)
+
+                        &&
+
+                        s.VatNumber.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                    )
+                );
+            }
+
+
+            // =====================================================
+            // STATUS
+            // =====================================================
+
+            query = query.Where(s =>
+                StatusFilter == "Alle"
+
+                ||
+
+                (
+                    StatusFilter == "Aktiv"
+                    &&
+                    s.IsActive
+                )
+
+                ||
+
+                (
+                    StatusFilter == "Inaktiv"
+                    &&
+                    !s.IsActive
+                )
+            );
+
+
+            return query
+                .OrderBy(s => s.CompanyName)
+                .ToList();
+        }
+    }
+
+
+    // =========================================================
+    // PAGED SUPPLIERS
+    // =========================================================
+
+    private List<Supplier> PagedSuppliers =>
+        FilteredSuppliers
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredSuppliers.Count /
+                (double)PageSize));
+
+
+    private int PaginationStart =>
+        FilteredSuppliers.Count == 0
+            ? 0
+            : ((CurrentPage - 1) * PageSize) + 1;
+
+
+    private int PaginationEnd =>
+        Math.Min(
+            CurrentPage * PageSize,
+            FilteredSuppliers.Count);
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
+    private int ActiveCount =>
+        FilteredSuppliers.Count(x => x.IsActive);
+
+
+    private int IncomingCount =>
+        FilteredMovements.Count(x =>
+            x.Type == StockMovementType.Wareneingang);
+
+
+    private decimal IncomingQuantity =>
+        FilteredMovements
+            .Where(x =>
+                x.Type == StockMovementType.Wareneingang)
+            .Sum(x => x.Quantity);
+
+
+    private int PurchaseOrderCount =>
+        FilteredMovements
+            .Where(x => x.PurchaseOrderId.HasValue)
+            .Select(x => x.PurchaseOrderId)
+            .Distinct()
+            .Count();
+
+
+    private IEnumerable<StockMovement> FilteredMovements =>
+        Movements.Where(x =>
+            FilteredSuppliers.Any(s =>
+                s.Id == x.SupplierId));
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await using var context =
+                await DbFactory.CreateDbContextAsync();
+
+
+            // =====================================================
+            // SUPPLIERS
+            // =====================================================
+
+            Suppliers =
+                await context.Suppliers
+                    .AsNoTracking()
+                    .OrderBy(x => x.CompanyName)
+                    .ToListAsync();
+
+
+            // =====================================================
+            // MOVEMENTS
+            // =====================================================
+
+            Movements =
+                await context.StockMovements
+                    .AsNoTracking()
+                    .Where(x => x.SupplierId.HasValue)
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
+    }
+
+
+    // =========================================================
+    // MOVEMENT TYPE
+    // =========================================================
+
+    private string GetMovementTypeName(
+        StockMovementType type)
+    {
+        return type switch
+        {
+            StockMovementType.Wareneingang =>
+                "Wareneingang",
+
+            StockMovementType.Warenausgang =>
+                "Warenausgang",
+
+            StockMovementType.Umlagerung =>
+                "Umlagerung",
+
+            StockMovementType.Inventur =>
+                "Inventur",
+
+            StockMovementType.Korrektur =>
+                "Korrektur",
+
+            _ => type.ToString()
+        };
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

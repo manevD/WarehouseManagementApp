@@ -1,0 +1,726 @@
+﻿@page "/inventory/edit/{Id:int}"
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Models
+@using WarehouseManagement.Data
+
+@inject ApplicationDbContext Db
+@inject NavigationManager Navigation
+
+<PageTitle>Inventur bearbeiten</PageTitle>
+
+<div class="product-form-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Inventur #@Id bearbeiten
+            </h1>
+
+            <p>
+                @(Inventory?.Warehouse?.Name ?? "-")
+            </p>
+
+        </div>
+
+        @if (Inventory != null)
+        {
+            <div class="page-header-actions">
+
+                <a href="/inventory/details/@Inventory.Id"
+                   class="btn-secondary">
+                    ← Zurück
+                </a>
+
+                <button type="button"
+                        class="btn-primary"
+                        disabled="@IsSaving"
+                        @onclick="Save">
+
+                    @(IsSaving
+                        ? "Wird gespeichert..."
+                        : "Speichern")
+
+                </button>
+
+            </div>
+        }
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="form-card">
+
+            <div class="loading-state">
+                Inventur wird geladen...
+            </div>
+
+        </div>
+    }
+    else if (Inventory == null)
+    {
+        <div class="form-card">
+
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    ⚠
+                </div>
+
+                <h3>
+                    Inventur nicht gefunden
+                </h3>
+
+                <p>
+                    Die gewünschte Inventur konnte nicht gefunden werden.
+                </p>
+
+                <a href="/inventory"
+                   class="btn-primary">
+                    ← Zurück zu Inventuren
+                </a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <!-- =====================================================
+             MESSAGES
+             ===================================================== -->
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <div class="form-error mb-3">
+                @ErrorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+        {
+            <div class="form-success mb-3">
+                @SuccessMessage
+            </div>
+        }
+
+
+        <!-- =====================================================
+             MAIN FORM CARD
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Status</h2>
+
+                    <p>
+                        Aktueller Status der Inventur.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <div class="form-control"
+                             style="display:flex;align-items:center;">
+
+                            @if (Inventory.Status == InventoryStatus.Entwurf)
+                            {
+                                <span class="status-badge status-draft">
+                                    Entwurf
+                                </span>
+                            }
+                            else if (Inventory.Status == InventoryStatus.InBearbeitung)
+                            {
+                                <span class="status-badge status-warning">
+                                    In Bearbeitung
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-active">
+                                    Abgeschlossen
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Erstellt am
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Inventory.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")"
+                               disabled />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Lager
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@(Inventory.Warehouse?.Name ?? "-")"
+                               disabled />
+
+                        <small>
+                            Das Lager kann nach dem Start der Inventur
+                            nicht mehr geändert werden.
+                        </small>
+
+                    </div>
+
+
+                    @if (Inventory.CompletedAt.HasValue)
+                    {
+                        <div class="form-group">
+
+                            <label>
+                                Abgeschlossen am
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Inventory.CompletedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")"
+                                   disabled />
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 INVENTORY DATA
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Inventurdaten</h2>
+
+                    <p>
+                        Bearbeiten Sie die zusätzlichen Informationen
+                        dieser Inventur.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="note">
+                            Notiz
+                        </label>
+
+                        <textarea id="note"
+                                  class="form-control textarea"
+                                  rows="4"
+                                  maxlength="500"
+                                  placeholder="Optionale Notiz..."
+                                  @bind="Note"></textarea>
+
+                        <small>
+                            Maximal 500 Zeichen.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 POSITIONS
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>Inventurpositionen</h2>
+
+                    <p>
+                        Übersicht aller Positionen dieser Inventur.
+                    </p>
+
+                </div>
+
+
+                @if (Inventory.Items == null || Inventory.Items.Count == 0)
+                {
+                    <div class="empty-products">
+
+                        <div class="empty-products-icon">
+                            📦
+                        </div>
+
+                        <h3>
+                            Keine Positionen vorhanden
+                        </h3>
+
+                        <p>
+                            Diese Inventur enthält keine Positionen.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="products-table-wrapper">
+
+                        <table class="products-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Artikel
+                                    </th>
+
+                                    <th>
+                                        SKU
+                                    </th>
+
+                                    <th>
+                                        Lagerplatz
+                                    </th>
+
+                                    <th>
+                                        Systembestand
+                                    </th>
+
+                                    <th>
+                                        Gezählt
+                                    </th>
+
+                                    <th>
+                                        Differenz
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var item in Inventory.Items
+                                    .OrderBy(x => x.WarehouseLocation?.Code)
+                                    .ThenBy(x => x.Product?.Name))
+                                {
+                                    var difference =
+                                        (item.CountedQuantity ?? 0) -
+                                        item.SystemQuantity;
+
+                                    <tr>
+
+                                        <!-- PRODUCT -->
+
+                                        <td>
+
+                                            <div class="product-name">
+
+                                                <div class="product-avatar">
+                                                    @GetInitials(item.Product?.Name)
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+                                                        @(item.Product?.Name ?? "-")
+                                                    </strong>
+
+                                                    <small>
+                                                        SKU: @(item.Product?.SKU ?? "-")
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- SKU -->
+
+                                        <td>
+                                            @(item.Product?.SKU ?? "-")
+                                        </td>
+
+
+                                        <!-- LOCATION -->
+
+                                        <td>
+
+                                            <div class="movement-location">
+
+                                                <strong>
+                                                    @(item.WarehouseLocation?.Code ?? "-")
+                                                </strong>
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    item.WarehouseLocation?.Name))
+                                                {
+                                                    <small>
+                                                        @item.WarehouseLocation.Name
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- SYSTEM -->
+
+                                        <td>
+
+                                            <strong>
+                                                @item.SystemQuantity.ToString("0.###")
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- COUNTED -->
+
+                                        <td>
+
+                                            @if (item.CountedQuantity.HasValue)
+                                            {
+                                                <strong>
+                                                    @item.CountedQuantity.Value.ToString("0.###")
+                                                </strong>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    Noch nicht gezählt
+                                                </span>
+                                            }
+
+                                        </td>
+
+
+                                        <!-- DIFFERENCE -->
+
+                                        <td>
+
+                                            @if (!item.CountedQuantity.HasValue)
+                                            {
+                                                <span class="status-badge">
+                                                    –
+                                                </span>
+                                            }
+                                            else if (difference > 0)
+                                            {
+                                                <span class="status-badge status-active">
+                                                    +@difference.ToString("0.###")
+                                                </span>
+                                            }
+                                            else if (difference < 0)
+                                            {
+                                                <span class="status-badge status-low">
+                                                    @difference.ToString("0.###")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge">
+                                                    0,00
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="form-actions">
+
+                <a href="/inventory/details/@Inventory.Id"
+                   class="btn-secondary">
+                    Abbrechen
+                </a>
+
+                <button type="button"
+                        class="btn-primary"
+                        disabled="@IsSaving"
+                        @onclick="Save">
+
+                    @(IsSaving
+                        ? "Wird gespeichert..."
+                        : "Speichern")
+
+                </button>
+
+            </div>
+
+        </div>
+    }
+</div>
+
+
+@code {
+
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private Inventory? Inventory;
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private string? Note;
+
+    private string? ErrorMessage;
+
+    private string? SuccessMessage;
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadInventory();
+    }
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    private async Task LoadInventory()
+    {
+        IsLoading = true;
+        ErrorMessage = null;
+
+        try
+        {
+            Inventory =
+                await Db.Inventories
+
+                    .Include(x => x.Warehouse)
+
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.Product)
+
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.WarehouseLocation)
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+
+
+            if (Inventory != null)
+            {
+                Note = Inventory.Note;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Die Inventur konnte nicht geladen werden: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // SAVE
+    // =========================================================
+
+    private async Task Save()
+    {
+        ErrorMessage = null;
+        SuccessMessage = null;
+
+
+        if (Inventory == null)
+            return;
+
+
+        if (Inventory.Status == InventoryStatus.Abgeschlossen)
+        {
+            ErrorMessage =
+                "Eine abgeschlossene Inventur kann nicht mehr bearbeitet werden.";
+
+            return;
+        }
+
+
+        if (Note?.Length > 500)
+        {
+            ErrorMessage =
+                "Die Notiz darf maximal 500 Zeichen enthalten.";
+
+            return;
+        }
+
+
+        IsSaving = true;
+
+
+        try
+        {
+            var dbInventory =
+                await Db.Inventories
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Inventory.Id);
+
+
+            if (dbInventory == null)
+            {
+                ErrorMessage =
+                    "Die Inventur wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            if (dbInventory.Status == InventoryStatus.Abgeschlossen)
+            {
+                ErrorMessage =
+                    "Die Inventur wurde bereits abgeschlossen.";
+
+                return;
+            }
+
+
+            dbInventory.Note =
+                string.IsNullOrWhiteSpace(Note)
+                    ? null
+                    : Note.Trim();
+
+
+            dbInventory.Status =
+                InventoryStatus.InBearbeitung;
+
+
+            await Db.SaveChangesAsync();
+
+
+            Inventory.Note =
+                dbInventory.Note;
+
+            Inventory.Status =
+                dbInventory.Status;
+
+
+            SuccessMessage =
+                "Die Inventur wurde erfolgreich gespeichert.";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"Die Inventur konnte nicht gespeichert werden: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+}

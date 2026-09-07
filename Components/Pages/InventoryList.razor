@@ -1,0 +1,643 @@
+﻿@page "/inventory"
+
+@using Microsoft.EntityFrameworkCore
+@using WarehouseManagement.Models
+@using WarehouseManagement.Data
+
+@inject ApplicationDbContext Db
+
+<PageTitle>Inventuren</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Inventuren
+            </h1>
+
+            <p>
+                Übersicht und Verwaltung der Inventuren
+            </p>
+
+        </div>
+
+
+        <a href="/inventory/create"
+           class="btn-primary">
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Neue Inventur
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================================================
+     FILTER
+     ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="search-box">
+
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   class="search-input"
+                   placeholder="Lager, Status oder Notiz suchen..."
+                   @bind="SearchText"
+                   @bind:event="oninput" />
+
+        </div>
+
+
+        <select class="filter-select"
+                @bind="SelectedStatus">
+
+            <option value="">
+                Alle Status
+            </option>
+
+            <option value="Entwurf">
+                Entwurf
+            </option>
+
+            <option value="InBearbeitung">
+                In Bearbeitung
+            </option>
+
+            <option value="Abgeschlossen">
+                Abgeschlossen
+            </option>
+
+        </select>
+
+    </div>
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="stock-summary-grid">
+
+        <!-- GESAMT -->
+        <div class="stock-summary-card">
+
+            <span>
+                Gesamt
+            </span>
+
+            <strong>
+                @FilteredInventories.Count()
+            </strong>
+
+        </div>
+
+
+        <!-- OFFEN -->
+        <div class="stock-summary-card">
+
+            <span>
+                Offen
+            </span>
+
+            <strong class="text-warning">
+                @FilteredInventories.Count(x =>
+                    x.Status != InventoryStatus.Abgeschlossen)
+            </strong>
+
+        </div>
+
+
+        <!-- ABGESCHLOSSEN -->
+        <div class="stock-summary-card">
+
+            <span>
+                Abgeschlossen
+            </span>
+
+            <strong class="text-success">
+                @FilteredInventories.Count(x =>
+                    x.Status == InventoryStatus.Abgeschlossen)
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         INVENTUREN
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <!-- HEADER -->
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Inventuren
+                </strong>
+
+                <span>
+                    @FilteredInventories.Count() Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+
+                <div class="spinner-border text-primary"
+                     role="status">
+                </div>
+
+                <div>
+                    Inventuren werden geladen...
+                </div>
+
+            </div>
+        }
+        else
+        {
+            @if (!FilteredInventories.Any())
+            {
+                <div class="empty-products">
+
+                    <div class="empty-products-icon">
+
+                        <i class="bi bi-clipboard-x"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Keine Inventuren gefunden
+                    </h3>
+
+
+                    @if (!string.IsNullOrWhiteSpace(SearchText) ||
+                         !string.IsNullOrWhiteSpace(SelectedStatus))
+                    {
+                        <p>
+                            Keine Inventur entspricht Ihren Suchkriterien.
+                        </p>
+
+
+                        <button type="button"
+                                class="btn-secondary"
+                                @onclick="ClearFilters">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                            Filter zurücksetzen
+
+                        </button>
+                    }
+                    else
+                    {
+                        <p>
+                            Es wurden noch keine Inventuren erstellt.
+                        </p>
+
+
+                        <a href="/inventory/create"
+                           class="btn-primary">
+
+                            <i class="bi bi-plus-lg me-1"></i>
+
+                            Neue Inventur
+
+                        </a>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="products-table-wrapper">
+
+                    <table class="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Lager
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Positionen
+                                </th>
+
+                                <th>
+                                    Erstellt am
+                                </th>
+
+                                <th>
+                                    Abgeschlossen am
+                                </th>
+
+                                <th class="text-end">
+                                    Aktionen
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var inventory in FilteredInventories)
+                            {
+                                <tr>
+
+                                    <!-- =================================
+                                         LAGER
+                                         ================================= -->
+
+                                    <td>
+
+                                        <div class="product-name">
+
+                                            <div class="product-avatar">
+
+                                                @GetInitials(
+                                                    inventory.Warehouse?.Name)
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong>
+                                                    @(inventory.Warehouse?.Name ?? "-")
+                                                </strong>
+
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    inventory.Note))
+                                                {
+                                                    <small>
+                                                        @inventory.Note
+                                                    </small>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         STATUS
+                                         ================================= -->
+
+                                    <td>
+
+                                        @if (inventory.Status ==
+                                             InventoryStatus.Entwurf)
+                                        {
+                                            <span class="status-badge status-draft">
+
+                                                <i class="bi bi-pencil me-1"></i>
+
+                                                Entwurf
+
+                                            </span>
+                                        }
+                                        else if (inventory.Status ==
+                                                 InventoryStatus.InBearbeitung)
+                                        {
+                                            <span class="status-badge status-warning">
+
+                                                <i class="bi bi-arrow-repeat me-1"></i>
+
+                                                In Bearbeitung
+
+                                            </span>
+                                        }
+                                        else if (inventory.Status ==
+                                                 InventoryStatus.Abgeschlossen)
+                                        {
+                                            <span class="status-badge status-active">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+
+                                                Abgeschlossen
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge">
+
+                                                @inventory.Status
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         POSITIONEN
+                                         ================================= -->
+
+                                    <td>
+
+                                        <strong>
+                                            @(inventory.Items?.Count ?? 0)
+                                        </strong>
+
+                                        <span class="text-muted ms-1">
+                                            Positionen
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         ERSTELLT
+                                         ================================= -->
+
+                                    <td>
+
+                                        <div class="movement-date">
+
+                                            <strong>
+                                                @inventory.CreatedAt
+                                            
+                                            </strong>
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         ABGESCHLOSSEN
+                                         ================================= -->
+
+                                    <td>
+
+                                        @if (inventory.CompletedAt.HasValue)
+                                        {
+                                            <div class="movement-date">
+
+                                                <strong>
+                                                    @inventory.CompletedAt.Value
+                                                </strong>
+
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         AKTIONEN
+                                         ================================= -->
+
+                                    <td>
+
+                                        <div class="product-actions justify-content-end">
+
+                                            <!-- DETAILS -->
+                                            <a href="/inventory/details/@inventory.Id"
+                                               class="action-button"
+                                               title="Details">
+                                                    👁
+                                            </a>
+
+
+                                            <!-- EDIT -->
+                                            @if (inventory.Status !=
+                                                 InventoryStatus.Abgeschlossen)
+                                            {
+                                                <a href="/inventory/edit/@inventory.Id"
+                                                   class="action-button"
+                                                   title="Bearbeiten">
+                                                   ✎
+                                                </a>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<Inventory> Inventories = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchText = string.Empty;
+
+    private string SelectedStatus = string.Empty;
+
+
+    // =========================================================
+    // FILTERED INVENTORIES
+    // =========================================================
+
+    private IEnumerable<Inventory> FilteredInventories =>
+        Inventories
+
+            // SEARCH
+            .Where(x =>
+                string.IsNullOrWhiteSpace(SearchText)
+
+                ||
+
+                (
+                    x.Warehouse?.Name?.Contains(
+                        SearchText,
+                        StringComparison.OrdinalIgnoreCase)
+                    ?? false
+                )
+
+                ||
+
+                (
+                    x.Note?.Contains(
+                        SearchText,
+                        StringComparison.OrdinalIgnoreCase)
+                    ?? false
+                )
+
+                ||
+
+                x.Status.ToString().Contains(
+                    SearchText,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+
+            // STATUS
+            .Where(x =>
+                string.IsNullOrWhiteSpace(SelectedStatus)
+
+                ||
+
+                x.Status.ToString() ==
+                SelectedStatus
+            )
+
+            // NEWEST FIRST
+            .OrderByDescending(x =>
+                x.CreatedAt);
+
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInventories();
+    }
+
+
+    // =========================================================
+    // LOAD INVENTORIES
+    // =========================================================
+
+    private async Task LoadInventories()
+    {
+        IsLoading = true;
+
+        try
+        {
+            Inventories =
+                await Db.Inventories
+
+                    .Include(x =>
+                        x.Warehouse)
+
+                    .Include(x =>
+                        x.Items)
+
+                    .AsNoTracking()
+
+                    .OrderByDescending(x =>
+                        x.CreatedAt)
+
+                    .ToListAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // CLEAR FILTERS
+    // =========================================================
+
+    private void ClearFilters()
+    {
+        SearchText =
+            string.Empty;
+
+        SelectedStatus =
+            string.Empty;
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}
