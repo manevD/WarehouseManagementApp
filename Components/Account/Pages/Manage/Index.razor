@@ -8,84 +8,419 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Profile</PageTitle>
 
-<h3>Profile</h3>
-<StatusMessage />
+<PageTitle>Profil</PageTitle>
 
-<div class="row">
-    <div class="col-xl-6">
-        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <input type="text" value="@username" id="username" class="form-control" placeholder="Choose your username." disabled />
-                <label for="username" class="form-label">Username</label>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" placeholder="Enter your phone number" />
-                <label for="Input.PhoneNumber" class="form-label">Phone number</label>
-                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </EditForm>
+
+<style>
+
+    /* =========================================================
+           PROFILE PAGE
+           ========================================================= */
+
+    .profile-page {
+        max-width: 900px;
+    }
+
+
+    .profile-header {
+        margin-bottom: 22px;
+    }
+
+
+        .profile-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+
+        .profile-header p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+    /* =========================================================
+           PROFILE CARD
+           ========================================================= */
+
+    .profile-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 24px;
+    }
+
+
+    .profile-card-title {
+        margin-bottom: 20px;
+    }
+
+
+        .profile-card-title h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+
+        .profile-card-title span {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+
+    /* =========================================================
+           FORM
+           ========================================================= */
+
+    .profile-form-group {
+        margin-bottom: 18px;
+    }
+
+
+    .profile-form-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+    }
+
+
+    .profile-input {
+        width: 100%;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 0 10px;
+        background: white;
+        font-size: 13px;
+        color: #374151;
+        box-sizing: border-box;
+    }
+
+
+        .profile-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.08);
+        }
+
+
+        .profile-input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+
+    .profile-validation {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #dc2626;
+    }
+
+
+    /* =========================================================
+           BUTTON
+           ========================================================= */
+
+    .profile-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 22px;
+    }
+
+
+    .profile-save-button {
+        min-width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 7px;
+        padding: 0 18px;
+        background: var(--primary);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+
+        .profile-save-button:hover {
+            filter: brightness(0.95);
+        }
+
+
+    /* =========================================================
+           STATUS
+           ========================================================= */
+
+    .profile-status {
+        margin-bottom: 18px;
+    }
+
+
+    /* =========================================================
+           MOBILE
+           ========================================================= */
+
+    @@media (max-width: 650px) {
+
+        .profile-card {
+            padding: 18px;
+        }
+
+        .profile-actions {
+            justify-content: stretch;
+        }
+
+        .profile-save-button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<div class="profile-page">
+
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="profile-header">
+
+        <h1>
+            Profil
+        </h1>
+
+        <p>
+            Verwalten Sie Ihre persönlichen Kontoinformationen.
+        </p>
+
     </div>
+
+
+    <!-- =========================================================
+         STATUS
+         ========================================================= -->
+
+    <div class="profile-status">
+
+        <StatusMessage />
+
+    </div>
+
+
+    <!-- =========================================================
+         PROFILE CARD
+         ========================================================= -->
+
+    <div class="profile-card">
+
+
+        <div class="profile-card-title">
+
+            <h2>
+                Kontoinformationen
+            </h2>
+
+            <span>
+                Ihre grundlegenden Kontodaten
+            </span>
+
+        </div>
+
+
+        <EditForm Model="Input"
+                  FormName="profile"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post">
+
+            <DataAnnotationsValidator />
+
+            <ValidationSummary class="profile-validation"
+                               role="alert" />
+
+
+            <!-- =================================================
+                 USERNAME
+                 ================================================= -->
+
+            <div class="profile-form-group">
+
+                <label for="username"
+                       class="profile-form-label">
+
+                    Benutzername
+
+                </label>
+
+                <input type="text"
+                       value="@username"
+                       id="username"
+                       class="profile-input"
+                       placeholder="Benutzername"
+                       disabled />
+
+            </div>
+
+
+            <!-- =================================================
+                 PHONE
+                 ================================================= -->
+
+            <div class="profile-form-group">
+
+                <label for="Input.PhoneNumber"
+                       class="profile-form-label">
+
+                    Telefonnummer
+
+                </label>
+
+                <InputText @bind-Value="Input.PhoneNumber"
+                           id="Input.PhoneNumber"
+                           class="profile-input"
+                           placeholder="Telefonnummer" />
+
+                <ValidationMessage For="() => Input.PhoneNumber"
+                                   class="profile-validation" />
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="profile-actions">
+
+                <button type="submit"
+                        class="profile-save-button">
+
+                    Speichern
+
+                </button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
 </div>
 
+
 @code {
+
     private ApplicationUser? user;
+
     private string? username;
+
     private string? phoneNumber;
+
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
+
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
+
 
     protected override async Task OnInitializedAsync()
     {
         Input ??= new();
 
-        user = await UserManager.GetUserAsync(HttpContext.User);
+
+        user =
+            await UserManager.GetUserAsync(
+                HttpContext.User);
+
+
         if (user is null)
         {
-            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
+            RedirectManager.RedirectToInvalidUser(
+                UserManager,
+                HttpContext);
+
             return;
         }
 
-        username = await UserManager.GetUserNameAsync(user);
-        phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+
+        username =
+            await UserManager.GetUserNameAsync(
+                user);
+
+
+        phoneNumber =
+            await UserManager.GetPhoneNumberAsync(
+                user);
+
 
         Input.PhoneNumber ??= phoneNumber;
     }
+
 
     private async Task OnValidSubmitAsync()
     {
         if (user is null)
         {
-            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
+            RedirectManager.RedirectToInvalidUser(
+                UserManager,
+                HttpContext);
+
             return;
         }
 
+
         if (Input.PhoneNumber != phoneNumber)
         {
-            var setPhoneResult = await UserManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+            var setPhoneResult =
+                await UserManager.SetPhoneNumberAsync(
+                    user,
+                    Input.PhoneNumber);
+
+
             if (!setPhoneResult.Succeeded)
             {
-                RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set phone number.", HttpContext);
+                RedirectManager.RedirectToCurrentPageWithStatus(
+                    "Fehler: Telefonnummer konnte nicht gespeichert werden.",
+                    HttpContext);
+
                 return;
             }
         }
 
+
         await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+
+
+        RedirectManager.RedirectToCurrentPageWithStatus(
+            "Ihr Profil wurde erfolgreich aktualisiert.",
+            HttpContext);
     }
+
 
     private sealed class InputModel
     {
-        [Phone]
-        [Display(Name = "Phone number")]
+
+        [Phone(
+            ErrorMessage = "Bitte geben Sie eine gültige Telefonnummer ein.")]
+        [Display(
+            Name = "Telefonnummer")]
         public string? PhoneNumber { get; set; }
+
     }
+
 }

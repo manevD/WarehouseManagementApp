@@ -1,9 +1,46 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<style>
+
+    /* =========================================================
+           EINSTELLUNGEN
+           ========================================================= */
+
+    .settings-title {
+        cursor: default;
+    }
+
+    .settings-submenu {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .settings-submenu .nav-item {
+            padding-left: 42px;
+        }
+
+        .settings-submenu .nav-icon {
+            font-size: 10px;
+        }
+
+</style>
+
 
 <div class="app-layout">
 
-    <!-- SIDEBAR -->
+    <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
+
     <aside class="sidebar">
+
+        <!-- =====================================================
+             BRAND
+             ===================================================== -->
 
         <div class="sidebar-brand">
 
@@ -12,14 +49,26 @@
             </div>
 
             <div class="brand-text">
-                <strong>Warehouse</strong>
-                <small>Management</small>
+
+                <strong>
+                    Warehouse
+                </strong>
+
+                <small>
+                    Management
+                </small>
+
             </div>
 
         </div>
 
 
+        <!-- =====================================================
+             NAVIGATION
+             ===================================================== -->
+
         <nav class="sidebar-nav">
+
 
             <!-- =================================================
                  ÜBERSICHT
@@ -29,13 +78,16 @@
                 <span>ÜBERSICHT</span>
             </div>
 
+
             <NavLink href="/"
                      Match="NavLinkMatch.All"
                      class="nav-item">
 
                 <span class="nav-icon">⌂</span>
 
-                <span>Dashboard</span>
+                <span>
+                    Dashboard
+                </span>
 
             </NavLink>
 
@@ -54,7 +106,9 @@
 
                 <span class="nav-icon">▦</span>
 
-                <span>Produkte</span>
+                <span>
+                    Produkte
+                </span>
 
             </NavLink>
 
@@ -64,7 +118,9 @@
 
                 <span class="nav-icon">▤</span>
 
-                <span>Kategorien</span>
+                <span>
+                    Kategorien
+                </span>
 
             </NavLink>
 
@@ -74,7 +130,9 @@
 
                 <span class="nav-icon">▥</span>
 
-                <span>Lager</span>
+                <span>
+                    Lager
+                </span>
 
             </NavLink>
 
@@ -84,7 +142,9 @@
 
                 <span class="nav-icon">⌖</span>
 
-                <span>Lagerplätze</span>
+                <span>
+                    Lagerplätze
+                </span>
 
             </NavLink>
 
@@ -103,7 +163,9 @@
 
                 <span class="nav-icon">▣</span>
 
-                <span>Bestand</span>
+                <span>
+                    Bestand
+                </span>
 
             </NavLink>
 
@@ -113,7 +175,9 @@
 
                 <span class="nav-icon">↓</span>
 
-                <span>Wareneingang</span>
+                <span>
+                    Wareneingang
+                </span>
 
             </NavLink>
 
@@ -123,7 +187,9 @@
 
                 <span class="nav-icon">↑</span>
 
-                <span>Warenausgang</span>
+                <span>
+                    Warenausgang
+                </span>
 
             </NavLink>
 
@@ -133,7 +199,9 @@
 
                 <span class="nav-icon">↔</span>
 
-                <span>Umlagerung</span>
+                <span>
+                    Umlagerung
+                </span>
 
             </NavLink>
 
@@ -143,7 +211,9 @@
 
                 <span class="nav-icon">↕</span>
 
-                <span>Bewegungen</span>
+                <span>
+                    Bewegungen
+                </span>
 
             </NavLink>
 
@@ -162,7 +232,9 @@
 
                 <span class="nav-icon">♙</span>
 
-                <span>Lieferanten</span>
+                <span>
+                    Lieferanten
+                </span>
 
             </NavLink>
 
@@ -172,7 +244,9 @@
 
                 <span class="nav-icon">♙</span>
 
-                <span>Kunden</span>
+                <span>
+                    Kunden
+                </span>
 
             </NavLink>
 
@@ -182,18 +256,24 @@
 
                 <span class="nav-icon">☷</span>
 
-                <span>Bestellungen</span>
+                <span>
+                    Bestellungen
+                </span>
 
             </NavLink>
+
 
             <NavLink href="/purchase-orders"
                      class="nav-item">
 
                 <span class="nav-icon">☷</span>
 
-                <span>Lieferant-Bestellungen</span>
+                <span>
+                    Lieferant-Bestellungen
+                </span>
 
             </NavLink>
+
 
             <!-- =================================================
                  ANALYSE
@@ -209,7 +289,9 @@
 
                 <span class="nav-icon">✓</span>
 
-                <span>Inventur</span>
+                <span>
+                    Inventur
+                </span>
 
             </NavLink>
 
@@ -219,55 +301,137 @@
 
                 <span class="nav-icon">▥</span>
 
-                <span>Berichte</span>
+                <span>
+                    Berichte
+                </span>
 
             </NavLink>
+
+
+            <!-- =================================================
+                 EINSTELLUNGEN
+                 ================================================= -->
+
+            <div class="settings-menu">
+
+                <div class="nav-item settings-title">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
+                    <span>
+                        Einstellungen
+                    </span>
+
+                </div>
+
+
+                <div class="settings-submenu">
+
+
+                    <!-- PROFIL -->
+
+                    <NavLink href="/Account/Manage"
+                             Match="NavLinkMatch.All"
+                             class="nav-item">
+
+                        <span class="nav-icon">
+                            •
+                        </span>
+
+                        <span>
+                            Profil
+                        </span>
+
+                    </NavLink>
+
+
+                    <!-- PASSWORT -->
+
+                    <NavLink href="/Account/Manage/ChangePassword"
+                             class="nav-item">
+
+                        <span class="nav-icon">
+                            •
+                        </span>
+
+                        <span>
+                            Passwort ändern
+                        </span>
+
+                    </NavLink>
+
+
+                    <!-- E-MAIL -->
+
+                    <NavLink href="/Account/Manage/Email"
+                             class="nav-item">
+
+                        <span class="nav-icon">
+                            •
+                        </span>
+
+                        <span>
+                            E-Mail ändern
+                        </span>
+
+                    </NavLink>
+
+
+                    <!-- PERSÖNLICHE DATEN -->
+
+                    <NavLink href="/Account/Manage/PersonalData"
+                             class="nav-item">
+
+                        <span class="nav-icon">
+                            •
+                        </span>
+
+                        <span>
+                            Persönliche Daten
+                        </span>
+
+                    </NavLink>
+
+                </div>
+
+            </div>
 
         </nav>
-
-
-        <!-- =================================================
-             SIDEBAR BOTTOM
-             ================================================= -->
-
-        <div class="sidebar-bottom">
-
-            <NavLink href="/settings"
-                     class="nav-item">
-
-                <span class="nav-icon">⚙</span>
-
-                <span>Einstellungen</span>
-
-            </NavLink>
-
-           
-        </div>
 
     </aside>
 
 
-    <!-- =====================================================
-         MAIN
-         ===================================================== -->
+    <!-- =========================================================
+         MAIN AREA
+         ========================================================= -->
 
     <div class="main-area">
 
 
-        <!-- TOPBAR -->
+        <!-- =====================================================
+             TOPBAR
+             ===================================================== -->
 
         <header class="topbar">
 
+
             <div class="topbar-left">
 
-                <button class="mobile-menu-button">
+                <button class="mobile-menu-button"
+                        type="button">
+
                     ☰
+
                 </button>
 
 
                 <div class="page-search">
 
-                    <span>⌕</span>
+                    <span>
+                        ⌕
+                    </span>
 
                     <input type="text"
                            placeholder="Suchen..." />
@@ -277,12 +441,17 @@
             </div>
 
 
+            <!-- =================================================
+                 TOPBAR RIGHT
+                 ================================================= -->
+
             <div class="topbar-right">
 
 
                 <!-- NOTIFICATIONS -->
 
-                <button class="topbar-button">
+                <button type="button"
+                        class="topbar-button">
 
                     🔔
 
@@ -297,45 +466,56 @@
 
                     🇩🇪
 
-                    <span>DE</span>
+                    <span>
+                        DE
+                    </span>
 
-                    <span>⌄</span>
+                    <span>
+                        ⌄
+                    </span>
 
                 </div>
 
 
                 <!-- USER -->
 
-                <div class="user-menu">
+                <NavLink href="/settings"
+                         class="user-menu">
 
                     <div class="user-avatar">
-                        A
+
+                        @UserInitials
+
                     </div>
+
 
                     <div class="user-info">
 
                         <strong>
-                            Admin
+                            @UserName
                         </strong>
 
                         <small>
-                            Administrator
+                            Benutzerkonto
                         </small>
 
                     </div>
+
 
                     <span class="user-arrow">
                         ⌄
                     </span>
 
-                </div>
+                </NavLink>
 
             </div>
 
         </header>
 
 
-        <!-- PAGE CONTENT -->
+        <!-- =====================================================
+             PAGE CONTENT
+             ===================================================== -->
 
         <main class="content-area">
 
@@ -348,7 +528,9 @@
 </div>
 
 
-<!-- ERROR -->
+<!-- =============================================================
+     ERROR
+     ============================================================= -->
 
 <div id="blazor-error-ui"
      data-nosnippet>
@@ -367,3 +549,71 @@
     </span>
 
 </div>
+
+
+@code {
+
+    // =========================================================
+    // USER
+    // =========================================================
+
+    private string UserName = "Benutzer";
+
+    private string UserInitials = "B";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState =
+            await AuthenticationStateProvider
+                .GetAuthenticationStateAsync();
+
+        var user =
+            authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            UserName =
+                user.Identity.Name
+                ?? "Benutzer";
+
+            UserInitials =
+                GetInitials(UserName);
+        }
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "B";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

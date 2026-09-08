@@ -1,5 +1,6 @@
 ﻿@page "/inventory/edit/{Id:int}"
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Models
 @using WarehouseManagement.Data

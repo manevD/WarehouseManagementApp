@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
@@ -398,7 +399,6 @@
                                         </strong>
 
                                         <small>
-
                                             @GetMovementName(
                                                 movement.Type)
                                             @movement.CreatedAt.Date.ToString("dd.MM.yyyy")

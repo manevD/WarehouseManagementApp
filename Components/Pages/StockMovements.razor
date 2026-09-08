@@ -1,6 +1,7 @@
 ﻿@page "/stock/movements"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
@@ -8,7 +9,126 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 <PageTitle>Bestandsbewegungen</PageTitle>
+<style>
+    .movements-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
+.movements-filter-row {
+    display: grid;
+    grid-template-columns:
+        minmax(300px, 2fr)
+        minmax(160px, 1fr)
+        minmax(160px, 1fr)
+        minmax(180px, 1.1fr)
+        minmax(180px, 1.1fr);
+
+    gap: 10px;
+    width: 100%;
+}
+
+.movements-filter-row > * {
+    min-width: 0;
+}
+
+.movements-filter-row .search-box {
+    width: 100%;
+    max-width: none;
+}
+
+.movements-filter-row .filter-select {
+    width: 100%;
+}
+
+
+.movements-date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    width: 100%;
+}
+
+.movements-date-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.movements-date-group label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.movements-date-group input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 10px;
+    background: white;
+    font-size: 13px;
+    color: #374151;
+}
+
+.movements-reset-button {
+    height: 40px;
+    white-space: nowrap;
+}
+
+
+    @@media (max-width: 1200px) {
+
+    .movements-filter-row {
+        grid-template-columns:
+            minmax(280px, 2fr)
+            minmax(160px, 1fr)
+            minmax(160px, 1fr);
+    }
+
+}
+
+
+    @@media (max-width: 850px) {
+
+    .movements-filter-row {
+        grid-template-columns:
+            minmax(260px, 2fr)
+            minmax(170px, 1fr);
+    }
+
+    .movements-date-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .movements-reset-button {
+        grid-column: 1 / -1;
+        width: fit-content;
+    }
+
+}
+
+
+    @@media (max-width: 600px) {
+
+    .movements-filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .movements-date-row {
+        grid-template-columns: 1fr;
+    }
+
+    .movements-reset-button {
+        grid-column: auto;
+        width: 100%;
+    }
+
+}
+</style>
 <div class="stock-page">
 
     <!-- =========================================================
@@ -40,165 +160,185 @@
     <!-- =========================================================
          FILTER
          ========================================================= -->
+    <!-- =========================================================
+     FILTER
+     ========================================================= -->
 
-    <div class="filter-card">
+    <div class="filter-card movements-filter">
 
-        <!-- SEARCH -->
-            <input type="text" class="form-control"
-                   placeholder="Produkt, SKU, Barcode, Lieferant, Bestellung oder Referenz suchen..."
-                   @bind="SearchTerm"
-                   @bind:event="oninput"
-                   @bind:after="SearchChanged" />
+        <!-- =====================================================
+         FIRST ROW
+         ===================================================== -->
 
-        <!-- TYPE -->
+        <div class="movements-filter-row">
 
-        <select class="filter-select"
-                @bind="SelectedType"
-                @bind:after="FilterChanged">
+            <!-- SEARCH -->
 
-            <option value="0">
-                Alle Bewegungen
-            </option>
+            <div class="search-box">
 
-            <option value="@((int)StockMovementType.Wareneingang)">
-                Wareneingang
-            </option>
+                <span class="search-icon">
+                    ⌕
+                </span>
 
-            <option value="@((int)StockMovementType.Warenausgang)">
-                Warenausgang
-            </option>
+                <input type="text"
+                       placeholder="Produkt, SKU, Barcode, Lieferant, Bestellung oder Referenz suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput"
+                       @bind:after="SearchChanged" />
 
-            <option value="@((int)StockMovementType.Umlagerung)">
-                Umlagerung
-            </option>
-
-            <option value="@((int)StockMovementType.Inventur)">
-                Inventur
-            </option>
-
-            <option value="@((int)StockMovementType.Korrektur)">
-                Korrektur
-            </option>
-
-        </select>
-
-
-        <!-- WAREHOUSE -->
-
-        <select class="filter-select"
-                @bind="SelectedWarehouseId"
-                @bind:after="WarehouseChanged">
-
-            <option value="0">
-                Alle Lager
-            </option>
-
-            @foreach (var warehouse in Warehouses)
-            {
-                <option value="@warehouse.Id">
-
-                    @warehouse.Name
-
-                </option>
-            }
-
-        </select>
-
-
-        <!-- LOCATION -->
-
-        <select class="filter-select"
-                @bind="SelectedLocationId"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Lagerplätze
-            </option>
-
-            @foreach (var location in Locations)
-            {
-                <option value="@location.Id">
-
-                    @location.Code
-
-                    @if (!string.IsNullOrWhiteSpace(location.Name))
-                    {
-                        @($" - {location.Name}")
-                    }
-
-                </option>
-            }
-
-        </select>
-
-
-        <!-- SUPPLIER -->
-
-        <select class="filter-select"
-                @bind="SelectedSupplierId"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Lieferanten
-            </option>
-
-            @foreach (var supplier in Suppliers)
-            {
-                <option value="@supplier.Id">
-
-                    @supplier.CompanyName
-
-                    @if (!string.IsNullOrWhiteSpace(
-                        supplier.SupplierNumber))
-                    {
-                        @($" ({supplier.SupplierNumber})")
-                    }
-
-                </option>
-            }
-
-        </select>
-        <br />
-
-        <!-- FROM DATE -->
-
-        <div style="display:flex; gap:12px; width:100%;">
-
-            <div style="flex:1;">
-                <label class="form-label">Von</label>
-
-                <input type="date"
-                       class="form-control"
-                       style="width:100%;"
-                       @bind="FromDate"
-                       @bind:after="FilterChanged" />
             </div>
 
-            <div style="flex:1;">
-                <label class="form-label">Bis</label>
 
-                <input type="date"
-                       class="form-control"
-                       style="width:100%;"
-                       @bind="ToDate"
-                       @bind:after="FilterChanged" />
-            </div>
+            <!-- TYPE -->
+
+            <select class="filter-select"
+                    @bind="SelectedType"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Bewegungen
+                </option>
+
+                <option value="@((int)StockMovementType.Wareneingang)">
+                    Wareneingang
+                </option>
+
+                <option value="@((int)StockMovementType.Warenausgang)">
+                    Warenausgang
+                </option>
+
+                <option value="@((int)StockMovementType.Umlagerung)">
+                    Umlagerung
+                </option>
+
+                <option value="@((int)StockMovementType.Inventur)">
+                    Inventur
+                </option>
+
+                <option value="@((int)StockMovementType.Korrektur)">
+                    Korrektur
+                </option>
+
+            </select>
+
+
+            <!-- WAREHOUSE -->
+
+            <select class="filter-select"
+                    @bind="SelectedWarehouseId"
+                    @bind:after="WarehouseChanged">
+
+                <option value="0">
+                    Alle Lager
+                </option>
+
+                @foreach (var warehouse in Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- LOCATION -->
+
+            <select class="filter-select"
+                    @bind="SelectedLocationId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lagerplätze
+                </option>
+
+                @foreach (var location in Locations)
+                {
+                    <option value="@location.Id">
+                        @location.Code
+                        @if (!string.IsNullOrWhiteSpace(location.Name))
+                        {
+                            @($" - {location.Name}")
+                        }
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- SUPPLIER -->
+
+            <select class="filter-select"
+                    @bind="SelectedSupplierId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lieferanten
+                </option>
+
+                @foreach (var supplier in Suppliers)
+                {
+                    <option value="@supplier.Id">
+
+                        @supplier.CompanyName
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            supplier.SupplierNumber))
+                        {
+                            @($" ({supplier.SupplierNumber})")
+                        }
+
+                    </option>
+                }
+
+            </select>
 
         </div>
 
-        <!-- RESET -->
 
-        <button type="button"
-                class="btn-secondary"
-                @onclick="ResetFilters">
+        <!-- =====================================================
+         SECOND ROW
+         ===================================================== -->
 
-            Filter zurücksetzen
+        <div class="movements-date-row">
 
-        </button>
+            <div class="movements-date-group">
+
+                <label>
+                    Von
+                </label>
+
+                <input type="date"
+                       @bind="FromDate"
+                       @bind:after="FilterChanged" />
+
+            </div>
+
+
+            <div class="movements-date-group">
+
+                <label>
+                    Bis
+                </label>
+
+                <input type="date"
+                       @bind="ToDate"
+                       @bind:after="FilterChanged" />
+
+            </div>
+
+
+            <button type="button"
+                    class="btn-secondary movements-reset-button"
+                    @onclick="ResetFilters">
+
+                Filter zurücksetzen
+
+            </button>
+
+        </div>
 
     </div>
-
-
     <!-- =========================================================
          ACTIVE FILTER INFO
          ========================================================= -->

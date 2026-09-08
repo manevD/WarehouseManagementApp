@@ -6,37 +6,154 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Personal Data</PageTitle>
 
-<StatusMessage />
-<h3>Personal Data</h3>
+<PageTitle>Persönliche Daten</PageTitle>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
+
+<div class="personal-data-page">
+
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="personal-data-header">
+
+        <h1>
+            Persönliche Daten
+        </h1>
+
         <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+            Verwalten Sie die persönlichen Daten Ihres Kontos.
         </p>
-        <form action="Account/Manage/DownloadPersonalData" method="post">
-            <AntiforgeryToken />
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a href="Account/Manage/DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
+
     </div>
+
+
+    <!-- =========================================================
+         STATUS
+         ========================================================= -->
+
+    <div class="personal-data-status">
+
+        <StatusMessage />
+
+    </div>
+
+
+    <!-- =========================================================
+         CARD
+         ========================================================= -->
+
+    <div class="personal-data-card">
+
+
+        <div class="personal-data-card-title">
+
+            <h2>
+                Ihre persönlichen Daten
+            </h2>
+
+            <span>
+                Sie können Ihre gespeicherten Daten herunterladen oder Ihr Konto löschen.
+            </span>
+
+        </div>
+
+
+        <!-- =====================================================
+             INFORMATION
+             ===================================================== -->
+
+        <div class="personal-data-text">
+
+            Ihr Konto enthält persönliche Daten, die Sie uns zur Verfügung
+            gestellt haben. Auf dieser Seite können Sie diese Daten
+            herunterladen oder Ihr Konto löschen.
+
+        </div>
+
+
+        <!-- =====================================================
+             WARNING
+             ===================================================== -->
+
+        <div class="personal-data-warning">
+
+            <strong>
+                Achtung:
+            </strong>
+
+            Das Löschen dieser Daten entfernt Ihr Konto dauerhaft.
+            Dieser Vorgang kann nicht rückgängig gemacht werden.
+
+        </div>
+
+
+        <!-- =====================================================
+             ACTIONS
+             ===================================================== -->
+
+        <div class="personal-data-actions">
+
+
+            <!-- DOWNLOAD -->
+
+            <form action="Account/Manage/DownloadPersonalData"
+                  method="post">
+
+                <AntiforgeryToken />
+
+                <button class="personal-data-download"
+                        type="submit">
+
+                    Daten herunterladen
+
+                </button>
+
+            </form>
+
+
+            <!-- DELETE -->
+
+            <a href="Account/Manage/DeletePersonalData"
+               class="personal-data-delete">
+
+                Konto löschen
+
+            </a>
+
+
+        </div>
+
+    </div>
+
 </div>
 
+
 @code {
+
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
+
     protected override async Task OnInitializedAsync()
     {
-        var user  = await UserManager.GetUserAsync(HttpContext.User);
+
+        var user =
+            await UserManager.GetUserAsync(
+                HttpContext.User);
+
+
         if (user is null)
         {
-            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
+            RedirectManager.RedirectToInvalidUser(
+                UserManager,
+                HttpContext);
+
+            return;
         }
+
     }
+
 }

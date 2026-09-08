@@ -1,6 +1,7 @@
 ﻿@page "/purchase-orders/details/{Id:int}"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models

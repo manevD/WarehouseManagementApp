@@ -2274,3 +2274,581 @@ textarea.form-control {
         opacity: 0.45;
         cursor: not-allowed;
     }
+
+/* =========================================================
+           CHANGE PASSWORD PAGE
+           ========================================================= */
+
+.password-page {
+    max-width: 900px;
+}
+
+
+.password-header {
+    margin-bottom: 22px;
+}
+
+
+    .password-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+
+    .password-header p {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           CARD
+           ========================================================= */
+
+.password-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 24px;
+}
+
+
+.password-card-title {
+    margin-bottom: 20px;
+}
+
+
+    .password-card-title h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+
+    .password-card-title span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           FORM
+           ========================================================= */
+
+.password-form-group {
+    margin-bottom: 18px;
+}
+
+
+.password-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+
+.password-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 10px;
+    background: white;
+    font-size: 13px;
+    color: #374151;
+    box-sizing: border-box;
+}
+
+
+    .password-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.08);
+    }
+
+
+    .password-input::placeholder {
+        color: #9ca3af;
+    }
+
+
+.password-validation {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+           ERROR / STATUS
+           ========================================================= */
+
+.password-message {
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+           ACTIONS
+           ========================================================= */
+
+.password-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+
+.password-save-button {
+    min-width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 7px;
+    padding: 0 18px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+    .password-save-button:hover {
+        filter: brightness(0.95);
+    }
+
+
+/* =========================================================
+           MOBILE
+           ========================================================= */
+
+@media (max-width: 650px) {
+
+    .password-card {
+        padding: 18px;
+    }
+
+    .password-actions {
+        justify-content: stretch;
+    }
+
+    .password-save-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+           EMAIL PAGE
+           ========================================================= */
+
+.email-page {
+    max-width: 900px;
+}
+
+
+.email-header {
+    margin-bottom: 22px;
+}
+
+
+    .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+
+    .email-header p {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           CARD
+           ========================================================= */
+
+.email-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 24px;
+}
+
+
+.email-card-title {
+    margin-bottom: 20px;
+}
+
+
+    .email-card-title h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+
+    .email-card-title span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           FORM
+           ========================================================= */
+
+.email-form-group {
+    margin-bottom: 18px;
+}
+
+
+.email-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+
+.email-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 10px;
+    background: white;
+    font-size: 13px;
+    color: #374151;
+    box-sizing: border-box;
+}
+
+
+    .email-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.08);
+    }
+
+
+    .email-input:disabled {
+        background: #f3f4f6;
+        color: #6b7280;
+        cursor: not-allowed;
+    }
+
+
+.email-validation {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+           CURRENT EMAIL
+           ========================================================= */
+
+.current-email-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+
+.current-email-field {
+    flex: 1;
+    min-width: 0;
+}
+
+
+.email-confirmed {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: 7px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+
+.email-confirmed-icon {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.verification-button {
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 14px;
+    background: white;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+
+    .verification-button:hover {
+        background: #f9fafb;
+    }
+
+
+/* =========================================================
+           ACTIONS
+           ========================================================= */
+
+.email-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+
+.email-save-button {
+    min-width: 130px;
+    height: 40px;
+    border: none;
+    border-radius: 7px;
+    padding: 0 18px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+    .email-save-button:hover {
+        filter: brightness(0.95);
+    }
+
+
+/* =========================================================
+           MOBILE
+           ========================================================= */
+
+@media (max-width: 650px) {
+
+    .email-card {
+        padding: 18px;
+    }
+
+    .current-email-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .verification-button {
+        width: 100%;
+    }
+
+    .email-confirmed {
+        justify-content: center;
+    }
+
+    .email-actions {
+        justify-content: stretch;
+    }
+
+    .email-save-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+           PERSONAL DATA PAGE
+           ========================================================= */
+
+.personal-data-page {
+    max-width: 900px;
+}
+
+
+.personal-data-header {
+    margin-bottom: 22px;
+}
+
+
+    .personal-data-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+
+    .personal-data-header p {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           CARD
+           ========================================================= */
+
+.personal-data-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 24px;
+}
+
+
+.personal-data-card-title {
+    margin-bottom: 20px;
+}
+
+
+    .personal-data-card-title h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+
+    .personal-data-card-title span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+
+/* =========================================================
+           TEXT
+           ========================================================= */
+
+.personal-data-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 18px;
+}
+
+
+.personal-data-warning {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 7px;
+    padding: 12px 14px;
+    margin-bottom: 22px;
+    color: #92400e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+    .personal-data-warning strong {
+        font-weight: 600;
+    }
+
+
+/* =========================================================
+           ACTIONS
+           ========================================================= */
+
+.personal-data-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+
+.personal-data-download {
+    height: 40px;
+    border: none;
+    border-radius: 7px;
+    padding: 0 18px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+    .personal-data-download:hover {
+        filter: brightness(0.95);
+    }
+
+
+.personal-data-delete {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dc2626;
+    border-radius: 7px;
+    padding: 0 18px;
+    background: white;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+
+    .personal-data-delete:hover {
+        background: #fef2f2;
+    }
+
+
+/* =========================================================
+           STATUS
+           ========================================================= */
+
+.personal-data-status {
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+           MOBILE
+           ========================================================= */
+
+@media (max-width: 650px) {
+
+    .personal-data-card {
+        padding: 18px;
+    }
+
+    .personal-data-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .personal-data-download,
+    .personal-data-delete {
+        width: 100%;
+    }
+}

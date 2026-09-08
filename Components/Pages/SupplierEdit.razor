@@ -1,6 +1,7 @@
 ﻿@page "/suppliers/edit/{Id:int}"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data

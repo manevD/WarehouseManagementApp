@@ -11,78 +11,532 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
-<div class="row">
-    <div class="col-lg-6">
-        <section>
+<PageTitle>Login</PageTitle>
+
+
+<style>
+
+    /* =========================================================
+           LOGIN PAGE
+           ========================================================= */
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f6f8;
+        padding: 30px;
+    }
+
+
+    .login-container {
+        width: 100%;
+        max-width: 430px;
+    }
+
+
+    /* =========================================================
+           BRAND
+           ========================================================= */
+
+    .login-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+
+    .login-brand-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+
+    .login-brand-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+
+    .login-brand-subtitle {
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 3px;
+    }
+
+
+    /* =========================================================
+           CARD
+           ========================================================= */
+
+    .login-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+
+    .login-header {
+        margin-bottom: 24px;
+    }
+
+
+        .login-header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+
+        .login-header p {
+            margin: 7px 0 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+    /* =========================================================
+           FORM
+           ========================================================= */
+
+    .login-form-group {
+        margin-bottom: 17px;
+    }
+
+
+    .login-form-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+    }
+
+
+    .login-input {
+        width: 100%;
+        height: 42px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 0 12px;
+        background: white;
+        font-size: 13px;
+        color: #374151;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+
+        .login-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.08);
+        }
+
+
+        .login-input::placeholder {
+            color: #9ca3af;
+        }
+
+
+    .login-validation {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #dc2626;
+    }
+
+
+    /* =========================================================
+           REMEMBER ME
+           ========================================================= */
+
+    .login-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        color: #4b5563;
+        cursor: pointer;
+    }
+
+
+        .remember-me input {
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+
+    /* =========================================================
+           BUTTON
+           ========================================================= */
+
+    .login-button {
+        width: 100%;
+        height: 42px;
+        border: none;
+        border-radius: 7px;
+        background: var(--primary);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease;
+    }
+
+
+        .login-button:hover {
+            filter: brightness(0.95);
+        }
+
+
+    /* =========================================================
+           ERROR
+           ========================================================= */
+
+    .login-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        color: #b91c1c;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+           LINKS
+           ========================================================= */
+
+    .login-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+
+        .login-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+
+            .login-links a:hover {
+                text-decoration: underline;
+            }
+
+
+    /* =========================================================
+           PASSKEY / EXTERNAL LOGIN
+           ========================================================= */
+
+    .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 22px 0;
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+
+        .login-divider::before,
+        .login-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+
+    .passkey-button {
+        width: 100%;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: white;
+        color: #374151;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+
+        .passkey-button:hover {
+            background: #f9fafb;
+        }
+
+
+    .external-login {
+        margin-top: 18px;
+    }
+
+
+    .external-login-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+           MOBILE
+           ========================================================= */
+
+    @@media (max-width: 500px) {
+
+        .login-page {
+            padding: 18px;
+        }
+
+        .login-card {
+            padding: 24px 20px;
+        }
+    }
+
+</style>
+
+
+<div class="login-page">
+
+    <div class="login-container">
+
+
+        <!-- =====================================================
+             BRAND
+             ===================================================== -->
+
+        <div class="login-brand">
+
+            <div class="login-brand-icon">
+                W
+            </div>
+
+            <div class="login-brand-name">
+                Warehouse Management
+            </div>
+
+            <div class="login-brand-subtitle">
+                Lagerverwaltung
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             LOGIN CARD
+             ===================================================== -->
+
+        <div class="login-card">
+
+
+            <div class="login-header">
+
+                <h1>
+                    Willkommen zurück
+                </h1>
+
+                <p>
+                    Melden Sie sich an, um fortzufahren.
+                </p>
+
+            </div>
+
+
             <StatusMessage Message="@errorMessage" />
-            <EditForm EditContext="editContext" method="post" OnSubmit="LoginUser" FormName="login">
+
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="login-error">
+                    @errorMessage
+                </div>
+            }
+
+
+            <EditForm EditContext="editContext"
+                      method="post"
+                      OnSubmit="LoginUser"
+                      FormName="login">
+
                 <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username webauthn" aria-required="true" placeholder="name@example.com" />
-                    <label for="Input.Email" class="form-label">Email</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="Input.Password" class="form-label">Password</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
-                </div>
-                <div class="checkbox mb-3">
-                    <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
+
+                <ValidationSummary class="login-validation"
+                                   role="alert" />
+
+
+                <!-- =================================================
+                     EMAIL
+                     ================================================= -->
+
+                <div class="login-form-group">
+
+                    <label for="Input.Email"
+                           class="login-form-label">
+
+                        E-Mail
+
                     </label>
+
+                    <InputText @bind-Value="Input.Email"
+                               id="Input.Email"
+                               class="login-input"
+                               autocomplete="username webauthn"
+                               aria-required="true"
+                               placeholder="E-Mail-Adresse" />
+
+                    <ValidationMessage For="() => Input.Email"
+                                       class="login-validation" />
+
                 </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+
+
+                <!-- =================================================
+                     PASSWORD
+                     ================================================= -->
+
+                <div class="login-form-group">
+
+                    <label for="Input.Password"
+                           class="login-form-label">
+
+                        Passwort
+
+                    </label>
+
+                    <InputText type="password"
+                               @bind-Value="Input.Password"
+                               id="Input.Password"
+                               class="login-input"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="Passwort" />
+
+                    <ValidationMessage For="() => Input.Password"
+                                       class="login-validation" />
+
                 </div>
-                <hr />
-                <div class="d-flex flex-column">
-                    <span class="text-secondary mx-auto mt-2">OR</span>
-                    <PasskeySubmit Operation="PasskeyOperation.Request" Name="Input.Passkey" EmailName="Input.Email" class="btn btn-link mx-auto">Log in with a passkey</PasskeySubmit>
+
+
+                <!-- =================================================
+                     REMEMBER ME
+                     ================================================= -->
+
+                <div class="login-options">
+
+                    <label class="remember-me">
+
+                        <InputCheckbox @bind-Value="Input.RememberMe" />
+
+                        <span>
+                            Angemeldet bleiben
+                        </span>
+
+                    </label>
+
                 </div>
-                <hr />
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
+
+
+                <!-- =================================================
+                     LOGIN BUTTON
+                     ================================================= -->
+
+                <button type="submit"
+                        class="login-button">
+
+                    Anmelden
+
+                </button>
+
+
+                <!-- =================================================
+                     PASSKEY
+                     ================================================= -->
+
+                <div class="login-divider">
+                    ODER
                 </div>
+
+
+                <!-- =================================================
+                     LINKS
+                     ================================================= -->
+
+                <div class="login-links">
+
+                    <a href="Account/ForgotPassword">
+                        Passwort vergessen?
+                    </a>
+
+                </div>
+
             </EditForm>
-        </section>
+
+
+            <!-- =====================================================
+                 EXTERNAL LOGIN
+                 ===================================================== -->
+
+            <div class="external-login">
+
+                <ExternalLoginPicker />
+
+            </div>
+
+        </div>
+
     </div>
-    <div class="col-lg-4 col-lg-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
+
 </div>
 
+
 @code {
+
     private string? errorMessage;
+
     private EditContext editContext = default!;
+
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
+
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
 
+
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,75 +544,116 @@
 
         editContext = new EditContext(Input);
 
+
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            // Clear the existing external cookie
+            // to ensure a clean login process.
+
+            await HttpContext.SignOutAsync(
+                IdentityConstants.ExternalScheme);
         }
     }
 
+
     public async Task LoginUser()
     {
+
         if (!string.IsNullOrEmpty(Input.Passkey?.Error))
         {
-            errorMessage = $"Error: {Input.Passkey.Error}";
+            errorMessage =
+                $"Fehler: {Input.Passkey.Error}";
+
             return;
         }
 
+
         SignInResult result;
+
+
         if (!string.IsNullOrEmpty(Input.Passkey?.CredentialJson))
         {
-            // When performing passkey sign-in, don't perform form validation.
-            result = await SignInManager.PasskeySignInAsync(Input.Passkey.CredentialJson);
+            // Passkey login does not use normal form validation.
+
+            result =
+                await SignInManager.PasskeySignInAsync(
+                    Input.Passkey.CredentialJson);
         }
         else
         {
-            // If doing a password sign-in, validate the form.
+            // Password login.
+
             if (!editContext.Validate())
             {
                 return;
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+            result =
+                await SignInManager.PasswordSignInAsync(
+                    Input.Email,
+                    Input.Password,
+                    Input.RememberMe,
+                    lockoutOnFailure: false);
         }
+
 
         if (result.Succeeded)
         {
-            Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            Logger.LogInformation(
+                "User logged in.");
+
+            RedirectManager.RedirectTo(
+                ReturnUrl);
         }
         else if (result.RequiresTwoFactor)
         {
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new()
+                {
+                    ["returnUrl"] = ReturnUrl,
+                    ["rememberMe"] = Input.RememberMe
+                });
         }
         else if (result.IsLockedOut)
         {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
+            Logger.LogWarning(
+                "User account locked out.");
+
+            RedirectManager.RedirectTo(
+                "Account/Lockout");
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            errorMessage =
+                "Fehler: E-Mail oder Passwort ist falsch.";
         }
     }
 
+
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
+
+        [Required(
+            ErrorMessage = "E-Mail ist erforderlich.")]
+        [EmailAddress(
+            ErrorMessage = "Bitte geben Sie eine gültige E-Mail-Adresse ein.")]
         public string Email { get; set; } = "";
 
-        [Required]
+
+        [Required(
+            ErrorMessage = "Passwort ist erforderlich.")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
-        [Display(Name = "Remember me?")]
+
+        [Display(Name = "Angemeldet bleiben")]
         public bool RememberMe { get; set; }
 
+
         public PasskeyInputModel? Passkey { get; set; }
+
     }
+
 }

@@ -1,5 +1,6 @@
 ﻿@page "/stock/outgoing"
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data

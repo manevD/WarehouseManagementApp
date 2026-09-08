@@ -1,6 +1,7 @@
 ﻿@page "/products"
 @rendermode InteractiveServer
-
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
@@ -28,17 +29,18 @@
 
     <!-- FILTER BAR -->
     <div class="filter-card">
+        <div class="search-box">
 
+            <span class="search-icon">⌕</span>
             <input type="text"
                    placeholder="Produkt suchen..."
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
+        </div>
 
-
-        <select
-            class="filter-select"
-            @bind="SelectedCategoryId">
+        <select class="filter-select"
+                @bind="SelectedCategoryId">
 
             <option value="0">Alle Kategorien</option>
 
@@ -51,9 +53,8 @@
 
         </select>
 
-        <select
-            class="filter-select"
-            @bind="SelectedStatus">
+        <select class="filter-select"
+                @bind="SelectedStatus">
 
             <option value="all">Alle Status</option>
             <option value="active">Aktiv</option>
@@ -100,9 +101,8 @@
                     Es wurden noch keine Produkte angelegt.
                 </p>
 
-                <a
-                    href="/products/create"
-                    class="btn-primary">
+                <a href="/products/create"
+                   class="btn-primary">
 
                     + Neuer Artikel
 
@@ -263,10 +263,9 @@
 
                                     <div class="product-actions">
 
-                                        <a
-                                            href="/products/edit/@product.Id"
-                                            class="action-button"
-                                            title="Bearbeiten">
+                                        <a href="/products/edit/@product.Id"
+                                           class="action-button"
+                                           title="Bearbeiten">
 
                                             ✎
 
