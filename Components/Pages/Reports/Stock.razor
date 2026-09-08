@@ -19,18 +19,24 @@
     <div class="page-header">
 
         <div>
-            <h1>Bestandsbericht</h1>
+
+            <h1>
+                Bestandsbericht
+            </h1>
 
             <p>
                 Aktueller Lagerbestand nach Produkt und Lagerplatz.
             </p>
+
         </div>
 
         <div class="page-header-actions">
 
             <a href="/reports"
                class="btn-secondary">
+
                 ← Berichte
+
             </a>
 
         </div>
@@ -38,10 +44,15 @@
     </div>
 
 
+    <!-- =========================================================
+         LOADING
+         ========================================================= -->
     @if (IsLoading)
     {
         <div class="loading-state">
+
             Bestand wird geladen...
+
         </div>
     }
     else
@@ -53,95 +64,109 @@
 
         <div class="filter-card">
 
-            <div class="search-box">
+            <div class="filter-main-row">
 
-                <span class="search-icon">
-                    ⌕
-                </span>
+                <!-- SEARCH -->
 
-                <input type="text"
-                       placeholder="Produkt, SKU oder Barcode suchen..."
-                       @bind="SearchTerm"
-                       @bind:event="oninput"
-                       @bind:after="SearchChanged" />
+                <div class="search-box">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input type="text"
+                           placeholder="Produkt, SKU oder Barcode suchen..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput"
+                           @bind:after="SearchChanged" />
+
+                </div>
+
+
+                <!-- WAREHOUSE -->
+
+                <select class="filter-select"
+                        @bind="SelectedWarehouseId"
+                        @bind:after="FilterChanged">
+
+                    <option value="0">
+                        Alle Lager
+                    </option>
+
+                    @foreach (var warehouse in Warehouses)
+                    {
+                        <option value="@warehouse.Id">
+                            @warehouse.Name
+                        </option>
+                    }
+
+                </select>
+
+
+                <!-- LOCATION -->
+
+                <select class="filter-select"
+                        @bind="SelectedLocationId"
+                        @bind:after="FilterChanged">
+
+                    <option value="0">
+                        Alle Lagerplätze
+                    </option>
+
+                    @foreach (var location in FilteredLocations)
+                    {
+                        <option value="@location.Id">
+
+                            @location.Code
+
+                            @if (!string.IsNullOrWhiteSpace(location.Name))
+                            {
+                                @($" - {location.Name}")
+                            }
+
+                        </option>
+                    }
+
+                </select>
+
+
+                <!-- STATUS -->
+
+                <select class="filter-select"
+                        @bind="SelectedStatus"
+                        @bind:after="FilterChanged">
+
+                    <option value="all">
+                        Alle Bestände
+                    </option>
+
+                    <option value="ok">
+                        Bestand OK
+                    </option>
+
+                    <option value="low">
+                        Niedrigbestand
+                    </option>
+
+                    <option value="empty">
+                        Kein Bestand
+                    </option>
+
+                </select>
+
+
+                @if (HasActiveFilters)
+                {
+                    <button type="button"
+                            class="btn-secondary filter-reset"
+                            @onclick="ResetFilters">
+
+                        Filter zurücksetzen
+
+                    </button>
+                }
 
             </div>
-
-
-            <select class="filter-select"
-                    @bind="SelectedWarehouseId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    Alle Lager
-                </option>
-
-                @foreach (var warehouse in Warehouses)
-                {
-                    <option value="@warehouse.Id">
-                        @warehouse.Name
-                    </option>
-                }
-
-            </select>
-
-
-            <select class="filter-select"
-                    @bind="SelectedLocationId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    Alle Lagerplätze
-                </option>
-
-                @foreach (var location in FilteredLocations)
-                {
-                    <option value="@location.Id">
-                        @location.Code
-
-                        @if (!string.IsNullOrWhiteSpace(location.Name))
-                        {
-                            @($" - {location.Name}")
-                        }
-                    </option>
-                }
-
-            </select>
-
-
-            <select class="filter-select"
-                    @bind="SelectedStatus"
-                    @bind:after="FilterChanged">
-
-                <option value="all">
-                    Alle Bestände
-                </option>
-
-                <option value="ok">
-                    Bestand OK
-                </option>
-
-                <option value="low">
-                    Niedrigbestand
-                </option>
-
-                <option value="empty">
-                    Kein Bestand
-                </option>
-
-            </select>
-
-
-            @if (HasActiveFilters)
-            {
-                <button type="button"
-                        class="btn-secondary filter-reset"
-                        @onclick="ResetFilters">
-
-                    Filter zurücksetzen
-
-                </button>
-            }
 
         </div>
 
@@ -246,6 +271,7 @@
             }
             else
             {
+
                 <div class="products-table-wrapper">
 
                     <table class="products-table">
@@ -293,7 +319,7 @@
 
                         <tbody>
 
-                            @foreach (var stock in FilteredStocks)
+                            @foreach (var stock in PagedStocks)
                             {
                                 <tr>
 
@@ -304,7 +330,10 @@
                                         <div class="product-name">
 
                                             <div class="product-avatar">
-                                                @GetInitials(stock.ProductName)
+
+                                                @GetInitials(
+                                                    stock.ProductName)
+
                                             </div>
 
                                             <div>
@@ -313,7 +342,8 @@
                                                     @stock.ProductName
                                                 </strong>
 
-                                                @if (!string.IsNullOrWhiteSpace(stock.Barcode))
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    stock.Barcode))
                                                 {
                                                     <small>
                                                         @stock.Barcode
@@ -351,7 +381,8 @@
                                                 @stock.LocationCode
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(stock.LocationName))
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                stock.LocationName))
                                             {
                                                 <small>
                                                     @stock.LocationName
@@ -381,7 +412,9 @@
                                         @if (stock.ReservedQuantity > 0)
                                         {
                                             <span class="stock-reserved">
+
                                                 @stock.ReservedQuantity.ToString("N2")
+
                                             </span>
                                         }
                                         else
@@ -415,7 +448,8 @@
                                                 Kein Bestand
                                             </span>
                                         }
-                                        else if (stock.Quantity < stock.MinimumStock)
+                                        else if (stock.Quantity <
+                                                 stock.MinimumStock)
                                         {
                                             <span class="status-badge status-warning">
                                                 Niedrig
@@ -438,6 +472,78 @@
                     </table>
 
                 </div>
+
+
+                <!-- =================================================
+                     PAGINATION
+                     ================================================= -->
+                @if (TotalPages > 1)
+                {
+                    <div class="pagination-container">
+
+                        <div class="pagination-info">
+
+                            Zeige
+
+                            <strong>
+                                @PaginationStart
+                            </strong>
+
+                            -
+
+                            <strong>
+                                @PaginationEnd
+                            </strong>
+
+                            von
+
+                            <strong>
+                                @FilteredStocks.Count
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pagination-buttons">
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    disabled="@(CurrentPage == 1)"
+                                    @onclick="PreviousPage">
+
+                                &lt;
+
+                            </button>
+
+
+                            @for (int page = 1; page <= TotalPages; page++)
+                            {
+                                var pageNumber = page;
+
+                                <button type="button"
+                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        @onclick="() => GoToPage(pageNumber)">
+
+                                    @pageNumber
+
+                                </button>
+                            }
+
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    disabled="@(CurrentPage == TotalPages)"
+                                    @onclick="NextPage">
+
+                                &gt;
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
             }
 
         </div>
@@ -445,8 +551,6 @@
     }
 
 </div>
-
-
 
 
 @code {
@@ -466,13 +570,112 @@
     // FILTER
     // =========================================================
 
-    private string SearchTerm = string.Empty;
+    private string _searchTerm = string.Empty;
 
-    private int SelectedWarehouseId;
+    private string SearchTerm
+    {
+        get => _searchTerm;
 
-    private int SelectedLocationId;
+        set
+        {
+            if (_searchTerm == value)
+                return;
 
-    private string SelectedStatus = "all";
+            _searchTerm = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedWarehouseId;
+
+    private int SelectedWarehouseId
+    {
+        get => _selectedWarehouseId;
+
+        set
+        {
+            if (_selectedWarehouseId == value)
+                return;
+
+            _selectedWarehouseId = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedLocationId;
+
+    private int SelectedLocationId
+    {
+        get => _selectedLocationId;
+
+        set
+        {
+            if (_selectedLocationId == value)
+                return;
+
+            _selectedLocationId = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    private string _selectedStatus = "all";
+
+    private string SelectedStatus
+    {
+        get => _selectedStatus;
+
+        set
+        {
+            if (_selectedStatus == value)
+                return;
+
+            _selectedStatus = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private List<StockRow> PagedStocks =>
+        FilteredStocks
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredStocks.Count /
+                (double)PageSize));
+
+
+    private int PaginationStart =>
+        FilteredStocks.Count == 0
+            ? 0
+            : ((CurrentPage - 1) * PageSize) + 1;
+
+
+    private int PaginationEnd =>
+        Math.Min(
+            CurrentPage * PageSize,
+            FilteredStocks.Count);
 
 
     // =========================================================
@@ -499,6 +702,7 @@
 
     private List<StockRow> FilteredStocks =>
         Stocks
+
             .Where(x =>
                 SelectedWarehouseId == 0
                 ||
@@ -530,7 +734,9 @@
 
             .Where(x =>
                 SelectedStatus == "all"
+
                 ||
+
                 (
                     SelectedStatus == "ok"
                     &&
@@ -538,7 +744,9 @@
                     &&
                     x.Quantity > 0
                 )
+
                 ||
+
                 (
                     SelectedStatus == "low"
                     &&
@@ -546,7 +754,9 @@
                     &&
                     x.Quantity < x.MinimumStock
                 )
+
                 ||
+
                 (
                     SelectedStatus == "empty"
                     &&
@@ -583,6 +793,10 @@
             x.Quantity > 0 &&
             x.Quantity < x.MinimumStock);
 
+
+    // =========================================================
+    // ACTIVE FILTERS
+    // =========================================================
 
     private bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm)
@@ -649,14 +863,21 @@
             Stocks =
                 await db.Stocks
                     .AsNoTracking()
-                    .Include(x => x.Product)
-                    .Include(x => x.WarehouseLocation)
-                        .ThenInclude(x => x.Warehouse)
+
+                    .Include(x =>
+                        x.Product)
+
+                    .Include(x =>
+                        x.WarehouseLocation)
+                        .ThenInclude(x =>
+                            x.Warehouse)
+
                     .Select(x => new StockRow
                     {
                         Id = x.Id,
 
-                        ProductId = x.ProductId,
+                        ProductId =
+                            x.ProductId,
 
                         WarehouseLocationId =
                             x.WarehouseLocationId,
@@ -711,6 +932,7 @@
                         AvailableQuantity =
                             x.AvailableQuantity
                     })
+
                     .ToListAsync();
         }
         finally
@@ -726,6 +948,8 @@
 
     private Task SearchChanged()
     {
+        CurrentPage = 1;
+
         return Task.CompletedTask;
     }
 
@@ -736,6 +960,8 @@
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         if (SelectedWarehouseId > 0 &&
             SelectedLocationId > 0)
         {
@@ -768,7 +994,43 @@
 
         SelectedStatus = "all";
 
+        CurrentPage = 1;
+
         await InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
     }
 
 
@@ -781,12 +1043,10 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
-
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
-
 
         if (words.Length == 1)
         {
@@ -798,7 +1058,6 @@
                         words[0].Length))
                 .ToUpper();
         }
-
 
         return
             $"{words[0][0]}{words[1][0]}"
@@ -847,4 +1106,5 @@
 
         public decimal MinimumStock { get; set; }
     }
+
 }

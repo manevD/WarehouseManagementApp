@@ -1,4 +1,4 @@
-﻿@page "/reports/low-stock"
+﻿@page "/reports/value"
 @rendermode InteractiveServer
 
 @using Microsoft.EntityFrameworkCore
@@ -7,25 +7,10 @@
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<PageTitle>Niedrigbestand</PageTitle>
-<style>
-    .stock-page .filter-main-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-    }
+<PageTitle>Lagerwert</PageTitle>
 
-        .stock-page .filter-main-row .search-box {
-            flex: 1;
-            max-width: 450px;
-        }
-
-        .stock-page .filter-main-row .filter-select {
-            flex: 0 0 auto;
-        }
-</style>
 <div class="stock-page">
+
     <!-- =========================================================
          HEADER
          ========================================================= -->
@@ -33,10 +18,10 @@
     <div class="page-header">
 
         <div>
-            <h1>Niedrigbestand</h1>
+            <h1>Lagerwert</h1>
 
             <p>
-                Produkte mit niedrigem oder kritischem Lagerbestand
+                Gesamtwert des aktuellen Lagerbestands
             </p>
         </div>
 
@@ -46,7 +31,6 @@
                class="btn-secondary">
 
                 <i class="bi bi-arrow-left me-1"></i>
-
                 Berichte
 
             </a>
@@ -59,6 +43,7 @@
     <!-- =========================================================
          FILTER
          ========================================================= -->
+
     <div class="filter-card">
 
         <div class="filter-main-row">
@@ -111,45 +96,47 @@
         </div>
 
     </div>
+
+
     <!-- =========================================================
          SUMMARY
          ========================================================= -->
 
     <div class="stock-summary-grid">
 
-        <!-- NIEDRIGBESTAND -->
+        <!-- LAGERWERT -->
 
         <div class="stock-summary-card">
 
             <span>
-                Niedrigbestand
+                Lagerwert
             </span>
 
             <strong>
-                @FilteredStocks.Count
+                @(TotalPurchaseValue.ToString("N2")) €
             </strong>
 
             <small>
-                Betroffene Positionen
+                Zum Einkaufspreis
             </small>
 
         </div>
 
 
-        <!-- KRITISCH -->
+        <!-- VERKAUFSWERT -->
 
         <div class="stock-summary-card">
 
             <span>
-                Kritisch
+                Verkaufswert
             </span>
 
-            <strong class="text-danger">
-                @CriticalCount
+            <strong>
+                @(TotalSaleValue.ToString("N2")) €
             </strong>
 
             <small>
-                Kein verfügbarer Bestand
+                Zum Verkaufspreis
             </small>
 
         </div>
@@ -168,45 +155,26 @@
             </strong>
 
             <small>
-                Aktueller Bestand
+                Aktuelle Menge
             </small>
 
         </div>
 
 
-        <!-- VERFÜGBAR -->
+        <!-- POSITIONEN -->
 
         <div class="stock-summary-card">
 
             <span>
-                Verfügbar
+                Positionen
             </span>
 
             <strong>
-                @(TotalAvailable.ToString("N2"))
+                @FilteredStocks.Count
             </strong>
 
             <small>
-                Nach Reservierungen
-            </small>
-
-        </div>
-
-
-        <!-- FEHLMENGE -->
-
-        <div class="stock-summary-card">
-
-            <span>
-                Fehlmenge
-            </span>
-
-            <strong class="text-danger">
-                @(TotalShortage.ToString("N2"))
-            </strong>
-
-            <small>
-                Bis zum Mindestbestand
+                Lagerpositionen
             </small>
 
         </div>
@@ -225,7 +193,7 @@
             <div>
 
                 <strong>
-                    Niedrigbestand
+                    Lagerwert
                 </strong>
 
                 <span>
@@ -240,9 +208,7 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-
-                Niedrigbestände werden geladen...
-
+                Lagerwerte werden geladen...
             </div>
         }
         else if (PagedStocks.Count == 0)
@@ -250,29 +216,22 @@
             <div class="empty-products">
 
                 <div class="empty-products-icon">
-
-                    <i class="bi bi-check-circle"></i>
-
+                    <i class="bi bi-box-seam"></i>
                 </div>
 
                 <h3>
-                    Keine Niedrigbestände
+                    Keine Lagerbestände
                 </h3>
 
                 <p>
-                    Für die gewählten Filter wurden keine Produkte
-                    mit niedrigem Lagerbestand gefunden.
+                    Für die gewählten Filter wurden keine
+                    Lagerbestände gefunden.
                 </p>
 
             </div>
         }
         else
         {
-
-            <!-- =====================================================
-                 TABLE
-                 ===================================================== -->
-
             <div class="products-table-wrapper">
 
                 <table class="products-table">
@@ -302,23 +261,19 @@
                             </th>
 
                             <th>
-                                Reserviert
+                                Einkaufspreis
                             </th>
 
                             <th>
-                                Verfügbar
+                                Lagerwert
                             </th>
 
                             <th>
-                                Mindestbestand
+                                Verkaufspreis
                             </th>
 
                             <th>
-                                Fehlmenge
-                            </th>
-
-                            <th>
-                                Status
+                                Verkaufswert
                             </th>
 
                         </tr>
@@ -333,11 +288,11 @@
                             var product = stock.Product;
                             var location = stock.WarehouseLocation;
 
-                            var shortage = Math.Max(
-                                0,
-                                product!.MinimumStock -
-                                stock.AvailableQuantity);
+                            var purchaseValue =
+                                stock.Quantity * product!.PurchasePrice;
 
+                            var saleValue =
+                                stock.Quantity * product.SalePrice;
 
                             <tr>
 
@@ -348,10 +303,7 @@
                                     <div class="product-name">
 
                                         <div class="product-avatar">
-
-                                            @GetInitials(
-                                                product.Name)
-
+                                            @GetInitials(product.Name)
                                         </div>
 
                                         <div>
@@ -360,8 +312,7 @@
                                                 @product.Name
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(
-                                                product.Barcode))
+                                            @if (!string.IsNullOrWhiteSpace(product.Barcode))
                                             {
                                                 <small>
                                                     @product.Barcode
@@ -378,9 +329,7 @@
                                 <!-- SKU -->
 
                                 <td>
-
                                     @product.SKU
-
                                 </td>
 
 
@@ -414,8 +363,7 @@
                                                 @location.Code
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(
-                                                location.Name))
+                                            @if (!string.IsNullOrWhiteSpace(location.Name))
                                             {
                                                 <small>
                                                     @location.Name
@@ -445,71 +393,38 @@
                                 </td>
 
 
-                                <!-- RESERVED -->
+                                <!-- PURCHASE PRICE -->
 
                                 <td>
-
-                                    @(stock.ReservedQuantity.ToString("N2"))
-
+                                    @(product.PurchasePrice.ToString("N2")) €
                                 </td>
 
 
-                                <!-- AVAILABLE -->
+                                <!-- PURCHASE VALUE -->
 
                                 <td>
 
                                     <strong>
-                                        @(stock.AvailableQuantity.ToString("N2"))
+                                        @(purchaseValue.ToString("N2")) €
                                     </strong>
 
                                 </td>
 
 
-                                <!-- MINIMUM STOCK -->
+                                <!-- SALE PRICE -->
 
                                 <td>
-
-                                    @(product.MinimumStock.ToString("N2"))
-
+                                    @(product.SalePrice.ToString("N2")) €
                                 </td>
 
 
-                                <!-- SHORTAGE -->
+                                <!-- SALE VALUE -->
 
                                 <td>
 
-                                    @if (shortage > 0)
-                                    {
-                                        <strong class="text-danger">
-                                            @(shortage.ToString("N2"))
-                                        </strong>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">
-                                            0,00
-                                        </span>
-                                    }
-
-                                </td>
-
-
-                                <!-- STATUS -->
-
-                                <td>
-
-                                    @if (stock.AvailableQuantity <= 0)
-                                    {
-                                        <span class="status-badge status-inactive">
-                                            Kritisch
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="status-badge status-warning">
-                                            Niedrig
-                                        </span>
-                                    }
+                                    <strong>
+                                        @(saleValue.ToString("N2")) €
+                                    </strong>
 
                                 </td>
 
@@ -526,6 +441,7 @@
             <!-- =====================================================
                  PAGINATION
                  ===================================================== -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination-container">
@@ -583,14 +499,22 @@
                                 class="btn-secondary"
                                 disabled="@(CurrentPage == TotalPages)"
                                 @onclick="NextPage">
+
                             &gt;
+
                         </button>
+
                     </div>
+
                 </div>
             }
+
         }
+
     </div>
+
 </div>
+
 
 @code {
 
@@ -621,7 +545,6 @@
                 return;
 
             _searchTerm = value;
-
             CurrentPage = 1;
         }
     }
@@ -641,7 +564,6 @@
             _selectedWarehouseId = value;
 
             SelectedLocationId = 0;
-
             CurrentPage = 1;
         }
     }
@@ -659,7 +581,6 @@
                 return;
 
             _selectedLocationId = value;
-
             CurrentPage = 1;
         }
     }
@@ -693,8 +614,7 @@
                 return Locations;
 
             return Locations.Where(x =>
-                x.WarehouseId ==
-                SelectedWarehouseId);
+                x.WarehouseId == SelectedWarehouseId);
         }
     }
 
@@ -708,21 +628,14 @@
         get
         {
             var query = Stocks
-                .Where(x =>
-                    x.Product != null
-                    &&
-                    x.AvailableQuantity <=
-                        x.Product.MinimumStock);
+                .Where(x => x.Product != null);
 
 
-            // =====================================================
             // SEARCH
-            // =====================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                var search =
-                    SearchTerm.Trim();
+                var search = SearchTerm.Trim();
 
                 query = query.Where(x =>
                     x.Product != null
@@ -755,9 +668,7 @@
             }
 
 
-            // =====================================================
             // WAREHOUSE
-            // =====================================================
 
             if (SelectedWarehouseId > 0)
             {
@@ -769,9 +680,7 @@
             }
 
 
-            // =====================================================
             // LOCATION
-            // =====================================================
 
             if (SelectedLocationId > 0)
             {
@@ -828,27 +737,21 @@
     // SUMMARY
     // =========================================================
 
-    private int CriticalCount =>
-        FilteredStocks.Count(x =>
-            x.AvailableQuantity <= 0);
-
-
     private decimal TotalQuantity =>
         FilteredStocks.Sum(x =>
             x.Quantity);
 
 
-    private decimal TotalAvailable =>
+    private decimal TotalPurchaseValue =>
         FilteredStocks.Sum(x =>
-            x.AvailableQuantity);
+            x.Quantity *
+            x.Product!.PurchasePrice);
 
 
-    private decimal TotalShortage =>
+    private decimal TotalSaleValue =>
         FilteredStocks.Sum(x =>
-            Math.Max(
-                0,
-                x.Product!.MinimumStock -
-                x.AvailableQuantity));
+            x.Quantity *
+            x.Product!.SalePrice);
 
 
     // =========================================================
@@ -906,8 +809,7 @@
                     .Include(x => x.Product)
                     .Include(x => x.WarehouseLocation)
                         .ThenInclude(x => x.Warehouse)
-                .Where(x => x.Product != null &&
-            x.Quantity - x.ReservedQuantity <= x.Product.MinimumStock)
+                    .Where(x => x.Product != null)
                     .OrderBy(x => x.Product!.Name)
                     .ThenBy(x =>
                         x.WarehouseLocation!.Code)

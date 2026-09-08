@@ -18,19 +18,23 @@
     <div class="page-header">
 
         <div>
+
             <h1>Warenbewegungen</h1>
 
             <p>
                 Übersicht und Historie aller Lagerbewegungen.
             </p>
+
         </div>
 
         <div class="page-header-actions">
 
             <a href="/reports"
                class="btn-secondary">
+
                 <i class="bi bi-arrow-left me-1"></i>
                 Berichte
+
             </a>
 
         </div>
@@ -44,9 +48,11 @@
 
     <div class="filter-card">
 
-        <div class="filter-main-row">
+        <!-- =====================================================
+             MAIN FILTERS
+             ===================================================== -->
 
-            <!-- SEARCH -->
+        <div class="filter-main-row">
 
             <div class="search-box">
 
@@ -61,8 +67,6 @@
 
             </div>
 
-
-            <!-- TYPE -->
 
             <select class="filter-select"
                     @bind="SelectedType">
@@ -94,8 +98,6 @@
             </select>
 
 
-            <!-- WAREHOUSE -->
-
             <select class="filter-select"
                     @bind="SelectedWarehouseId">
 
@@ -113,8 +115,6 @@
             </select>
 
 
-            <!-- LOCATION -->
-
             <select class="filter-select"
                     @bind="SelectedLocationId">
 
@@ -125,11 +125,14 @@
                 @foreach (var location in Locations)
                 {
                     <option value="@location.Id">
+
                         @location.Code
+
                         @if (!string.IsNullOrWhiteSpace(location.Name))
                         {
                             @($" - {location.Name}")
                         }
+
                     </option>
                 }
 
@@ -138,7 +141,9 @@
         </div>
 
 
-        <!-- DATE FILTER -->
+        <!-- =====================================================
+             DATE FILTER
+             ===================================================== -->
 
         <div class="filter-date-row">
 
@@ -149,7 +154,7 @@
                 </label>
 
                 <input type="date"
-                       class="form-control"
+                       class="filter-date-input"
                        @bind="FromDate" />
 
             </div>
@@ -162,7 +167,7 @@
                 </label>
 
                 <input type="date"
-                       class="form-control"
+                       class="filter-date-input"
                        @bind="ToDate" />
 
             </div>
@@ -185,10 +190,15 @@
     </div>
 
 
+    <!-- =========================================================
+         CONTENT
+         ========================================================= -->
     @if (IsLoading)
     {
         <div class="loading-state">
+
             Bewegungen werden geladen...
+
         </div>
     }
     else
@@ -199,8 +209,6 @@
              ===================================================== -->
 
         <div class="stock-summary-grid">
-
-            <!-- TOTAL -->
 
             <div class="stock-summary-card">
 
@@ -215,8 +223,6 @@
             </div>
 
 
-            <!-- INCOMING -->
-
             <div class="stock-summary-card">
 
                 <span>
@@ -229,8 +235,6 @@
 
             </div>
 
-
-            <!-- OUTGOING -->
 
             <div class="stock-summary-card">
 
@@ -245,8 +249,6 @@
             </div>
 
 
-            <!-- TRANSFERS -->
-
             <div class="stock-summary-card">
 
                 <span>
@@ -259,8 +261,6 @@
 
             </div>
 
-
-            <!-- INVENTORY -->
 
             <div class="stock-summary-card">
 
@@ -389,11 +389,13 @@
 
                         <tbody>
 
-                            @foreach (var movement in FilteredMovements)
+                            @foreach (var movement in PagedMovements)
                             {
                                 <tr>
 
-                                    <!-- DATE -->
+                                    <!-- =================================================
+                                         DATE
+                                         ================================================= -->
 
                                     <td>
 
@@ -416,7 +418,9 @@
                                     </td>
 
 
-                                    <!-- PRODUCT -->
+                                    <!-- =================================================
+                                         PRODUCT
+                                         ================================================= -->
 
                                     <td>
 
@@ -446,7 +450,9 @@
                                     </td>
 
 
-                                    <!-- TYPE -->
+                                    <!-- =================================================
+                                         TYPE
+                                         ================================================= -->
 
                                     <td>
 
@@ -455,8 +461,10 @@
                                             case StockMovementType.Wareneingang:
 
                                                 <span class="movement-badge movement-in">
+
                                                     <i class="bi bi-arrow-down-circle me-1"></i>
                                                     Wareneingang
+
                                                 </span>
 
                                                 break;
@@ -465,8 +473,10 @@
                                             case StockMovementType.Warenausgang:
 
                                                 <span class="movement-badge movement-out">
+
                                                     <i class="bi bi-arrow-up-circle me-1"></i>
                                                     Warenausgang
+
                                                 </span>
 
                                                 break;
@@ -475,8 +485,10 @@
                                             case StockMovementType.Umlagerung:
 
                                                 <span class="movement-badge movement-transfer">
+
                                                     <i class="bi bi-arrow-left-right me-1"></i>
                                                     Umlagerung
+
                                                 </span>
 
                                                 break;
@@ -485,8 +497,10 @@
                                             case StockMovementType.Inventur:
 
                                                 <span class="movement-badge movement-inventory">
+
                                                     <i class="bi bi-clipboard-check me-1"></i>
                                                     Inventur
+
                                                 </span>
 
                                                 break;
@@ -495,8 +509,10 @@
                                             case StockMovementType.Korrektur:
 
                                                 <span class="movement-badge movement-correction">
+
                                                     <i class="bi bi-pencil-square me-1"></i>
                                                     Korrektur
+
                                                 </span>
 
                                                 break;
@@ -514,7 +530,9 @@
                                     </td>
 
 
-                                    <!-- QUANTITY -->
+                                    <!-- =================================================
+                                         QUANTITY
+                                         ================================================= -->
 
                                     <td>
 
@@ -546,7 +564,9 @@
                                     </td>
 
 
-                                    <!-- FROM -->
+                                    <!-- =================================================
+                                         FROM
+                                         ================================================= -->
 
                                     <td>
 
@@ -577,7 +597,9 @@
                                     </td>
 
 
-                                    <!-- TO -->
+                                    <!-- =================================================
+                                         TO
+                                         ================================================= -->
 
                                     <td>
 
@@ -608,7 +630,9 @@
                                     </td>
 
 
-                                    <!-- SUPPLIER -->
+                                    <!-- =================================================
+                                         SUPPLIER
+                                         ================================================= -->
 
                                     <td>
 
@@ -640,7 +664,9 @@
                                     </td>
 
 
-                                    <!-- REFERENCE -->
+                                    <!-- =================================================
+                                         REFERENCE
+                                         ================================================= -->
 
                                     <td>
 
@@ -661,7 +687,9 @@
                                     </td>
 
 
-                                    <!-- NOTE -->
+                                    <!-- =================================================
+                                         NOTE
+                                         ================================================= -->
 
                                     <td>
 
@@ -690,6 +718,74 @@
 
                 </div>
 
+
+                <!-- =====================================================
+                     PAGINATION
+                     ===================================================== -->
+                @if (TotalPages > 1)
+                {
+                    <div class="pagination-container">
+
+                        <div class="pagination-info">
+
+                            Zeige
+
+                            <strong>
+                                @PaginationStart
+                            </strong>
+
+                            -
+
+                            <strong>
+                                @PaginationEnd
+                            </strong>
+
+                            von
+
+                            <strong>
+                                @FilteredMovements.Count
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pagination-buttons">
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    disabled="@(CurrentPage == 1)"
+                                    @onclick="PreviousPage">
+                                &lt;
+                            </button>
+
+
+                            @for (int page = 1; page <= TotalPages; page++)
+                            {
+                                var pageNumber = page;
+
+                                <button type="button"
+                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        @onclick="() => GoToPage(pageNumber)">
+
+                                    @pageNumber
+
+                                </button>
+                            }
+
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    
+                                    disabled="@(CurrentPage == TotalPages)"
+                                    @onclick="NextPage">
+                                   &gt;
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
             }
 
         </div>
@@ -716,19 +812,151 @@
     // FILTER
     // =========================================================
 
-    private string SearchTerm = string.Empty;
+    private string _searchTerm = string.Empty;
 
-    private string TableSearchTerm = string.Empty;
+    private string SearchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            if (_searchTerm == value)
+                return;
 
-    private int SelectedType;
+            _searchTerm = value;
+            CurrentPage = 1;
+        }
+    }
 
-    private int SelectedWarehouseId;
 
-    private int SelectedLocationId;
+    private string _tableSearchTerm = string.Empty;
 
-    private DateTime? FromDate;
+    private string TableSearchTerm
+    {
+        get => _tableSearchTerm;
+        set
+        {
+            if (_tableSearchTerm == value)
+                return;
 
-    private DateTime? ToDate;
+            _tableSearchTerm = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedType;
+
+    private int SelectedType
+    {
+        get => _selectedType;
+        set
+        {
+            if (_selectedType == value)
+                return;
+
+            _selectedType = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedWarehouseId;
+
+    private int SelectedWarehouseId
+    {
+        get => _selectedWarehouseId;
+        set
+        {
+            if (_selectedWarehouseId == value)
+                return;
+
+            _selectedWarehouseId = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedLocationId;
+
+    private int SelectedLocationId
+    {
+        get => _selectedLocationId;
+        set
+        {
+            if (_selectedLocationId == value)
+                return;
+
+            _selectedLocationId = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private DateTime? _fromDate;
+
+    private DateTime? FromDate
+    {
+        get => _fromDate;
+        set
+        {
+            if (_fromDate == value)
+                return;
+
+            _fromDate = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private DateTime? _toDate;
+
+    private DateTime? ToDate
+    {
+        get => _toDate;
+        set
+        {
+            if (_toDate == value)
+                return;
+
+            _toDate = value;
+            CurrentPage = 1;
+        }
+    }
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private List<StockMovement> PagedMovements =>
+        FilteredMovements
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredMovements.Count /
+                (double)PageSize));
+
+
+    private int PaginationStart =>
+        FilteredMovements.Count == 0
+            ? 0
+            : ((CurrentPage - 1) * PageSize) + 1;
+
+
+    private int PaginationEnd =>
+        Math.Min(
+            CurrentPage * PageSize,
+            FilteredMovements.Count);
 
 
     // =========================================================
@@ -877,7 +1105,7 @@
 
 
     // =========================================================
-    // TABLE LIVE SEARCH
+    // TABLE SEARCH
     // =========================================================
 
     private bool MatchesTableSearch(StockMovement movement)
@@ -924,17 +1152,6 @@
             )
             ||
             (
-                movement.Supplier != null
-                &&
-                !string.IsNullOrWhiteSpace(
-                    movement.Supplier.SupplierNumber)
-                &&
-                movement.Supplier.SupplierNumber.Contains(
-                    search,
-                    StringComparison.OrdinalIgnoreCase)
-            )
-            ||
-            (
                 !string.IsNullOrWhiteSpace(
                     movement.ReferenceNumber)
                 &&
@@ -952,12 +1169,14 @@
                     StringComparison.OrdinalIgnoreCase)
             )
             ||
-            movement.Quantity.ToString("N2")
+            movement.Quantity
+                .ToString("N2")
                 .Contains(
                     search,
                     StringComparison.OrdinalIgnoreCase)
             ||
-            movement.Type.ToString()
+            movement.Type
+                .ToString()
                 .Contains(
                     search,
                     StringComparison.OrdinalIgnoreCase);
@@ -1056,7 +1275,7 @@
 
 
     // =========================================================
-    // INITIALIZATION
+    // LOAD
     // =========================================================
 
     protected override async Task OnInitializedAsync()
@@ -1064,10 +1283,6 @@
         await LoadData();
     }
 
-
-    // =========================================================
-    // LOAD
-    // =========================================================
 
     private async Task LoadData()
     {
@@ -1079,10 +1294,6 @@
                 await DbFactory.CreateDbContextAsync();
 
 
-            // =====================================================
-            // WAREHOUSES
-            // =====================================================
-
             Warehouses =
                 await db.Warehouses
                     .AsNoTracking()
@@ -1090,10 +1301,6 @@
                     .OrderBy(x => x.Name)
                     .ToListAsync();
 
-
-            // =====================================================
-            // LOCATIONS
-            // =====================================================
 
             Locations =
                 await db.WarehouseLocations
@@ -1103,10 +1310,6 @@
                     .OrderBy(x => x.Code)
                     .ToListAsync();
 
-
-            // =====================================================
-            // MOVEMENTS
-            // =====================================================
 
             Movements =
                 await db.StockMovements
@@ -1141,7 +1344,7 @@
 
 
     // =========================================================
-    // RESET FILTERS
+    // RESET
     // =========================================================
 
     private void ResetFilters()
@@ -1159,6 +1362,42 @@
         FromDate = null;
 
         ToDate = null;
+
+        CurrentPage = 1;
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
     }
 
 
@@ -1189,7 +1428,7 @@
 
         return
             $"{words[0][0]}{words[1][0]}"
-                .ToUpper();
+            .ToUpper();
     }
 
 }

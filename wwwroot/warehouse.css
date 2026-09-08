@@ -2157,3 +2157,120 @@ textarea.form-control {
     }
 }
 
+
+.stock-page .filter-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stock-page .filter-main-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+    .stock-page .filter-main-row .search-box {
+        flex: 1;
+        max-width: 450px;
+    }
+
+.stock-page .filter-date-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    width: 100%;
+}
+
+.stock-page .filter-date-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .stock-page .filter-date-group label {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+.stock-page .filter-date-input {
+    width: 180px;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: white;
+    font-size: 13px;
+    color: #374151;
+    box-sizing: border-box;
+}
+
+    .stock-page .filter-date-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+    .pagination-info strong {
+        color: #374151;
+    }
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .pagination-buttons button {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+.pagination-page {
+    border: 1px solid var(--border);
+    background: white;
+    color: #374151;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+    .pagination-page:hover {
+        background: #f3f4f6;
+    }
+
+    .pagination-page.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+.pagination-buttons .btn-secondary {
+    border: 1px solid var(--border);
+    background: white;
+    color: #374151;
+    border-radius: 6px;
+}
+
+    .pagination-buttons .btn-secondary:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }

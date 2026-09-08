@@ -6,7 +6,71 @@
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+<style>
+    .stock-page .filter-card {
+        display: grid;
+        grid-template-columns: minmax(320px, 2fr) minmax(180px, 1fr) minmax(180px, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+    }
 
+        .stock-page .filter-card > * {
+            min-width: 0;
+        }
+
+        .stock-page .filter-card .search-box {
+            width: 100%;
+            max-width: none;
+        }
+
+        .stock-page .filter-card .filter-select {
+            width: 100%;
+        }
+
+    @@media (max-width: 950px) {
+        .stock-page .filter-card {
+            grid-template-columns: minmax(280px, 2fr) minmax(180px, 1fr);
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .stock-page .filter-card {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .summary-card {
+        min-width: 0;
+    }
+
+    
+    @@media (max-width: 1100px) {
+        .summary-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    
+    @@media (max-width: 750px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    
+    @@media (max-width: 500px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 <PageTitle>Inventurbericht</PageTitle>
 
 <div class="stock-page">
@@ -18,20 +82,24 @@
     <div class="page-header">
 
         <div>
+
             <h1>Inventurbericht</h1>
 
             <p>
                 Übersicht über durchgeführte Inventuren und
                 Bestandsabweichungen.
             </p>
+
         </div>
 
         <div class="page-header-actions">
 
             <a href="/reports"
                class="btn-secondary">
+
                 <i class="bi bi-arrow-left me-1"></i>
                 Berichte
+
             </a>
 
         </div>
@@ -56,20 +124,20 @@
 
             <div class="search-box">
 
-                <span class="search-icon">
-                    <i class="bi bi-search"></i>
-                </span>
+                <span class="search-icon">⌕</span>
 
                 <input type="text"
                        placeholder="Lager oder Notiz suchen..."
                        @bind="SearchTerm"
-                       @bind:event="oninput" />
+                       @bind:event="oninput"
+                       @bind:after="SearchChanged" />
 
             </div>
 
 
             <select class="filter-select"
-                    @bind="SelectedWarehouseId">
+                    @bind="SelectedWarehouseId"
+                    @bind:after="FilterChanged">
 
                 <option value="0">
                     Alle Lager
@@ -86,38 +154,30 @@
 
 
             <select class="filter-select"
-                    @bind="SelectedStatus">
+                    @bind="SelectedStatus"
+                    @bind:after="FilterChanged">
 
                 <option value="all">
                     Alle Status
                 </option>
 
-                <option value="Entwurf">
-                    Entwurf
-                </option>
-
-                <option value="InBearbeitung">
-                    In Bearbeitung
-                </option>
-
-                <option value="Abgeschlossen">
-                    Abgeschlossen
-                </option>
+                @foreach (var status in StatusOptions)
+                {
+                    <option value="@status">
+                        @GetStatusText(status)
+                    </option>
+                }
 
             </select>
 
 
-            @if (HasActiveFilters)
-            {
-                <button type="button"
-                        class="btn-secondary"
-                        @onclick="ResetFilters">
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ResetFilters">
 
-                    <i class="bi bi-arrow-counterclockwise me-1"></i>
-                    Filter zurücksetzen
+                Zurücksetzen
 
-                </button>
-            }
+            </button>
 
         </div>
 
@@ -126,12 +186,11 @@
              SUMMARY
              ===================================================== -->
 
-        <div class="stock-summary-grid">
+        <div class="summary-grid">
 
-            <!-- INVENTUREN -->
-            <div class="stock-summary-card">
+            <div class="summary-card">
 
-                <span>
+                <span class="summary-label">
                     Inventuren
                 </span>
 
@@ -142,10 +201,9 @@
             </div>
 
 
-            <!-- ABGESCHLOSSEN -->
-            <div class="stock-summary-card">
+            <div class="summary-card">
 
-                <span>
+                <span class="summary-label">
                     Abgeschlossen
                 </span>
 
@@ -156,10 +214,9 @@
             </div>
 
 
-            <!-- POSITIONEN -->
-            <div class="stock-summary-card">
+            <div class="summary-card">
 
-                <span>
+                <span class="summary-label">
                     Positionen
                 </span>
 
@@ -170,10 +227,9 @@
             </div>
 
 
-            <!-- ABWEICHENDE POSITIONEN -->
-            <div class="stock-summary-card">
+            <div class="summary-card">
 
-                <span>
+                <span class="summary-label">
                     Abweichende Positionen
                 </span>
 
@@ -184,15 +240,14 @@
             </div>
 
 
-            <!-- GESAMTDIFFERENZ -->
-            <div class="stock-summary-card">
+            <div class="summary-card">
 
-                <span>
+                <span class="summary-label">
                     Gesamtdifferenz
                 </span>
 
                 <strong>
-                    @FormatDifference(TotalDifference)
+                    @TotalDifference.ToString("N2")
                 </strong>
 
             </div>
@@ -227,6 +282,7 @@
             }
             else
             {
+
                 <div class="products-table-wrapper">
 
                     <table class="products-table">
@@ -278,10 +334,11 @@
 
                         <tbody>
 
-                            @foreach (var inventory in FilteredInventories)
+                            @foreach (var inventory in PagedInventories)
                             {
                                 var systemQuantity =
-                                    inventory.Items?.Sum(x => x.SystemQuantity) ?? 0;
+                                    inventory.Items?.Sum(
+                                        x => x.SystemQuantity) ?? 0;
 
                                 var countedQuantity =
                                     inventory.Items?
@@ -289,7 +346,9 @@
                                         .Sum(x => x.CountedQuantity!.Value) ?? 0;
 
                                 var difference =
-                                    inventory.Items?.Sum(x => x.Difference) ?? 0;
+                                    inventory.Items?.Sum(
+                                        x => x.Difference) ?? 0;
+
 
                                 <tr>
 
@@ -340,24 +399,30 @@
                                             InventoryStatus.Entwurf)
                                         {
                                             <span class="status-badge status-draft">
+
                                                 <i class="bi bi-pencil me-1"></i>
                                                 Entwurf
+
                                             </span>
                                         }
                                         else if (inventory.Status ==
                                                  InventoryStatus.InBearbeitung)
                                         {
                                             <span class="status-badge status-warning">
+
                                                 <i class="bi bi-arrow-repeat me-1"></i>
                                                 In Bearbeitung
+
                                             </span>
                                         }
                                         else if (inventory.Status ==
                                                  InventoryStatus.Abgeschlossen)
                                         {
                                             <span class="status-badge status-active">
+
                                                 <i class="bi bi-check-circle me-1"></i>
                                                 Abgeschlossen
+
                                             </span>
                                         }
 
@@ -374,18 +439,22 @@
                                     <!-- SYSTEM -->
 
                                     <td>
+
                                         <strong>
                                             @systemQuantity.ToString("N2")
                                         </strong>
+
                                     </td>
 
 
                                     <!-- COUNTED -->
 
                                     <td>
+
                                         <strong>
                                             @countedQuantity.ToString("N2")
                                         </strong>
+
                                     </td>
 
 
@@ -477,6 +546,67 @@
                     </table>
 
                 </div>
+
+
+                <!-- =================================================
+                     PAGINATION
+                     ================================================= -->
+                @if (TotalPages > 1)
+                {
+                    <div class="pagination-container">
+
+                        <div class="pagination-info">
+
+                            Zeige
+                            <strong>@PaginationStart</strong>
+                            -
+                            <strong>@PaginationEnd</strong>
+                            von
+                            <strong>@FilteredInventories.Count</strong>
+
+                        </div>
+
+
+                        <div class="pagination-buttons">
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    disabled="@(CurrentPage == 1)"
+                                    @onclick="PreviousPage">
+
+                                &lt;
+
+                            </button>
+
+
+                            @for (int page = 1; page <= TotalPages; page++)
+                            {
+                                var pageNumber = page;
+
+                                <button type="button"
+                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        @onclick="() => GoToPage(pageNumber)">
+
+                                    @pageNumber
+
+                                </button>
+                            }
+
+
+                            <button type="button"
+                                    class="btn-secondary"
+                                    disabled="@(CurrentPage == TotalPages)"
+                                    @onclick="NextPage">
+
+                                &gt;
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
             }
 
         </div>
@@ -484,8 +614,6 @@
     }
 
 </div>
-
-
 
 
 @code {
@@ -500,14 +628,118 @@
 
 
     // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private readonly string[] StatusOptions =
+    {
+        "Entwurf",
+        "InBearbeitung",
+        "Abgeschlossen"
+    };
+
+
+    private string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Entwurf" => "Entwurf",
+            "InBearbeitung" => "In Bearbeitung",
+            "Abgeschlossen" => "Abgeschlossen",
+            _ => status
+        };
+    }
+
+
+    // =========================================================
     // FILTER
     // =========================================================
 
-    private string SearchTerm = string.Empty;
+    private string _searchTerm = string.Empty;
 
-    private int SelectedWarehouseId;
+    private string SearchTerm
+    {
+        get => _searchTerm;
 
-    private string SelectedStatus = "all";
+        set
+        {
+            if (_searchTerm == value)
+                return;
+
+            _searchTerm = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private int _selectedWarehouseId;
+
+    private int SelectedWarehouseId
+    {
+        get => _selectedWarehouseId;
+
+        set
+        {
+            if (_selectedWarehouseId == value)
+                return;
+
+            _selectedWarehouseId = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    private string _selectedStatus = "all";
+
+    private string SelectedStatus
+    {
+        get => _selectedStatus;
+
+        set
+        {
+            if (_selectedStatus == value)
+                return;
+
+            _selectedStatus = value;
+            CurrentPage = 1;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private List<WarehouseManagement.Models.Inventory> PagedInventories =>
+        FilteredInventories
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredInventories.Count /
+                (double)PageSize));
+
+
+    private int PaginationStart =>
+        FilteredInventories.Count == 0
+            ? 0
+            : ((CurrentPage - 1) * PageSize) + 1;
+
+
+    private int PaginationEnd =>
+        Math.Min(
+            CurrentPage * PageSize,
+            FilteredInventories.Count);
 
 
     // =========================================================
@@ -524,38 +756,43 @@
     private List<WarehouseManagement.Models.Inventory> FilteredInventories =>
         Inventories
 
-            // WAREHOUSE
             .Where(x =>
                 SelectedWarehouseId == 0
                 ||
                 x.WarehouseId == SelectedWarehouseId)
 
-            // STATUS
             .Where(x =>
                 SelectedStatus == "all"
+
                 ||
+
                 (
                     SelectedStatus == "Entwurf"
                     &&
                     x.Status == InventoryStatus.Entwurf
                 )
+
                 ||
+
                 (
                     SelectedStatus == "InBearbeitung"
                     &&
                     x.Status == InventoryStatus.InBearbeitung
                 )
+
                 ||
+
                 (
                     SelectedStatus == "Abgeschlossen"
                     &&
                     x.Status == InventoryStatus.Abgeschlossen
                 ))
 
-            // SEARCH
             .Where(x =>
                 string.IsNullOrWhiteSpace(SearchTerm)
+
                 ||
+
                 (
                     x.Warehouse != null
                     &&
@@ -563,7 +800,9 @@
                         SearchTerm,
                         StringComparison.OrdinalIgnoreCase)
                 )
+
                 ||
+
                 (
                     !string.IsNullOrWhiteSpace(x.Note)
                     &&
@@ -572,7 +811,6 @@
                         StringComparison.OrdinalIgnoreCase)
                 ))
 
-            // NEWEST FIRST
             .OrderByDescending(x => x.CreatedAt)
 
             .ToList();
@@ -594,8 +832,10 @@
 
     private int DifferenceCount =>
         FilteredInventories
+
             .SelectMany(x =>
                 x.Items ?? new List<InventoryItem>())
+
             .Count(x =>
                 x.CountedQuantity.HasValue
                 &&
@@ -604,13 +844,20 @@
 
     private decimal TotalDifference =>
         FilteredInventories
+
             .SelectMany(x =>
                 x.Items ?? new List<InventoryItem>())
+
             .Where(x =>
                 x.CountedQuantity.HasValue)
+
             .Sum(x =>
                 x.Difference);
 
+
+    // =========================================================
+    // ACTIVE FILTERS
+    // =========================================================
 
     private bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm)
@@ -679,6 +926,30 @@
 
 
     // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private Task SearchChanged()
+    {
+        CurrentPage = 1;
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private Task FilterChanged()
+    {
+        CurrentPage = 1;
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
     // RESET
     // =========================================================
 
@@ -689,6 +960,42 @@
         SelectedWarehouseId = 0;
 
         SelectedStatus = "all";
+
+        CurrentPage = 1;
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
     }
 
 
@@ -714,12 +1021,10 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
-
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
-
 
         if (words.Length == 1)
         {
@@ -731,7 +1036,6 @@
                         words[0].Length))
                 .ToUpper();
         }
-
 
         return
             $"{words[0][0]}{words[1][0]}"
