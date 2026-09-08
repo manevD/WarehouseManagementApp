@@ -1,0 +1,160 @@
+﻿@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+    --primary: #173944;
+    --primary-foreground: #f4fbf8;
+    --radius: 0.8rem;
+    --background: #f4f7f7;
+    --foreground: #142a35;
+    --card: #ffffff;
+    --card-foreground: #142a35;
+    --popover: #ffffff;
+    --popover-foreground: #142a35;
+    --secondary: #edf5f3;
+    --secondary-foreground: #2f555b;
+    --muted: #eef4f3;
+    --muted-foreground: #7f969a;
+    --accent: #e2f6ef;
+    --accent-foreground: #236256;
+    --destructive: #c66e58;
+    --destructive-foreground: #fff8f6;
+    --border: #deebe8;
+    --input: #deebe8;
+    --ring: #74cdb4;
+    --sidebar: #102631;
+    --sidebar-foreground: #e9f4f1;
+    --sidebar-primary: #74e2c5;
+    --sidebar-primary-foreground: #102631;
+    --sidebar-accent: #1c3a45;
+    --sidebar-accent-foreground: #e9f4f1;
+    --sidebar-border: #2a4650;
+    --sidebar-ring: #74e2c5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button, input {
+    font: inherit;
+}
+
+    button:not(:disabled), [role="button"]:not([aria-disabled="true"]), a[href], select:not(:disabled) {
+        cursor: pointer;
+    }
+
+button {
+    border: 0;
+}
+
+.font-display {
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    ::selection {
+        background: rgba(116, 226, 197, .3);
+        color: #102631;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    main > .mx-auto {
+        animation: page-in 500ms cubic-bezier(.23, 1, .32, 1) both;
+    }
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c6d8d5;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #9dbab4;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+@media (max-width: 640px) {
+    .font-display {
+        letter-spacing: -0.025em;
+    }
+}
