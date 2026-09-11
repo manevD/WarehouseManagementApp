@@ -1,12 +1,17 @@
 ﻿@page "/reports/suppliers"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Lieferantenbericht</PageTitle>
 
@@ -19,19 +24,30 @@
     <div class="page-header">
 
         <div>
-            <h1>Lieferanten</h1>
+
+            <h1>
+                Lieferanten
+            </h1>
 
             <p>
                 Übersicht der Lieferanten und Warenbewegungen
             </p>
+
         </div>
 
         <div class="page-header-actions">
 
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedSuppliers.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
             <a href="/suppliers/create"
                class="btn-primary">
-
-                <i class="bi bi-plus-lg me-1"></i>
 
                 Neuer Lieferant
 
@@ -48,16 +64,14 @@
 
     <div class="filter-card">
 
-        <div class="filter-main-row"
-             style="display:flex; flex-direction:row; align-items:center; gap:12px; flex-wrap:nowrap;">
+        <div class="filter-main-row">
 
-            <!-- SEARCH -->
-
-            <div class="search-box"
-                 style="flex:1 1 auto; min-width:0;">
+            <div class="search-box">
 
                 <span class="search-icon">
+
                     <i class="bi bi-search"></i>
+
                 </span>
 
                 <input type="text"
@@ -68,10 +82,7 @@
             </div>
 
 
-            <!-- STATUS -->
-
             <select class="filter-select"
-                    style="flex:0 0 220px; width:220px;"
                     @bind="StatusFilter">
 
                 <option value="Alle">
@@ -99,8 +110,6 @@
 
     <div class="stock-summary-grid">
 
-        <!-- LIEFERANTEN -->
-
         <div class="stock-summary-card">
 
             <span>
@@ -117,8 +126,6 @@
 
         </div>
 
-
-        <!-- AKTIV -->
 
         <div class="stock-summary-card">
 
@@ -137,8 +144,6 @@
         </div>
 
 
-        <!-- WARENEINGÄNGE -->
-
         <div class="stock-summary-card">
 
             <span>
@@ -156,8 +161,6 @@
         </div>
 
 
-        <!-- MENGE -->
-
         <div class="stock-summary-card">
 
             <span>
@@ -165,7 +168,7 @@
             </span>
 
             <strong>
-                @(IncomingQuantity.ToString("N2"))
+                @IncomingQuantity.ToString("N2")
             </strong>
 
             <small>
@@ -174,8 +177,6 @@
 
         </div>
 
-
-        <!-- BESTELLUNGEN -->
 
         <div class="stock-summary-card">
 
@@ -197,7 +198,7 @@
 
 
     <!-- =========================================================
-         SUPPLIER TABLE
+         TABLE
          ========================================================= -->
 
     <div class="products-card">
@@ -232,7 +233,9 @@
             <div class="empty-products">
 
                 <div class="empty-products-icon">
+
                     <i class="bi bi-truck"></i>
+
                 </div>
 
                 <h3>
@@ -247,10 +250,6 @@
         }
         else
         {
-
-            <!-- =====================================================
-                 TABLE
-                 ===================================================== -->
 
             <div class="products-table-wrapper">
 
@@ -312,29 +311,38 @@
 
                         @foreach (var supplier in PagedSuppliers)
                         {
-                            var supplierMovements = Movements
-                                .Where(x => x.SupplierId == supplier.Id)
-                                .ToList();
+                            var supplierMovements =
+                                Movements
+                                    .Where(x =>
+                                        x.SupplierId == supplier.Id)
+                                    .ToList();
 
-                            var incomingMovements = supplierMovements
-                                .Where(x =>
-                                    x.Type == StockMovementType.Wareneingang)
-                                .ToList();
+                            var incomingMovements =
+                                supplierMovements
+                                    .Where(x =>
+                                        x.Type ==
+                                        StockMovementType.Wareneingang)
+                                    .ToList();
 
-                            var purchaseOrders = supplierMovements
-                                .Where(x => x.PurchaseOrderId.HasValue)
-                                .Select(x => x.PurchaseOrderId)
-                                .Distinct()
-                                .Count();
+                            var purchaseOrders =
+                                supplierMovements
+                                    .Where(x =>
+                                        x.PurchaseOrderId.HasValue)
+                                    .Select(x =>
+                                        x.PurchaseOrderId)
+                                    .Distinct()
+                                    .Count();
 
-                            var lastMovement = supplierMovements
-                                .OrderByDescending(x => x.CreatedAt)
-                                .FirstOrDefault();
+                            var lastMovement =
+                                supplierMovements
+                                    .OrderByDescending(x =>
+                                        x.CreatedAt)
+                                    .FirstOrDefault();
 
 
                             <tr>
 
-                                <!-- COMPANY -->
+                                <!-- SUPPLIER -->
 
                                 <td>
 
@@ -508,9 +516,7 @@
                                 <td>
 
                                     <strong>
-                                        @(incomingMovements
-                                            .Sum(x => x.Quantity)
-                                            .ToString("N2"))
+                                        @incomingMovements.Sum(x => x.Quantity).ToString("N2")
                                     </strong>
 
                                 </td>
@@ -601,54 +607,29 @@
             </div>
 
 
-            <!-- =====================================================
+            <!-- =================================================
                  PAGINATION
-                 ===================================================== -->
+                 ================================================= -->
             @if (TotalPages > 1)
             {
-                <div class="pagination-container">
+                <div class="pagination">
 
-                    <div class="pagination-info">
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
 
-                        Zeige
+                        ‹
 
-                        <strong>
-                            @PaginationStart
-                        </strong>
-
-                        -
-
-                        <strong>
-                            @PaginationEnd
-                        </strong>
-
-                        von
-
-                        <strong>
-                            @FilteredSuppliers.Count
-                        </strong>
-
-                    </div>
+                    </button>
 
 
-                    <div class="pagination-buttons">
+                    <div class="pagination-pages">
 
-                        <button type="button"
-                                class="btn-secondary"
-                                disabled="@(CurrentPage == 1)"
-                                @onclick="PreviousPage">
-
-                            &lt;
-
-                        </button>
-
-
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @foreach (var pageNumber in GetPageNumbers())
                         {
-                            var pageNumber = page;
-
                             <button type="button"
-                                    class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                     @onclick="() => GoToPage(pageNumber)">
 
                                 @pageNumber
@@ -656,18 +637,28 @@
                             </button>
                         }
 
-
-                        <button type="button"
-                                class="btn-secondary"
-                                disabled="@(CurrentPage == TotalPages)"
-                                @onclick="NextPage">
-                            &gt;
-                        </button>
-
                     </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
 
                 </div>
             }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedSuppliers.Count von @FilteredSuppliers.Count Lieferanten
+
+            </div>
 
         }
 
@@ -736,154 +727,6 @@
     private int CurrentPage = 1;
 
 
-    // =========================================================
-    // STATE
-    // =========================================================
-
-    private bool IsLoading = true;
-
-
-    // =========================================================
-    // FILTERED SUPPLIERS
-    // =========================================================
-
-    private List<Supplier> FilteredSuppliers
-    {
-        get
-        {
-            var query = Suppliers.AsEnumerable();
-
-
-            // =====================================================
-            // SEARCH
-            // =====================================================
-
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
-            {
-                var search = SearchTerm.Trim();
-
-                query = query.Where(s =>
-                    s.CompanyName.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase)
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.SupplierNumber)
-
-                        &&
-
-                        s.SupplierNumber.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.ContactPerson)
-
-                        &&
-
-                        s.ContactPerson.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.Email)
-
-                        &&
-
-                        s.Email.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.Phone)
-
-                        &&
-
-                        s.Phone.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.City)
-
-                        &&
-
-                        s.City.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(
-                            s.VatNumber)
-
-                        &&
-
-                        s.VatNumber.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-                    )
-                );
-            }
-
-
-            // =====================================================
-            // STATUS
-            // =====================================================
-
-            query = query.Where(s =>
-                StatusFilter == "Alle"
-
-                ||
-
-                (
-                    StatusFilter == "Aktiv"
-                    &&
-                    s.IsActive
-                )
-
-                ||
-
-                (
-                    StatusFilter == "Inaktiv"
-                    &&
-                    !s.IsActive
-                )
-            );
-
-
-            return query
-                .OrderBy(s => s.CompanyName)
-                .ToList();
-        }
-    }
-
-
-    // =========================================================
-    // PAGED SUPPLIERS
-    // =========================================================
-
     private List<Supplier> PagedSuppliers =>
         FilteredSuppliers
             .Skip((CurrentPage - 1) * PageSize)
@@ -899,16 +742,167 @@
                 (double)PageSize));
 
 
-    private int PaginationStart =>
-        FilteredSuppliers.Count == 0
-            ? 0
-            : ((CurrentPage - 1) * PageSize) + 1;
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
+
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
 
 
-    private int PaginationEnd =>
-        Math.Min(
-            CurrentPage * PageSize,
-            FilteredSuppliers.Count);
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+
+    // =========================================================
+    // FILTERED SUPPLIERS
+    // =========================================================
+
+    private List<Supplier> FilteredSuppliers
+    {
+        get
+        {
+            var query =
+                Suppliers.AsEnumerable();
+
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+                query =
+                    query.Where(s =>
+                        s.CompanyName.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.SupplierNumber)
+
+                            &&
+
+                            s.SupplierNumber.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.ContactPerson)
+
+                            &&
+
+                            s.ContactPerson.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.Email)
+
+                            &&
+
+                            s.Email.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.Phone)
+
+                            &&
+
+                            s.Phone.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.City)
+
+                            &&
+
+                            s.City.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                s.VatNumber)
+
+                            &&
+
+                            s.VatNumber.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+                    );
+            }
+
+
+            query =
+                query.Where(s =>
+                    StatusFilter == "Alle"
+
+                    ||
+
+                    (
+                        StatusFilter == "Aktiv"
+                        &&
+                        s.IsActive
+                    )
+
+                    ||
+
+                    (
+                        StatusFilter == "Inaktiv"
+                        &&
+                        !s.IsActive
+                    )
+                );
+
+
+            return query
+                .OrderBy(s => s.CompanyName)
+                .ToList();
+        }
+    }
 
 
     // =========================================================
@@ -916,25 +910,31 @@
     // =========================================================
 
     private int ActiveCount =>
-        FilteredSuppliers.Count(x => x.IsActive);
+        FilteredSuppliers.Count(x =>
+            x.IsActive);
 
 
     private int IncomingCount =>
         FilteredMovements.Count(x =>
-            x.Type == StockMovementType.Wareneingang);
+            x.Type ==
+            StockMovementType.Wareneingang);
 
 
     private decimal IncomingQuantity =>
         FilteredMovements
             .Where(x =>
-                x.Type == StockMovementType.Wareneingang)
-            .Sum(x => x.Quantity);
+                x.Type ==
+                StockMovementType.Wareneingang)
+            .Sum(x =>
+                x.Quantity);
 
 
     private int PurchaseOrderCount =>
         FilteredMovements
-            .Where(x => x.PurchaseOrderId.HasValue)
-            .Select(x => x.PurchaseOrderId)
+            .Where(x =>
+                x.PurchaseOrderId.HasValue)
+            .Select(x =>
+                x.PurchaseOrderId)
             .Distinct()
             .Count();
 
@@ -965,25 +965,19 @@
                 await DbFactory.CreateDbContextAsync();
 
 
-            // =====================================================
-            // SUPPLIERS
-            // =====================================================
-
             Suppliers =
                 await context.Suppliers
                     .AsNoTracking()
-                    .OrderBy(x => x.CompanyName)
+                    .OrderBy(x =>
+                        x.CompanyName)
                     .ToListAsync();
 
-
-            // =====================================================
-            // MOVEMENTS
-            // =====================================================
 
             Movements =
                 await context.StockMovements
                     .AsNoTracking()
-                    .Where(x => x.SupplierId.HasValue)
+                    .Where(x =>
+                        x.SupplierId.HasValue)
                     .ToListAsync();
         }
         finally
@@ -1028,6 +1022,149 @@
 
 
     // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedSuppliers.ToList();
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Lieferanten",
+                    $"Lieferantenbericht – Seite {CurrentPage}",
+
+                    (
+                        "Lieferant",
+                        x => x.CompanyName
+                    ),
+
+                    (
+                        "Lieferantennummer",
+                        x => x.SupplierNumber ?? ""
+                    ),
+
+                    (
+                        "Ansprechpartner",
+                        x => x.ContactPerson ?? ""
+                    ),
+
+                    (
+                        "E-Mail",
+                        x => x.Email ?? ""
+                    ),
+
+                    (
+                        "Telefon",
+                        x => x.Phone ?? ""
+                    ),
+
+                    (
+                        "Straße",
+                        x => x.Street ?? ""
+                    ),
+
+                    (
+                        "PLZ",
+                        x => x.PostalCode ?? ""
+                    ),
+
+                    (
+                        "Stadt",
+                        x => x.City ?? ""
+                    ),
+
+                    (
+                        "Land",
+                        x => x.Country ?? ""
+                    ),
+
+                    (
+                        "USt-IdNr.",
+                        x => x.VatNumber ?? ""
+                    ),
+
+                    (
+                        "Wareneingänge",
+                        x => Movements
+                            .Count(m =>
+                                m.SupplierId == x.Id
+                                &&
+                                m.Type ==
+                                StockMovementType.Wareneingang)
+                    ),
+
+                    (
+                        "Eingegangene Menge",
+                        x => Movements
+                            .Where(m =>
+                                m.SupplierId == x.Id
+                                &&
+                                m.Type ==
+                                StockMovementType.Wareneingang)
+                            .Sum(m =>
+                                m.Quantity)
+                    ),
+
+                    (
+                        "Bestellungen",
+                        x => Movements
+                            .Where(m =>
+                                m.SupplierId == x.Id
+                                &&
+                                m.PurchaseOrderId.HasValue)
+                            .Select(m =>
+                                m.PurchaseOrderId)
+                            .Distinct()
+                            .Count()
+                    ),
+
+                    (
+                        "Status",
+                        x => x.IsActive
+                            ? "Aktiv"
+                            : "Inaktiv"
+                    ),
+
+                    (
+                        "Erstellt am",
+                        x => x.CreatedAt
+                    ),
+
+                    (
+                        "Notiz",
+                        x => x.Note ?? ""
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Lieferantenbericht_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
     // MOVEMENT TYPE
     // =========================================================
 
@@ -1051,7 +1188,8 @@
             StockMovementType.Korrektur =>
                 "Korrektur",
 
-            _ => type.ToString()
+            _ =>
+                type.ToString()
         };
     }
 
@@ -1065,10 +1203,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -1080,6 +1220,7 @@
                         words[0].Length))
                 .ToUpper();
         }
+
 
         return
             $"{words[0][0]}{words[1][0]}"

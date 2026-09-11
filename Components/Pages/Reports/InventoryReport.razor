@@ -1,78 +1,88 @@
 ﻿@page "/reports/inventory"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+
+<PageTitle>Inventurbericht</PageTitle>
+
 <style>
-    .stock-page .filter-card {
+
+    /* =========================================================
+           INVENTORY REPORT FILTER
+           ========================================================= */
+
+    .inventory-report-filter {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .inventory-report-filter-row {
         display: grid;
         grid-template-columns: minmax(320px, 2fr) minmax(180px, 1fr) minmax(180px, 1fr) auto;
         gap: 10px;
+        width: 100%;
         align-items: center;
     }
 
-        .stock-page .filter-card > * {
+        .inventory-report-filter-row > * {
             min-width: 0;
         }
 
-        .stock-page .filter-card .search-box {
+        .inventory-report-filter-row .search-box {
             width: 100%;
             max-width: none;
         }
 
-        .stock-page .filter-card .filter-select {
+        .inventory-report-filter-row .filter-select {
             width: 100%;
         }
 
-    @@media (max-width: 950px) {
-        .stock-page .filter-card {
-            grid-template-columns: minmax(280px, 2fr) minmax(180px, 1fr);
+    .inventory-report-reset {
+        height: 40px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+    @@media (max-width: 1000px) {
+
+        .inventory-report-filter-row {
+            grid-template-columns: minmax(280px, 2fr) minmax(170px, 1fr);
+        }
+
+        .inventory-report-reset {
+            width: fit-content;
         }
     }
 
-    @@media (max-width: 650px) {
-        .stock-page .filter-card {
+
+    @@media (max-width: 600px) {
+
+        .inventory-report-filter-row {
             grid-template-columns: 1fr;
         }
-    }
 
-    .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 14px;
-        margin-bottom: 18px;
-    }
-
-    .summary-card {
-        min-width: 0;
-    }
-
-    
-    @@media (max-width: 1100px) {
-        .summary-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+        .inventory-report-reset {
+            width: 100%;
         }
     }
 
-    
-    @@media (max-width: 750px) {
-        .summary-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-
-    
-    @@media (max-width: 500px) {
-        .summary-grid {
-            grid-template-columns: 1fr;
-        }
-    }
 </style>
-<PageTitle>Inventurbericht</PageTitle>
+
 
 <div class="stock-page">
 
@@ -84,7 +94,9 @@
 
         <div>
 
-            <h1>Inventurbericht</h1>
+            <h1>
+                Inventurbericht
+            </h1>
 
             <p>
                 Übersicht über durchgeführte Inventuren und
@@ -93,13 +105,23 @@
 
         </div>
 
+
         <div class="page-header-actions">
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedInventories.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
 
             <a href="/reports"
                class="btn-secondary">
 
-                <i class="bi bi-arrow-left me-1"></i>
-                Berichte
+                ← Berichte
 
             </a>
 
@@ -111,7 +133,9 @@
     @if (IsLoading)
     {
         <div class="loading-state">
+
             Inventuren werden geladen...
+
         </div>
     }
     else
@@ -121,77 +145,110 @@
              FILTER
              ===================================================== -->
 
-        <div class="filter-card">
+        <div class="filter-card inventory-report-filter">
 
-            <div class="search-box">
+            <div class="inventory-report-filter-row">
 
-                <span class="search-icon">⌕</span>
+                <!-- SEARCH -->
 
-                <input type="text"
-                       placeholder="Lager oder Notiz suchen..."
-                       @bind="SearchTerm"
-                       @bind:event="oninput"
-                       @bind:after="SearchChanged" />
+                <div class="search-box">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input type="text"
+                           placeholder="Lager oder Notiz suchen..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput"
+                           @bind:after="SearchChanged" />
+
+                </div>
+
+
+                <!-- WAREHOUSE -->
+
+                <select class="filter-select"
+                        @bind="SelectedWarehouseId"
+                        @bind:after="FilterChanged">
+
+                    <option value="0">
+                        Alle Lager
+                    </option>
+
+                    @foreach (var warehouse in Warehouses)
+                    {
+                        <option value="@warehouse.Id">
+                            @warehouse.Name
+                        </option>
+                    }
+
+                </select>
+
+
+                <!-- STATUS -->
+
+                <select class="filter-select"
+                        @bind="SelectedStatus"
+                        @bind:after="FilterChanged">
+
+                    <option value="all">
+                        Alle Status
+                    </option>
+
+                    @foreach (var status in StatusOptions)
+                    {
+                        <option value="@status">
+                            @GetStatusText(status)
+                        </option>
+                    }
+
+                </select>
+
+
+                <!-- RESET -->
+
+                <button type="button"
+                        class="btn-secondary inventory-report-reset"
+                        @onclick="ResetFilters">
+
+                    Filter zurücksetzen
+
+                </button>
 
             </div>
 
-
-            <select class="filter-select"
-                    @bind="SelectedWarehouseId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    Alle Lager
-                </option>
-
-                @foreach (var warehouse in Warehouses)
-                {
-                    <option value="@warehouse.Id">
-                        @warehouse.Name
-                    </option>
-                }
-
-            </select>
-
-
-            <select class="filter-select"
-                    @bind="SelectedStatus"
-                    @bind:after="FilterChanged">
-
-                <option value="all">
-                    Alle Status
-                </option>
-
-                @foreach (var status in StatusOptions)
-                {
-                    <option value="@status">
-                        @GetStatusText(status)
-                    </option>
-                }
-
-            </select>
-
-
-            <button type="button"
-                    class="btn-secondary"
-                    @onclick="ResetFilters">
-
-                Zurücksetzen
-
-            </button>
-
         </div>
+
+
+        <!-- =====================================================
+             ACTIVE FILTER INFO
+             ===================================================== -->
+        @if (HasActiveFilters)
+        {
+            <div class="filter-info">
+
+                <span>
+                    Filter aktiv
+                </span>
+
+                <strong>
+                    @FilteredInventories.Count Inventuren
+                </strong>
+
+            </div>
+        }
 
 
         <!-- =====================================================
              SUMMARY
              ===================================================== -->
 
-        <div class="summary-grid">
+        <div class="stock-summary-grid">
 
-            <div class="summary-card">
+            <div class="stock-summary-card">
 
-                <span class="summary-label">
+                <span>
                     Inventuren
                 </span>
 
@@ -202,9 +259,9 @@
             </div>
 
 
-            <div class="summary-card">
+            <div class="stock-summary-card">
 
-                <span class="summary-label">
+                <span>
                     Abgeschlossen
                 </span>
 
@@ -215,9 +272,9 @@
             </div>
 
 
-            <div class="summary-card">
+            <div class="stock-summary-card">
 
-                <span class="summary-label">
+                <span>
                     Positionen
                 </span>
 
@@ -228,9 +285,9 @@
             </div>
 
 
-            <div class="summary-card">
+            <div class="stock-summary-card">
 
-                <span class="summary-label">
+                <span>
                     Abweichende Positionen
                 </span>
 
@@ -241,9 +298,9 @@
             </div>
 
 
-            <div class="summary-card">
+            <div class="stock-summary-card">
 
-                <span class="summary-label">
+                <span>
                     Gesamtdifferenz
                 </span>
 
@@ -260,19 +317,40 @@
              TABLE
              ===================================================== -->
 
-        <div class="stock-table-card">
+        <div class="products-card">
+
+            <div class="products-card-header">
+
+                <div>
+
+                    <strong>
+                        Inventurhistorie
+                    </strong>
+
+                    <span>
+                        @FilteredInventories.Count Einträge
+                    </span>
+
+                </div>
+
+            </div>
+
 
             @if (FilteredInventories.Count == 0)
             {
                 <div class="empty-products">
 
                     <div class="empty-products-icon">
+
                         <i class="bi bi-clipboard-x"></i>
+
                     </div>
+
 
                     <h3>
                         Keine Inventuren gefunden
                     </h3>
+
 
                     <p>
                         Für die aktuellen Filter wurden keine
@@ -343,8 +421,10 @@
 
                                 var countedQuantity =
                                     inventory.Items?
-                                        .Where(x => x.CountedQuantity.HasValue)
-                                        .Sum(x => x.CountedQuantity!.Value) ?? 0;
+                                        .Where(x =>
+                                            x.CountedQuantity.HasValue)
+                                        .Sum(x =>
+                                            x.CountedQuantity!.Value) ?? 0;
 
                                 var difference =
                                     inventory.Items?.Sum(
@@ -353,22 +433,28 @@
 
                                 <tr>
 
-                                    <!-- INVENTORY -->
+                                    <!-- =================================
+                                         INVENTORY
+                                         ================================= -->
 
                                     <td>
 
                                         <div class="product-name">
 
                                             <div class="product-avatar">
+
                                                 @GetInitials(
                                                     inventory.Warehouse?.Name)
+
                                             </div>
+
 
                                             <div>
 
                                                 <strong>
                                                     Inventur #@inventory.Id
                                                 </strong>
+
 
                                                 @if (!string.IsNullOrWhiteSpace(
                                                     inventory.Note))
@@ -385,23 +471,30 @@
                                     </td>
 
 
-                                    <!-- WAREHOUSE -->
+                                    <!-- =================================
+                                         WAREHOUSE
+                                         ================================= -->
 
                                     <td>
+
                                         @(inventory.Warehouse?.Name ?? "-")
+
                                     </td>
 
 
-                                    <!-- STATUS -->
+                                    <!-- =================================
+                                         STATUS
+                                         ================================= -->
 
                                     <td>
 
                                         @if (inventory.Status ==
-                                            InventoryStatus.Entwurf)
+                                             InventoryStatus.Entwurf)
                                         {
                                             <span class="status-badge status-draft">
 
                                                 <i class="bi bi-pencil me-1"></i>
+
                                                 Entwurf
 
                                             </span>
@@ -412,6 +505,7 @@
                                             <span class="status-badge status-warning">
 
                                                 <i class="bi bi-arrow-repeat me-1"></i>
+
                                                 In Bearbeitung
 
                                             </span>
@@ -422,6 +516,7 @@
                                             <span class="status-badge status-active">
 
                                                 <i class="bi bi-check-circle me-1"></i>
+
                                                 Abgeschlossen
 
                                             </span>
@@ -430,14 +525,20 @@
                                     </td>
 
 
-                                    <!-- ITEMS -->
+                                    <!-- =================================
+                                         ITEMS
+                                         ================================= -->
 
                                     <td>
+
                                         @(inventory.Items?.Count ?? 0)
+
                                     </td>
 
 
-                                    <!-- SYSTEM -->
+                                    <!-- =================================
+                                         SYSTEM
+                                         ================================= -->
 
                                     <td>
 
@@ -448,7 +549,9 @@
                                     </td>
 
 
-                                    <!-- COUNTED -->
+                                    <!-- =================================
+                                         COUNTED
+                                         ================================= -->
 
                                     <td>
 
@@ -459,33 +562,43 @@
                                     </td>
 
 
-                                    <!-- DIFFERENCE -->
+                                    <!-- =================================
+                                         DIFFERENCE
+                                         ================================= -->
 
                                     <td>
 
                                         @if (difference > 0)
                                         {
                                             <span class="status-badge status-active">
+
                                                 +@difference.ToString("N2")
+
                                             </span>
                                         }
                                         else if (difference < 0)
                                         {
                                             <span class="status-badge status-low">
+
                                                 @difference.ToString("N2")
+
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="status-badge">
+
                                                 0,00
+
                                             </span>
                                         }
 
                                     </td>
 
 
-                                    <!-- CREATED -->
+                                    <!-- =================================
+                                         CREATED
+                                         ================================= -->
 
                                     <td>
 
@@ -508,7 +621,9 @@
                                     </td>
 
 
-                                    <!-- COMPLETED -->
+                                    <!-- =================================
+                                         COMPLETED
+                                         ================================= -->
 
                                     <td>
 
@@ -554,38 +669,24 @@
                      ================================================= -->
                 @if (TotalPages > 1)
                 {
-                    <div class="pagination-container">
+                    <div class="pagination">
 
-                        <div class="pagination-info">
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage <= 1)"
+                                @onclick="PreviousPage">
 
-                            Zeige
-                            <strong>@PaginationStart</strong>
-                            -
-                            <strong>@PaginationEnd</strong>
-                            von
-                            <strong>@FilteredInventories.Count</strong>
+                            ‹
 
-                        </div>
+                        </button>
 
 
-                        <div class="pagination-buttons">
+                        <div class="pagination-pages">
 
-                            <button type="button"
-                                    class="btn-secondary"
-                                    disabled="@(CurrentPage == 1)"
-                                    @onclick="PreviousPage">
-
-                                &lt;
-
-                            </button>
-
-
-                            @for (int page = 1; page <= TotalPages; page++)
+                            @foreach (var pageNumber in GetPageNumbers())
                             {
-                                var pageNumber = page;
-
                                 <button type="button"
-                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                         @onclick="() => GoToPage(pageNumber)">
 
                                     @pageNumber
@@ -593,20 +694,28 @@
                                 </button>
                             }
 
-
-                            <button type="button"
-                                    class="btn-secondary"
-                                    disabled="@(CurrentPage == TotalPages)"
-                                    @onclick="NextPage">
-
-                                &gt;
-
-                            </button>
-
                         </div>
+
+
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage >= TotalPages)"
+                                @onclick="NextPage">
+
+                            ›
+
+                        </button>
 
                     </div>
                 }
+
+
+                <div class="pagination-info">
+
+                    Seite @CurrentPage von @TotalPages
+                    · @PagedInventories.Count von @FilteredInventories.Count Inventuren
+
+                </div>
 
             }
 
@@ -644,16 +753,23 @@
     {
         return status switch
         {
-            "Entwurf" => "Entwurf",
-            "InBearbeitung" => "In Bearbeitung",
-            "Abgeschlossen" => "Abgeschlossen",
-            _ => status
+            "Entwurf" =>
+                "Entwurf",
+
+            "InBearbeitung" =>
+                "In Bearbeitung",
+
+            "Abgeschlossen" =>
+                "Abgeschlossen",
+
+            _ =>
+                status
         };
     }
 
 
     // =========================================================
-    // FILTER
+    // FILTER - SEARCH
     // =========================================================
 
     private string _searchTerm = string.Empty;
@@ -668,10 +784,15 @@
                 return;
 
             _searchTerm = value;
+
             CurrentPage = 1;
         }
     }
 
+
+    // =========================================================
+    // FILTER - WAREHOUSE
+    // =========================================================
 
     private int _selectedWarehouseId;
 
@@ -685,10 +806,15 @@
                 return;
 
             _selectedWarehouseId = value;
+
             CurrentPage = 1;
         }
     }
 
+
+    // =========================================================
+    // FILTER - STATUS
+    // =========================================================
 
     private string _selectedStatus = "all";
 
@@ -702,6 +828,7 @@
                 return;
 
             _selectedStatus = value;
+
             CurrentPage = 1;
         }
     }
@@ -731,16 +858,27 @@
                 (double)PageSize));
 
 
-    private int PaginationStart =>
-        FilteredInventories.Count == 0
-            ? 0
-            : ((CurrentPage - 1) * PageSize) + 1;
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
 
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
 
-    private int PaginationEnd =>
-        Math.Min(
-            CurrentPage * PageSize,
-            FilteredInventories.Count);
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
 
 
     // =========================================================
@@ -812,7 +950,8 @@
                         StringComparison.OrdinalIgnoreCase)
                 ))
 
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x =>
+                x.CreatedAt)
 
             .ToList();
 
@@ -879,7 +1018,7 @@
 
 
     // =========================================================
-    // LOAD
+    // LOAD DATA
     // =========================================================
 
     private async Task LoadData()
@@ -898,11 +1037,15 @@
 
             Warehouses =
                 await db.Warehouses
+
                     .AsNoTracking()
+
                     .Where(x =>
                         x.IsActive)
+
                     .OrderBy(x =>
                         x.Name)
+
                     .ToListAsync();
 
 
@@ -912,12 +1055,19 @@
 
             Inventories =
                 await db.Inventories
+
                     .AsNoTracking()
+
                     .Include(x =>
                         x.Warehouse)
+
                     .Include(x =>
                         x.Items)
+
                     .ToListAsync();
+
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -927,7 +1077,7 @@
 
 
     // =========================================================
-    // SEARCH
+    // SEARCH CHANGED
     // =========================================================
 
     private Task SearchChanged()
@@ -939,7 +1089,7 @@
 
 
     // =========================================================
-    // FILTER
+    // FILTER CHANGED
     // =========================================================
 
     private Task FilterChanged()
@@ -951,7 +1101,7 @@
 
 
     // =========================================================
-    // RESET
+    // RESET FILTERS
     // =========================================================
 
     private void ResetFilters()
@@ -1001,6 +1151,105 @@
 
 
     // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data = PagedInventories;
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Inventurbericht",
+                    $"Inventurbericht – Seite {CurrentPage}",
+
+                    (
+                        "Inventur",
+                        x => $"Inventur #{x.Id}"
+                    ),
+
+                    (
+                        "Lager",
+                        x => x.Warehouse?.Name ?? ""
+                    ),
+
+                    (
+                        "Status",
+                        x => GetStatusText(
+                            x.Status.ToString())
+                    ),
+
+                    (
+                        "Positionen",
+                        x => x.Items?.Count ?? 0
+                    ),
+
+                    (
+                        "Systembestand",
+                        x => x.Items?
+                            .Sum(i =>
+                                i.SystemQuantity) ?? 0
+                    ),
+
+                    (
+                        "Gezählt",
+                        x => x.Items?
+                            .Where(i =>
+                                i.CountedQuantity.HasValue)
+                            .Sum(i =>
+                                i.CountedQuantity!.Value) ?? 0
+                    ),
+
+                    (
+                        "Differenz",
+                        x => x.Items?
+                            .Sum(i =>
+                                i.Difference) ?? 0
+                    ),
+
+                    (
+                        "Erstellt am",
+                        x => x.CreatedAt
+                    ),
+
+                    (
+                        "Abgeschlossen am",
+                        x => x.CompletedAt
+                    ),
+
+                    (
+                        "Notiz",
+                        x => x.Note ?? ""
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Inventurbericht_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
     // DIFFERENCE
     // =========================================================
 
@@ -1022,10 +1271,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -1037,6 +1288,7 @@
                         words[0].Length))
                 .ToUpper();
         }
+
 
         return
             $"{words[0][0]}{words[1][0]}"

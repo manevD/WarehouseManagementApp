@@ -1,12 +1,17 @@
 ﻿@page "/reports/value"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using Microsoft.JSInterop
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Lagerwert</PageTitle>
 
@@ -28,11 +33,17 @@
 
         <div class="page-header-actions">
 
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedStocks.Count == 0)">
+                📊 Excel exportieren
+            </button>
+
             <a href="/reports"
                class="btn-secondary">
 
-                <i class="bi bi-arrow-left me-1"></i>
-                Berichte
+                ← Berichte
 
             </a>
 
@@ -442,73 +453,44 @@
             <!-- =====================================================
                  PAGINATION
                  ===================================================== -->
-
             @if (TotalPages > 1)
             {
-                <div class="pagination-container">
+                <div class="pagination">
 
-                    <div class="pagination-info">
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+                        ‹
+                    </button>
 
-                        Zeige
+                    <div class="pagination-pages">
 
-                        <strong>
-                            @PaginationStart
-                        </strong>
-
-                        -
-
-                        <strong>
-                            @PaginationEnd
-                        </strong>
-
-                        von
-
-                        <strong>
-                            @FilteredStocks.Count
-                        </strong>
-
-                    </div>
-
-
-                    <div class="pagination-buttons">
-
-                        <button type="button"
-                                class="btn-secondary"
-                                disabled="@(CurrentPage == 1)"
-                                @onclick="PreviousPage">
-
-                            &lt;
-
-                        </button>
-
-
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @foreach (var pageNumber in GetPageNumbers())
                         {
-                            var pageNumber = page;
-
                             <button type="button"
-                                    class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                     @onclick="() => GoToPage(pageNumber)">
-
                                 @pageNumber
-
                             </button>
                         }
 
-
-                        <button type="button"
-                                class="btn-secondary"
-                                disabled="@(CurrentPage == TotalPages)"
-                                @onclick="NextPage">
-
-                            &gt;
-
-                        </button>
-
                     </div>
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+                        ›
+                    </button>
 
                 </div>
             }
+
+            <div class="pagination-info">
+                Seite @CurrentPage von @TotalPages
+                · @PagedStocks.Count von @FilteredStocks.Count Einträge
+            </div>
 
         }
 
@@ -721,17 +703,27 @@
                 (double)PageSize));
 
 
-    private int PaginationStart =>
-        FilteredStocks.Count == 0
-            ? 0
-            : ((CurrentPage - 1) *
-               PageSize) + 1;
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
 
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
 
-    private int PaginationEnd =>
-        Math.Min(
-            CurrentPage * PageSize,
-            FilteredStocks.Count);
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
 
 
     // =========================================================
@@ -854,6 +846,101 @@
             page = TotalPages;
 
         CurrentPage = page;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedStocks.ToList();
+
+            if (data.Count == 0)
+                return;
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Lagerwert",
+                    $"Lagerwertbericht – Seite {CurrentPage}",
+
+                    (
+                        "Produkt",
+                        x => x.Product?.Name ?? ""
+                    ),
+
+                    (
+                        "SKU",
+                        x => x.Product?.SKU ?? ""
+                    ),
+
+                    (
+                        "Barcode",
+                        x => x.Product?.Barcode ?? ""
+                    ),
+
+                    (
+                        "Lager",
+                        x => x.WarehouseLocation?.Warehouse?.Name ?? ""
+                    ),
+
+                    (
+                        "Lagerplatz",
+                        x => x.WarehouseLocation?.Code ?? ""
+                    ),
+
+                    (
+                        "Lagerplatzname",
+                        x => x.WarehouseLocation?.Name ?? ""
+                    ),
+
+                    (
+                        "Bestand",
+                        x => x.Quantity
+                    ),
+
+                    (
+                        "Einkaufspreis",
+                        x => x.Product?.PurchasePrice ?? 0
+                    ),
+
+                    (
+                        "Lagerwert",
+                        x => x.Quantity *
+                            (x.Product?.PurchasePrice ?? 0)
+                    ),
+
+                    (
+                        "Verkaufspreis",
+                        x => x.Product?.SalePrice ?? 0
+                    ),
+
+                    (
+                        "Verkaufswert",
+                        x => x.Quantity *
+                            (x.Product?.SalePrice ?? 0)
+                    )
+                );
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Lagerwert_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
     }
 
 

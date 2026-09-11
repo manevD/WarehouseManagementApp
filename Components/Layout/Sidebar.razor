@@ -1,0 +1,222 @@
+﻿@rendermode InteractiveServer
+
+<aside class="sidebar">
+    <button type="button"
+            class="sidebar-close-button"
+            aria-label="Menü schließen"
+            onclick="warehouseCloseSidebar()">
+        ×
+    </button>
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            W
+        </div>
+
+        <div class="brand-text">
+            <strong>Warehouse</strong>
+            <small>Management</small>
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <div class="nav-section">
+            ÜBERSICHT
+        </div>
+
+        <NavLink href="/dashboard"
+                 Match="NavLinkMatch.All"
+                 class="nav-item">
+
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+
+        </NavLink>
+
+
+        <div class="nav-section">
+            LAGER
+        </div>
+
+        <NavLink href="/products" class="nav-item">
+            <span class="nav-icon">▦</span>
+            <span>Produkte</span>
+        </NavLink>
+
+        <NavLink href="/categories" class="nav-item">
+            <span class="nav-icon">▤</span>
+            <span>Kategorien</span>
+        </NavLink>
+
+        <NavLink href="/warehouses" class="nav-item">
+            <span class="nav-icon">▥</span>
+            <span>Lager</span>
+        </NavLink>
+
+        <NavLink href="/locations" class="nav-item">
+            <span class="nav-icon">⌖</span>
+            <span>Lagerplätze</span>
+        </NavLink>
+
+
+        <div class="nav-section">
+            BESTAND
+        </div>
+
+        <NavLink href="/stock" class="nav-item">
+            <span class="nav-icon">▣</span>
+            <span>Bestand</span>
+        </NavLink>
+
+        <NavLink href="/stock/incoming" class="nav-item">
+            <span class="nav-icon">↓</span>
+            <span>Wareneingang</span>
+        </NavLink>
+
+        <NavLink href="/stock/outgoing" class="nav-item">
+            <span class="nav-icon">↑</span>
+            <span>Warenausgang</span>
+        </NavLink>
+
+        <NavLink href="/stock/transfer" class="nav-item">
+            <span class="nav-icon">↔</span>
+            <span>Umlagerung</span>
+        </NavLink>
+
+        <NavLink href="/stock/movements" class="nav-item">
+            <span class="nav-icon">↕</span>
+            <span>Bewegungen</span>
+        </NavLink>
+
+
+        <div class="nav-section">
+            VERWALTUNG
+        </div>
+
+        <NavLink href="/suppliers" class="nav-item">
+            <span class="nav-icon">♙</span>
+            <span>Lieferanten</span>
+        </NavLink>
+
+        <NavLink href="/customers" class="nav-item">
+            <span class="nav-icon">♙</span>
+            <span>Kunden</span>
+        </NavLink>
+
+        <NavLink href="/orders" class="nav-item">
+            <span class="nav-icon">☷</span>
+            <span>Bestellungen</span>
+        </NavLink>
+
+        <NavLink href="/purchase-orders" class="nav-item">
+            <span class="nav-icon">☷</span>
+            <span>Lieferant-Bestellungen</span>
+        </NavLink>
+
+
+        <div class="nav-section">
+            ANALYSE
+        </div>
+
+        <NavLink href="/inventory" class="nav-item">
+            <span class="nav-icon">✓</span>
+            <span>Inventur</span>
+        </NavLink>
+
+        <NavLink href="/reports" class="nav-item">
+            <span class="nav-icon">▥</span>
+            <span>Berichte</span>
+        </NavLink>
+
+
+        <div class="nav-section">
+            EINSTELLUNGEN
+        </div>
+
+        <button type="button"
+                class="nav-item settings-title"
+                @onclick="ToggleSettings">
+
+            <span class="nav-icon">⚙</span>
+
+            <span>Einstellungen</span>
+
+            <span class="settings-arrow @(SettingsOpen ? "open" : "")">
+                ▼
+            </span>
+
+        </button>
+
+
+        @if (SettingsOpen)
+        {
+            <div class="settings-submenu">
+
+                <NavLink href="/Account/Manage"
+                         Match="NavLinkMatch.All"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>Profil</span>
+
+                </NavLink>
+
+                <NavLink href="/Account/Manage/ChangePassword"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>Passwort ändern</span>
+
+                </NavLink>
+
+                <NavLink href="/Account/Manage/Email"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>E-Mail ändern</span>
+
+                </NavLink>
+
+                <NavLink href="/Account/Manage/PersonalData"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>Persönliche Daten</span>
+
+                </NavLink>
+
+                <NavLink href="/users"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>Benutzerverwaltung</span>
+
+                </NavLink>
+
+                <NavLink href="/roles"
+                         class="nav-item">
+
+                    <span class="nav-icon">•</span>
+                    <span>Rollenverwaltung</span>
+
+                </NavLink>
+
+            </div>
+        }
+
+    </nav>
+
+</aside>
+@code {
+
+    private bool SettingsOpen = false;
+
+    private void ToggleSettings()
+    {
+        SettingsOpen = !SettingsOpen;
+    }
+
+}

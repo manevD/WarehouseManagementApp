@@ -1,0 +1,1455 @@
+﻿@page "/users"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
+@using WarehouseManagement.Data
+@using WarehouseManagement.Services
+
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+
+<PageTitle>Benutzerverwaltung</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Benutzerverwaltung
+            </h1>
+
+            <p>
+                Benutzer und Rollen verwalten
+            </p>
+
+        </div>
+
+        <div class="page-header-actions">
+
+            <!-- EXCEL -->
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedUsers.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
+
+            <!-- NEW USER -->
+
+            <button type="button"
+                    class="btn-primary"
+                    @onclick="OpenCreate">
+
+                + Neuer Benutzer
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="filter-main-row">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       placeholder="Benutzer, E-Mail oder Rolle suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Benutzer
+                </strong>
+
+                <span>
+                    @FilteredUsers.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+
+                Benutzer werden geladen...
+
+            </div>
+        }
+        else if (PagedUsers.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+
+                    <i class="bi bi-people"></i>
+
+                </div>
+
+                <h3>
+                    Keine Benutzer gefunden
+                </h3>
+
+                <p>
+                    Es wurden keine Benutzer gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+
+            <!-- =====================================================
+                 TABLE
+                 ===================================================== -->
+
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Benutzer
+                            </th>
+
+                            <th>
+                                E-Mail
+                            </th>
+
+                            <th>
+                                Rollen
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Aktionen
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var user in PagedUsers)
+                        {
+                            <tr>
+
+                                <!-- USER -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+
+                                            @GetInitials(
+                                                user.UserName)
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @user.UserName
+                                            </strong>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- EMAIL -->
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        user.Email))
+                                    {
+                                        @user.Email
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ROLES -->
+
+                                <td>
+
+                                    @if (UserRoles.TryGetValue(
+                                        user.Id,
+                                        out var roles)
+                                        &&
+                                        roles.Count > 0)
+                                    {
+                                        <div>
+
+                                            @foreach (var role in roles)
+                                            {
+                                                <span class="status-badge status-active">
+                                                    @role
+                                                </span>
+                                            }
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            Keine Rolle
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (IsUserActive(user))
+                                    {
+                                        <span class="status-badge status-active">
+                                            Aktiv
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inaktiv
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+                                    <div class="product-actions">
+                                        <button type="button"
+                                                class="action-button"
+                                                title="Bearbeiten"
+                                                @onclick="() => OpenEdit(user)">
+                                            ✎
+                                        </button>
+
+                                        <button class="action-button delete-button"
+                                                title="Löschen"
+                                                @onclick="() => OpenDelete(user)">
+                                            🗑
+                                        </button>
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PAGINATION
+                 ===================================================== -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @foreach (var pageNumber in GetPageNumbers())
+                        {
+                            <button type="button"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedUsers.Count von @FilteredUsers.Count Items
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     CREATE / EDIT MODAL
+     ============================================================= -->
+@if (ShowUserModal)
+{
+    <div class="modal-backdrop">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        @(IsEditMode
+                            ? "Benutzer bearbeiten"
+                            : "Neuer Benutzer")
+                    </h2>
+
+                    <p>
+                        @(IsEditMode
+                            ? "Benutzerdaten und Rolle ändern"
+                            : "Neuen Benutzer anlegen")
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        class="modal-close"
+                        @onclick="CloseModal">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <!-- USERNAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Benutzername
+                    </label>
+
+                    <input class="form-control"
+                           @bind="EditModel.UserName"
+                           disabled="@IsEditMode" />
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label>
+                        E-Mail
+                    </label>
+
+                    <input type="email"
+                           class="form-control"
+                           @bind="EditModel.Email" />
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                @if (!IsEditMode)
+                {
+                    <div class="form-group">
+
+                        <label>
+                            Passwort
+                        </label>
+
+                        <input type="password"
+                               class="form-control"
+                               @bind="EditModel.Password" />
+
+                    </div>
+                }
+
+
+                <!-- ROLE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Rolle
+                    </label>
+
+                    <select class="form-control"
+                            @bind="EditModel.Role">
+
+                        <option value="">
+                            Keine Rolle
+                        </option>
+
+                        @foreach (var role in Roles)
+                        {
+                            <option value="@role.Name">
+                                @role.Name
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-check">
+
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="userActive"
+                           @bind="EditModel.IsActive" />
+
+                    <label for="userActive">
+                        Benutzer ist aktiv
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="CloseModal">
+
+                    Abbrechen
+
+                </button>
+
+                <button type="button"
+                        class="btn-primary"
+                        @onclick="SaveUser"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Speichern")
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+<!-- =============================================================
+     DELETE MODAL
+     ============================================================= -->
+@if (ShowDeleteModal)
+{
+    <div class="modal-backdrop">
+
+        <div class="modal-card modal-card-small">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Benutzer löschen
+                    </h2>
+
+                    <p>
+                        Diese Aktion kann nicht rückgängig gemacht werden.
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        class="modal-close"
+                        @onclick="CloseDelete">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @ErrorMessage
+                    </div>
+                }
+
+                <p>
+
+                    Möchten Sie den Benutzer
+
+                    <strong>
+                        @DeleteUser?.UserName
+                    </strong>
+
+                    wirklich löschen?
+
+                </p>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="CloseDelete">
+
+                    Abbrechen
+
+                </button>
+
+                <button type="button"
+                        class="btn-danger"
+                        @onclick="DeleteUserAsync"
+                        disabled="@IsSaving">
+
+                    Löschen
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<ApplicationUser> Users = new();
+
+    private List<IdentityRole> Roles = new();
+
+    private Dictionary<string, List<string>> UserRoles = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private bool ShowUserModal;
+
+    private bool ShowDeleteModal;
+
+    private bool IsEditMode;
+
+    private string? ErrorMessage;
+
+    private ApplicationUser? DeleteUser;
+
+    private string? EditUserId;
+
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private string _searchTerm = string.Empty;
+
+    private string SearchTerm
+    {
+        get => _searchTerm;
+
+        set
+        {
+            if (_searchTerm == value)
+                return;
+
+            _searchTerm = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private List<ApplicationUser> FilteredUsers
+    {
+        get
+        {
+            var query =
+                Users.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
+            {
+                var search =
+                    SearchTerm.Trim();
+
+                query =
+                    query.Where(user =>
+                        (
+                            user.UserName?.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                            ?? false
+                        )
+                        ||
+                        (
+                            user.Email?.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                            ?? false
+                        )
+                        ||
+                        (
+                            UserRoles.TryGetValue(
+                                user.Id,
+                                out var roles)
+                            &&
+                            roles.Any(role =>
+                                role.Contains(
+                                    search,
+                                    StringComparison.OrdinalIgnoreCase))
+                        )
+                    );
+            }
+
+            return query
+                .OrderBy(x => x.UserName)
+                .ToList();
+        }
+    }
+
+
+    private List<ApplicationUser> PagedUsers =>
+        FilteredUsers
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredUsers.Count /
+                (double)PageSize));
+
+
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
+
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
+
+
+    // =========================================================
+    // EDIT MODEL
+    // =========================================================
+
+    private UserEditModel EditModel = new();
+
+
+    private class UserEditModel
+    {
+        public string UserName { get; set; } =
+            string.Empty;
+
+        public string Email { get; set; } =
+            string.Empty;
+
+        public string Password { get; set; } =
+            string.Empty;
+
+        public string Role { get; set; } =
+            string.Empty;
+
+        public bool IsActive { get; set; } = true;
+    }
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            Users =
+                await UserManager.Users
+                    .OrderBy(x => x.UserName)
+                    .ToListAsync();
+
+
+            Roles =
+                await RoleManager.Roles
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            UserRoles.Clear();
+
+            foreach (var user in Users)
+            {
+                var roles =
+                    await UserManager.GetRolesAsync(
+                        user);
+
+                UserRoles[user.Id] =
+                    roles.ToList();
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // CREATE
+    // =========================================================
+
+    private void OpenCreate()
+    {
+        ErrorMessage = null;
+
+        IsEditMode = false;
+
+        EditUserId = null;
+
+        EditModel =
+            new UserEditModel
+            {
+                IsActive = true
+            };
+
+        ShowUserModal = true;
+    }
+
+
+    // =========================================================
+    // EDIT
+    // =========================================================
+
+    private async Task OpenEdit(
+        ApplicationUser user)
+    {
+        ErrorMessage = null;
+
+        IsEditMode = true;
+
+        EditUserId = user.Id;
+
+        var roles =
+            await UserManager.GetRolesAsync(
+                user);
+
+        EditModel =
+            new UserEditModel
+            {
+                UserName =
+                    user.UserName ?? string.Empty,
+
+                Email =
+                    user.Email ?? string.Empty,
+
+                Role =
+                    roles.FirstOrDefault()
+                    ?? string.Empty,
+
+                IsActive =
+                    IsUserActive(user)
+            };
+
+        ShowUserModal = true;
+    }
+
+
+    // =========================================================
+    // SAVE
+    // =========================================================
+
+    private async Task SaveUser()
+    {
+        ErrorMessage = null;
+
+        IsSaving = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(
+                EditModel.UserName))
+            {
+                ErrorMessage =
+                    "Benutzername ist erforderlich.";
+
+                return;
+            }
+
+
+            if (IsEditMode)
+            {
+                await UpdateUser();
+            }
+            else
+            {
+                await CreateUser();
+            }
+
+
+            if (string.IsNullOrWhiteSpace(
+                ErrorMessage))
+            {
+                ShowUserModal = false;
+
+                await LoadData();
+
+                if (CurrentPage > TotalPages)
+                    CurrentPage = TotalPages;
+            }
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // CREATE USER
+    // =========================================================
+
+    private async Task CreateUser()
+    {
+        if (string.IsNullOrWhiteSpace(
+            EditModel.Password))
+        {
+            ErrorMessage =
+                "Passwort ist erforderlich.";
+
+            return;
+        }
+
+
+        var user =
+            new ApplicationUser
+            {
+                UserName =
+                    EditModel.UserName.Trim(),
+
+                Email =
+                    string.IsNullOrWhiteSpace(
+                        EditModel.Email)
+                        ? null
+                        : EditModel.Email.Trim(),
+
+                EmailConfirmed = true
+            };
+
+
+        var result =
+            await UserManager.CreateAsync(
+                user,
+                EditModel.Password);
+
+
+        if (!result.Succeeded)
+        {
+            ErrorMessage =
+                string.Join(
+                    " ",
+                    result.Errors.Select(
+                        x => x.Description));
+
+            return;
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(
+            EditModel.Role))
+        {
+            if (await RoleManager.RoleExistsAsync(
+                EditModel.Role))
+            {
+                var roleResult =
+                    await UserManager.AddToRoleAsync(
+                        user,
+                        EditModel.Role);
+
+                if (!roleResult.Succeeded)
+                {
+                    ErrorMessage =
+                        string.Join(
+                            " ",
+                            roleResult.Errors.Select(
+                                x => x.Description));
+
+                    return;
+                }
+            }
+        }
+
+
+        SetUserActive(
+            user,
+            EditModel.IsActive);
+
+        await UserManager.UpdateAsync(user);
+    }
+
+
+    // =========================================================
+    // UPDATE USER
+    // =========================================================
+
+    private async Task UpdateUser()
+    {
+        if (string.IsNullOrWhiteSpace(
+            EditUserId))
+        {
+            ErrorMessage =
+                "Benutzer wurde nicht gefunden.";
+
+            return;
+        }
+
+
+        var user =
+            await UserManager.FindByIdAsync(
+                EditUserId);
+
+
+        if (user == null)
+        {
+            ErrorMessage =
+                "Benutzer wurde nicht gefunden.";
+
+            return;
+        }
+
+
+        user.Email =
+            string.IsNullOrWhiteSpace(
+                EditModel.Email)
+                ? null
+                : EditModel.Email.Trim();
+
+
+        SetUserActive(
+            user,
+            EditModel.IsActive);
+
+
+        var updateResult =
+            await UserManager.UpdateAsync(
+                user);
+
+
+        if (!updateResult.Succeeded)
+        {
+            ErrorMessage =
+                string.Join(
+                    " ",
+                    updateResult.Errors.Select(
+                        x => x.Description));
+
+            return;
+        }
+
+
+        // =====================================================
+        // ROLES
+        // =====================================================
+
+        var currentRoles =
+            await UserManager.GetRolesAsync(
+                user);
+
+
+        if (currentRoles.Any())
+        {
+            var removeResult =
+                await UserManager.RemoveFromRolesAsync(
+                    user,
+                    currentRoles);
+
+            if (!removeResult.Succeeded)
+            {
+                ErrorMessage =
+                    string.Join(
+                        " ",
+                        removeResult.Errors.Select(
+                            x => x.Description));
+
+                return;
+            }
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(
+            EditModel.Role))
+        {
+            if (await RoleManager.RoleExistsAsync(
+                EditModel.Role))
+            {
+                var roleResult =
+                    await UserManager.AddToRoleAsync(
+                        user,
+                        EditModel.Role);
+
+                if (!roleResult.Succeeded)
+                {
+                    ErrorMessage =
+                        string.Join(
+                            " ",
+                            roleResult.Errors.Select(
+                                x => x.Description));
+
+                    return;
+                }
+            }
+        }
+    }
+
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
+    private void OpenDelete(
+        ApplicationUser user)
+    {
+        ErrorMessage = null;
+
+        DeleteUser = user;
+
+        ShowDeleteModal = true;
+    }
+
+
+    private void CloseDelete()
+    {
+        ShowDeleteModal = false;
+
+        DeleteUser = null;
+
+        ErrorMessage = null;
+    }
+
+
+    private async Task DeleteUserAsync()
+    {
+        if (DeleteUser == null)
+            return;
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+        try
+        {
+            var authState =
+                await AuthenticationStateProvider
+                    .GetAuthenticationStateAsync();
+
+
+            var currentUser =
+                await UserManager.GetUserAsync(
+                    authState.User);
+
+
+            if (currentUser != null
+                &&
+                currentUser.Id ==
+                DeleteUser.Id)
+            {
+                ErrorMessage =
+                    "Sie können Ihren eigenen Benutzer nicht löschen.";
+
+                return;
+            }
+
+
+            var result =
+                await UserManager.DeleteAsync(
+                    DeleteUser);
+
+
+            if (!result.Succeeded)
+            {
+                ErrorMessage =
+                    string.Join(
+                        " ",
+                        result.Errors.Select(
+                            x => x.Description));
+
+                return;
+            }
+
+
+            ShowDeleteModal = false;
+
+            DeleteUser = null;
+
+            await LoadData();
+
+
+            if (CurrentPage > TotalPages)
+                CurrentPage = TotalPages;
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // MODAL
+    // =========================================================
+
+    private void CloseModal()
+    {
+        ShowUserModal = false;
+
+        ErrorMessage = null;
+
+        EditUserId = null;
+    }
+
+
+    // =========================================================
+    // ACTIVE / INACTIVE
+    // =========================================================
+
+    private bool IsUserActive(
+        ApplicationUser user)
+    {
+        return user.LockoutEnd == null
+            ||
+            user.LockoutEnd <=
+                DateTimeOffset.UtcNow;
+    }
+
+
+    private void SetUserActive(
+        ApplicationUser user,
+        bool active)
+    {
+        if (active)
+        {
+            user.LockoutEnabled = false;
+
+            user.LockoutEnd = null;
+        }
+        else
+        {
+            user.LockoutEnabled = true;
+
+            user.LockoutEnd =
+                DateTimeOffset.UtcNow.AddYears(100);
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(
+        int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedUsers.ToList();
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Benutzer",
+                    $"Benutzerverwaltung – Seite {CurrentPage}",
+
+                    (
+                        "Benutzer",
+                        x => x.UserName ?? ""
+                    ),
+
+                    (
+                        "E-Mail",
+                        x => x.Email ?? ""
+                    ),
+
+                    (
+                        "Rollen",
+                        x =>
+                            UserRoles.TryGetValue(
+                                x.Id,
+                                out var roles)
+                                && roles.Count > 0
+                                    ? string.Join(
+                                        ", ",
+                                        roles)
+                                    : "Keine Rolle"
+                    ),
+
+                    (
+                        "Status",
+                        x =>
+                            IsUserActive(x)
+                                ? "Aktiv"
+                                : "Inaktiv"
+                    ),
+
+                    (
+                        "E-Mail bestätigt",
+                        x => x.EmailConfirmed
+                    ),
+
+                    (
+                        "Telefon",
+                        x => x.PhoneNumber ?? ""
+                    )
+                );
+
+            var base64 =
+                Convert.ToBase64String(
+                    bytes);
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Benutzer_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

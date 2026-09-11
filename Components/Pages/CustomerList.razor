@@ -1,17 +1,24 @@
 ﻿@page "/customers"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Kunden</PageTitle>
 
 <div class="product-list-page">
+
+    <!-- HEADER -->
 
     <div class="page-header">
 
@@ -20,10 +27,20 @@
             <p>Verwalten Sie Ihre Kunden.</p>
         </div>
 
-        <a href="/customers/create"
-           class="btn-primary">
-            + Neuer Kunde
-        </a>
+        <div>
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedCustomers.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+            <a href="/customers/create"
+               class="btn-primary">
+                + Neuer Kunde
+            </a>
+
+        </div>
 
     </div>
 
@@ -162,21 +179,13 @@
                         <tr>
 
                             <th>Nr.</th>
-
                             <th>Firma</th>
-
                             <th>Ansprechpartner</th>
-
                             <th>E-Mail</th>
-
                             <th>Telefon</th>
-
                             <th>Ort</th>
-
                             <th>USt-IdNr.</th>
-
                             <th>Status</th>
-
                             <th>Aktionen</th>
 
                         </tr>
@@ -186,7 +195,7 @@
 
                     <tbody>
 
-                        @foreach (var customer in Customers)
+                        @foreach (var customer in PagedCustomers)
                         {
                             <tr>
 
@@ -239,10 +248,12 @@
                                 <!-- ANSPRECHPARTNER -->
 
                                 <td>
+
                                     @(string.IsNullOrWhiteSpace(
                                         customer.ContactPerson)
                                         ? "-"
                                         : customer.ContactPerson)
+
                                 </td>
 
 
@@ -268,10 +279,12 @@
                                 <!-- TELEFON -->
 
                                 <td>
+
                                     @(string.IsNullOrWhiteSpace(
                                         customer.Phone)
                                         ? "-"
                                         : customer.Phone)
+
                                 </td>
 
 
@@ -297,10 +310,12 @@
                                 <!-- VAT -->
 
                                 <td>
+
                                     @(string.IsNullOrWhiteSpace(
                                         customer.VatNumber)
                                         ? "-"
                                         : customer.VatNumber)
+
                                 </td>
 
 
@@ -333,7 +348,9 @@
                                         <a href="/customers/edit/@customer.Id"
                                            class="action-button"
                                            title="Bearbeiten">
+
                                             ✎
+
                                         </a>
 
 
@@ -341,7 +358,9 @@
                                                 class="action-button delete-button"
                                                 title="Deaktivieren"
                                                 @onclick="() => DeactivateCustomer(customer)">
+
                                             🗑
+
                                         </button>
 
                                     </div>
@@ -356,6 +375,60 @@
                 </table>
 
             </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedCustomers.Count von @Customers.Count Kunden
+
+            </div>
         }
 
     </div>
@@ -364,6 +437,10 @@
 
 
 @code {
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
 
     private List<Customer> Customers = new();
 
@@ -380,6 +457,21 @@
 
     private int InactiveCount =>
         Customers.Count(x => !x.IsActive);
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Customers.Count /
+                (double)PageSize));
+
+
+    private List<Customer> PagedCustomers =>
+        Customers
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
 
 
     protected override async Task OnInitializedAsync()
@@ -401,6 +493,8 @@
             var query =
                 db.Customers.AsQueryable();
 
+
+            // SEARCH
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
@@ -458,6 +552,8 @@
             }
 
 
+            // STATUS
+
             if (SelectedStatus == "active")
             {
                 query =
@@ -474,6 +570,9 @@
                 await query
                     .OrderBy(x => x.CompanyName)
                     .ToListAsync();
+
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -484,13 +583,114 @@
 
     private async Task SearchChanged()
     {
+        CurrentPage = 1;
+
         await LoadCustomers();
     }
 
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         await LoadCustomers();
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private async Task ExportExcel()
+    {
+        var data = PagedCustomers
+            .Where(x => x != null)
+            .ToList();
+
+
+        if (data.Count == 0)
+            return;
+
+
+        var fileBytes = ExcelExport.Export(
+            data,
+            "Kunden",
+            $"Kunden – Seite {CurrentPage}",
+
+            ("Nr.", x =>
+                string.IsNullOrWhiteSpace(x.CustomerNumber)
+                    ? $"#{x.Id}"
+                    : x.CustomerNumber),
+
+            ("Firma", x =>
+                x.CompanyName ?? ""),
+
+            ("Ansprechpartner", x =>
+                x.ContactPerson ?? ""),
+
+            ("E-Mail", x =>
+                x.Email ?? ""),
+
+            ("Telefon", x =>
+                x.Phone ?? ""),
+
+            ("Straße", x =>
+                x.Street ?? ""),
+
+            ("PLZ", x =>
+                x.PostalCode ?? ""),
+
+            ("Ort", x =>
+                x.City ?? ""),
+
+            ("Land", x =>
+                x.Country ?? ""),
+
+            ("USt-IdNr.", x =>
+                x.VatNumber ?? ""),
+
+            ("Status", x =>
+                x.IsActive
+                    ? "Aktiv"
+                    : "Inaktiv"),
+
+            ("Notiz", x =>
+                x.Note ?? "")
+        );
+
+
+        var base64 =
+            Convert.ToBase64String(fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+            $"Kunden_Seite_{CurrentPage}.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            base64);
     }
 
 

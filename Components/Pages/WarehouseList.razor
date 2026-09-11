@@ -1,31 +1,62 @@
 ﻿@page "/warehouses"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+
 
 <PageTitle>Lager</PageTitle>
 
+
 <div class="categories-page">
+
+    <!-- HEADER -->
 
     <div class="page-header">
 
         <div>
-            <h1>Lager</h1>
-            <p>Verwalten Sie Ihre Lager und Standorte.</p>
+
+            <h1>
+                Lager
+            </h1>
+
+            <p>
+                Verwalten Sie Ihre Lager und Standorte.
+            </p>
+
         </div>
 
-        <a href="/warehouses/create"
-           class="btn-primary">
 
-            <span>+</span>
-            Neues Lager
+        <div>
 
-        </a>
+          <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedWarehouses.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
+
+            <a href="/warehouses/create"
+               class="btn-primary">
+
+                <span>+</span>
+
+                Neues Lager
+
+            </a>
+
+        </div>
 
     </div>
 
@@ -36,7 +67,10 @@
 
         <div class="search-box">
 
-            <span class="search-icon">⌕</span>
+            <span class="search-icon">
+                ⌕
+            </span>
+
 
             <input type="text"
                    placeholder="Lager suchen..."
@@ -72,11 +106,14 @@
 
     <div class="products-card">
 
+
         <div class="products-card-header">
 
             <div>
 
-                <strong>Lagerliste</strong>
+                <strong>
+                    Lagerliste
+                </strong>
 
                 <span>
                     @Warehouses.Count Lager
@@ -90,22 +127,30 @@
         @if (IsLoading)
         {
             <div class="loading-state">
+
                 Lager werden geladen...
+
             </div>
         }
         else if (Warehouses.Count == 0)
         {
             <div class="empty-products">
 
+
                 <div class="empty-products-icon">
                     🏢
                 </div>
 
-                <h3>Keine Lager gefunden</h3>
+
+                <h3>
+                    Keine Lager gefunden
+                </h3>
+
 
                 <p>
-                    Es wurden noch keine Lager angelegt.
+                    Für die aktuellen Filter wurden keine Lager gefunden.
                 </p>
+
 
                 <a href="/warehouses/create"
                    class="btn-primary">
@@ -114,23 +159,40 @@
 
                 </a>
 
+
             </div>
         }
         else
         {
+
             <div class="products-table-wrapper">
 
+
                 <table class="products-table">
+
 
                     <thead>
 
                         <tr>
 
-                            <th>Name</th>
-                            <th>Beschreibung</th>
-                            <th>Lagerplätze</th>
-                            <th>Status</th>
-                            <th></th>
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Beschreibung
+                            </th>
+
+                            <th>
+                                Lagerplätze
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                            </th>
 
                         </tr>
 
@@ -139,9 +201,11 @@
 
                     <tbody>
 
-                        @foreach (var warehouse in Warehouses)
+
+                        @foreach (var warehouse in PagedWarehouses)
                         {
                             <tr>
+
 
                                 <!-- NAME -->
 
@@ -149,22 +213,27 @@
 
                                     <div class="product-name">
 
+
                                         <div class="product-avatar">
-                                            @GetInitials(warehouse.Name)
+
+                                            @GetInitials(
+                                                warehouse.Name)
+
                                         </div>
+
 
                                         <div>
 
                                             <strong>
-                                                @warehouse.Name
+                                                @(warehouse.Name ?? "-")
                                             </strong>
 
                                         </div>
 
+
                                     </div>
 
                                 </td>
-
 
 
                                 <!-- DESCRIPTION -->
@@ -191,7 +260,9 @@
                                 <td>
 
                                     <span class="category-count">
-                                        @warehouse.Locations.Count
+
+                                        @(warehouse.Locations?.Count ?? 0)
+
                                     </span>
 
                                 </td>
@@ -204,13 +275,17 @@
                                     @if (warehouse.IsActive)
                                     {
                                         <span class="status-badge status-active">
+
                                             Aktiv
+
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-inactive">
+
                                             Inaktiv
+
                                         </span>
                                     }
 
@@ -223,6 +298,7 @@
 
                                     <div class="product-actions">
 
+
                                         <a href="/warehouses/edit/@warehouse.Id"
                                            class="action-button"
                                            title="Bearbeiten">
@@ -230,6 +306,7 @@
                                             ✎
 
                                         </a>
+
 
                                         <button class="action-button delete-button"
                                                 title="Deaktivieren"
@@ -239,18 +316,88 @@
 
                                         </button>
 
+
                                     </div>
 
                                 </td>
 
+
                             </tr>
                         }
+
 
                     </tbody>
 
                 </table>
 
+
             </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+
+                    <!-- PREVIOUS -->
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    <div class="pagination-pages">
+
+
+                        @foreach (var pageNumber in GetPageNumbers())
+                        {
+                            <button type="button"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+
+                    </div>
+
+
+                    <!-- NEXT -->
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+
+                </div>
+            }
+
+
+            <!-- PAGINATION INFO -->
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                ·
+                @PagedWarehouses.Count von @Warehouses.Count Lager
+
+            </div>
+
         }
 
     </div>
@@ -261,34 +408,47 @@
     {
         <div class="delete-modal-backdrop">
 
+
             <div class="delete-modal">
+
 
                 <div class="delete-modal-icon">
                     🗑
                 </div>
 
-                <h3>Lager deaktivieren?</h3>
+
+                <h3>
+                    Lager deaktivieren?
+                </h3>
+
 
                 <p>
+
                     Möchten Sie
+
                     <strong>
-                        @WarehouseToDelete.Name
+                        @(WarehouseToDelete.Name ?? "-")
                     </strong>
+
                     wirklich deaktivieren?
+
                 </p>
 
+
                 <small>
+
                     Das Lager wird nicht gelöscht.
                     Es wird nur als inaktiv markiert.
+
                 </small>
 
 
-                @if (WarehouseToDelete.Locations.Any())
+                @if (WarehouseToDelete.Locations?.Any() == true)
                 {
                     <div class="form-error">
 
                         Dieses Lager enthält
-                        @WarehouseToDelete.Locations.Count
+                        @(WarehouseToDelete.Locations?.Count ?? 0)
                         Lagerplatz/Lagerplätze.
 
                         Diese bleiben erhalten.
@@ -299,12 +459,14 @@
 
                 <div class="delete-modal-actions">
 
+
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
                         Abbrechen
 
                     </button>
+
 
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
@@ -313,23 +475,132 @@
 
                     </button>
 
+
                 </div>
+
 
             </div>
 
         </div>
     }
 
+
 </div>
 
 
 @code {
 
+    // =========================================================
+    // DATA
+    // =========================================================
+
     private List<Warehouse> Warehouses = new();
 
-    private string SearchTerm = string.Empty;
 
-    private string SelectedStatus = "all";
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Warehouses.Count /
+                (double)PageSize));
+
+
+    private List<Warehouse> PagedWarehouses =>
+        Warehouses
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+
+
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
+
+
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+
+        return pages;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+
+        if (page > TotalPages)
+        {
+            page = TotalPages;
+        }
+
+
+        CurrentPage = page;
+    }
+
+
+    // =========================================================
+    // FILTER
+    // =========================================================
+
+    private string SearchTerm =
+        string.Empty;
+
+
+    private string SelectedStatus =
+        "all";
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private bool IsLoading = true;
 
@@ -338,51 +609,81 @@
     private bool ShowDeleteModal;
 
 
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
         await LoadWarehouses();
     }
 
 
+    // =========================================================
+    // LOAD WAREHOUSES
+    // =========================================================
+
     private async Task LoadWarehouses()
     {
         IsLoading = true;
+
 
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
-            var query = db.Warehouses
-                .Include(x => x.Locations)
-                .AsQueryable();
+
+            var query =
+                db.Warehouses
+                    .Include(x => x.Locations)
+                    .AsQueryable();
 
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            // SEARCH
+
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
 
-                query = query.Where(x =>
-                    x.Name.Contains(search) ||
-                    (x.Description != null &&
-                     x.Description.Contains(search)));
+
+                query =
+                    query.Where(x =>
+                        x.Name.Contains(search) ||
+                        (x.Description != null &&
+                         x.Description.Contains(search)));
             }
 
+
+            // STATUS
 
             if (SelectedStatus == "active")
             {
-                query = query.Where(x => x.IsActive);
+                query =
+                    query.Where(x =>
+                        x.IsActive);
             }
             else if (SelectedStatus == "inactive")
             {
-                query = query.Where(x => !x.IsActive);
+                query =
+                    query.Where(x =>
+                        !x.IsActive);
             }
 
 
-            Warehouses = await query
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+            // LOAD
+
+            Warehouses =
+                await query
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            // RESET TO PAGE 1
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -391,21 +692,110 @@
     }
 
 
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
     private async Task SearchChanged()
     {
+        CurrentPage = 1;
+
         await LoadWarehouses();
     }
 
+
+    // =========================================================
+    // FILTER
+    // =========================================================
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         await LoadWarehouses();
     }
 
 
-    private void ConfirmDelete(Warehouse warehouse)
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
     {
-        WarehouseToDelete = warehouse;
+        var data =
+            PagedWarehouses
+                .Where(x => x != null)
+                .ToList();
+
+
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+
+        var fileBytes =
+            ExcelExport.Export(
+                data,
+
+                "Lager",
+
+                $"Lager – Seite {CurrentPage}",
+
+                ("Name",
+                    x => x.Name ?? ""),
+
+                ("Beschreibung",
+                    x => x.Description ?? ""),
+
+                ("Lagerplätze",
+                    x => x.Locations?.Count ?? 0),
+
+                ("Status",
+                    x => x.IsActive
+                        ? "Aktiv"
+                        : "Inaktiv"),
+
+                ("Adresse",
+                    x => x.Address ?? ""),
+
+                ("PLZ",
+                    x => x.PostalCode ?? ""),
+
+                ("Stadt",
+                    x => x.City ?? ""),
+
+                ("Land",
+                    x => x.Country ?? "")
+            );
+
+
+        var base64 =
+            Convert.ToBase64String(
+                fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+
+            $"Lager_Seite_{CurrentPage}.xlsx",
+
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+            base64);
+    }
+
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
+    private void ConfirmDelete(
+        Warehouse warehouse)
+    {
+        WarehouseToDelete =
+            warehouse;
+
         ShowDeleteModal = true;
     }
 
@@ -413,6 +803,7 @@
     private void CancelDelete()
     {
         WarehouseToDelete = null;
+
         ShowDeleteModal = false;
     }
 
@@ -420,57 +811,88 @@
     private async Task DeleteConfirmed()
     {
         if (WarehouseToDelete == null)
+        {
             return;
+        }
+
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-        var warehouse = await db.Warehouses
-            .FirstOrDefaultAsync(x =>
-                x.Id == WarehouseToDelete.Id);
+
+        var warehouse =
+            await db.Warehouses
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id ==
+                        WarehouseToDelete.Id);
+
 
         if (warehouse != null)
         {
             warehouse.IsActive = false;
 
-            var locations = await db.WarehouseLocations
-                .Where(x => x.WarehouseId == warehouse.Id)
-                .ToListAsync();
+
+            var locations =
+                await db.WarehouseLocations
+                    .Where(x =>
+                        x.WarehouseId ==
+                        warehouse.Id)
+                    .ToListAsync();
+
 
             foreach (var location in locations)
             {
                 location.IsActive = false;
             }
 
+
             await db.SaveChangesAsync();
         }
 
+
         WarehouseToDelete = null;
+
         ShowDeleteModal = false;
+
 
         await LoadWarehouses();
     }
 
 
-    private string GetInitials(string? name)
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
+        {
             return "?";
+        }
 
-        var words = name.Split(
-            ' ',
-            StringSplitOptions.RemoveEmptyEntries);
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
             return words[0]
                 .Substring(
                     0,
-                    Math.Min(2, words[0].Length))
+                    Math.Min(
+                        2,
+                        words[0].Length))
                 .ToUpper();
         }
 
-        return $"{words[0][0]}{words[1][0]}"
+
+        return
+            $"{words[0][0]}{words[1][0]}"
             .ToUpper();
     }
 

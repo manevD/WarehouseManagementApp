@@ -1,14 +1,59 @@
 ﻿@page "/purchase-orders"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+<style>
+    .filter-date-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        min-width: 190px;
+    }
 
+        .filter-date-group label {
+            margin: 0;
+            padding: 0;
+            height: auto;
+            color: #374151;
+            font-size: 13px;
+            line-height: 40px;
+            white-space: nowrap;
+        }
+
+    .filter-date {
+        width: 145px;
+        height: 40px;
+        box-sizing: border-box;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0 10px;
+        background: #ffffff;
+        color: #374151;
+        font-size: 13px;
+        outline: none;
+    }
+
+        .filter-date:hover {
+            border-color: #cbd5e1;
+        }
+
+        .filter-date:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+</style>
 <PageTitle>Bestellungen</PageTitle>
 
 <div class="stock-page">
@@ -28,137 +73,143 @@
             </p>
 
         </div>
+       <div>
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedOrders.Count == 0)">
 
+                📊 Excel exportieren
+
+            </button>
         <a href="/purchase-orders/create"
            class="btn-primary">
 
             + Bestellung erstellen
 
         </a>
-
+        </div>
     </div>
 
 
     <!-- =========================================================
          FILTER
          ========================================================= -->
+    <!-- =========================================================
+     FILTER
+     ========================================================= -->
 
     <div class="filter-card">
 
-        <!-- SEARCH -->
+        <div class="filter-main-row">
 
-      
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <span class="search-icon">⌕</span>
+
+                <input type="text"
+                       class="search-input"
+                       placeholder="Bestellnummer, Lieferant oder Referenz suchen..."
+                       value="@SearchTerm"
+                       @oninput="OnSearchInput" />
+
+            </div>
 
 
-            <input type="text"
-                   class="form-control"
-                   placeholder="Bestellnummer, Lieferant oder Referenz suchen..."
-                   @bind="SearchTerm"
-                   @bind:event="oninput"
-                   @bind:after="SearchChanged" />
-       
+            <!-- STATUS -->
 
+            <select class="filter-select"
+                    @bind="SelectedStatus"
+                    @bind:after="FilterChanged">
 
-        <!-- STATUS -->
-
-        <select class="filter-select form-control"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Status
-            </option>
-
-            <option value="@((int)PurchaseOrderStatus.Entwurf)">
-                Entwurf
-            </option>
-
-            <option value="@((int)PurchaseOrderStatus.Bestellt)">
-                Bestellt
-            </option>
-
-            <option value="@((int)PurchaseOrderStatus.TeilweiseGeliefert)">
-                Teilweise geliefert
-            </option>
-
-            <option value="@((int)PurchaseOrderStatus.Geliefert)">
-                Geliefert
-            </option>
-
-            <option value="@((int)PurchaseOrderStatus.Storniert)">
-                Storniert
-            </option>
-
-        </select>
-
-        <!-- SUPPLIER -->
-        <select class="filter-select form-control"
-                @bind="SelectedSupplierId"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Lieferanten
-            </option>
-
-            @foreach (var supplier in Suppliers)
-            {
-                <option value="@supplier.Id">
-
-                    @supplier.CompanyName
-
-                    @if (!string.IsNullOrWhiteSpace(
-                        supplier.SupplierNumber))
-                    {
-                        @($" ({supplier.SupplierNumber})")
-                    }
-
+                <option value="0">
+                    Alle Status
                 </option>
-            }
 
-        </select>
+                <option value="@((int)PurchaseOrderStatus.Entwurf)">
+                    Entwurf
+                </option>
+
+                <option value="@((int)PurchaseOrderStatus.Bestellt)">
+                    Bestellt
+                </option>
+
+                <option value="@((int)PurchaseOrderStatus.TeilweiseGeliefert)">
+                    Teilweise geliefert
+                </option>
+
+                <option value="@((int)PurchaseOrderStatus.Geliefert)">
+                    Geliefert
+                </option>
+
+                <option value="@((int)PurchaseOrderStatus.Storniert)">
+                    Storniert
+                </option>
+
+            </select>
 
 
-        <!-- FROM DATE -->
-        <!-- FROM DATE -->
+            <!-- SUPPLIER -->
 
-        <div class="filter-date-group filter-date-aligned">
+            <select class="filter-select"
+                    @bind="SelectedSupplierId"
+                    @bind:after="FilterChanged">
 
-            <label>
-                Von
-            </label>
+                <option value="0">
+                    Alle Lieferanten
+                </option>
 
-            <input type="date"
-                   class="form-control"
-                   @bind="FromDate"
-                   @bind:after="FilterChanged" />
+                @foreach (var supplier in Suppliers)
+                {
+                    <option value="@supplier.Id">
+                        @supplier.CompanyName
+                        @if (!string.IsNullOrWhiteSpace(supplier.SupplierNumber))
+                        {
+                            @($" ({supplier.SupplierNumber})")
+                        }
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- FROM DATE -->
+
+            <div class="filter-date-group">
+
+                <label>Von</label>
+
+                <input type="date"
+                       class="filter-date"
+                       @bind="FromDate"
+                       @bind:after="FilterChanged" />
+
+            </div>
+
+            <div class="filter-date-group">
+
+                <label>Bis</label>
+
+                <input type="date"
+                       class="filter-date"
+                       @bind="ToDate"
+                       @bind:after="FilterChanged" />
+
+            </div>
+
+
+            <!-- RESET -->
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ResetFilters">
+
+                Filter zurücksetzen
+
+            </button>
 
         </div>
-
-
-        <!-- TO DATE -->
-
-        <div class="filter-date-group filter-date-aligned">
-
-            <label>
-                Bis
-            </label>
-
-            <input type="date"
-                   class="form-control"
-                   @bind="ToDate"
-                   @bind:after="FilterChanged" />
-
-        </div>
-
-        <!-- RESET -->
-
-        <button type="button"
-                class="btn-secondary form-control"
-                @onclick="ResetFilters">
-
-            Filter zurücksetzen
-
-        </button>
 
     </div>
 
@@ -342,7 +393,7 @@
 
                     <tbody>
 
-                        @foreach (var order in Orders)
+                        @foreach (var order in PagedOrders)
                         {
                             <tr>
 
@@ -382,18 +433,14 @@
                                             <div>
 
                                                 <strong>
-
                                                     @order.Supplier.CompanyName
-
                                                 </strong>
 
                                                 @if (!string.IsNullOrWhiteSpace(
                                                     order.Supplier.SupplierNumber))
                                                 {
                                                     <small>
-
                                                         @order.Supplier.SupplierNumber
-
                                                     </small>
                                                 }
 
@@ -418,6 +465,7 @@
                                 <td>
 
                                     @order.OrderDate.ToString("dd.MM.yyyy")
+
                                 </td>
 
 
@@ -599,6 +647,62 @@
                 </table>
 
             </div>
+
+
+            <!-- =========================================================
+                 PAGINATION
+                 ========================================================= -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedOrders.Count von @Orders.Count Bestellungen
+
+            </div>
         }
 
     </div>
@@ -630,6 +734,28 @@
     private DateTime? FromDate;
 
     private DateTime? ToDate;
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Orders.Count /
+                (double)PageSize));
+
+    private List<PurchaseOrder> PagedOrders =>
+        Orders
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
 
 
     // =========================================================
@@ -710,7 +836,6 @@
     private async Task LoadOrders()
     {
         IsLoading = true;
-
 
         try
         {
@@ -855,6 +980,8 @@
                         x.Id)
 
                     .ToListAsync();
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -862,13 +989,12 @@
         }
     }
 
-
-    // =========================================================
-    // SEARCH
-    // =========================================================
-
-    private async Task SearchChanged()
+    private async Task OnSearchInput(ChangeEventArgs args)
     {
+        SearchTerm = args.Value?.ToString() ?? string.Empty;
+
+        CurrentPage = 1;
+
         await LoadOrders();
     }
 
@@ -879,6 +1005,8 @@
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         await LoadOrders();
     }
 
@@ -904,8 +1032,146 @@
         ToDate =
             null;
 
+        CurrentPage = 1;
 
         await LoadOrders();
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data = PagedOrders;
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Bestellungen",
+                    $"Lieferantenbestellungen – Seite {CurrentPage}",
+
+                    (
+                        "Bestellnummer",
+                        x => x.OrderNumber
+                    ),
+
+                    (
+                        "Lieferant",
+                        x => x.Supplier?.CompanyName ?? ""
+                    ),
+
+                    (
+                        "Lieferantennummer",
+                        x => x.Supplier?.SupplierNumber ?? ""
+                    ),
+
+                    (
+                        "Bestelldatum",
+                        x => x.OrderDate
+                    ),
+
+                    (
+                        "Positionen",
+                        x => x.Items.Count
+                    ),
+
+                    (
+                        "Gesamt",
+                        x => x.Total
+                    ),
+
+                    (
+                        "Status",
+                        x => GetStatusText(x.Status)
+                    ),
+
+                    (
+                        "Referenz",
+                        x => x.ReferenceNumber ?? ""
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Lieferantenbestellungen_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(
+        PurchaseOrderStatus status)
+    {
+        return status switch
+        {
+            PurchaseOrderStatus.Entwurf =>
+                "Entwurf",
+
+            PurchaseOrderStatus.Bestellt =>
+                "Bestellt",
+
+            PurchaseOrderStatus.TeilweiseGeliefert =>
+                "Teilweise geliefert",
+
+            PurchaseOrderStatus.Geliefert =>
+                "Geliefert",
+
+            PurchaseOrderStatus.Storniert =>
+                "Storniert",
+
+            _ =>
+                status.ToString()
+        };
     }
 
 

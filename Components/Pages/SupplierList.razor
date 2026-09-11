@@ -1,13 +1,18 @@
 ﻿@page "/suppliers"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Lieferanten</PageTitle>
 
@@ -22,10 +27,20 @@
             <p>Verwalten Sie Ihre Lieferanten.</p>
         </div>
 
-        <a href="/suppliers/create"
-           class="btn-primary">
-            + Neuer Lieferant
-        </a>
+        <div>
+        <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedSuppliers.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
+            <a href="/suppliers/create"
+               class="btn-primary">
+                + Neuer Lieferant
+            </a>
+        </div>
 
     </div>
 
@@ -188,7 +203,7 @@
 
                     <tbody>
 
-                        @foreach (var supplier in Suppliers)
+                        @foreach (var supplier in PagedSuppliers)
                         {
                             <tr>
 
@@ -368,6 +383,60 @@
                 </table>
 
             </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedSuppliers.Count von @Suppliers.Count Lieferanten
+
+            </div>
         }
 
     </div>
@@ -376,6 +445,10 @@
 
 
 @code {
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
 
     private List<Supplier> Suppliers = new();
 
@@ -392,6 +465,21 @@
 
     private int InactiveCount =>
         Suppliers.Count(x => !x.IsActive);
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Suppliers.Count /
+                (double)PageSize));
+
+
+    private List<Supplier> PagedSuppliers =>
+        Suppliers
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
 
 
     protected override async Task OnInitializedAsync()
@@ -420,7 +508,6 @@
             {
                 var search =
                     SearchTerm.Trim();
-
 
                 query =
                     query.Where(x =>
@@ -490,6 +577,9 @@
                 await query
                     .OrderBy(x => x.CompanyName)
                     .ToListAsync();
+
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -500,21 +590,120 @@
 
     private async Task SearchChanged()
     {
+        CurrentPage = 1;
+
         await LoadSuppliers();
     }
 
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         await LoadSuppliers();
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private async Task ExportExcel()
+    {
+        var data = PagedSuppliers
+            .Where(x => x != null)
+            .ToList();
+
+        if (data.Count == 0)
+            return;
+
+
+        var fileBytes = ExcelExport.Export(
+            data,
+            "Lieferanten",
+            $"Lieferanten – Seite {CurrentPage}",
+
+            ("Nr.", x =>
+                string.IsNullOrWhiteSpace(x.SupplierNumber)
+                    ? $"#{x.Id}"
+                    : x.SupplierNumber),
+
+            ("Firma", x =>
+                x.CompanyName ?? ""),
+
+            ("Ansprechpartner", x =>
+                x.ContactPerson ?? ""),
+
+            ("E-Mail", x =>
+                x.Email ?? ""),
+
+            ("Telefon", x =>
+                x.Phone ?? ""),
+
+            ("Straße", x =>
+                x.Street ?? ""),
+
+            ("PLZ", x =>
+                x.PostalCode ?? ""),
+
+            ("Ort", x =>
+                x.City ?? ""),
+
+            ("Land", x =>
+                x.Country ?? ""),
+
+            ("USt-IdNr.", x =>
+                x.VatNumber ?? ""),
+
+            ("Status", x =>
+                x.IsActive
+                    ? "Aktiv"
+                    : "Inaktiv"),
+
+            ("Notiz", x =>
+                x.Note ?? "")
+        );
+
+
+        var base64 =
+            Convert.ToBase64String(fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+            $"Lieferanten_Seite_{CurrentPage}.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            base64);
     }
 
 
     private async Task DeleteSupplier(Supplier supplier)
     {
         var confirmed =
-            await Task.FromResult(
-                true);
+            await Task.FromResult(true);
 
         if (!confirmed)
             return;
@@ -535,6 +724,7 @@
 
 
         // Soft delete
+
         entity.IsActive = false;
 
 

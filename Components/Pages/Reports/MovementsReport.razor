@@ -1,12 +1,17 @@
 ﻿@page "/reports/movements"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using Microsoft.JSInterop
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Bericht Warenbewegungen</PageTitle>
 
@@ -20,7 +25,9 @@
 
         <div>
 
-            <h1>Warenbewegungen</h1>
+            <h1>
+                Warenbewegungen
+            </h1>
 
             <p>
                 Übersicht und Historie aller Lagerbewegungen.
@@ -30,12 +37,18 @@
 
         <div class="page-header-actions">
 
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedMovements.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
             <a href="/reports"
                class="btn-secondary">
-
-                <i class="bi bi-arrow-left me-1"></i>
-                Berichte
-
+                              ← Berichte
             </a>
 
         </div>
@@ -48,10 +61,6 @@
          ========================================================= -->
 
     <div class="filter-card">
-
-        <!-- =====================================================
-             MAIN FILTERS
-             ===================================================== -->
 
         <div class="filter-main-row">
 
@@ -284,39 +293,6 @@
 
         <div class="products-card">
 
-            <div class="products-card-header">
-
-                <div>
-
-                    <strong>
-                        Bewegungshistorie
-                    </strong>
-
-                    <span>
-                        @FilteredMovements.Count Einträge
-                    </span>
-
-                </div>
-
-
-                <!-- LIVE SEARCH INSIDE TABLE -->
-
-                <div class="search-box">
-
-                    <span class="search-icon">
-                        <i class="bi bi-search"></i>
-                    </span>
-
-                    <input type="text"
-                           placeholder="Bewegungshistorie durchsuchen..."
-                           @bind="TableSearchTerm"
-                           @bind:event="oninput" />
-
-                </div>
-
-            </div>
-
-
             @if (FilteredMovements.Count == 0)
             {
                 <div class="empty-products">
@@ -394,10 +370,6 @@
                             {
                                 <tr>
 
-                                    <!-- =================================================
-                                         DATE
-                                         ================================================= -->
-
                                     <td>
 
                                         <div class="movement-date">
@@ -418,10 +390,6 @@
 
                                     </td>
 
-
-                                    <!-- =================================================
-                                         PRODUCT
-                                         ================================================= -->
 
                                     <td>
 
@@ -450,10 +418,6 @@
 
                                     </td>
 
-
-                                    <!-- =================================================
-                                         TYPE
-                                         ================================================= -->
 
                                     <td>
 
@@ -531,10 +495,6 @@
                                     </td>
 
 
-                                    <!-- =================================================
-                                         QUANTITY
-                                         ================================================= -->
-
                                     <td>
 
                                         <strong>
@@ -565,10 +525,6 @@
                                     </td>
 
 
-                                    <!-- =================================================
-                                         FROM
-                                         ================================================= -->
-
                                     <td>
 
                                         @if (movement.FromWarehouseLocation != null)
@@ -598,10 +554,6 @@
                                     </td>
 
 
-                                    <!-- =================================================
-                                         TO
-                                         ================================================= -->
-
                                     <td>
 
                                         @if (movement.ToWarehouseLocation != null)
@@ -630,10 +582,6 @@
 
                                     </td>
 
-
-                                    <!-- =================================================
-                                         SUPPLIER
-                                         ================================================= -->
 
                                     <td>
 
@@ -665,10 +613,6 @@
                                     </td>
 
 
-                                    <!-- =================================================
-                                         REFERENCE
-                                         ================================================= -->
-
                                     <td>
 
                                         @if (!string.IsNullOrWhiteSpace(
@@ -687,10 +631,6 @@
 
                                     </td>
 
-
-                                    <!-- =================================================
-                                         NOTE
-                                         ================================================= -->
 
                                     <td>
 
@@ -720,52 +660,29 @@
                 </div>
 
 
-                <!-- =====================================================
+                <!-- =================================================
                      PAGINATION
-                     ===================================================== -->
+                     ================================================= -->
                 @if (TotalPages > 1)
                 {
-                    <div class="pagination-container">
+                    <div class="pagination">
 
-                        <div class="pagination-info">
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage <= 1)"
+                                @onclick="PreviousPage">
 
-                            Zeige
+                            ‹
 
-                            <strong>
-                                @PaginationStart
-                            </strong>
-
-                            -
-
-                            <strong>
-                                @PaginationEnd
-                            </strong>
-
-                            von
-
-                            <strong>
-                                @FilteredMovements.Count
-                            </strong>
-
-                        </div>
+                        </button>
 
 
-                        <div class="pagination-buttons">
+                        <div class="pagination-pages">
 
-                            <button type="button"
-                                    class="btn-secondary"
-                                    disabled="@(CurrentPage == 1)"
-                                    @onclick="PreviousPage">
-                                &lt;
-                            </button>
-
-
-                            @for (int page = 1; page <= TotalPages; page++)
+                            @foreach (var pageNumber in GetPageNumbers())
                             {
-                                var pageNumber = page;
-
                                 <button type="button"
-                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                         @onclick="() => GoToPage(pageNumber)">
 
                                     @pageNumber
@@ -773,19 +690,28 @@
                                 </button>
                             }
 
-
-                            <button type="button"
-                                    class="btn-secondary"
-                                    
-                                    disabled="@(CurrentPage == TotalPages)"
-                                    @onclick="NextPage">
-                                   &gt;
-                            </button>
-
                         </div>
+
+
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage >= TotalPages)"
+                                @onclick="NextPage">
+
+                            ›
+
+                        </button>
 
                     </div>
                 }
+
+
+                <div class="pagination-info">
+
+                    Seite @CurrentPage von @TotalPages
+                    · @PagedMovements.Count von @FilteredMovements.Count Bewegungen
+
+                </div>
 
             }
 
@@ -818,6 +744,7 @@
     private string SearchTerm
     {
         get => _searchTerm;
+
         set
         {
             if (_searchTerm == value)
@@ -834,6 +761,7 @@
     private string TableSearchTerm
     {
         get => _tableSearchTerm;
+
         set
         {
             if (_tableSearchTerm == value)
@@ -850,6 +778,7 @@
     private int SelectedType
     {
         get => _selectedType;
+
         set
         {
             if (_selectedType == value)
@@ -866,6 +795,7 @@
     private int SelectedWarehouseId
     {
         get => _selectedWarehouseId;
+
         set
         {
             if (_selectedWarehouseId == value)
@@ -882,6 +812,7 @@
     private int SelectedLocationId
     {
         get => _selectedLocationId;
+
         set
         {
             if (_selectedLocationId == value)
@@ -898,6 +829,7 @@
     private DateTime? FromDate
     {
         get => _fromDate;
+
         set
         {
             if (_fromDate == value)
@@ -914,6 +846,7 @@
     private DateTime? ToDate
     {
         get => _toDate;
+
         set
         {
             if (_toDate == value)
@@ -923,6 +856,7 @@
             CurrentPage = 1;
         }
     }
+
 
     // =========================================================
     // PAGINATION
@@ -948,16 +882,27 @@
                 (double)PageSize));
 
 
-    private int PaginationStart =>
-        FilteredMovements.Count == 0
-            ? 0
-            : ((CurrentPage - 1) * PageSize) + 1;
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
 
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
 
-    private int PaginationEnd =>
-        Math.Min(
-            CurrentPage * PageSize,
-            FilteredMovements.Count);
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
 
 
     // =========================================================
@@ -1403,6 +1348,101 @@
 
 
     // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedMovements.ToList();
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Warenbewegungen",
+                    $"Warenbewegungen – Seite {CurrentPage}",
+
+                    (
+                        "Datum",
+                        x => x.CreatedAt
+                    ),
+
+                    (
+                        "SKU",
+                        x => x.Product?.SKU ?? ""
+                    ),
+
+                    (
+                        "Produkt",
+                        x => x.Product?.Name ?? ""
+                    ),
+
+                    (
+                        "Typ",
+                        x => x.Type.ToString()
+                    ),
+
+                    (
+                        "Menge",
+                        x => x.Quantity
+                    ),
+
+                    (
+                        "Von",
+                        x => x.FromWarehouseLocation == null
+                            ? ""
+                            : $"{x.FromWarehouseLocation.Code} - {x.FromWarehouseLocation.Warehouse?.Name ?? ""}"
+                    ),
+
+                    (
+                        "Nach",
+                        x => x.ToWarehouseLocation == null
+                            ? ""
+                            : $"{x.ToWarehouseLocation.Code} - {x.ToWarehouseLocation.Warehouse?.Name ?? ""}"
+                    ),
+
+                    (
+                        "Lieferant",
+                        x => x.Supplier?.CompanyName ?? ""
+                    ),
+
+                    (
+                        "Referenz",
+                        x => x.ReferenceNumber ?? ""
+                    ),
+
+                    (
+                        "Notiz",
+                        x => x.Note ?? ""
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Warenbewegungen_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
     // INITIALS
     // =========================================================
 
@@ -1411,10 +1451,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -1427,9 +1469,10 @@
                 .ToUpper();
         }
 
+
         return
             $"{words[0][0]}{words[1][0]}"
-            .ToUpper();
+                .ToUpper();
     }
 
 }

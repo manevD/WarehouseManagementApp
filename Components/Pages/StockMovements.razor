@@ -1,139 +1,123 @@
 ﻿@page "/stock/movements"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Bestandsbewegungen</PageTitle>
+
 <style>
     .movements-filter {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.movements-filter-row {
-    display: grid;
-    grid-template-columns:
-        minmax(300px, 2fr)
-        minmax(160px, 1fr)
-        minmax(160px, 1fr)
-        minmax(180px, 1.1fr)
-        minmax(180px, 1.1fr);
-
-    gap: 10px;
-    width: 100%;
-}
-
-.movements-filter-row > * {
-    min-width: 0;
-}
-
-.movements-filter-row .search-box {
-    width: 100%;
-    max-width: none;
-}
-
-.movements-filter-row .filter-select {
-    width: 100%;
-}
-
-
-.movements-date-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 10px;
-    align-items: end;
-    width: 100%;
-}
-
-.movements-date-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    min-width: 0;
-}
-
-.movements-date-group label {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.movements-date-group input {
-    width: 100%;
-    height: 40px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 0 10px;
-    background: white;
-    font-size: 13px;
-    color: #374151;
-}
-
-.movements-reset-button {
-    height: 40px;
-    white-space: nowrap;
-}
-
-
-    @@media (max-width: 1200px) {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
 
     .movements-filter-row {
-        grid-template-columns:
-            minmax(280px, 2fr)
-            minmax(160px, 1fr)
-            minmax(160px, 1fr);
-    }
-
-}
-
-
-    @@media (max-width: 850px) {
-
-    .movements-filter-row {
-        grid-template-columns:
-            minmax(260px, 2fr)
-            minmax(170px, 1fr);
-    }
-
-    .movements-date-row {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .movements-reset-button {
-        grid-column: 1 / -1;
-        width: fit-content;
-    }
-
-}
-
-
-    @@media (max-width: 600px) {
-
-    .movements-filter-row {
-        grid-template-columns: 1fr;
-    }
-
-    .movements-date-row {
-        grid-template-columns: 1fr;
-    }
-
-    .movements-reset-button {
-        grid-column: auto;
+        display: grid;
+        grid-template-columns: minmax(300px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr) minmax(180px, 1.1fr) minmax(180px, 1.1fr);
+        gap: 10px;
         width: 100%;
     }
 
-}
+        .movements-filter-row > * {
+            min-width: 0;
+        }
+
+        .movements-filter-row .search-box {
+            width: 100%;
+            max-width: none;
+        }
+
+        .movements-filter-row .filter-select {
+            width: 100%;
+        }
+
+    .movements-date-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+        align-items: end;
+        width: 100%;
+    }
+
+    .movements-date-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+    }
+
+        .movements-date-group label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .movements-date-group input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 0 10px;
+            background: white;
+            font-size: 13px;
+            color: #374151;
+        }
+
+    .movements-reset-button {
+        height: 40px;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 1200px) {
+        .movements-filter-row {
+            grid-template-columns: minmax(280px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr);
+        }
+    }
+
+    @@media (max-width: 850px) {
+        .movements-filter-row {
+            grid-template-columns: minmax(260px, 2fr) minmax(170px, 1fr);
+        }
+
+        .movements-date-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .movements-reset-button {
+            grid-column: 1 / -1;
+            width: fit-content;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .movements-filter-row {
+            grid-template-columns: 1fr;
+        }
+
+        .movements-date-row {
+            grid-template-columns: 1fr;
+        }
+
+        .movements-reset-button {
+            grid-column: auto;
+            width: 100%;
+        }
+    }
 </style>
+
 <div class="stock-page">
 
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
+    <!-- HEADER -->
 
     <div class="page-header">
 
@@ -147,28 +131,33 @@
 
         </div>
 
-        <a href="/stock"
-           class="btn-secondary">
+        <div>
 
-            ← Bestand
+           <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedMovements.Count == 0)">
 
-        </a>
+                📊 Excel exportieren
+
+            </button>
+
+            <a href="/stock"
+               class="btn-secondary">
+
+                ← Bestand
+
+            </a>
+
+        </div>
 
     </div>
 
 
-    <!-- =========================================================
-         FILTER
-         ========================================================= -->
-    <!-- =========================================================
-     FILTER
-     ========================================================= -->
+    <!-- FILTER -->
 
     <div class="filter-card movements-filter">
 
-        <!-- =====================================================
-         FIRST ROW
-         ===================================================== -->
+        <!-- FIRST ROW -->
 
         <div class="movements-filter-row">
 
@@ -296,9 +285,7 @@
         </div>
 
 
-        <!-- =====================================================
-         SECOND ROW
-         ===================================================== -->
+        <!-- SECOND ROW -->
 
         <div class="movements-date-row">
 
@@ -339,9 +326,9 @@
         </div>
 
     </div>
-    <!-- =========================================================
-         ACTIVE FILTER INFO
-         ========================================================= -->
+
+
+    <!-- ACTIVE FILTER INFO -->
     @if (HasActiveFilters)
     {
         <div class="filter-info">
@@ -358,9 +345,7 @@
     }
 
 
-    <!-- =========================================================
-         SUMMARY
-         ========================================================= -->
+    <!-- SUMMARY -->
 
     <div class="stock-summary-grid">
 
@@ -431,9 +416,7 @@
     </div>
 
 
-    <!-- =========================================================
-         TABLE
-         ========================================================= -->
+    <!-- TABLE -->
 
     <div class="products-card">
 
@@ -538,22 +521,18 @@
 
                     <tbody>
 
-                        @foreach (var movement in Movements)
+                        @foreach (var movement in PagedMovements)
                         {
                             <tr>
 
-                                <!-- =================================================
-                                     DATE
-                                     ================================================= -->
+                                <!-- DATE -->
 
                                 <td>
 
                                     <div class="movement-date">
 
                                         <strong>
-
                                             @movement.CreatedAt
-
                                         </strong>
 
                                     </div>
@@ -561,9 +540,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     PRODUCT
-                                     ================================================= -->
+                                <!-- PRODUCT -->
 
                                 <td>
 
@@ -579,15 +556,11 @@
                                         <div>
 
                                             <strong>
-
                                                 @(movement.Product?.Name ?? "-")
-
                                             </strong>
 
                                             <small>
-
                                                 @(movement.Product?.SKU ?? "-")
-
                                             </small>
 
                                         </div>
@@ -597,9 +570,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     TYPE
-                                     ================================================= -->
+                                <!-- TYPE -->
 
                                 <td>
 
@@ -608,64 +579,47 @@
                                         case StockMovementType.Wareneingang:
 
                                             <span class="movement-badge movement-in">
-
                                                 + Wareneingang
-
                                             </span>
 
                                             break;
-
 
                                         case StockMovementType.Warenausgang:
 
                                             <span class="movement-badge movement-out">
-
                                                 − Warenausgang
-
                                             </span>
 
                                             break;
-
 
                                         case StockMovementType.Umlagerung:
 
                                             <span class="movement-badge movement-transfer">
-
                                                 ↔ Umlagerung
-
                                             </span>
 
                                             break;
-
 
                                         case StockMovementType.Inventur:
 
                                             <span class="movement-badge movement-inventory">
-
                                                 Inventur
-
                                             </span>
 
                                             break;
-
 
                                         case StockMovementType.Korrektur:
 
                                             <span class="movement-badge movement-correction">
-
                                                 Korrektur
-
                                             </span>
 
                                             break;
 
-
                                         default:
 
                                             <span class="movement-badge">
-
                                                 @movement.Type
-
                                             </span>
 
                                             break;
@@ -674,9 +628,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     QUANTITY
-                                     ================================================= -->
+                                <!-- QUANTITY -->
 
                                 <td>
 
@@ -708,9 +660,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     FROM
-                                     ================================================= -->
+                                <!-- FROM -->
 
                                 <td>
 
@@ -741,9 +691,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     TO
-                                     ================================================= -->
+                                <!-- TO -->
 
                                 <td>
 
@@ -752,9 +700,7 @@
                                         <div class="movement-location">
 
                                             <strong>
-
                                                 @movement.ToWarehouseLocation.Code
-
                                             </strong>
 
                                             @if (movement.ToWarehouseLocation.Warehouse != null)
@@ -776,9 +722,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     SUPPLIER
-                                     ================================================= -->
+                                <!-- SUPPLIER -->
 
                                 <td>
 
@@ -790,7 +734,8 @@
                                                 @movement.Supplier.CompanyName
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(movement.Supplier.SupplierNumber))
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                movement.Supplier.SupplierNumber))
                                             {
                                                 <small>
                                                     @movement.Supplier.SupplierNumber
@@ -809,9 +754,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     PURCHASE ORDER
-                                     ================================================= -->
+                                <!-- PURCHASE ORDER -->
 
                                 <td>
 
@@ -834,9 +777,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     REFERENCE
-                                     ================================================= -->
+                                <!-- REFERENCE -->
 
                                 <td>
 
@@ -844,9 +785,7 @@
                                         movement.ReferenceNumber))
                                     {
                                         <span>
-
                                             @movement.ReferenceNumber
-
                                         </span>
                                     }
                                     else
@@ -859,9 +798,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     NOTE
-                                     ================================================= -->
+                                <!-- NOTE -->
 
                                 <td>
 
@@ -869,9 +806,7 @@
                                         movement.Note))
                                     {
                                         <span class="movement-note">
-
                                             @movement.Note
-
                                         </span>
                                     }
                                     else
@@ -889,6 +824,60 @@
                     </tbody>
 
                 </table>
+
+            </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedMovements.Count von @Movements.Count Bewegungen
 
             </div>
         }
@@ -911,6 +900,28 @@
     private List<WarehouseLocation> Locations = new();
 
     private List<Supplier> Suppliers = new();
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Movements.Count /
+                (double)PageSize));
+
+    private List<StockMovement> PagedMovements =>
+        Movements
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
 
 
     // =========================================================
@@ -1012,18 +1023,13 @@
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Warehouses =
             await db.Warehouses
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
     }
 
@@ -1037,18 +1043,13 @@
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Suppliers =
             await db.Suppliers
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.CompanyName)
-
                 .ToListAsync();
     }
 
@@ -1062,17 +1063,12 @@
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         var query =
             db.WarehouseLocations
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .AsQueryable();
-
 
         if (SelectedWarehouseId > 0)
         {
@@ -1082,13 +1078,10 @@
                     SelectedWarehouseId);
         }
 
-
         Locations =
             await query
-
                 .OrderBy(x =>
                     x.Code)
-
                 .ToListAsync();
     }
 
@@ -1101,80 +1094,47 @@
     {
         IsLoading = true;
 
-
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
-
             var query =
                 db.StockMovements
-
                     .AsNoTracking()
-
-                    // =================================================
-                    // PRODUCT
-                    // =================================================
 
                     .Include(x =>
                         x.Product)
 
-
-                    // =================================================
-                    // SUPPLIER
-                    // =================================================
-
                     .Include(x =>
                         x.Supplier)
-
-
-                    // =================================================
-                    // PURCHASE ORDER
-                    // =================================================
 
                     .Include(x =>
                         x.PurchaseOrder)
 
-
-                    // =================================================
-                    // FROM LOCATION
-                    // =================================================
-
                     .Include(x =>
                         x.FromWarehouseLocation)
-
-                        .ThenInclude(x =>
-                            x.Warehouse)
-
-
-                    // =================================================
-                    // TO LOCATION
-                    // =================================================
+                    .ThenInclude(x =>
+                        x.Warehouse)
 
                     .Include(x =>
                         x.ToWarehouseLocation)
-
-                        .ThenInclude(x =>
-                            x.Warehouse)
+                    .ThenInclude(x =>
+                        x.Warehouse)
 
                     .AsQueryable();
 
 
-            // =========================================================
             // SEARCH
-            // =========================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
 
-
                 query =
                     query.Where(x =>
 
-                        // PRODUCT NAME
                         (
                             x.Product != null
                             &&
@@ -1183,7 +1143,6 @@
 
                         ||
 
-                        // SKU
                         (
                             x.Product != null
                             &&
@@ -1192,7 +1151,6 @@
 
                         ||
 
-                        // BARCODE
                         (
                             x.Product != null
                             &&
@@ -1203,7 +1161,6 @@
 
                         ||
 
-                        // NOTE
                         (
                             x.Note != null
                             &&
@@ -1212,7 +1169,6 @@
 
                         ||
 
-                        // REFERENCE
                         (
                             x.ReferenceNumber != null
                             &&
@@ -1221,7 +1177,6 @@
 
                         ||
 
-                        // SUPPLIER
                         (
                             x.Supplier != null
                             &&
@@ -1230,7 +1185,6 @@
 
                         ||
 
-                        // SUPPLIER NUMBER
                         (
                             x.Supplier != null
                             &&
@@ -1241,7 +1195,6 @@
 
                         ||
 
-                        // PURCHASE ORDER
                         (
                             x.PurchaseOrder != null
                             &&
@@ -1252,15 +1205,12 @@
             }
 
 
-            // =========================================================
             // TYPE
-            // =========================================================
 
             if (SelectedType > 0)
             {
                 var type =
                     (StockMovementType)SelectedType;
-
 
                 query =
                     query.Where(x =>
@@ -1268,9 +1218,7 @@
             }
 
 
-            // =========================================================
             // WAREHOUSE
-            // =========================================================
 
             if (SelectedWarehouseId > 0)
             {
@@ -1297,9 +1245,7 @@
             }
 
 
-            // =========================================================
             // LOCATION
-            // =========================================================
 
             if (SelectedLocationId > 0)
             {
@@ -1322,9 +1268,7 @@
             }
 
 
-            // =========================================================
             // SUPPLIER
-            // =========================================================
 
             if (SelectedSupplierId > 0)
             {
@@ -1335,15 +1279,12 @@
             }
 
 
-            // =========================================================
             // FROM DATE
-            // =========================================================
 
             if (FromDate.HasValue)
             {
                 var from =
                     FromDate.Value.Date;
-
 
                 query =
                     query.Where(x =>
@@ -1351,15 +1292,12 @@
             }
 
 
-            // =========================================================
             // TO DATE
-            // =========================================================
 
             if (ToDate.HasValue)
             {
                 var to =
                     ToDate.Value.Date.AddDays(1);
-
 
                 query =
                     query.Where(x =>
@@ -1367,17 +1305,15 @@
             }
 
 
-            // =========================================================
             // LOAD
-            // =========================================================
 
             Movements =
                 await query
-
                     .OrderByDescending(x =>
                         x.CreatedAt)
-
                     .ToListAsync();
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -1387,11 +1323,106 @@
 
 
     // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+            CurrentPage--;
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+            CurrentPage++;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        var data = PagedMovements
+            .Where(x => x != null)
+            .ToList();
+
+        if (data.Count == 0)
+            return;
+
+        var fileBytes = ExcelExport.Export(
+            data,
+            "Bewegungen",
+            $"Bestandsbewegungen – Seite {CurrentPage}",
+
+            ("Datum", x => x.CreatedAt),
+
+            ("SKU", x =>
+                x.Product?.SKU ?? ""),
+
+            ("Produkt", x =>
+                x.Product?.Name ?? ""),
+
+            ("Typ", x =>
+                x.Type.ToString()),
+
+            ("Menge", x =>
+                x.Quantity),
+
+            ("Von", x =>
+                x.FromWarehouseLocation == null
+                    ? ""
+                    : $"{x.FromWarehouseLocation.Code} - {x.FromWarehouseLocation.Warehouse?.Name ?? ""}"),
+
+            ("Nach", x =>
+                x.ToWarehouseLocation == null
+                    ? ""
+                    : $"{x.ToWarehouseLocation.Code} - {x.ToWarehouseLocation.Warehouse?.Name ?? ""}"),
+
+            ("Lieferant", x =>
+                x.Supplier?.CompanyName ?? ""),
+
+            ("Bestellung", x =>
+                x.PurchaseOrder?.OrderNumber ?? ""),
+
+            ("Referenz", x =>
+                x.ReferenceNumber ?? ""),
+
+            ("Notiz", x =>
+                x.Note ?? "")
+        );
+
+        var base64 =
+            Convert.ToBase64String(fileBytes);
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+            $"Bestandsbewegungen_Seite_{CurrentPage}.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            base64);
+    }
+
+
+    // =========================================================
     // SEARCH CHANGED
     // =========================================================
 
     private async Task SearchChanged()
     {
+        CurrentPage = 1;
+
         await LoadMovements();
     }
 
@@ -1402,6 +1433,8 @@
 
     private async Task FilterChanged()
     {
+        CurrentPage = 1;
+
         await LoadMovements();
     }
 
@@ -1412,6 +1445,8 @@
 
     private async Task WarehouseChanged()
     {
+        CurrentPage = 1;
+
         SelectedLocationId = 0;
 
         await LoadLocations();
@@ -1447,6 +1482,7 @@
         ToDate =
             null;
 
+        CurrentPage = 1;
 
         await LoadLocations();
 
@@ -1463,26 +1499,21 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
-
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
 
-
         if (words.Length == 1)
         {
             return words[0]
-
                 .Substring(
                     0,
                     Math.Min(
                         2,
                         words[0].Length))
-
                 .ToUpper();
         }
-
 
         return
             $"{words[0][0]}{words[1][0]}"

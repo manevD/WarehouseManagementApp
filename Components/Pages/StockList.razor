@@ -1,65 +1,34 @@
 ﻿@page "/stock"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using Microsoft.JSInterop
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+
 
 <PageTitle>Bestand</PageTitle>
-<style>
-    .stock-page .filter-card {
-        display: grid;
-        grid-template-columns: minmax(320px, 2fr) minmax(170px, 1fr) minmax(190px, 1.1fr) minmax(170px, 1fr);
-        gap: 10px;
-        align-items: center;
-    }
 
-        .stock-page .filter-card > * {
-            min-width: 0;
-        }
 
-        .stock-page .filter-card .search-box {
-            width: 100%;
-            max-width: none;
-        }
-
-        .stock-page .filter-card .filter-select {
-            width: 100%;
-        }
-
-    @@media (max-width: 1100px) {
-        .stock-page .filter-card {
-            grid-template-columns: minmax(280px, 2fr) minmax(170px, 1fr) minmax(190px, 1fr);
-        }
-    }
-
-    @@media (max-width: 850px) {
-        .stock-page .filter-card {
-            grid-template-columns: minmax(280px, 2fr) minmax(180px, 1fr);
-        }
-    }
-
-    @@media (max-width: 650px) {
-        .stock-page .filter-card {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
 <div class="stock-page">
 
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
+    <!-- HEADER -->
 
     <div class="page-header">
 
         <div>
 
-            <h1>Bestand</h1>
+            <h1>
+                Bestand
+            </h1>
 
             <p>
                 Übersicht über den aktuellen Lagerbestand.
@@ -69,6 +38,15 @@
 
 
         <div class="page-header-actions">
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedStockRows.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
 
             <a href="/stock/incoming"
                class="btn-primary">
@@ -98,12 +76,7 @@
     </div>
 
 
-    <!-- =========================================================
-         FILTER
-         ========================================================= -->
-    <!-- =========================================================
-     FILTER
-     ========================================================= -->
+    <!-- FILTER -->
 
     <div class="filter-card">
 
@@ -112,6 +85,7 @@
             <span class="search-icon">
                 ⌕
             </span>
+
 
             <input type="text"
                    placeholder="Produkt, SKU oder Barcode suchen..."
@@ -122,8 +96,6 @@
         </div>
 
 
-        <!-- WAREHOUSE -->
-
         <select class="filter-select"
                 @bind="SelectedWarehouseId"
                 @bind:after="FilterChanged">
@@ -131,6 +103,7 @@
             <option value="0">
                 Alle Lager
             </option>
+
 
             @foreach (var warehouse in Warehouses)
             {
@@ -142,8 +115,6 @@
         </select>
 
 
-        <!-- LOCATION -->
-
         <select class="filter-select"
                 @bind="SelectedLocationId"
                 @bind:after="FilterChanged">
@@ -152,21 +123,23 @@
                 Alle Lagerplätze
             </option>
 
+
             @foreach (var location in FilterLocations)
             {
                 <option value="@location.Id">
+
                     @location.Code
+
                     @if (!string.IsNullOrWhiteSpace(location.Name))
                     {
                         @($" - {location.Name}")
                     }
+
                 </option>
             }
 
         </select>
 
-
-        <!-- STATUS -->
 
         <select class="filter-select"
                 @bind="SelectedStatus"
@@ -197,14 +170,10 @@
     </div>
 
 
-    <!-- =========================================================
-         SUMMARY
-         ========================================================= -->
+    <!-- SUMMARY -->
 
     <div class="stock-summary-grid">
 
-
-        <!-- ARTIKEL -->
 
         <div class="stock-summary-card">
 
@@ -219,8 +188,6 @@
         </div>
 
 
-        <!-- GESAMTBESTAND -->
-
         <div class="stock-summary-card">
 
             <span>
@@ -233,8 +200,6 @@
 
         </div>
 
-
-        <!-- RESERVIERT -->
 
         <div class="stock-summary-card">
 
@@ -249,8 +214,6 @@
         </div>
 
 
-        <!-- VERFÜGBAR -->
-
         <div class="stock-summary-card">
 
             <span>
@@ -264,8 +227,6 @@
         </div>
 
 
-        <!-- LOW -->
-
         <div class="stock-summary-card stock-warning-card">
 
             <span>
@@ -278,14 +239,14 @@
 
         </div>
 
+
     </div>
 
 
-    <!-- =========================================================
-         TABLE
-         ========================================================= -->
+    <!-- TABLE -->
 
     <div class="products-card">
+
 
         <div class="products-card-header">
 
@@ -316,26 +277,33 @@
         {
             <div class="empty-products">
 
+
                 <div class="empty-products-icon">
                     📦
                 </div>
 
+
                 <h3>
                     Kein Bestand gefunden
                 </h3>
+
 
                 <p>
                     Für die aktuellen Filter wurden keine
                     Bestandsdaten gefunden.
                 </p>
 
+
             </div>
         }
         else
         {
+
             <div class="products-table-wrapper">
 
+
                 <table class="products-table">
+
 
                     <thead>
 
@@ -384,20 +352,17 @@
 
                     <tbody>
 
-                        @foreach (var stock in StockRows)
+
+                        @foreach (var stock in PagedStockRows)
                         {
                             var minimumStock =
                                 stock.Product?.MinimumStock ?? 0;
 
-
                             var isLow =
-                                stock.Quantity <
-                                minimumStock;
-
+                                stock.Quantity < minimumStock;
 
                             var isEmpty =
                                 stock.Quantity <= 0;
-
 
                             var isAvailable =
                                 stock.AvailableQuantity > 0;
@@ -406,9 +371,7 @@
                             <tr>
 
 
-                                <!-- =================================================
-                                     SKU
-                                     ================================================= -->
+                                <!-- SKU -->
 
                                 <td>
 
@@ -421,13 +384,12 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     PRODUCT
-                                     ================================================= -->
+                                <!-- PRODUCT -->
 
                                 <td>
 
                                     <div class="product-name">
+
 
                                         <div class="product-avatar">
 
@@ -458,14 +420,13 @@
 
                                         </div>
 
+
                                     </div>
 
                                 </td>
 
 
-                                <!-- =================================================
-                                     WAREHOUSE
-                                     ================================================= -->
+                                <!-- WAREHOUSE -->
 
                                 <td>
 
@@ -476,9 +437,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     LOCATION
-                                     ================================================= -->
+                                <!-- LOCATION -->
 
                                 <td>
 
@@ -506,9 +465,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     QUANTITY
-                                     ================================================= -->
+                                <!-- QUANTITY -->
 
                                 <td>
 
@@ -521,9 +478,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     RESERVED
-                                     ================================================= -->
+                                <!-- RESERVED -->
 
                                 <td>
 
@@ -532,9 +487,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     AVAILABLE
-                                     ================================================= -->
+                                <!-- AVAILABLE -->
 
                                 <td>
 
@@ -547,9 +500,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     STATUS
-                                     ================================================= -->
+                                <!-- STATUS -->
 
                                 <td>
 
@@ -589,9 +540,7 @@
                                 </td>
 
 
-                                <!-- =================================================
-                                     ACTIONS
-                                     ================================================= -->
+                                <!-- ACTIONS -->
 
                                 <td>
 
@@ -615,32 +564,90 @@
 
                                         </button>
 
+
                                     </div>
 
                                 </td>
 
+
                             </tr>
                         }
+
 
                     </tbody>
 
                 </table>
 
+
             </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @foreach (var pageNumber in GetPageNumbers())
+                        {
+                            <button type="button"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                ·
+                @PagedStockRows.Count von @StockRows.Count Einträgen
+
+            </div>
+
         }
 
     </div>
 
 
-    <!-- =========================================================
-         DELETE MODAL
-         ========================================================= -->
+    <!-- DELETE MODAL -->
     @if (ShowDeleteModal &&
              StockToDelete != null)
     {
         <div class="delete-modal-backdrop">
 
+
             <div class="delete-modal">
+
 
                 <div class="delete-modal-icon">
                     🗑
@@ -675,6 +682,7 @@
 
                 <div class="delete-modal-actions">
 
+
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
@@ -690,12 +698,15 @@
 
                     </button>
 
+
                 </div>
+
 
             </div>
 
         </div>
     }
+
 
 </div>
 
@@ -714,16 +725,44 @@
 
 
     // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                StockRows.Count /
+                (double)PageSize));
+
+
+    private List<Stock> PagedStockRows =>
+        StockRows
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    // =========================================================
     // FILTER
     // =========================================================
 
-    private string SearchTerm = string.Empty;
+    private string SearchTerm =
+        string.Empty;
 
     private int SelectedWarehouseId;
 
     private int SelectedLocationId;
 
-    private string SelectedStatus = "all";
+    private string SelectedStatus =
+        "all";
 
 
     // =========================================================
@@ -738,21 +777,25 @@
     // =========================================================
 
     private decimal TotalQuantity =>
-        StockRows.Sum(x => x.Quantity);
+        StockRows.Sum(
+            x => x.Quantity);
 
 
     private decimal TotalReserved =>
-        StockRows.Sum(x => x.ReservedQuantity);
+        StockRows.Sum(
+            x => x.ReservedQuantity);
 
 
     private decimal TotalAvailable =>
-        StockRows.Sum(x => x.AvailableQuantity);
+        StockRows.Sum(
+            x => x.AvailableQuantity);
 
 
     private int LowStockCount =>
-        StockRows.Count(x =>
-            x.Quantity <
-            (x.Product?.MinimumStock ?? 0));
+        StockRows.Count(
+            x =>
+                x.Quantity <
+                (x.Product?.MinimumStock ?? 0));
 
 
     // =========================================================
@@ -790,13 +833,10 @@
 
         Warehouses =
             await db.Warehouses
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
     }
 
@@ -813,7 +853,8 @@
 
         var query =
             db.WarehouseLocations
-                .Where(x => x.IsActive)
+                .Where(x =>
+                    x.IsActive)
                 .AsQueryable();
 
 
@@ -828,10 +869,8 @@
 
         FilterLocations =
             await query
-
                 .OrderBy(x =>
                     x.Code)
-
                 .ToListAsync();
     }
 
@@ -866,11 +905,10 @@
                     .AsQueryable();
 
 
-            // =================================================
             // SEARCH
-            // =================================================
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
@@ -878,20 +916,13 @@
 
                 query =
                     query.Where(x =>
-
                         x.Product != null
-
                         &&
-
                         (
                             x.Product.Name.Contains(search)
-
                             ||
-
                             x.Product.SKU.Contains(search)
-
                             ||
-
                             (
                                 x.Product.Barcode != null
                                 &&
@@ -902,43 +933,29 @@
             }
 
 
-            // =================================================
             // WAREHOUSE
-            // =================================================
 
             if (SelectedWarehouseId > 0)
             {
                 query =
                     query.Where(x =>
-
                         x.WarehouseLocation != null
-
                         &&
-
                         x.WarehouseLocation.WarehouseId ==
-                            SelectedWarehouseId
-                    );
+                        SelectedWarehouseId);
             }
 
 
-            // =================================================
             // LOCATION
-            // =================================================
 
             if (SelectedLocationId > 0)
             {
                 query =
                     query.Where(x =>
-
                         x.WarehouseLocationId ==
-                            SelectedLocationId
-                    );
+                        SelectedLocationId);
             }
 
-
-            // =================================================
-            // LOAD
-            // =================================================
 
             var rows =
                 await query
@@ -952,56 +969,50 @@
                     .ToListAsync();
 
 
-            // =================================================
             // STATUS
-            // =================================================
 
             if (SelectedStatus == "low")
             {
                 rows =
                     rows
-
                         .Where(x =>
                             x.Quantity <
                             (x.Product?.MinimumStock ?? 0))
-
                         .ToList();
             }
             else if (SelectedStatus == "ok")
             {
                 rows =
                     rows
-
                         .Where(x =>
                             x.Quantity >=
                             (x.Product?.MinimumStock ?? 0))
-
                         .ToList();
             }
             else if (SelectedStatus == "available")
             {
                 rows =
                     rows
-
                         .Where(x =>
                             x.AvailableQuantity > 0)
-
                         .ToList();
             }
             else if (SelectedStatus == "empty")
             {
                 rows =
                     rows
-
                         .Where(x =>
                             x.Quantity <= 0)
-
                         .ToList();
             }
 
 
-            StockRows =
-                rows;
+            StockRows = rows;
+
+
+            // RESET PAGINATION
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -1011,7 +1022,7 @@
 
 
     // =========================================================
-    // SEARCH CHANGED
+    // LIVE SEARCH
     // =========================================================
 
     private async Task SearchChanged()
@@ -1026,20 +1037,14 @@
 
     private async Task FilterChanged()
     {
-        SelectedLocationId =
-            SelectedWarehouseId > 0 &&
-            FilterLocations.Any(x =>
-                x.Id == SelectedLocationId)
-                ? SelectedLocationId
-                : 0;
-
-
         await LoadLocations();
 
 
         if (SelectedLocationId > 0 &&
-            !FilterLocations.Any(x =>
-                x.Id == SelectedLocationId))
+            !FilterLocations.Any(
+                x =>
+                    x.Id ==
+                    SelectedLocationId))
         {
             SelectedLocationId = 0;
         }
@@ -1050,13 +1055,179 @@
 
 
     // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+
+        if (page > TotalPages)
+        {
+            page = TotalPages;
+        }
+
+
+        CurrentPage = page;
+    }
+
+
+    private List<int> GetPageNumbers()
+    {
+        var pages =
+            new List<int>();
+
+
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
+
+
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+
+        for (
+            var i = start;
+            i <= end;
+            i++)
+        {
+            pages.Add(i);
+        }
+
+
+        return pages;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        var data =
+            PagedStockRows
+                .Where(x => x != null)
+                .ToList();
+
+
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+
+        var fileBytes =
+            ExcelExport.Export(
+                data,
+
+                "Bestand",
+
+                $"Bestand – Seite {CurrentPage}",
+
+                ("SKU",
+                    x => x.Product?.SKU ?? "-"),
+
+                ("Produkt",
+                    x => x.Product?.Name ?? "-"),
+
+                ("Barcode",
+                    x => x.Product?.Barcode ?? ""),
+
+                ("Lager",
+                    x =>
+                        x.WarehouseLocation?
+                            .Warehouse?
+                            .Name ?? "-"),
+
+                ("Lagerplatz",
+                    x =>
+                        x.WarehouseLocation == null
+                            ? "-"
+                            : string.IsNullOrWhiteSpace(
+                                x.WarehouseLocation.Name)
+                                ? x.WarehouseLocation.Code
+                                : $"{x.WarehouseLocation.Code} - {x.WarehouseLocation.Name}"),
+
+                ("Bestand",
+                    x => x.Quantity),
+
+                ("Reserviert",
+                    x => x.ReservedQuantity),
+
+                ("Verfügbar",
+                    x => x.AvailableQuantity),
+
+                ("Mindestbestand",
+                    x =>
+                        x.Product?.MinimumStock ?? 0),
+
+                ("Status",
+                    x =>
+                        x.Quantity <= 0
+                            ? "Leer"
+                            : x.Quantity <
+                              (x.Product?.MinimumStock ?? 0)
+                                ? "Niedrig"
+                                : x.AvailableQuantity <= 0
+                                    ? "Reserviert"
+                                    : "OK")
+            );
+
+
+        var base64 =
+            Convert.ToBase64String(
+                fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+
+            $"Bestand_Seite_{CurrentPage}.xlsx",
+
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+            base64);
+    }
+
+
+    // =========================================================
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
+        {
             return "?";
+        }
 
 
         var words =
@@ -1068,13 +1239,11 @@
         if (words.Length == 1)
         {
             return words[0]
-
                 .Substring(
                     0,
                     Math.Min(
                         2,
                         words[0].Length))
-
                 .ToUpper();
         }
 
@@ -1121,7 +1290,9 @@
     private async Task DeleteConfirmed()
     {
         if (StockToDelete == null)
+        {
             return;
+        }
 
 
         await using var db =
@@ -1130,10 +1301,10 @@
 
         var stock =
             await db.Stocks
-
-                .FirstOrDefaultAsync(x =>
-                    x.Id ==
-                    StockToDelete.Id);
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id ==
+                        StockToDelete.Id);
 
 
         if (stock == null)
@@ -1144,9 +1315,7 @@
         }
 
 
-        // =====================================================
         // CREATE CORRECTION MOVEMENT
-        // =====================================================
 
         if (stock.Quantity > 0)
         {
@@ -1187,9 +1356,7 @@
         }
 
 
-        // =====================================================
         // SET STOCK TO ZERO
-        // =====================================================
 
         stock.Quantity =
             0;
@@ -1204,20 +1371,12 @@
         await db.SaveChangesAsync();
 
 
-        // =====================================================
-        // CLOSE MODAL
-        // =====================================================
-
         StockToDelete =
             null;
 
         ShowDeleteModal =
             false;
 
-
-        // =====================================================
-        // RELOAD
-        // =====================================================
 
         await LoadStock();
     }

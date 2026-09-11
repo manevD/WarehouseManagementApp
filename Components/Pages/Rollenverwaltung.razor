@@ -1,0 +1,1178 @@
+﻿@page "/roles"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
+@using WarehouseManagement.Data
+@using WarehouseManagement.Services
+
+@inject RoleManager<IdentityRole> RoleManager
+@inject UserManager<ApplicationUser> UserManager
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
+
+<PageTitle>Rollenverwaltung</PageTitle>
+
+<div class="stock-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Rollenverwaltung
+            </h1>
+
+            <p>
+                Rollen und Berechtigungen verwalten
+            </p>
+
+        </div>
+
+        <div class="page-header-actions">
+
+            <!-- EXCEL -->
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedRoles.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
+
+
+            <!-- NEW ROLE -->
+
+            <button type="button"
+                    class="btn-primary"
+                    @onclick="OpenCreate">
+
+                + Neue Rolle
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="filter-main-row">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       placeholder="Rolle suchen..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
+
+    <div class="products-card">
+
+        <div class="products-card-header">
+
+            <div>
+
+                <strong>
+                    Rollen
+                </strong>
+
+                <span>
+                    @FilteredRoles.Count Einträge
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (IsLoading)
+        {
+            <div class="loading-state">
+
+                Rollen werden geladen...
+
+            </div>
+        }
+        else if (PagedRoles.Count == 0)
+        {
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+
+                    <i class="bi bi-shield-lock"></i>
+
+                </div>
+
+                <h3>
+                    Keine Rollen gefunden
+                </h3>
+
+                <p>
+                    Es wurden keine Rollen gefunden.
+                </p>
+
+            </div>
+        }
+        else
+        {
+
+            <div class="products-table-wrapper">
+
+                <table class="products-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Rolle
+                            </th>
+
+                            <th>
+                                Benutzer
+                            </th>
+
+                            <th>
+                                Erstellt
+                            </th>
+
+                            <th>
+                                Aktionen
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var role in PagedRoles)
+                        {
+                            <tr>
+
+                                <!-- ROLE -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        <div class="product-avatar">
+
+                                            @GetInitials(role.Name)
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @role.Name
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- USERS -->
+
+                                <td>
+
+                                    @GetUserCount(role.Name)
+
+                                </td>
+
+
+                                <!-- CREATED -->
+
+                                <td>
+
+                                    <span class="text-muted">
+                                        —
+                                    </span>
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <button type="button"
+                                                class="action-button"
+                                                title="Bearbeiten"
+                                                @onclick="() => OpenEdit(role)">
+
+                                            ✎
+
+                                        </button>
+
+
+                                        <button type="button"
+                                                class="action-button delete-button"
+                                                title="Löschen"
+                                                @onclick="() => OpenDelete(role)">
+
+                                            🗑
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PAGINATION
+                 ===================================================== -->
+
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @foreach (var pageNumber in GetPageNumbers())
+                        {
+                            <button type="button"
+                                    class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                · @PagedRoles.Count von @FilteredRoles.Count Items
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     CREATE / EDIT MODAL
+     ============================================================= -->
+
+@if (ShowRoleModal)
+{
+    <div class="modal-backdrop">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        @(IsEditMode
+                            ? "Rolle bearbeiten"
+                            : "Neue Rolle")
+                    </h2>
+
+                    <p>
+                        @(IsEditMode
+                            ? "Namen der Rolle ändern"
+                            : "Neue Rolle anlegen")
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        class="modal-close"
+                        @onclick="CloseModal">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <div class="form-group">
+
+                    <label>
+                        Rollenname
+                    </label>
+
+                    <input class="form-control"
+                           @bind="EditModel.Name"
+                           placeholder="z. B. Lagerleiter" />
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="CloseModal">
+
+                    Abbrechen
+
+                </button>
+
+
+                <button type="button"
+                        class="btn-primary"
+                        @onclick="SaveRole"
+                        disabled="@IsSaving">
+
+                    @(IsSaving
+                        ? "Speichern..."
+                        : "Speichern")
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+<!-- =============================================================
+     DELETE MODAL
+     ============================================================= -->
+
+@if (ShowDeleteModal)
+{
+    <div class="modal-backdrop">
+
+        <div class="modal-card modal-card-small">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Rolle löschen
+                    </h2>
+
+                    <p>
+                        Diese Aktion kann nicht rückgängig gemacht werden.
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        class="modal-close"
+                        @onclick="CloseDelete">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                <p>
+
+                    Möchten Sie die Rolle
+
+                    <strong>
+                        @DeleteRole?.Name
+                    </strong>
+
+                    wirklich löschen?
+
+                </p>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="CloseDelete">
+
+                    Abbrechen
+
+                </button>
+
+
+                <button type="button"
+                        class="btn-danger"
+                        @onclick="DeleteRoleAsync"
+                        disabled="@IsSaving">
+
+                    Löschen
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private List<IdentityRole> Roles = new();
+
+    private Dictionary<string, int> RoleUserCounts = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsLoading = true;
+
+    private bool IsSaving;
+
+    private bool ShowRoleModal;
+
+    private bool ShowDeleteModal;
+
+    private bool IsEditMode;
+
+    private string? ErrorMessage;
+
+    private IdentityRole? DeleteRole;
+
+    private string? EditRoleId;
+
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private string _searchTerm = string.Empty;
+
+    private string SearchTerm
+    {
+        get => _searchTerm;
+
+        set
+        {
+            if (_searchTerm == value)
+                return;
+
+            _searchTerm = value;
+
+            CurrentPage = 1;
+        }
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private List<IdentityRole> FilteredRoles
+    {
+        get
+        {
+            var query = Roles.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                var search = SearchTerm.Trim();
+
+                query = query.Where(role =>
+                    role.Name?.Contains(
+                        search,
+                        StringComparison.OrdinalIgnoreCase)
+                    ?? false);
+            }
+
+            return query
+                .OrderBy(x => x.Name)
+                .ToList();
+        }
+    }
+
+
+    private List<IdentityRole> PagedRoles =>
+        FilteredRoles
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredRoles.Count /
+                (double)PageSize));
+
+
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
+
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
+
+
+    // =========================================================
+    // EDIT MODEL
+    // =========================================================
+
+    private RoleEditModel EditModel = new();
+
+
+    private class RoleEditModel
+    {
+        public string Name { get; set; } =
+            string.Empty;
+    }
+
+
+    // =========================================================
+    // LOAD
+    // =========================================================
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+
+        try
+        {
+            Roles =
+                await RoleManager.Roles
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            RoleUserCounts.Clear();
+
+            foreach (var role in Roles)
+            {
+                if (string.IsNullOrWhiteSpace(role.Name))
+                    continue;
+
+                var users =
+                    await UserManager.GetUsersInRoleAsync(
+                        role.Name);
+
+                RoleUserCounts[role.Name] =
+                    users.Count;
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================================
+    // CREATE
+    // =========================================================
+
+    private void OpenCreate()
+    {
+        ErrorMessage = null;
+
+        IsEditMode = false;
+
+        EditRoleId = null;
+
+        EditModel =
+            new RoleEditModel();
+
+        ShowRoleModal = true;
+    }
+
+
+    // =========================================================
+    // EDIT
+    // =========================================================
+
+    private void OpenEdit(
+        IdentityRole role)
+    {
+        ErrorMessage = null;
+
+        IsEditMode = true;
+
+        EditRoleId = role.Id;
+
+        EditModel =
+            new RoleEditModel
+            {
+                Name =
+                    role.Name ?? string.Empty
+            };
+
+        ShowRoleModal = true;
+    }
+
+
+    // =========================================================
+    // SAVE
+    // =========================================================
+
+    private async Task SaveRole()
+    {
+        ErrorMessage = null;
+
+        IsSaving = true;
+
+        try
+        {
+            var roleName =
+                EditModel.Name.Trim();
+
+            if (string.IsNullOrWhiteSpace(roleName))
+            {
+                ErrorMessage =
+                    "Rollenname ist erforderlich.";
+
+                return;
+            }
+
+
+            if (roleName.Length > 256)
+            {
+                ErrorMessage =
+                    "Der Rollenname darf maximal 256 Zeichen lang sein.";
+
+                return;
+            }
+
+
+            if (IsEditMode)
+            {
+                await UpdateRole(roleName);
+            }
+            else
+            {
+                await CreateRole(roleName);
+            }
+
+
+            if (string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                ShowRoleModal = false;
+
+                await LoadData();
+
+                if (CurrentPage > TotalPages)
+                    CurrentPage = TotalPages;
+            }
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // CREATE ROLE
+    // =========================================================
+
+    private async Task CreateRole(
+        string roleName)
+    {
+        var exists =
+            await RoleManager.RoleExistsAsync(
+                roleName);
+
+        if (exists)
+        {
+            ErrorMessage =
+                "Eine Rolle mit diesem Namen existiert bereits.";
+
+            return;
+        }
+
+
+        var role =
+            new IdentityRole
+            {
+                Name = roleName
+            };
+
+
+        var result =
+            await RoleManager.CreateAsync(role);
+
+
+        if (!result.Succeeded)
+        {
+            ErrorMessage =
+                string.Join(
+                    " ",
+                    result.Errors.Select(
+                        x => x.Description));
+
+            return;
+        }
+    }
+
+
+    // =========================================================
+    // UPDATE ROLE
+    // =========================================================
+
+    private async Task UpdateRole(
+        string roleName)
+    {
+        if (string.IsNullOrWhiteSpace(EditRoleId))
+        {
+            ErrorMessage =
+                "Rolle wurde nicht gefunden.";
+
+            return;
+        }
+
+
+        var role =
+            await RoleManager.FindByIdAsync(
+                EditRoleId);
+
+
+        if (role == null)
+        {
+            ErrorMessage =
+                "Rolle wurde nicht gefunden.";
+
+            return;
+        }
+
+
+        var existingRole =
+            await RoleManager.FindByNameAsync(
+                roleName);
+
+
+        if (existingRole != null
+            &&
+            existingRole.Id != role.Id)
+        {
+            ErrorMessage =
+                "Eine andere Rolle mit diesem Namen existiert bereits.";
+
+            return;
+        }
+
+
+        role.Name = roleName;
+
+
+        var result =
+            await RoleManager.UpdateAsync(
+                role);
+
+
+        if (!result.Succeeded)
+        {
+            ErrorMessage =
+                string.Join(
+                    " ",
+                    result.Errors.Select(
+                        x => x.Description));
+
+            return;
+        }
+    }
+
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
+    private void OpenDelete(
+        IdentityRole role)
+    {
+        ErrorMessage = null;
+
+        DeleteRole = role;
+
+        ShowDeleteModal = true;
+    }
+
+
+    private void CloseDelete()
+    {
+        ShowDeleteModal = false;
+
+        DeleteRole = null;
+
+        ErrorMessage = null;
+    }
+
+
+    private async Task DeleteRoleAsync()
+    {
+        if (DeleteRole == null)
+            return;
+
+
+        IsSaving = true;
+
+        ErrorMessage = null;
+
+        try
+        {
+            var roleName =
+                DeleteRole.Name;
+
+
+            if (string.IsNullOrWhiteSpace(roleName))
+            {
+                ErrorMessage =
+                    "Rollenname wurde nicht gefunden.";
+
+                return;
+            }
+
+
+            // ADMIN-ROLLE SCHÜTZEN
+
+            if (string.Equals(
+                    roleName,
+                    "Admin",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage =
+                    "Die Rolle 'Admin' kann nicht gelöscht werden.";
+
+                return;
+            }
+
+
+            // PRÜFEN, OB BENUTZER DIE ROLLE VERWENDEN
+
+            var users =
+                await UserManager.GetUsersInRoleAsync(
+                    roleName);
+
+
+            if (users.Count > 0)
+            {
+                ErrorMessage =
+                    $"Die Rolle kann nicht gelöscht werden, da {users.Count} Benutzer diese Rolle verwenden.";
+
+                return;
+            }
+
+
+            var result =
+                await RoleManager.DeleteAsync(
+                    DeleteRole);
+
+
+            if (!result.Succeeded)
+            {
+                ErrorMessage =
+                    string.Join(
+                        " ",
+                        result.Errors.Select(
+                            x => x.Description));
+
+                return;
+            }
+
+
+            ShowDeleteModal = false;
+
+            DeleteRole = null;
+
+            await LoadData();
+
+
+            if (CurrentPage > TotalPages)
+                CurrentPage = TotalPages;
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+
+    // =========================================================
+    // MODAL
+    // =========================================================
+
+    private void CloseModal()
+    {
+        ShowRoleModal = false;
+
+        ErrorMessage = null;
+
+        EditRoleId = null;
+    }
+
+
+    // =========================================================
+    // USER COUNT
+    // =========================================================
+
+    private int GetUserCount(
+        string? roleName)
+    {
+        if (string.IsNullOrWhiteSpace(roleName))
+            return 0;
+
+        return RoleUserCounts.TryGetValue(
+            roleName,
+            out var count)
+            ? count
+            : 0;
+    }
+
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoToPage(
+        int page)
+    {
+        if (page < 1)
+            page = 1;
+
+        if (page > TotalPages)
+            page = TotalPages;
+
+        CurrentPage = page;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedRoles.ToList();
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Rollen",
+                    $"Rollenverwaltung – Seite {CurrentPage}",
+
+                    (
+                        "Rolle",
+                        x => x.Name ?? ""
+                    ),
+
+                    (
+                        "Benutzer",
+                        x => GetUserCount(x.Name)
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(
+                    bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Rollen_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
+
+        if (words.Length == 1)
+        {
+            return words[0]
+                .Substring(
+                    0,
+                    Math.Min(
+                        2,
+                        words[0].Length))
+                .ToUpper();
+        }
+
+
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
+    }
+
+}

@@ -1,37 +1,42 @@
 ﻿@page "/reports/stock"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Bestandsbericht</PageTitle>
 
-
 <div class="stock-page">
-
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
 
     <div class="page-header">
 
         <div>
-
-            <h1>
-                Bestandsbericht
-            </h1>
+            <h1>Bestandsbericht</h1>
 
             <p>
                 Aktueller Lagerbestand nach Produkt und Lagerplatz.
             </p>
-
         </div>
 
         <div class="page-header-actions">
+
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedStocks.Count == 0)">
+
+                📊 Excel exportieren
+
+            </button>
 
             <a href="/reports"
                class="btn-secondary">
@@ -45,29 +50,20 @@
     </div>
 
 
-    <!-- =========================================================
-         LOADING
-         ========================================================= -->
     @if (IsLoading)
     {
         <div class="loading-state">
-
             Bestand wird geladen...
-
         </div>
     }
     else
     {
 
-        <!-- =====================================================
-             FILTER
-             ===================================================== -->
+        <!-- FILTER -->
 
         <div class="filter-card">
 
             <div class="filter-main-row">
-
-                <!-- SEARCH -->
 
                 <div class="search-box">
 
@@ -83,8 +79,6 @@
 
                 </div>
 
-
-                <!-- WAREHOUSE -->
 
                 <select class="filter-select"
                         @bind="SelectedWarehouseId"
@@ -103,8 +97,6 @@
 
                 </select>
 
-
-                <!-- LOCATION -->
 
                 <select class="filter-select"
                         @bind="SelectedLocationId"
@@ -130,8 +122,6 @@
 
                 </select>
 
-
-                <!-- STATUS -->
 
                 <select class="filter-select"
                         @bind="SelectedStatus"
@@ -172,9 +162,7 @@
         </div>
 
 
-        <!-- =====================================================
-             SUMMARY
-             ===================================================== -->
+        <!-- SUMMARY -->
 
         <div class="stock-summary-grid">
 
@@ -245,9 +233,7 @@
         </div>
 
 
-        <!-- =====================================================
-             TABLE
-             ===================================================== -->
+        <!-- TABLE -->
 
         <div class="stock-table-card">
 
@@ -281,37 +267,14 @@
 
                             <tr>
 
-                                <th>
-                                    Produkt
-                                </th>
-
-                                <th>
-                                    SKU
-                                </th>
-
-                                <th>
-                                    Lager
-                                </th>
-
-                                <th>
-                                    Lagerplatz
-                                </th>
-
-                                <th>
-                                    Bestand
-                                </th>
-
-                                <th>
-                                    Reserviert
-                                </th>
-
-                                <th>
-                                    Verfügbar
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
+                                <th>Produkt</th>
+                                <th>SKU</th>
+                                <th>Lager</th>
+                                <th>Lagerplatz</th>
+                                <th>Bestand</th>
+                                <th>Reserviert</th>
+                                <th>Verfügbar</th>
+                                <th>Status</th>
 
                             </tr>
 
@@ -323,8 +286,6 @@
                             @foreach (var stock in PagedStocks)
                             {
                                 <tr>
-
-                                    <!-- PRODUCT -->
 
                                     <td>
 
@@ -358,21 +319,15 @@
                                     </td>
 
 
-                                    <!-- SKU -->
-
                                     <td>
                                         @stock.SKU
                                     </td>
 
 
-                                    <!-- WAREHOUSE -->
-
                                     <td>
                                         @stock.WarehouseName
                                     </td>
 
-
-                                    <!-- LOCATION -->
 
                                     <td>
 
@@ -395,8 +350,6 @@
                                     </td>
 
 
-                                    <!-- QUANTITY -->
-
                                     <td>
 
                                         <strong>
@@ -406,16 +359,12 @@
                                     </td>
 
 
-                                    <!-- RESERVED -->
-
                                     <td>
 
                                         @if (stock.ReservedQuantity > 0)
                                         {
                                             <span class="stock-reserved">
-
                                                 @stock.ReservedQuantity.ToString("N2")
-
                                             </span>
                                         }
                                         else
@@ -428,8 +377,6 @@
                                     </td>
 
 
-                                    <!-- AVAILABLE -->
-
                                     <td>
 
                                         <strong>
@@ -438,8 +385,6 @@
 
                                     </td>
 
-
-                                    <!-- STATUS -->
 
                                     <td>
 
@@ -475,54 +420,27 @@
                 </div>
 
 
-                <!-- =================================================
-                     PAGINATION
-                     ================================================= -->
+                <!-- PAGINATION -->
                 @if (TotalPages > 1)
                 {
-                    <div class="pagination-container">
+                    <div class="pagination">
 
-                        <div class="pagination-info">
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage <= 1)"
+                                @onclick="PreviousPage">
 
-                            Zeige
+                            ‹
 
-                            <strong>
-                                @PaginationStart
-                            </strong>
-
-                            -
-
-                            <strong>
-                                @PaginationEnd
-                            </strong>
-
-                            von
-
-                            <strong>
-                                @FilteredStocks.Count
-                            </strong>
-
-                        </div>
+                        </button>
 
 
-                        <div class="pagination-buttons">
+                        <div class="pagination-pages">
 
-                            <button type="button"
-                                    class="btn-secondary"
-                                    disabled="@(CurrentPage == 1)"
-                                    @onclick="PreviousPage">
-
-                                &lt;
-
-                            </button>
-
-
-                            @for (int page = 1; page <= TotalPages; page++)
+                            @foreach (var pageNumber in GetPageNumbers())
                             {
-                                var pageNumber = page;
-
                                 <button type="button"
-                                        class="pagination-page @(CurrentPage == pageNumber ? "active" : "")"
+                                        class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                         @onclick="() => GoToPage(pageNumber)">
 
                                     @pageNumber
@@ -530,20 +448,28 @@
                                 </button>
                             }
 
-
-                            <button type="button"
-                                    class="btn-secondary"
-                                    disabled="@(CurrentPage == TotalPages)"
-                                    @onclick="NextPage">
-
-                                &gt;
-
-                            </button>
-
                         </div>
+
+
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage >= TotalPages)"
+                                @onclick="NextPage">
+
+                            ›
+
+                        </button>
 
                     </div>
                 }
+
+
+                <div class="pagination-info">
+
+                    Seite @CurrentPage von @TotalPages
+                    · @PagedStocks.Count von @FilteredStocks.Count Einträge
+
+                </div>
 
             }
 
@@ -555,10 +481,6 @@
 
 
 @code {
-
-    // =========================================================
-    // DATA
-    // =========================================================
 
     private List<StockRow> Stocks = new();
 
@@ -667,16 +589,27 @@
                 (double)PageSize));
 
 
-    private int PaginationStart =>
-        FilteredStocks.Count == 0
-            ? 0
-            : ((CurrentPage - 1) * PageSize) + 1;
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
 
+        var start =
+            Math.Max(
+                1,
+                CurrentPage - 2);
 
-    private int PaginationEnd =>
-        Math.Min(
-            CurrentPage * PageSize,
-            FilteredStocks.Count);
+        var end =
+            Math.Min(
+                TotalPages,
+                CurrentPage + 2);
+
+        for (var i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
 
 
     // =========================================================
@@ -833,10 +766,6 @@
                 await DbFactory.CreateDbContextAsync();
 
 
-            // =====================================================
-            // WAREHOUSES
-            // =====================================================
-
             Warehouses =
                 await db.Warehouses
                     .AsNoTracking()
@@ -845,10 +774,6 @@
                     .ToListAsync();
 
 
-            // =====================================================
-            // LOCATIONS
-            // =====================================================
-
             Locations =
                 await db.WarehouseLocations
                     .AsNoTracking()
@@ -856,10 +781,6 @@
                     .OrderBy(x => x.Code)
                     .ToListAsync();
 
-
-            // =====================================================
-            // STOCK
-            // =====================================================
 
             Stocks =
                 await db.Stocks
@@ -1036,6 +957,115 @@
 
 
     // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data =
+                PagedStocks.ToList();
+
+            if (data.Count == 0)
+                return;
+
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Bestandsbericht",
+                    $"Bestandsbericht – Seite {CurrentPage}",
+
+                    (
+                        "Produkt",
+                        x => x.ProductName
+                    ),
+
+                    (
+                        "SKU",
+                        x => x.SKU
+                    ),
+
+                    (
+                        "Barcode",
+                        x => x.Barcode ?? ""
+                    ),
+
+                    (
+                        "Lager",
+                        x => x.WarehouseName
+                    ),
+
+                    (
+                        "Lagerplatz",
+                        x =>
+                            string.IsNullOrWhiteSpace(
+                                x.LocationName)
+
+                                ? x.LocationCode
+
+                                : $"{x.LocationCode} - {x.LocationName}"
+                    ),
+
+                    (
+                        "Bestand",
+                        x => x.Quantity
+                    ),
+
+                    (
+                        "Reserviert",
+                        x => x.ReservedQuantity
+                    ),
+
+                    (
+                        "Verfügbar",
+                        x => x.AvailableQuantity
+                    ),
+
+                    (
+                        "Mindestbestand",
+                        x => x.MinimumStock
+                    ),
+
+                    (
+                        "Status",
+                        x => GetStockStatus(x)
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Bestandsbericht_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    private string GetStockStatus(StockRow stock)
+    {
+        if (stock.Quantity <= 0)
+            return "Kein Bestand";
+
+        if (stock.Quantity < stock.MinimumStock)
+            return "Niedrig";
+
+        return "OK";
+    }
+
+
+    // =========================================================
     // INITIALS
     // =========================================================
 
@@ -1044,10 +1074,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -1060,9 +1092,10 @@
                 .ToUpper();
         }
 
+
         return
             $"{words[0][0]}{words[1][0]}"
-            .ToUpper();
+                .ToUpper();
     }
 
 

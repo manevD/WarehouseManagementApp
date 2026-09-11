@@ -1,47 +1,69 @@
 ﻿@page "/categories"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using Microsoft.JSInterop
-@using WarehouseManagement.Services.WarehouseManagement.Services
+@using WarehouseManagement.Services
+
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+
+
 <PageTitle>Kategorien</PageTitle>
+
 
 <div class="categories-page">
 
     <!-- HEADER -->
+
     <div class="page-header">
 
         <div>
             <h1>Kategorien</h1>
-            <p>Verwalten Sie Ihre Produktkategorien.</p>
+
+            <p>
+                Verwalten Sie Ihre Produktkategorien.
+            </p>
         </div>
+
+
         <div>
             <button type="button"
-                    class="btn-primary"
-                    @onclick="ExportExcel">
-                Excel exportieren
+                    class="btn-secondary"
+                    @onclick="ExportExcel" disabled="@(PagedCategories.Count == 0)">
+
+                📊 Excel exportieren
+
             </button>
 
-            <a href="/categories/create" class="btn-primary">
+            <a href="/categories/create"
+               class="btn-primary">
+
                 <span>+</span>
+
                 Neue Kategorie
+
             </a>
+
         </div>
+
     </div>
 
 
     <!-- FILTER -->
+
     <div class="filter-card">
 
         <div class="search-box">
 
-            <span class="search-icon">⌕</span>
+            <span class="search-icon">
+                ⌕
+            </span>
 
             <input type="text"
                    placeholder="Kategorie suchen..."
@@ -56,26 +78,39 @@
                 @bind="SelectedStatus"
                 @bind:after="SearchChanged">
 
-            <option value="all">Alle Status</option>
-            <option value="active">Aktiv</option>
-            <option value="inactive">Inaktiv</option>
+            <option value="all">
+                Alle Status
+            </option>
+
+            <option value="active">
+                Aktiv
+            </option>
+
+            <option value="inactive">
+                Inaktiv
+            </option>
 
         </select>
 
     </div>
 
 
-    <!-- TABLE -->
+    <!-- TABLE CARD -->
+
     <div class="products-card">
 
         <div class="products-card-header">
 
             <div>
-                <strong>Kategorienliste</strong>
+
+                <strong>
+                    Kategorienliste
+                </strong>
 
                 <span>
                     @Categories.Count Kategorien
                 </span>
+
             </div>
 
         </div>
@@ -95,7 +130,9 @@
                     📁
                 </div>
 
-                <h3>Keine Kategorien gefunden</h3>
+                <h3>
+                    Keine Kategorien gefunden
+                </h3>
 
                 <p>
                     Es wurden noch keine Kategorien angelegt.
@@ -120,35 +157,55 @@
 
                         <tr>
 
-                            <th>Name</th>
-                            <th>Beschreibung</th>
-                            <th>Produkte</th>
-                            <th>Status</th>
-                            <th></th>
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Beschreibung
+                            </th>
+
+                            <th>
+                                Produkte
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                            </th>
 
                         </tr>
 
                     </thead>
 
+
                     <tbody>
 
-                        @foreach (var category in Categories)
+                        @foreach (var category in PagedCategories)
                         {
                             <tr>
 
                                 <!-- NAME -->
+
                                 <td>
 
                                     <div class="product-name">
 
                                         <div class="product-avatar">
+
                                             @GetInitials(category.Name)
+
                                         </div>
 
+
                                         <div>
+
                                             <strong>
                                                 @category.Name
                                             </strong>
+
                                         </div>
 
                                     </div>
@@ -157,9 +214,11 @@
 
 
                                 <!-- DESCRIPTION -->
+
                                 <td>
 
-                                    @if (!string.IsNullOrWhiteSpace(category.Description))
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        category.Description))
                                     {
                                         <span>
                                             @category.Description
@@ -176,16 +235,20 @@
 
 
                                 <!-- PRODUCTS COUNT -->
+
                                 <td>
 
                                     <span class="category-count">
-                                        @category.Products.Count
+
+                                        @(category.Products?.Count ?? 0)
+
                                     </span>
 
                                 </td>
 
 
                                 <!-- STATUS -->
+
                                 <td>
 
                                     @if (category.IsActive)
@@ -205,6 +268,7 @@
 
 
                                 <!-- ACTIONS -->
+
                                 <td>
 
                                     <div class="product-actions">
@@ -212,24 +276,88 @@
                                         <a href="/categories/edit/@category.Id"
                                            class="action-button"
                                            title="Bearbeiten">
+
                                             ✎
+
                                         </a>
+
+
                                         @if (category.IsActive)
                                         {
                                             <button class="action-button delete-button"
                                                     title="Deaktivieren"
                                                     @onclick="() => ConfirmDelete(category)">
+
                                                 🗑
+
                                             </button>
                                         }
+
                                     </div>
+
                                 </td>
+
                             </tr>
                         }
 
                     </tbody>
 
                 </table>
+
+            </div>
+
+
+            <!-- PAGINATION -->
+            @if (TotalPages > 1)
+            {
+                <div class="pagination">
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="PreviousPage">
+
+                        ‹
+
+                    </button>
+
+
+                    <div class="pagination-pages">
+
+                        @for (int page = 1; page <= TotalPages; page++)
+                        {
+                            var pageNumber = page;
+
+                            <button type="button"
+                                    class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                    @onclick="() => GoToPage(pageNumber)">
+
+                                @pageNumber
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pagination-button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="NextPage">
+
+                        ›
+
+                    </button>
+
+                </div>
+            }
+
+
+            <div class="pagination-info">
+
+                Seite @CurrentPage von @TotalPages
+                ·
+                @PagedCategories.Count von @Categories.Count Kategorien
 
             </div>
         }
@@ -248,27 +376,45 @@
                     🗑
                 </div>
 
-                <h3>Kategorie deaktivieren?</h3>
+
+                <h3>
+                    Kategorie deaktivieren?
+                </h3>
+
 
                 <p>
+
                     Möchten Sie
-                    <strong>@CategoryToDelete.Name</strong>
+
+                    <strong>
+                        @CategoryToDelete.Name
+                    </strong>
+
                     wirklich deaktivieren?
+
                 </p>
 
+
                 <small>
+
                     Die Kategorie wird nicht gelöscht.
                     Sie wird nur als inaktiv markiert.
+
                 </small>
 
-                @if (CategoryToDelete.Products.Any())
+
+                @if (CategoryToDelete.Products?.Any() == true)
                 {
                     <div class="form-error">
+
                         Diese Kategorie enthält
                         @CategoryToDelete.Products.Count Produkt(e).
+
                         Die Kategorie kann trotzdem deaktiviert werden.
+
                     </div>
                 }
+
 
                 <div class="delete-modal-actions">
 
@@ -278,6 +424,7 @@
                         Abbrechen
 
                     </button>
+
 
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
@@ -298,6 +445,66 @@
 
 @code {
 
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                Categories.Count /
+                (double)PageSize));
+
+
+    private List<Category> PagedCategories =>
+        Categories
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 ||
+            page > TotalPages)
+        {
+            return;
+        }
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
     private List<Category> Categories = new();
 
     private string SearchTerm = string.Empty;
@@ -306,10 +513,19 @@
 
     private bool IsLoading = true;
 
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
     private Category? CategoryToDelete;
 
     private bool ShowDeleteModal;
 
+
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
 
     protected override async Task OnInitializedAsync()
     {
@@ -317,40 +533,69 @@
     }
 
 
+    // =========================================================
+    // LOAD CATEGORIES
+    // =========================================================
+
     private async Task LoadCategories()
     {
         IsLoading = true;
 
         try
         {
-            await using var db = await DbFactory.CreateDbContextAsync();
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
 
-            var query = db.Categories
-                .Include(x => x.Products)
-                .AsQueryable();
+
+            var query =
+                db.Categories
+                    .Include(x => x.Products)
+                    .AsQueryable();
+
+
+            // SEARCH
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                var search = SearchTerm.Trim();
+                var search =
+                    SearchTerm.Trim();
 
-                query = query.Where(x =>
-                    x.Name.Contains(search) ||
-                    (x.Description != null &&
-                     x.Description.Contains(search)));
+
+                query =
+                    query.Where(x =>
+                        x.Name.Contains(search) ||
+                        (x.Description != null &&
+                         x.Description.Contains(search)));
             }
+
+
+            // STATUS
 
             if (SelectedStatus == "active")
             {
-                query = query.Where(x => x.IsActive);
+                query =
+                    query.Where(x =>
+                        x.IsActive);
             }
             else if (SelectedStatus == "inactive")
             {
-                query = query.Where(x => !x.IsActive);
+                query =
+                    query.Where(x =>
+                        !x.IsActive);
             }
 
-            Categories = await query
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+
+            // LOAD
+
+            Categories =
+                await query
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            // RESET PAGINATION
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -359,37 +604,64 @@
     }
 
 
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
     private async Task SearchChanged()
     {
+        CurrentPage = 1;
+
         await LoadCategories();
     }
 
 
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
     private string GetInitials(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
+        {
             return "?";
+        }
 
-        var words = name
-            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        var words =
+            name.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
             return words[0]
                 .Substring(
                     0,
-                    Math.Min(2, words[0].Length))
+                    Math.Min(
+                        2,
+                        words[0].Length))
                 .ToUpper();
         }
 
-        return $"{words[0][0]}{words[1][0]}"
+
+        return
+            $"{words[0][0]}{words[1][0]}"
             .ToUpper();
     }
 
 
-    private void ConfirmDelete(Category category)
+    // =========================================================
+    // DELETE
+    // =========================================================
+
+    private void ConfirmDelete(
+        Category category)
     {
-        CategoryToDelete = category;
+        CategoryToDelete =
+            category;
+
         ShowDeleteModal = true;
     }
 
@@ -397,50 +669,30 @@
     private void CancelDelete()
     {
         CategoryToDelete = null;
+
         ShowDeleteModal = false;
     }
 
-    private async Task ExportExcel()
-    {
-        var data = Categories.ToList();
 
-        if (!data.Any())
-            return;
-
-        var fileBytes = ExcelExport.Export(
-            data,
-            "Kategorien",
-            "Kategorien",
-            ("Name", x => x.Name),
-
-            ("Beschreibung", x => x.Description ?? ""),
-
-            ("Produkte", x => x.Products?.Count ?? 0),
-
-            ("Status", x => x.IsActive
-                ? "Aktiv"
-                : "Inaktiv")
-        );
-
-        var base64 = Convert.ToBase64String(fileBytes);
-
-        await JS.InvokeVoidAsync(
-    "downloadFile",
-    "Kategorien.xlsx",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    base64);
-    }
     private async Task DeleteConfirmed()
     {
         if (CategoryToDelete == null)
+        {
             return;
+        }
+
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-        var category = await db.Categories
-            .FirstOrDefaultAsync(x =>
-                x.Id == CategoryToDelete.Id);
+
+        var category =
+            await db.Categories
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id ==
+                        CategoryToDelete.Id);
+
 
         if (category != null)
         {
@@ -449,9 +701,71 @@
             await db.SaveChangesAsync();
         }
 
+
         CategoryToDelete = null;
+
         ShowDeleteModal = false;
+
 
         await LoadCategories();
     }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        var data =
+            PagedCategories
+                .Where(x => x != null)
+                .ToList();
+
+
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+
+        var fileBytes =
+            ExcelExport.Export(
+                data,
+
+                "Kategorien",
+
+                $"Kategorien – Seite {CurrentPage}",
+
+                ("Name",
+                    x => x.Name ?? ""),
+
+                ("Beschreibung",
+                    x => x.Description ?? ""),
+
+                ("Produkte",
+                    x => x.Products?.Count ?? 0),
+
+                ("Status",
+                    x => x.IsActive
+                        ? "Aktiv"
+                        : "Inaktiv")
+            );
+
+
+        var base64 =
+            Convert.ToBase64String(
+                fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+
+            $"Kategorien_Seite_{CurrentPage}.xlsx",
+
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+            base64);
+    }
+
 }

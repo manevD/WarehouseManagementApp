@@ -1,11 +1,16 @@
 ﻿@page "/inventory"
 @attribute [Authorize]
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.JSInterop
 @using WarehouseManagement.Models
 @using WarehouseManagement.Data
+@using WarehouseManagement.Services
 
 @inject ApplicationDbContext Db
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 
 <PageTitle>Inventuren</PageTitle>
 
@@ -28,59 +33,75 @@
             </p>
 
         </div>
+        <div>
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel">
 
+                📊 Excel exportieren
 
-        <a href="/inventory/create"
-           class="btn-primary">
+            </button>
+            <a href="/inventory/create"
+               class="btn-primary">
 
-            <i class="bi bi-plus-lg me-1"></i>
+                Neue Inventur
 
-            Neue Inventur
-
-        </a>
-
+            </a>
+        </div>
     </div>
 
 
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
     <!-- =========================================================
      FILTER
      ========================================================= -->
 
     <div class="filter-card">
 
-        <div class="search-box">
+        <div class="filter-main-row">
 
-            <span class="search-icon">⌕</span>
+            <!-- SEARCH -->
 
-            <input type="text"
-                   class="search-input"
-                   placeholder="Lager, Status oder Notiz suchen..."
-                   @bind="SearchText"
-                   @bind:event="oninput" />
+            <div class="search-box">
+
+                <span class="search-icon">⌕</span>
+
+                <input type="text"
+                       class="search-input"
+                       placeholder="Lager, Status oder Notiz suchen..."
+                       value="@SearchText"
+                       @oninput="SearchChanged" />
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <select class="filter-select"
+                    @bind="SelectedStatus"
+                    @bind:after="StatusChanged">
+
+                <option value="">
+                    Alle Status
+                </option>
+
+                <option value="Entwurf">
+                    Entwurf
+                </option>
+
+                <option value="InBearbeitung">
+                    In Bearbeitung
+                </option>
+
+                <option value="Abgeschlossen">
+                    Abgeschlossen
+                </option>
+
+            </select>
 
         </div>
-
-
-        <select class="filter-select"
-                @bind="SelectedStatus">
-
-            <option value="">
-                Alle Status
-            </option>
-
-            <option value="Entwurf">
-                Entwurf
-            </option>
-
-            <option value="InBearbeitung">
-                In Bearbeitung
-            </option>
-
-            <option value="Abgeschlossen">
-                Abgeschlossen
-            </option>
-
-        </select>
 
     </div>
 
@@ -91,6 +112,7 @@
     <div class="stock-summary-grid">
 
         <!-- GESAMT -->
+
         <div class="stock-summary-card">
 
             <span>
@@ -105,6 +127,7 @@
 
 
         <!-- OFFEN -->
+
         <div class="stock-summary-card">
 
             <span>
@@ -112,14 +135,17 @@
             </span>
 
             <strong class="text-warning">
+
                 @FilteredInventories.Count(x =>
                     x.Status != InventoryStatus.Abgeschlossen)
+
             </strong>
 
         </div>
 
 
         <!-- ABGESCHLOSSEN -->
+
         <div class="stock-summary-card">
 
             <span>
@@ -127,8 +153,10 @@
             </span>
 
             <strong class="text-success">
+
                 @FilteredInventories.Count(x =>
                     x.Status == InventoryStatus.Abgeschlossen)
+
             </strong>
 
         </div>
@@ -143,6 +171,7 @@
     <div class="products-card">
 
         <!-- HEADER -->
+
         <div class="products-card-header">
 
             <div>
@@ -273,7 +302,7 @@
 
                         <tbody>
 
-                            @foreach (var inventory in FilteredInventories)
+                            @foreach (var inventory in PagedInventories)
                             {
                                 <tr>
 
@@ -393,8 +422,8 @@
 
                                             <strong>
                                                 @inventory.CreatedAt
-                                            
                                             </strong>
+
                                         </div>
 
                                     </td>
@@ -413,7 +442,6 @@
                                                 <strong>
                                                     @inventory.CompletedAt.Value
                                                 </strong>
-
 
                                             </div>
                                         }
@@ -436,21 +464,26 @@
                                         <div class="product-actions justify-content-end">
 
                                             <!-- DETAILS -->
+
                                             <a href="/inventory/details/@inventory.Id"
                                                class="action-button"
                                                title="Details">
-                                                    👁
+
+                                                👁
+
                                             </a>
 
 
                                             <!-- EDIT -->
                                             @if (inventory.Status !=
-                                                 InventoryStatus.Abgeschlossen)
+                                                                                             InventoryStatus.Abgeschlossen)
                                             {
                                                 <a href="/inventory/edit/@inventory.Id"
                                                    class="action-button"
                                                    title="Bearbeiten">
-                                                   ✎
+
+                                                    ✎
+
                                                 </a>
                                             }
 
@@ -466,6 +499,63 @@
                     </table>
 
                 </div>
+
+
+                <!-- =====================================================
+                     PAGINATION
+                     ===================================================== -->
+                @if (TotalPages > 1)
+                {
+                    <div class="pagination">
+
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage <= 1)"
+                                @onclick="PreviousPage">
+
+                            ‹
+
+                        </button>
+
+
+                        <div class="pagination-pages">
+
+                            @for (int page = 1; page <= TotalPages; page++)
+                            {
+                                var pageNumber = page;
+
+                                <button type="button"
+                                        class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
+                                        @onclick="() => GoToPage(pageNumber)">
+
+                                    @pageNumber
+
+                                </button>
+                            }
+
+                        </div>
+
+
+                        <button type="button"
+                                class="pagination-button"
+                                disabled="@(CurrentPage >= TotalPages)"
+                                @onclick="NextPage">
+
+                            ›
+
+                        </button>
+
+                    </div>
+                }
+
+
+                <div class="pagination-info">
+
+                    Seite @CurrentPage von @TotalPages
+                    · @PagedInventories.Count von @FilteredInventories.Count() Inventuren
+
+                </div>
+
             }
 
         }
@@ -501,6 +591,51 @@
 
 
     // =========================================================
+    // PAGINATION
+    // =========================================================
+
+    private const int PageSize = 10;
+
+    private int CurrentPage = 1;
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                FilteredInventories.Count() /
+                (double)PageSize));
+
+    private List<Inventory> PagedInventories =>
+        FilteredInventories
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPage = page;
+    }
+
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+            CurrentPage--;
+    }
+
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+            CurrentPage++;
+    }
+
+
+    // =========================================================
     // FILTERED INVENTORIES
     // =========================================================
 
@@ -508,6 +643,7 @@
         Inventories
 
             // SEARCH
+
             .Where(x =>
                 string.IsNullOrWhiteSpace(SearchText)
 
@@ -537,6 +673,7 @@
             )
 
             // STATUS
+
             .Where(x =>
                 string.IsNullOrWhiteSpace(SelectedStatus)
 
@@ -547,6 +684,7 @@
             )
 
             // NEWEST FIRST
+
             .OrderByDescending(x =>
                 x.CreatedAt);
 
@@ -586,6 +724,8 @@
                         x.CreatedAt)
 
                     .ToListAsync();
+
+            CurrentPage = 1;
         }
         finally
         {
@@ -595,16 +735,123 @@
 
 
     // =========================================================
+    // FILTER EVENTS
+    // =========================================================
+
+    private void SearchChanged(ChangeEventArgs args)
+    {
+        SearchText = args.Value?.ToString() ?? string.Empty;
+
+        CurrentPage = 1;
+    }
+
+
+    private void StatusChanged()
+    {
+        CurrentPage = 1;
+    }
+
+
+    // =========================================================
     // CLEAR FILTERS
     // =========================================================
 
     private void ClearFilters()
     {
-        SearchText =
-            string.Empty;
+        SearchText = string.Empty;
 
-        SelectedStatus =
-            string.Empty;
+        SelectedStatus = string.Empty;
+
+        CurrentPage = 1;
+    }
+
+
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        try
+        {
+            var data = PagedInventories;
+
+            var bytes =
+                ExcelExport.Export(
+                    data,
+                    "Inventuren",
+                    $"Inventuren – Seite {CurrentPage}",
+
+                    (
+                        "Lager",
+                        x => x.Warehouse?.Name ?? ""
+                    ),
+
+                    (
+                        "Status",
+                        x => GetStatusText(x.Status)
+                    ),
+
+                    (
+                        "Positionen",
+                        x => x.Items?.Count ?? 0
+                    ),
+
+                    (
+                        "Erstellt am",
+                        x => x.CreatedAt
+                    ),
+
+                    (
+                        "Abgeschlossen am",
+                        x => x.CompletedAt
+                    ),
+
+                    (
+                        "Notiz",
+                        x => x.Note ?? ""
+                    )
+                );
+
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"Inventuren_Seite_{CurrentPage}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Fehler beim Excel-Export: {ex}");
+        }
+    }
+
+
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(InventoryStatus status)
+    {
+        return status switch
+        {
+            InventoryStatus.Entwurf =>
+                "Entwurf",
+
+            InventoryStatus.InBearbeitung =>
+                "In Bearbeitung",
+
+            InventoryStatus.Abgeschlossen =>
+                "Abgeschlossen",
+
+            _ =>
+                status.ToString()
+        };
     }
 
 
