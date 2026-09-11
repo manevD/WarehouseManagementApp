@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Components;
+using WarehouseManagement.Services;
 
 namespace WarehouseManagement.Components.Pages;
 
@@ -7,8 +8,14 @@ public partial class Index
     protected bool MenuOpen { get; set; }
 
     protected bool Submitted { get; set; }
+    protected bool Sending { get; set; }
 
-    protected DemoRequest DemoRequestItem { get; set; } = new();
+    protected string? EmailError { get; set; }
+
+    [Inject]
+    protected EmailService EmailService { get; set; } = default!;
+
+    protected EmailService.DemoRequest DemoRequestItem { get; set; } = new();
 
     protected void ToggleMenu()
     {
@@ -19,26 +26,39 @@ public partial class Index
     {
         MenuOpen = false;
     }
-
-    protected void SubmitDemo()
+    protected void InvalidForm()
     {
-        Submitted = true;
+        EmailError = "Bitte füllen Sie alle Pflichtfelder korrekt aus.";
     }
-
-    public sealed class DemoRequest
+    protected async Task SubmitDemo()
     {
-        [Required(ErrorMessage = "Bitte Namen eingeben.")]
-        public string Name { get; set; } = string.Empty;
+        EmailError = null;
+        Submitted = false;
+        Sending = true;
 
-        [Required(ErrorMessage = "Bitte Unternehmen eingeben.")]
-        public string Company { get; set; } = string.Empty;
+        try
+        {
+            await EmailService.SendDemoRequest(DemoRequestItem);
 
-        [Required(ErrorMessage = "Bitte E-Mail eingeben.")]
-        [EmailAddress(ErrorMessage = "Bitte gültige E-Mail eingeben.")]
-        public string Email { get; set; } = string.Empty;
+            Submitted = true;
 
-        public string Industry { get; set; } = "Großhandel";
+            // Formularot se prazni po uspešno isprakjanje
+            DemoRequestItem = new EmailService.DemoRequest();
+        }
+        catch (Exception ex)
+        {
+            EmailError =
+                "Die Anfrage konnte nicht gesendet werden. " +
+                "Bitte versuchen Sie es erneut.";
 
-        public string Message { get; set; } = string.Empty;
+            Console.WriteLine("========================================");
+            Console.WriteLine("FEHLER BEIM VERSENDEN DER DEMO-EMAIL");
+            Console.WriteLine(ex.ToString());
+            Console.WriteLine("========================================");
+        }
+        finally
+        {
+            Sending = false;
+        }
     }
 }

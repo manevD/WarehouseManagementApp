@@ -5,9 +5,11 @@
 @using Microsoft.EntityFrameworkCore
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
-
+@using Microsoft.JSInterop
+@using WarehouseManagement.Services.WarehouseManagement.Services
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
-
+@inject ExcelExportService ExcelExport
+@inject IJSRuntime JS
 <PageTitle>Kategorien</PageTitle>
 
 <div class="categories-page">
@@ -19,12 +21,18 @@
             <h1>Kategorien</h1>
             <p>Verwalten Sie Ihre Produktkategorien.</p>
         </div>
+        <div>
+            <button type="button"
+                    class="btn-primary"
+                    @onclick="ExportExcel">
+                Excel exportieren
+            </button>
 
-        <a href="/categories/create" class="btn-primary">
-            <span>+</span>
-            Neue Kategorie
-        </a>
-
+            <a href="/categories/create" class="btn-primary">
+                <span>+</span>
+                Neue Kategorie
+            </a>
+        </div>
     </div>
 
 
@@ -200,7 +208,7 @@
                                 <td>
 
                                     <div class="product-actions">
-                                        
+
                                         <a href="/categories/edit/@category.Id"
                                            class="action-button"
                                            title="Bearbeiten">
@@ -392,7 +400,36 @@
         ShowDeleteModal = false;
     }
 
-    
+    private async Task ExportExcel()
+    {
+        var data = Categories.ToList();
+
+        if (!data.Any())
+            return;
+
+        var fileBytes = ExcelExport.Export(
+            data,
+            "Kategorien",
+            "Kategorien",
+            ("Name", x => x.Name),
+
+            ("Beschreibung", x => x.Description ?? ""),
+
+            ("Produkte", x => x.Products?.Count ?? 0),
+
+            ("Status", x => x.IsActive
+                ? "Aktiv"
+                : "Inaktiv")
+        );
+
+        var base64 = Convert.ToBase64String(fileBytes);
+
+        await JS.InvokeVoidAsync(
+    "downloadFile",
+    "Kategorien.xlsx",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    base64);
+    }
     private async Task DeleteConfirmed()
     {
         if (CategoryToDelete == null)

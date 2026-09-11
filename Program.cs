@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using WarehouseManagement.Components;
 using WarehouseManagement.Components.Account;
 using WarehouseManagement.Data;
+using WarehouseManagement.Services;
+using WarehouseManagement.Services.WarehouseManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<IdentityRedirectManager>();
-
+builder.Services.AddScoped<ExcelExportService>();
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<
     AuthenticationStateProvider,
     IdentityRevalidatingAuthenticationStateProvider>();
