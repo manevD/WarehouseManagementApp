@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WarehouseManagement.Localization;
 
 namespace WarehouseManagement.Models
 {
@@ -6,14 +7,17 @@ namespace WarehouseManagement.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Firmenname ist erforderlich.")]
+        [Required(ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "CompanyNameRequired")]
         [MaxLength(200)]
         public string CompanyName { get; set; } = string.Empty;
 
         [MaxLength(150)]
         public string? ContactPerson { get; set; }
 
-        [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
+        [EmailAddress(
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidEmailAddress")]
         [MaxLength(200)]
         public string? Email { get; set; }
 

@@ -1,14 +1,15 @@
 ﻿@page "/inventory/create"
 @rendermode InteractiveServer
-
 @using Microsoft.EntityFrameworkCore
-@using WarehouseManagement.Models
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+@using WarehouseManagement.Models
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
-
+@inject IStringLocalizer<SharedResource> L
 <PageTitle>Neue Inventur</PageTitle>
 
 <div class="product-form-page">
@@ -589,5 +590,5 @@
             IsSaving = false;
         }
     }
-
+    
 }

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Nadzorna ploča</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>Proizvodi</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Kategorije</value>
+  </data>
+  <data name="Warehouses" xml:space="preserve">
+    <value>Skladišta</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Lokacije</value>
+  </data>
+  <data name="Stock" xml:space="preserve">
+    <value>Zaliha</value>
+  </data>
+  <data name="IncomingGoods" xml:space="preserve">
+    <value>Ulaz robe</value>
+  </data>
+  <data name="OutgoingGoods" xml:space="preserve">
+    <value>Izlaz robe</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Premještanje</value>
+  </data>
+  <data name="Movements" xml:space="preserve">
+    <value>Kretanja</value>
+  </data>
+  <data name="Suppliers" xml:space="preserve">
+    <value>Dobavljači</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>Kupci</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Narudžbe</value>
+  </data>
+  <data name="PurchaseOrders" xml:space="preserve">
+    <value>Narudžbe dobavljača</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventura</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Izvještaji</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Postavke</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Promijeni lozinku</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Promijeni e-mail</value>
+  </data>
+  <data name="PersonalData" xml:space="preserve">
+    <value>Osobni podaci</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Upravljanje korisnicima</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Upravljanje ulogama</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Odjava</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spremi</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Obriši</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Uredi</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Izradi</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zatvori</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Pretraži</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Resetiraj</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Natrag</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Potvrdi</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Primijeni</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naziv</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>Dobavljač</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Kupac</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Proizvod</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Količina</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Cijena</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Ukupno</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Radnje</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktivan</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Neaktivan</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ne</value>
+  </data>
+  <data name="CompanyNameRequired" xml:space="preserve">
+    <value>Naziv tvrtke je obavezan.</value>
+  </data>
+  <data name="InvalidEmailAddress" xml:space="preserve">
+    <value>Nevažeća e-mail adresa.</value>
+  </data>
+  <data name="InventoryStatusDraft" xml:space="preserve">
+    <value>Nacrt</value>
+  </data>
+  <data name="InventoryStatusInProgress" xml:space="preserve">
+    <value>U tijeku</value>
+  </data>
+  <data name="InventoryStatusCompleted" xml:space="preserve">
+    <value>Završeno</value>
+  </data>
+  <data name="InventoryOverview" xml:space="preserve">
+    <value>Pregled inventure</value>
+  </data>
+  <data name="InventoryComparisonDescription" xml:space="preserve">
+    <value>Usporedba između stanja zalihe u sustavu i stvarno prebrojane zalihe.</value>
+  </data>
+  <data name="InventoryDetails" xml:space="preserve">
+    <value>Detalji inventure</value>
+  </data>
+  <data name="InventoryLoading" xml:space="preserve">
+    <value>Inventura se učitava...</value>
+  </data>
+  <data name="InventoryNotFound" xml:space="preserve">
+    <value>Inventura nije pronađena</value>
+  </data>
+  <data name="BackToInventories" xml:space="preserve">
+    <value>Natrag na inventure</value>
+  </data>
+  <data name="InventoryNumber" xml:space="preserve">
+    <value>Inventura #{0}</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Spremanje...</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Spremi kao nacrt</value>
+  </data>
+  <data name="CompleteInventory" xml:space="preserve">
+    <value>Završi inventuru</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Kreirano</value>
+  </data>
+  <data name="CompletedAt" xml:space="preserve">
+    <value>Završeno</value>
+  </data>
+  <data name="Positions" xml:space="preserve">
+    <value>Stavke</value>
+  </data>
+  <data name="SystemStock" xml:space="preserve">
+    <value>Stanje u sustavu</value>
+  </data>
+  <data name="Counted" xml:space="preserve">
+    <value>Prebrojano</value>
+  </data>
+  <data name="DifferentPositions" xml:space="preserve">
+    <value>Stavke s odstupanjem</value>
+  </data>
+  <data name="TotalDifference" xml:space="preserve">
+    <value>Ukupna razlika</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Napomena</value>
+  </data>
+  <data name="StockCount" xml:space="preserve">
+    <value>Popis zalihe</value>
+  </data>
+  <data name="EnterCountedQuantities" xml:space="preserve">
+    <value>Unesite stvarno prebrojane količine.</value>
+  </data>
+  <data name="SearchProductSkuLocation" xml:space="preserve">
+    <value>Pretraži proizvod, SKU ili lokaciju...</value>
+  </data>
+  <data name="AllLocations" xml:space="preserve">
+    <value>Sve lokacije</value>
+  </data>
+  <data name="ResetFilters" xml:space="preserve">
+    <value>Poništi filtre</value>
+  </data>
+  <data name="NoPositionsFound" xml:space="preserve">
+    <value>Nisu pronađene stavke</value>
+  </data>
+  <data name="NoPositionMatchesFilter" xml:space="preserve">
+    <value>Nijedna stavka ne odgovara trenutnom filtru.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Lokacija</value>
+  </data>
+  <data name="Difference" xml:space="preserve">
+    <value>Razlika</value>
+  </data>
+  <data name="CompleteInventoryQuestion" xml:space="preserve">
+    <value>Završiti inventuru?</value>
+  </data>
+  <data name="CompleteInventoryDescription" xml:space="preserve">
+    <value>Nakon završetka, prebrojane količine bit će postavljene kao nova zaliha.</value>
+  </data>
+  <data name="YesCompleteInventory" xml:space="preserve">
+    <value>Da, završi inventuru</value>
+  </data>
+  <data name="Completing" xml:space="preserve">
+    <value>Završavanje...</value>
+  </data>
+  <data name="ErrorLoadingInventory" xml:space="preserve">
+    <value>Greška pri učitavanju inventure: {0}</value>
+  </data>
+  <data name="InventoryAlreadyCompleted" xml:space="preserve">
+    <value>Ova inventura je već završena.</value>
+  </data>
+  <data name="ErrorSavingInventory" xml:space="preserve">
+    <value>Greška pri spremanju: {0}</value>
+  </data>
+  <data name="InventorySaved" xml:space="preserve">
+    <value>Inventura je spremljena.</value>
+  </data>
+  <data name="InventoryPositionNotFound" xml:space="preserve">
+    <value>Stavka inventure nije pronađena.</value>
+  </data>
+  <data name="NoQuantityForProduct" xml:space="preserve">
+    <value>Za proizvod „{0}“ nije unesena količina.</value>
+  </data>
+  <data name="CountedQuantityCannotBeNegative" xml:space="preserve">
+    <value>Prebrojane količine ne smiju biti negativne.</value>
+  </data>
+  <data name="CountedBelowReserved" xml:space="preserve">
+    <value>Prebrojana zaliha ({0:N2}) manja je od rezervirane količine ({1:N2}).</value>
+  </data>
+  <data name="NoStockForProduct" xml:space="preserve">
+    <value>Nije pronađena zaliha za ID proizvoda {0}.</value>
+  </data>
+  <data name="InventoryMovementNote" xml:space="preserve">
+    <value>Inventura #{0}: zaliha {1:N2} → {2:N2}</value>
+  </data>
+  <data name="InventoryCompletedSuccessfully" xml:space="preserve">
+    <value>Inventura je uspješno završena.</value>
+  </data>
+  <data name="ErrorCompletingInventory" xml:space="preserve">
+    <value>Inventuru nije moguće završiti: {0}</value>
+  </data>
+</root>

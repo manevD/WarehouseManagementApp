@@ -1,20 +1,26 @@
 ﻿@page "/inventory/details/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
+@inject IStringLocalizer<SharedResource> L
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
 
-<PageTitle>Inventur Details</PageTitle>
+
+<PageTitle>@L["InventoryDetails"]</PageTitle>
+
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Inventur wird geladen...
+        @L["InventoryLoading"]
     </div>
 }
 else if (Inventory == null)
@@ -25,11 +31,13 @@ else if (Inventory == null)
             ⚠
         </div>
 
-        <h3>Inventur nicht gefunden</h3>
+        <h3>
+            @L["InventoryNotFound"]
+        </h3>
 
         <a href="/inventory"
            class="btn-primary">
-            Zurück zu Inventuren
+            @L["BackToInventories"]
         </a>
 
     </div>
@@ -47,7 +55,7 @@ else
             <div>
 
                 <h1>
-                    Inventur #@Inventory.Id
+                    @L["InventoryNumber", Inventory.Id]
                 </h1>
 
                 <p>
@@ -60,7 +68,7 @@ else
 
                 <a href="/inventory"
                    class="btn-secondary">
-                    ← Zurück
+                    ← @L["Back"]
                 </a>
 
                 @if (Inventory.Status != InventoryStatus.Abgeschlossen)
@@ -71,8 +79,8 @@ else
                             @onclick="SaveInventory">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Zwischenspeichern")
+                            ? L["Saving"]
+                            : L["SaveDraft"])
 
                     </button>
 
@@ -81,7 +89,7 @@ else
                             disabled="@(IsSaving || Items.Count == 0)"
                             @onclick="ShowCompleteConfirmation">
 
-                        ✓ Inventur abschließen
+                        ✓ @L["CompleteInventory"]
 
                     </button>
                 }
@@ -98,49 +106,76 @@ else
         <div class="inventory-info-bar">
 
             <div class="inventory-info-item">
-                <span class="inventory-info-label">Status</span>
+
+                <span class="inventory-info-label">
+                    @L["Status"]
+                </span>
 
                 @if (Inventory.Status == InventoryStatus.Entwurf)
                 {
                     <span class="status-badge status-draft">
-                        Entwurf
+                        @GetInventoryStatusText(
+                            InventoryStatus.Entwurf)
                     </span>
                 }
                 else if (Inventory.Status == InventoryStatus.InBearbeitung)
                 {
                     <span class="status-badge status-warning">
-                        In Bearbeitung
+                        @GetInventoryStatusText(
+                            InventoryStatus.InBearbeitung)
                     </span>
                 }
                 else
                 {
                     <span class="status-badge status-active">
-                        Abgeschlossen
+                        @GetInventoryStatusText(
+                            InventoryStatus.Abgeschlossen)
                     </span>
                 }
+
             </div>
 
+
             <div class="inventory-info-item">
-                <span class="inventory-info-label">Lager</span>
+
+                <span class="inventory-info-label">
+                    @L["Warehouse"]
+                </span>
+
                 <strong>
                     @(Inventory.Warehouse?.Name ?? "-")
                 </strong>
+
             </div>
 
+
             <div class="inventory-info-item">
-                <span class="inventory-info-label">Erstellt am</span>
+
+                <span class="inventory-info-label">
+                    @L["CreatedAt"]
+                </span>
+
                 <strong>
-                    @Inventory.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                    @Inventory.CreatedAt
+                    .ToLocalTime()
+                    .ToString("dd.MM.yyyy HH:mm")
                 </strong>
+
             </div>
+
 
             @if (Inventory.CompletedAt.HasValue)
             {
                 <div class="inventory-info-item">
-                    <span class="inventory-info-label">Abgeschlossen am</span>
+
+                    <span class="inventory-info-label">
+                        @L["CompletedAt"]
+                    </span>
+
                     <strong>
                         @Inventory.CompletedAt.Value
                     </strong>
+
                 </div>
             }
 
@@ -179,11 +214,12 @@ else
 
                 <div class="form-section-title">
 
-                    <h2>Inventurübersicht</h2>
+                    <h2>
+                        @L["InventoryOverview"]
+                    </h2>
 
                     <p>
-                        Vergleich zwischen Systembestand und
-                        tatsächlich gezähltem Bestand.
+                        @L["InventoryComparisonDescription"]
                     </p>
 
                 </div>
@@ -194,7 +230,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Positionen
+                            @L["Positions"]
                         </span>
 
                         <strong>
@@ -207,7 +243,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Systembestand
+                            @L["SystemStock"]
                         </span>
 
                         <strong>
@@ -220,7 +256,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Gezählt
+                            @L["Counted"]
                         </span>
 
                         <strong>
@@ -233,7 +269,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Abweichende Positionen
+                            @L["DifferentPositions"]
                         </span>
 
                         <strong>
@@ -246,7 +282,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Gesamtdifferenz
+                            @L["TotalDifference"]
                         </span>
 
                         <strong>
@@ -268,7 +304,11 @@ else
                 <div class="form-section">
 
                     <div class="form-section-title">
-                        <h2>Notiz</h2>
+
+                        <h2>
+                            @L["Note"]
+                        </h2>
+
                     </div>
 
                     <div class="note-box">
@@ -287,10 +327,12 @@ else
 
                 <div class="form-section-title">
 
-                    <h2>Bestandsaufnahme</h2>
+                    <h2>
+                        @L["StockCount"]
+                    </h2>
 
                     <p>
-                        Tragen Sie die tatsächlich gezählten Mengen ein.
+                        @L["EnterCountedQuantities"]
                     </p>
 
                 </div>
@@ -305,7 +347,7 @@ else
                         </span>
 
                         <input type="text"
-                               placeholder="Produkt, SKU oder Lagerplatz suchen..."
+                               placeholder="@L["SearchProductSkuLocation"]"
                                @bind="SearchText"
                                @bind:event="oninput" />
 
@@ -316,17 +358,20 @@ else
                             @bind="SelectedLocationId">
 
                         <option value="0">
-                            Alle Lagerplätze
+                            @L["AllLocations"]
                         </option>
 
                         @foreach (var location in Locations)
                         {
                             <option value="@location.Id">
                                 @location.Code
-                                @if (!string.IsNullOrWhiteSpace(location.Name))
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    location.Name))
                                 {
                                     @($" - {location.Name}")
                                 }
+
                             </option>
                         }
 
@@ -339,7 +384,9 @@ else
                         <button type="button"
                                 class="btn-secondary"
                                 @onclick="ClearFilters">
-                            Filter zurücksetzen
+
+                            @L["ResetFilters"]
+
                         </button>
                     }
 
@@ -363,11 +410,11 @@ else
                         </div>
 
                         <h3>
-                            Keine Positionen gefunden
+                            @L["NoPositionsFound"]
                         </h3>
 
                         <p>
-                            Keine Position entspricht dem aktuellen Filter.
+                            @L["NoPositionMatchesFilter"]
                         </p>
 
                     </div>
@@ -383,7 +430,7 @@ else
                                 <tr>
 
                                     <th>
-                                        Produkt
+                                        @L["Product"]
                                     </th>
 
                                     <th>
@@ -391,19 +438,19 @@ else
                                     </th>
 
                                     <th>
-                                        Lagerplatz
+                                        @L["Location"]
                                     </th>
 
                                     <th>
-                                        Systembestand
+                                        @L["SystemStock"]
                                     </th>
 
                                     <th>
-                                        Gezählt
+                                        @L["Counted"]
                                     </th>
 
                                     <th>
-                                        Differenz
+                                        @L["Difference"]
                                     </th>
 
                                 </tr>
@@ -424,7 +471,8 @@ else
                                             <div class="product-name">
 
                                                 <div class="product-avatar">
-                                                    @GetInitials(item.ProductName)
+                                                    @GetInitials(
+                                                        item.ProductName)
                                                 </div>
 
                                                 <div>
@@ -433,7 +481,8 @@ else
                                                         @item.ProductName
                                                     </strong>
 
-                                                    @if (!string.IsNullOrWhiteSpace(item.Barcode))
+                                                    @if (!string.IsNullOrWhiteSpace(
+                                                        item.Barcode))
                                                     {
                                                         <small>
                                                             @item.Barcode
@@ -464,7 +513,8 @@ else
                                                     @item.LocationCode
                                                 </strong>
 
-                                                @if (!string.IsNullOrWhiteSpace(item.LocationName))
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    item.LocationName))
                                                 {
                                                     <small>
                                                         @item.LocationName
@@ -481,7 +531,8 @@ else
                                         <td>
 
                                             <strong>
-                                                @item.SystemQuantity.ToString("N2")
+                                                @item.SystemQuantity
+                                                .ToString("N2")
                                             </strong>
 
                                         </td>
@@ -491,10 +542,12 @@ else
 
                                         <td style="min-width:150px;">
 
-                                            @if (Inventory.Status == InventoryStatus.Abgeschlossen)
+                                            @if (Inventory.Status ==
+                                                InventoryStatus.Abgeschlossen)
                                             {
                                                 <strong>
-                                                    @(item.CountedQuantity?.ToString("N2") ?? "-")
+                                                    @(item.CountedQuantity?
+                                                        .ToString("N2") ?? "-")
                                                 </strong>
                                             }
                                             else
@@ -503,8 +556,16 @@ else
                                                        class="form-control"
                                                        min="0"
                                                        step="0.01"
-                                                       value="@(item.CountedQuantity?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")"
-                                                       @oninput="e => CountedQuantityChanged(item, e.Value?.ToString())" />
+                                                       value="@(item.CountedQuantity?
+                                                                                                           .ToString(
+                                                                                                               System.Globalization
+                                                                                                                   .CultureInfo
+                                                                                                                   .InvariantCulture)
+                                                                                                           ?? "")"
+                                                       @oninput="e =>
+                                                                                                           CountedQuantityChanged(
+                                                                                                               item,
+                                                                                                               e.Value?.ToString())" />
                                             }
 
                                         </td>
@@ -516,8 +577,8 @@ else
 
                                             @{
                                                 var difference =
-                                                    (item.CountedQuantity ?? 0) -
-                                                    item.SystemQuantity;
+                                                    (item.CountedQuantity ?? 0)
+                                                    - item.SystemQuantity;
                                             }
 
                                             @if (difference > 0)
@@ -562,7 +623,7 @@ else
 
                 <a href="/inventory"
                    class="btn-secondary">
-                    ← Zurück
+                    ← @L["Back"]
                 </a>
 
 
@@ -574,8 +635,8 @@ else
                             @onclick="SaveInventory">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Zwischenspeichern")
+                            ? L["Saving"]
+                            : L["SaveDraft"])
 
                     </button>
 
@@ -585,7 +646,7 @@ else
                             disabled="@(IsSaving || Items.Count == 0)"
                             @onclick="ShowCompleteConfirmation">
 
-                        ✓ Inventur abschließen
+                        ✓ @L["CompleteInventory"]
 
                     </button>
                 }
@@ -611,12 +672,11 @@ else
                 </div>
 
                 <h3>
-                    Inventur abschließen?
+                    @L["CompleteInventoryQuestion"]
                 </h3>
 
                 <p>
-                    Nach dem Abschließen werden die gezählten Mengen
-                    als neuer Lagerbestand übernommen.
+                    @L["CompleteInventoryDescription"]
                 </p>
 
 
@@ -625,13 +685,15 @@ else
                     <div class="confirm-warning">
 
                         <strong>
-                            @DifferenceCount Position(en)
-                            mit Bestandsabweichung
+                            @L[
+                                "DifferentPositionsWithCount",
+                                DifferenceCount
+                            ]
                         </strong>
 
                         <p>
-                            Gesamtdifferenz:
-                            @FormatDifference(TotalDifference)
+                            @L["TotalDifferenceWithValue",
+                                FormatDifference(TotalDifference)]
                         </p>
 
                     </div>
@@ -645,7 +707,7 @@ else
                             disabled="@IsSaving"
                             @onclick="CancelComplete">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </button>
 
@@ -656,8 +718,8 @@ else
                             @onclick="CompleteInventory">
 
                         @(IsSaving
-                            ? "Wird abgeschlossen..."
-                            : "Ja, Inventur abschließen")
+                            ? L["Completing"]
+                            : L["YesCompleteInventory"])
 
                     </button>
 
@@ -736,21 +798,26 @@ else
                     SearchText,
                     StringComparison.OrdinalIgnoreCase)
                 ||
-                (!string.IsNullOrWhiteSpace(x.LocationName)
+                (
+                    !string.IsNullOrWhiteSpace(x.LocationName)
                     &&
                     x.LocationName.Contains(
                         SearchText,
-                        StringComparison.OrdinalIgnoreCase))
+                        StringComparison.OrdinalIgnoreCase)
+                )
                 ||
-                (!string.IsNullOrWhiteSpace(x.Barcode)
+                (
+                    !string.IsNullOrWhiteSpace(x.Barcode)
                     &&
                     x.Barcode.Contains(
                         SearchText,
-                        StringComparison.OrdinalIgnoreCase)))
+                        StringComparison.OrdinalIgnoreCase)
+                ))
             .Where(x =>
                 SelectedLocationId == 0
                 ||
-                x.WarehouseLocationId == SelectedLocationId)
+                x.WarehouseLocationId ==
+                    SelectedLocationId)
             .OrderBy(x => x.LocationCode)
             .ThenBy(x => x.ProductName)
             .ToList();
@@ -770,14 +837,14 @@ else
 
     private decimal TotalDifference =>
         Items.Sum(x =>
-            (x.CountedQuantity ?? 0) -
-            x.SystemQuantity);
+            (x.CountedQuantity ?? 0)
+            - x.SystemQuantity);
 
 
     private int DifferenceCount =>
         Items.Count(x =>
-            (x.CountedQuantity ?? 0) !=
-            x.SystemQuantity);
+            (x.CountedQuantity ?? 0)
+            != x.SystemQuantity);
 
 
     // =========================================================
@@ -886,7 +953,7 @@ else
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Laden der Inventur: {ex.Message}";
+                L["ErrorLoadingInventory", ex.Message];
         }
         finally
         {
@@ -968,7 +1035,7 @@ else
             if (inventory == null)
             {
                 ErrorMessage =
-                    "Inventur nicht gefunden.";
+                    L["InventoryNotFound"];
 
                 return;
             }
@@ -978,7 +1045,7 @@ else
                 InventoryStatus.Abgeschlossen)
             {
                 ErrorMessage =
-                    "Diese Inventur wurde bereits abgeschlossen.";
+                    L["InventoryAlreadyCompleted"];
 
                 return;
             }
@@ -999,10 +1066,10 @@ else
                     row.CountedQuantity;
 
                 dbItem.Difference =
-         Math.Round(
-             (row.CountedQuantity ?? 0) -
-             dbItem.SystemQuantity,
-             2);
+                    Math.Round(
+                        (row.CountedQuantity ?? 0)
+                        - dbItem.SystemQuantity,
+                        2);
             }
 
 
@@ -1022,12 +1089,12 @@ else
 
 
             SuccessMessage =
-                "Inventur wurde gespeichert.";
+                L["InventorySaved"];
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSavingInventory", ex.Message];
         }
         finally
         {
@@ -1102,7 +1169,7 @@ else
             if (inventory == null)
             {
                 ErrorMessage =
-                    "Inventur nicht gefunden.";
+                    L["InventoryNotFound"];
 
                 return;
             }
@@ -1112,7 +1179,7 @@ else
                 InventoryStatus.Abgeschlossen)
             {
                 ErrorMessage =
-                    "Diese Inventur wurde bereits abgeschlossen.";
+                    L["InventoryAlreadyCompleted"];
 
                 return;
             }
@@ -1128,14 +1195,17 @@ else
                 if (row == null)
                 {
                     throw new InvalidOperationException(
-                        "Eine Inventurposition konnte nicht gefunden werden.");
+                        L["InventoryPositionNotFound"]);
                 }
 
 
                 if (!row.CountedQuantity.HasValue)
                 {
                     throw new InvalidOperationException(
-                        $"Für Produkt '{row.ProductName}' wurde keine Menge eingegeben.");
+                        L[
+                            "NoQuantityForProduct",
+                            row.ProductName
+                        ]);
                 }
 
 
@@ -1146,7 +1216,7 @@ else
                 if (countedQuantity < 0)
                 {
                     throw new InvalidOperationException(
-                        "Gezählte Mengen dürfen nicht negativ sein.");
+                        L["CountedQuantityCannotBeNegative"]);
                 }
 
 
@@ -1167,7 +1237,10 @@ else
                 if (stock == null)
                 {
                     throw new InvalidOperationException(
-                        $"Kein Bestand für Produkt-ID {dbItem.ProductId} gefunden.");
+                        L[
+                            "NoStockForProduct",
+                            dbItem.ProductId
+                        ]);
                 }
 
 
@@ -1214,9 +1287,11 @@ else
                     stock.ReservedQuantity)
                 {
                     throw new InvalidOperationException(
-                        $"Der gezählte Bestand ({countedQuantity:N2}) " +
-                        $"liegt unter der reservierten Menge " +
-                        $"({stock.ReservedQuantity:N2}).");
+                        L[
+                            "CountedBelowReserved",
+                            countedQuantity,
+                            stock.ReservedQuantity
+                        ]);
                 }
 
 
@@ -1250,9 +1325,12 @@ else
                             $"INV-{inventory.Id}",
 
                         Note =
-                            $"Inventur #{inventory.Id}: " +
-                            $"Bestand {currentQuantity:N2} → " +
-                            $"{countedQuantity:N2}",
+                            L[
+                                "InventoryMovementNote",
+                                inventory.Id,
+                                currentQuantity,
+                                countedQuantity
+                            ],
 
                         CreatedAt =
                             DateTime.UtcNow
@@ -1298,14 +1376,17 @@ else
 
 
             SuccessMessage =
-                "Inventur wurde erfolgreich abgeschlossen.";
+                L["InventoryCompletedSuccessfully"];
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
 
             ErrorMessage =
-                $"Inventur konnte nicht abgeschlossen werden: {ex.Message}";
+                L[
+                    "ErrorCompletingInventory",
+                    ex.Message
+                ];
         }
         finally
         {
@@ -1400,5 +1481,28 @@ else
         public decimal? CountedQuantity { get; set; }
 
         public int? Difference { get; set; }
+    }
+
+
+    // =========================================================
+    // INVENTORY STATUS LOCALIZATION
+    // =========================================================
+
+    private string GetInventoryStatusText(
+        InventoryStatus status)
+    {
+        return status switch
+        {
+            InventoryStatus.Entwurf =>
+                L["InventoryStatusDraft"],
+
+            InventoryStatus.InBearbeitung =>
+                L["InventoryStatusInProgress"],
+
+            InventoryStatus.Abgeschlossen =>
+                L["InventoryStatusCompleted"],
+
+            _ => status.ToString()
+        };
     }
 }

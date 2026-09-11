@@ -1,3 +1,5 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 
 <!DOCTYPE html>
@@ -34,3 +36,21 @@
 </body>
 
 </html>
+@code{
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (HttpContext is null)
+            return;
+
+        var culture = CultureInfo.CurrentCulture;
+        var uiCulture = CultureInfo.CurrentUICulture;
+
+        HttpContext.Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(
+                new RequestCulture(culture, uiCulture)));
+    }
+}

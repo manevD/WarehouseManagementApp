@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using WarehouseManagement.Components;
 using WarehouseManagement.Components.Account;
 using WarehouseManagement.Data;
 using WarehouseManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddLocalization();
 // =========================================================
 // Blazor
 // =========================================================
@@ -78,7 +80,21 @@ builder.Services.AddSingleton<
     IdentityNoOpEmailSender>();
 
 var app = builder.Build();
+var supportedCultures = new[]
+{
+    new CultureInfo("de"),
+    new CultureInfo("mk"),
+    new CultureInfo("hr"),
+    new CultureInfo("en")
 
+};
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("de"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+app.UseRequestLocalization(localizationOptions);
 // =========================================================
 // Seed Database / Roles
 // =========================================================
