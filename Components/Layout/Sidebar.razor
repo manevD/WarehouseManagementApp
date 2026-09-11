@@ -1,4 +1,9 @@
-﻿@rendermode InteractiveServer
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using WarehouseManagement.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <aside class="sidebar">
     <button type="button"
@@ -206,7 +211,7 @@
 
             </div>
         }
-
+        
     </nav>
 
 </aside>
@@ -219,4 +224,5 @@
         SettingsOpen = !SettingsOpen;
     }
 
+ 
 }

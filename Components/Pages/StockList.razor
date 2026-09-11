@@ -77,95 +77,107 @@
 
 
     <!-- FILTER -->
+    <!-- =========================================================
+     FILTER
+     ========================================================= -->
 
     <div class="filter-card">
 
-        <div class="search-box">
+        <div class="filter-main-row">
 
-            <span class="search-icon">
-                ⌕
-            </span>
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input type="text"
+                       class="search-input"
+                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       value="@SearchTerm"
+                       @oninput="SearchChanged" />
+
+            </div>
 
 
-            <input type="text"
-                   placeholder="Produkt, SKU oder Barcode suchen..."
-                   @bind="SearchTerm"
-                   @bind:event="oninput"
-                   @bind:after="SearchChanged" />
+            <!-- WAREHOUSE -->
+
+            <select class="filter-select"
+                    @bind="SelectedWarehouseId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lager
+                </option>
+
+                @foreach (var warehouse in Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- LOCATION -->
+
+            <select class="filter-select"
+                    @bind="SelectedLocationId"
+                    @bind:after="FilterChanged">
+
+                <option value="0">
+                    Alle Lagerplätze
+                </option>
+
+                @foreach (var location in FilterLocations)
+                {
+                    <option value="@location.Id">
+
+                        @location.Code
+
+                        @if (!string.IsNullOrWhiteSpace(location.Name))
+                        {
+                            @($" - {location.Name}")
+                        }
+
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- STATUS -->
+
+            <select class="filter-select"
+                    @bind="SelectedStatus"
+                    @bind:after="FilterChanged">
+
+                <option value="all">
+                    Alle Bestände
+                </option>
+
+                <option value="ok">
+                    Bestand OK
+                </option>
+
+                <option value="low">
+                    Niedriger Bestand
+                </option>
+
+                <option value="available">
+                    Verfügbarer Bestand
+                </option>
+
+                <option value="empty">
+                    Kein Bestand
+                </option>
+
+            </select>
 
         </div>
-
-
-        <select class="filter-select"
-                @bind="SelectedWarehouseId"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Lager
-            </option>
-
-
-            @foreach (var warehouse in Warehouses)
-            {
-                <option value="@warehouse.Id">
-                    @warehouse.Name
-                </option>
-            }
-
-        </select>
-
-
-        <select class="filter-select"
-                @bind="SelectedLocationId"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                Alle Lagerplätze
-            </option>
-
-
-            @foreach (var location in FilterLocations)
-            {
-                <option value="@location.Id">
-
-                    @location.Code
-
-                    @if (!string.IsNullOrWhiteSpace(location.Name))
-                    {
-                        @($" - {location.Name}")
-                    }
-
-                </option>
-            }
-
-        </select>
-
-
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="all">
-                Alle Bestände
-            </option>
-
-            <option value="ok">
-                Bestand OK
-            </option>
-
-            <option value="low">
-                Niedriger Bestand
-            </option>
-
-            <option value="available">
-                Verfügbarer Bestand
-            </option>
-
-            <option value="empty">
-                Kein Bestand
-            </option>
-
-        </select>
 
     </div>
 
@@ -1024,9 +1036,12 @@
     // =========================================================
     // LIVE SEARCH
     // =========================================================
-
-    private async Task SearchChanged()
+    private async Task SearchChanged(ChangeEventArgs args)
     {
+        SearchTerm = args.Value?.ToString() ?? string.Empty;
+
+        CurrentPage = 1;
+
         await LoadStock();
     }
 
