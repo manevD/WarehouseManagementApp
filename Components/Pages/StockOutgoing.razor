@@ -1,15 +1,18 @@
 ﻿@page "/stock/outgoing"
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
+@rendermode InteractiveServer
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Warenausgang</PageTitle>
+<PageTitle>@L["OutgoingGoods"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -21,10 +24,10 @@
 
         <div>
 
-            <h1>Warenausgang</h1>
+            <h1>@L["OutgoingGoods"]</h1>
 
             <p>
-                Ware aus dem Lagerbestand ausbuchen.
+                @L["OutgoingGoodsDescription"]
             </p>
 
         </div>
@@ -32,7 +35,7 @@
         <a href="/stock"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -56,10 +59,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Warenausgang</h2>
+                    <h2>@L["OutgoingGoods"]</h2>
 
                     <p>
-                        Wählen Sie Produkt, Lager, Lagerplatz und Menge.
+                        @L["SelectProductWarehouseLocationQuantity"]
                     </p>
 
                 </div>
@@ -75,7 +78,7 @@
                     <div class="form-group">
 
                         <label>
-                            Produkt <span>*</span>
+                            @L["Product"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -83,7 +86,7 @@
                                 @onchange="OnProductChanged">
 
                             <option value="0">
-                                Produkt auswählen
+                                @L["SelectProduct"]
                             </option>
 
                             @foreach (var product in Products)
@@ -100,7 +103,7 @@
                         {
                             <div class="validation-message">
 
-                                Bitte ein Produkt auswählen.
+                                @L["ProductSelectionRequired"]
 
                             </div>
                         }
@@ -115,7 +118,7 @@
                     <div class="form-group">
 
                         <label>
-                            Lager <span>*</span>
+                            @L["Warehouse"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -124,7 +127,7 @@
                                 disabled="@(Model.ProductId <= 0)">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in Warehouses)
@@ -141,7 +144,7 @@
                         {
                             <div class="validation-message">
 
-                                Bitte ein Lager auswählen.
+                                @L["WarehouseSelectionRequired"]
 
                             </div>
                         }
@@ -156,7 +159,7 @@
                     <div class="form-group">
 
                         <label>
-                            Lagerplatz <span>*</span>
+                            @L["Location"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -165,7 +168,7 @@
                                 disabled="@(Model.WarehouseId <= 0)">
 
                             <option value="0">
-                                Lagerplatz auswählen
+                                @L["SelectLocation"]
                             </option>
 
                             @foreach (var location in Locations)
@@ -190,8 +193,7 @@
                         {
                             <div class="form-hint">
 
-                                Für dieses Produkt ist in diesem Lager
-                                kein verfügbarer Bestand vorhanden.
+                                @L["NoAvailableStockAtWarehouse"]
 
                             </div>
                         }
@@ -202,7 +204,7 @@
                         {
                             <div class="validation-message">
 
-                                Bitte einen Lagerplatz auswählen.
+                                @L["LocationSelectionRequired"]
 
                             </div>
                         }
@@ -217,7 +219,7 @@
                     <div class="form-group">
 
                         <label>
-                            Verfügbarer Bestand
+                            @L["AvailableStock"]
                         </label>
 
                         <input type="text"
@@ -235,7 +237,7 @@
                     <div class="form-group">
 
                         <label>
-                            Menge <span>*</span>
+                            @L["Quantity"] <span>*</span>
                         </label>
 
                         <InputNumber @bind-Value="Model.Quantity"
@@ -249,7 +251,7 @@
                         {
                             <div class="validation-message">
 
-                                Die Menge muss größer als 0 sein.
+                                @L["QuantityMustBeGreaterThanZero"]
 
                             </div>
                         }
@@ -260,11 +262,7 @@
                              Model.Quantity > 0)
                         {
                             <div class="form-error">
-
-                                Die Menge darf den verfügbaren Bestand
-                                von @AvailableQuantity.ToString("N2")
-                                nicht überschreiten.
-
+                                @L["QuantityExceedsAvailableStockStart", @AvailableQuantity.ToString("N2")]
                             </div>
                         }
 
@@ -278,12 +276,12 @@
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.ReferenceNumber"
                                    class="form-control"
-                                   placeholder="z.B. WA-2026-0001" />
+                                   placeholder="@L["OutgoingReferencePlaceholder"]" />
 
                     </div>
 
@@ -300,10 +298,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Notiz</h2>
+                    <h2>@L["Note"]</h2>
 
                     <p>
-                        Optionale Informationen zum Warenausgang.
+                        @L["OptionalOutgoingGoodsInformation"]
                     </p>
 
                 </div>
@@ -314,7 +312,7 @@
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="4"
-                                   placeholder="Notiz..." />
+                                   placeholder="@L["NotePlaceholder"]" />
 
                 </div>
 
@@ -352,7 +350,7 @@
                 <a href="/stock"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -361,8 +359,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Wird gebucht..."
-                        : "Warenausgang buchen")
+                        ? L["Booking"]
+                        : L["BookOutgoingGoods"])
 
                 </button>
 
@@ -434,13 +432,10 @@
 
         Products =
             await db.Products
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
 
 
@@ -582,48 +577,26 @@
 
         Warehouses =
             await db.Warehouses
-
                 .Where(warehouse =>
-
                     warehouse.IsActive
-
                     &&
-
                     db.WarehouseLocations.Any(location =>
-
                         location.WarehouseId ==
                             warehouse.Id
-
                         &&
-
                         location.IsActive
-
                         &&
-
                         db.Stocks.Any(stock =>
-
                             stock.ProductId ==
                                 Model.ProductId
-
                             &&
-
                             stock.WarehouseLocationId ==
                                 location.Id
-
                             &&
-
                             stock.Quantity >
-                                stock.ReservedQuantity
-
-                        )
-
-                    )
-
-                )
-
+                                stock.ReservedQuantity)))
                 .OrderBy(warehouse =>
                     warehouse.Name)
-
                 .ToListAsync();
 
 
@@ -670,6 +643,7 @@
             !Warehouses.Any(x => x.Id == warehouseId))
         {
             Model.WarehouseId = 0;
+
             warehouseId = 0;
         }
 
@@ -709,40 +683,23 @@
 
         Locations =
             await db.WarehouseLocations
-
                 .Where(location =>
-
                     location.IsActive
-
                     &&
-
                     location.WarehouseId ==
                         warehouseId
-
                     &&
-
                     db.Stocks.Any(stock =>
-
                         stock.ProductId ==
                             Model.ProductId
-
                         &&
-
                         stock.WarehouseLocationId ==
                             location.Id
-
                         &&
-
                         stock.Quantity >
-                            stock.ReservedQuantity
-
-                    )
-
-                )
-
+                            stock.ReservedQuantity))
                 .OrderBy(location =>
                     location.Code)
-
                 .ToListAsync();
 
 
@@ -783,6 +740,7 @@
         {
             locationId = 0;
         }
+
 
         Model.WarehouseLocationId =
             locationId;
@@ -834,18 +792,12 @@
 
         var stock =
             await db.Stocks
-
                 .FirstOrDefaultAsync(x =>
-
                     x.ProductId ==
                         Model.ProductId
-
                     &&
-
                     x.WarehouseLocationId ==
-                        Model.WarehouseLocationId
-
-                );
+                        Model.WarehouseLocationId);
 
 
         if (stock == null)
@@ -893,7 +845,7 @@
             ShowProductValidation = true;
 
             ErrorMessage =
-                "Bitte ein Produkt auswählen.";
+                L["ProductSelectionRequired"];
 
             return;
         }
@@ -908,7 +860,7 @@
             ShowWarehouseValidation = true;
 
             ErrorMessage =
-                "Bitte ein Lager auswählen.";
+                L["WarehouseSelectionRequired"];
 
             return;
         }
@@ -923,7 +875,7 @@
             ShowLocationValidation = true;
 
             ErrorMessage =
-                "Bitte einen Lagerplatz auswählen.";
+                L["LocationSelectionRequired"];
 
             return;
         }
@@ -938,7 +890,7 @@
             ShowQuantityValidation = true;
 
             ErrorMessage =
-                "Die Menge muss größer als 0 sein.";
+                L["QuantityMustBeGreaterThanZero"];
 
             return;
         }
@@ -959,23 +911,17 @@
 
             var product =
                 await db.Products
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.ProductId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (product == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Produkt wurde nicht gefunden.";
+                    L["SelectedProductNotFound"];
 
                 return;
             }
@@ -987,23 +933,17 @@
 
             var warehouse =
                 await db.Warehouses
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.WarehouseId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (warehouse == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["SelectedWarehouseNotFound"];
 
                 return;
             }
@@ -1015,28 +955,20 @@
 
             var location =
                 await db.WarehouseLocations
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.WarehouseLocationId
-
                         &&
-
                         x.WarehouseId ==
                             Model.WarehouseId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (location == null)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lagerplatz wurde nicht gefunden.";
+                    L["SelectedLocationNotFound"];
 
                 return;
             }
@@ -1048,24 +980,18 @@
 
             var stock =
                 await db.Stocks
-
                     .FirstOrDefaultAsync(x =>
-
                         x.ProductId ==
                             Model.ProductId
-
                         &&
-
                         x.WarehouseLocationId ==
-                            Model.WarehouseLocationId
-
-                    );
+                            Model.WarehouseLocationId);
 
 
             if (stock == null)
             {
                 ErrorMessage =
-                    "Für dieses Produkt existiert an diesem Lagerplatz kein Bestand.";
+                    L["NoStockAtLocation"];
 
                 return;
             }
@@ -1082,7 +1008,7 @@
             if (available <= 0)
             {
                 ErrorMessage =
-                    "An diesem Lagerplatz ist kein verfügbarer Bestand vorhanden.";
+                    L["NoAvailableStockAtLocation"];
 
                 return;
             }
@@ -1091,8 +1017,8 @@
             if (Model.Quantity > available)
             {
                 ErrorMessage =
-                    $"Nicht genügend verfügbarer Bestand. " +
-                    $"Verfügbar: {available:N2}.";
+                    L["InsufficientAvailableStock",
+                        available.ToString("N2")];
 
                 return;
             }
@@ -1146,17 +1072,13 @@
                         ReferenceNumber =
                             string.IsNullOrWhiteSpace(
                                 Model.ReferenceNumber)
-
                                 ? null
-
                                 : Model.ReferenceNumber.Trim(),
 
                         Note =
                             string.IsNullOrWhiteSpace(
                                 Model.Note)
-
                                 ? null
-
                                 : Model.Note.Trim(),
 
                         UserId =
@@ -1197,7 +1119,8 @@
 
 
             SuccessMessage =
-                $"Warenausgang von {bookedQuantity:N2} Stück wurde erfolgreich gebucht.";
+                L["OutgoingGoodsSuccess",
+                    bookedQuantity.ToString("N2")];
 
 
             // =================================================
@@ -1217,7 +1140,8 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Buchen: {ex.Message}";
+                L["OutgoingGoodsBookingError",
+                    ex.Message];
         }
         finally
         {

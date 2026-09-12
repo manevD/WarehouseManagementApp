@@ -948,4 +948,136 @@
   <data name="ReasonSelectionRequired" xml:space="preserve">
     <value>Ве молиме изберете причина.</value>
   </data>
+  <data name="IncomingGoodsDescription" xml:space="preserve">
+    <value>Внесете стока во залиха од нарачка или рачно.</value>
+  </data>
+  <data name="PurchaseOrder" xml:space="preserve">
+    <value>Нарачка</value>
+  </data>
+  <data name="OptionalOpenPurchaseOrder" xml:space="preserve">
+    <value>Опционално изберете отворена нарачка од добавувач.</value>
+  </data>
+  <data name="NoPurchaseOrderManual" xml:space="preserve">
+    <value>Без нарачка / рачно</value>
+  </data>
+  <data name="SelectSupplier" xml:space="preserve">
+    <value>Изберете добавувач</value>
+  </data>
+  <data name="SelectProductSupplierWarehouseLocationQuantity" xml:space="preserve">
+    <value>Изберете производ, добавувач, магацин, локација и количина.</value>
+  </data>
+  <data name="OrderedQuantity" xml:space="preserve">
+    <value>Нарачана количина</value>
+  </data>
+  <data name="AlreadyDelivered" xml:space="preserve">
+    <value>Веќе испорачано</value>
+  </data>
+  <data name="RemainingQuantity" xml:space="preserve">
+    <value>Преостанато</value>
+  </data>
+  <data name="MaximumAvailable" xml:space="preserve">
+    <value>Максимално достапно</value>
+  </data>
+  <data name="IncomingReferencePlaceholder" xml:space="preserve">
+    <value>на пр. WE-2026-0001</value>
+  </data>
+  <data name="DeliveryProgress" xml:space="preserve">
+    <value>Напредок на испораката</value>
+  </data>
+  <data name="Ordered" xml:space="preserve">
+    <value>Нарачано</value>
+  </data>
+  <data name="ThisReceipt" xml:space="preserve">
+    <value>Овој прием</value>
+  </data>
+  <data name="RemainingAfterReceipt" xml:space="preserve">
+    <value>Преостанато по приемот</value>
+  </data>
+  <data name="OptionalIncomingGoodsInformation" xml:space="preserve">
+    <value>Опционални информации за приемот на стоката.</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Белешка...</value>
+  </data>
+  <data name="Booking" xml:space="preserve">
+    <value>Се евидентира...</value>
+  </data>
+  <data name="BookIncomingGoods" xml:space="preserve">
+    <value>Евидентирај прием</value>
+  </data>
+  <data name="PurchaseOrderNotFound" xml:space="preserve">
+    <value>Нарачката не е пронајдена.</value>
+  </data>
+  <data name="NoOpenQuantityForProduct" xml:space="preserve">
+    <value>За овој производ нема преостаната количина во нарачката.</value>
+  </data>
+  <data name="SupplierSelectionRequired" xml:space="preserve">
+    <value>Ве молиме изберете добавувач.</value>
+  </data>
+  <data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+    <value>Количината мора да биде поголема од 0.</value>
+  </data>
+  <data name="SelectedSupplierNotFound" xml:space="preserve">
+    <value>Избраниот добавувач не е пронајден.</value>
+  </data>
+  <data name="PurchaseOrderCannotReceive" xml:space="preserve">
+    <value>За оваа нарачка повеќе не може да се евидентира прием.</value>
+  </data>
+  <data name="SupplierDoesNotMatchPurchaseOrder" xml:space="preserve">
+    <value>Добавувачот не се совпаѓа со нарачката.</value>
+  </data>
+  <data name="ProductNotInPurchaseOrder" xml:space="preserve">
+    <value>Производот не е дел од оваа нарачка.</value>
+  </data>
+  <data name="NoOpenQuantityRemaining" xml:space="preserve">
+    <value>За овој производ нема повеќе преостаната количина.</value>
+  </data>
+  <data name="QuantityExceedsRemaining" xml:space="preserve">
+    <value>Количината може да биде најмногу {0}.</value>
+  </data>
+  <data name="PurchaseOrderReceiptSuccess" xml:space="preserve">
+    <value>Приемот на {0} за нарачка {1} е успешно евидентиран.</value>
+  </data>
+  <data name="ManualReceiptSuccess" xml:space="preserve">
+    <value>Приемот на {0} парчиња од {1} е успешно евидентиран.</value>
+  </data>
+  <data name="IncomingGoodsBookingError" xml:space="preserve">
+    <value>Грешка при евидентирање: {0}</value>
+  </data>
+  <data name="OutgoingGoodsDescription" xml:space="preserve">
+    <value>Извадете стока од залихата.</value>
+  </data>
+  <data name="SelectProductWarehouseLocationQuantity" xml:space="preserve">
+    <value>Изберете производ, магацин, локација и количина.</value>
+  </data>
+  <data name="NoAvailableStockAtWarehouse" xml:space="preserve">
+    <value>За овој производ нема достапна залиха во овој магацин.</value>
+  </data>
+  <data name="QuantityExceedsAvailableStockStart" xml:space="preserve">
+    <value>Количината не смее да го надмине достапниот износ од {0}</value>
+  </data>
+  <data name="OutgoingReferencePlaceholder" xml:space="preserve">
+    <value>на пр. WA-2026-0001</value>
+  </data>
+  <data name="OptionalOutgoingGoodsInformation" xml:space="preserve">
+    <value>Опционални информации за излезот на стоката.</value>
+  </data>
+  <data name="BookOutgoingGoods" xml:space="preserve">
+    <value>Евидентирај излез</value>
+  </data>
+  <data name="NoStockAtLocation" xml:space="preserve">
+    <value>За овој производ нема залиха на оваа локација.</value>
+  </data>
+  <data name="NoAvailableStockAtLocation" xml:space="preserve">
+    <value>На оваа локација нема достапна залиха.</value>
+  </data>
+  <data name="InsufficientAvailableStock" xml:space="preserve">
+    <value>Нема доволно достапна залиха. Достапно: {0}.</value>
+  </data>
+  <data name="OutgoingGoodsSuccess" xml:space="preserve">
+    <value>Излезот на {0} парчиња е успешно евидентиран.</value>
+  </data>
+  <data name="OutgoingGoodsBookingError" xml:space="preserve">
+    <value>Грешка при евидентирање: {0}</value>
+  </data>
 </root>

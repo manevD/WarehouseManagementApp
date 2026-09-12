@@ -948,4 +948,136 @@
   <data name="ReasonSelectionRequired" xml:space="preserve">
     <value>Odaberite razlog.</value>
   </data>
+  <data name="IncomingGoodsDescription" xml:space="preserve">
+    <value>Unesite robu u zalihu iz narudžbe ili ručno.</value>
+  </data>
+  <data name="PurchaseOrder" xml:space="preserve">
+    <value>Narudžba</value>
+  </data>
+  <data name="OptionalOpenPurchaseOrder" xml:space="preserve">
+    <value>Po želji odaberite otvorenu narudžbu dobavljača.</value>
+  </data>
+  <data name="NoPurchaseOrderManual" xml:space="preserve">
+    <value>Bez narudžbe / ručno</value>
+  </data>
+  <data name="SelectSupplier" xml:space="preserve">
+    <value>Odaberite dobavljača</value>
+  </data>
+  <data name="SelectProductSupplierWarehouseLocationQuantity" xml:space="preserve">
+    <value>Odaberite proizvod, dobavljača, skladište, lokaciju i količinu.</value>
+  </data>
+  <data name="OrderedQuantity" xml:space="preserve">
+    <value>Naručena količina</value>
+  </data>
+  <data name="AlreadyDelivered" xml:space="preserve">
+    <value>Već isporučeno</value>
+  </data>
+  <data name="RemainingQuantity" xml:space="preserve">
+    <value>Preostalo</value>
+  </data>
+  <data name="MaximumAvailable" xml:space="preserve">
+    <value>Maksimalno dostupno</value>
+  </data>
+  <data name="IncomingReferencePlaceholder" xml:space="preserve">
+    <value>npr. WE-2026-0001</value>
+  </data>
+  <data name="DeliveryProgress" xml:space="preserve">
+    <value>Napredak isporuke</value>
+  </data>
+  <data name="Ordered" xml:space="preserve">
+    <value>Naručeno</value>
+  </data>
+  <data name="ThisReceipt" xml:space="preserve">
+    <value>Ovaj ulaz</value>
+  </data>
+  <data name="RemainingAfterReceipt" xml:space="preserve">
+    <value>Preostalo nakon ovog ulaza</value>
+  </data>
+  <data name="OptionalIncomingGoodsInformation" xml:space="preserve">
+    <value>Dodatne informacije o ulazu robe.</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Bilješka...</value>
+  </data>
+  <data name="Booking" xml:space="preserve">
+    <value>Knjiženje...</value>
+  </data>
+  <data name="BookIncomingGoods" xml:space="preserve">
+    <value>Knjiži ulaz robe</value>
+  </data>
+  <data name="PurchaseOrderNotFound" xml:space="preserve">
+    <value>Narudžba nije pronađena.</value>
+  </data>
+  <data name="NoOpenQuantityForProduct" xml:space="preserve">
+    <value>There is no open quantity for this product in the purchase order.</value>
+  </data>
+  <data name="SupplierSelectionRequired" xml:space="preserve">
+    <value>Odaberite dobavljača.</value>
+  </data>
+  <data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+    <value>Količina mora biti veća od 0.</value>
+  </data>
+  <data name="SelectedSupplierNotFound" xml:space="preserve">
+    <value>Odabrani dobavljač nije pronađen.</value>
+  </data>
+  <data name="PurchaseOrderCannotReceive" xml:space="preserve">
+    <value>Za ovu narudžbu više nije moguće evidentirati ulaz robe.</value>
+  </data>
+  <data name="SupplierDoesNotMatchPurchaseOrder" xml:space="preserve">
+    <value>Dobavljač se ne podudara s narudžbom.</value>
+  </data>
+  <data name="ProductNotInPurchaseOrder" xml:space="preserve">
+    <value>Proizvod nije dio ove narudžbe.</value>
+  </data>
+  <data name="NoOpenQuantityRemaining" xml:space="preserve">
+    <value>Za ovaj proizvod više nema preostale količine.</value>
+  </data>
+  <data name="QuantityExceedsRemaining" xml:space="preserve">
+    <value>Količina može biti najviše {0}.</value>
+  </data>
+  <data name="PurchaseOrderReceiptSuccess" xml:space="preserve">
+    <value>Ulaz robe od {0} za narudžbu {1} uspješno je evidentiran.</value>
+  </data>
+  <data name="ManualReceiptSuccess" xml:space="preserve">
+    <value>Ulaz od {0} komada od {1} uspješno je evidentiran.</value>
+  </data>
+  <data name="IncomingGoodsBookingError" xml:space="preserve">
+    <value>Pogreška pri knjiženju: {0}</value>
+  </data>
+  <data name="OutgoingGoodsDescription" xml:space="preserve">
+    <value>Izdajte robu iz zalihe.</value>
+  </data>
+  <data name="SelectProductWarehouseLocationQuantity" xml:space="preserve">
+    <value>Odaberite proizvod, skladište, lokaciju i količinu.</value>
+  </data>
+  <data name="NoAvailableStockAtWarehouse" xml:space="preserve">
+    <value>Za ovaj proizvod u ovom skladištu nema raspoložive zalihe.</value>
+  </data>
+  <data name="QuantityExceedsAvailableStockStart" xml:space="preserve">
+    <value>Količina ne smije premašiti raspoloživu zalihu od {0}</value>
+  </data>
+  <data name="OutgoingReferencePlaceholder" xml:space="preserve">
+    <value>npr. WA-2026-0001</value>
+  </data>
+  <data name="OptionalOutgoingGoodsInformation" xml:space="preserve">
+    <value>Dodatne informacije o izlazu robe.</value>
+  </data>
+  <data name="BookOutgoingGoods" xml:space="preserve">
+    <value>Knjiži izlaz robe</value>
+  </data>
+  <data name="NoStockAtLocation" xml:space="preserve">
+    <value>Za ovaj proizvod na ovoj lokaciji ne postoji zaliha.</value>
+  </data>
+  <data name="NoAvailableStockAtLocation" xml:space="preserve">
+    <value>Na ovoj lokaciji nema raspoložive zalihe.</value>
+  </data>
+  <data name="InsufficientAvailableStock" xml:space="preserve">
+    <value>Nema dovoljno raspoložive zalihe. Raspoloživo: {0}.</value>
+  </data>
+  <data name="OutgoingGoodsSuccess" xml:space="preserve">
+    <value>Izlaz od {0} komada uspješno je evidentiran.</value>
+  </data>
+  <data name="OutgoingGoodsBookingError" xml:space="preserve">
+    <value>Pogreška pri knjiženju: {0}</value>
+  </data>
 </root>

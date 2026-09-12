@@ -948,4 +948,136 @@
   <data name="ReasonSelectionRequired" xml:space="preserve">
     <value>Bitte einen Grund auswählen.</value>
   </data>
+  <data name="IncomingGoodsDescription" xml:space="preserve">
+    <value>Ware aus einer Bestellung oder manuell in den Lagerbestand aufnehmen.</value>
+  </data>
+  <data name="PurchaseOrder" xml:space="preserve">
+    <value>Bestellung</value>
+  </data>
+  <data name="OptionalOpenPurchaseOrder" xml:space="preserve">
+    <value>Optional eine offene Lieferantenbestellung auswählen.</value>
+  </data>
+  <data name="NoPurchaseOrderManual" xml:space="preserve">
+    <value>Keine Bestellung / manuell</value>
+  </data>
+  <data name="SelectSupplier" xml:space="preserve">
+    <value>Lieferant auswählen</value>
+  </data>
+  <data name="SelectProductSupplierWarehouseLocationQuantity" xml:space="preserve">
+    <value>Wählen Sie Produkt, Lieferant, Lager, Lagerplatz und Menge.</value>
+  </data>
+  <data name="OrderedQuantity" xml:space="preserve">
+    <value>Bestellte Menge</value>
+  </data>
+  <data name="AlreadyDelivered" xml:space="preserve">
+    <value>Bereits geliefert</value>
+  </data>
+  <data name="RemainingQuantity" xml:space="preserve">
+    <value>Noch offen</value>
+  </data>
+  <data name="MaximumAvailable" xml:space="preserve">
+    <value>Maximal verfügbar</value>
+  </data>
+  <data name="IncomingReferencePlaceholder" xml:space="preserve">
+    <value>z.B. WE-2026-0001</value>
+  </data>
+  <data name="DeliveryProgress" xml:space="preserve">
+    <value>Lieferfortschritt</value>
+  </data>
+  <data name="Ordered" xml:space="preserve">
+    <value>Bestellt</value>
+  </data>
+  <data name="ThisReceipt" xml:space="preserve">
+    <value>Dieser Eingang</value>
+  </data>
+  <data name="RemainingAfterReceipt" xml:space="preserve">
+    <value>Danach offen</value>
+  </data>
+  <data name="OptionalIncomingGoodsInformation" xml:space="preserve">
+    <value>Optionale Informationen zum Wareneingang.</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Notiz...</value>
+  </data>
+  <data name="Booking" xml:space="preserve">
+    <value>Wird gebucht...</value>
+  </data>
+  <data name="BookIncomingGoods" xml:space="preserve">
+    <value>Wareneingang buchen</value>
+  </data>
+  <data name="PurchaseOrderNotFound" xml:space="preserve">
+    <value>Die Bestellung wurde nicht gefunden.</value>
+  </data>
+  <data name="NoOpenQuantityForProduct" xml:space="preserve">
+    <value>Für dieses Produkt ist in der Bestellung keine offene Menge vorhanden.</value>
+  </data>
+  <data name="SupplierSelectionRequired" xml:space="preserve">
+    <value>Bitte einen Lieferanten auswählen.</value>
+  </data>
+  <data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+    <value>Die Menge muss größer als 0 sein.</value>
+  </data>
+  <data name="SelectedSupplierNotFound" xml:space="preserve">
+    <value>Der ausgewählte Lieferant wurde nicht gefunden.</value>
+  </data>
+  <data name="PurchaseOrderCannotReceive" xml:space="preserve">
+    <value>Diese Bestellung kann keinen Wareneingang mehr erhalten.</value>
+  </data>
+  <data name="SupplierDoesNotMatchPurchaseOrder" xml:space="preserve">
+    <value>Der Lieferant stimmt nicht mit der Bestellung überein.</value>
+  </data>
+  <data name="ProductNotInPurchaseOrder" xml:space="preserve">
+    <value>Das Produkt gehört nicht zu dieser Bestellung.</value>
+  </data>
+  <data name="NoOpenQuantityRemaining" xml:space="preserve">
+    <value>Für dieses Produkt ist keine offene Menge mehr vorhanden.</value>
+  </data>
+  <data name="QuantityExceedsRemaining" xml:space="preserve">
+    <value>Die Menge darf maximal {0} betragen.</value>
+  </data>
+  <data name="PurchaseOrderReceiptSuccess" xml:space="preserve">
+    <value>Wareneingang von {0} für Bestellung {1} wurde erfolgreich gebucht.</value>
+  </data>
+  <data name="ManualReceiptSuccess" xml:space="preserve">
+    <value>Wareneingang von {0} Stück von {1} wurde erfolgreich gebucht.</value>
+  </data>
+  <data name="IncomingGoodsBookingError" xml:space="preserve">
+    <value>Fehler beim Buchen: {0}</value>
+  </data>
+  <data name="OutgoingGoodsDescription" xml:space="preserve">
+    <value>Ware aus dem Lagerbestand ausbuchen.</value>
+  </data>
+  <data name="SelectProductWarehouseLocationQuantity" xml:space="preserve">
+    <value>Wählen Sie Produkt, Lager, Lagerplatz und Menge.</value>
+  </data>
+  <data name="NoAvailableStockAtWarehouse" xml:space="preserve">
+    <value>Für dieses Produkt ist in diesem Lager kein verfügbarer Bestand vorhanden.</value>
+  </data>
+  <data name="QuantityExceedsAvailableStockStart" xml:space="preserve">
+    <value>Die Menge darf den verfügbaren Bestand von {0} nicht überschreiten.</value>
+  </data>
+  <data name="OutgoingReferencePlaceholder" xml:space="preserve">
+    <value>z.B. WA-2026-0001</value>
+  </data>
+  <data name="OptionalOutgoingGoodsInformation" xml:space="preserve">
+    <value>Optionale Informationen zum Warenausgang.</value>
+  </data>
+  <data name="BookOutgoingGoods" xml:space="preserve">
+    <value>Warenausgang buchen</value>
+  </data>
+  <data name="NoStockAtLocation" xml:space="preserve">
+    <value>Für dieses Produkt existiert an diesem Lagerplatz kein Bestand.</value>
+  </data>
+  <data name="NoAvailableStockAtLocation" xml:space="preserve">
+    <value>An diesem Lagerplatz ist kein verfügbarer Bestand vorhanden.</value>
+  </data>
+  <data name="InsufficientAvailableStock" xml:space="preserve">
+    <value>Nicht genügend verfügbarer Bestand. Verfügbar: {0}.</value>
+  </data>
+  <data name="OutgoingGoodsSuccess" xml:space="preserve">
+    <value>Warenausgang von {0} Stück wurde erfolgreich gebucht.</value>
+  </data>
+  <data name="OutgoingGoodsBookingError" xml:space="preserve">
+    <value>Fehler beim Buchen: {0}</value>
+  </data>
 </root>

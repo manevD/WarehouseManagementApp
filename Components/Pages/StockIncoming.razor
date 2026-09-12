@@ -1,16 +1,20 @@
 ﻿@page "/stock/incoming"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Wareneingang</PageTitle>
+<PageTitle>@L["IncomingGoods"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -22,11 +26,10 @@
 
         <div>
 
-            <h1>Wareneingang</h1>
+            <h1>@L["IncomingGoods"]</h1>
 
             <p>
-                Ware aus einer Bestellung oder manuell in den
-                Lagerbestand aufnehmen.
+                @L["IncomingGoodsDescription"]
             </p>
 
         </div>
@@ -34,7 +37,7 @@
         <a href="/stock"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -58,11 +61,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Bestellung</h2>
+                    <h2>@L["PurchaseOrder"]</h2>
 
                     <p>
-                        Optional eine offene Lieferantenbestellung
-                        auswählen.
+                        @L["OptionalOpenPurchaseOrder"]
                     </p>
 
                 </div>
@@ -73,7 +75,7 @@
                     <div class="form-group">
 
                         <label>
-                            Bestellung
+                            @L["PurchaseOrder"]
                         </label>
 
                         <select class="form-control"
@@ -81,7 +83,7 @@
                                 @onchange="OnPurchaseOrderChanged">
 
                             <option value="0">
-                                Keine Bestellung / manuell
+                                @L["NoPurchaseOrderManual"]
                             </option>
 
                             @foreach (var order in PurchaseOrders)
@@ -105,7 +107,7 @@
                         <div class="form-group">
 
                             <label>
-                                Lieferant
+                                @L["Supplier"]
                             </label>
 
                             <input class="form-control"
@@ -133,11 +135,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Wareneingang</h2>
+                    <h2>@L["IncomingGoods"]</h2>
 
                     <p>
-                        Wählen Sie Produkt, Lieferant, Lager,
-                        Lagerplatz und Menge.
+                        @L["SelectProductSupplierWarehouseLocationQuantity"]
                     </p>
 
                 </div>
@@ -153,7 +154,7 @@
                     <div class="form-group">
 
                         <label>
-                            Produkt <span>*</span>
+                            @L["Product"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -162,7 +163,7 @@
                                 disabled="@(Model.PurchaseOrderId > 0)">
 
                             <option value="0">
-                                Produkt auswählen
+                                @L["SelectProduct"]
                             </option>
 
                             @foreach (var product in Products)
@@ -190,7 +191,7 @@
                         <div class="form-group">
 
                             <label>
-                                Lieferant <span>*</span>
+                                @L["Supplier"] <span>*</span>
                             </label>
 
                             <select class="form-control"
@@ -198,7 +199,7 @@
                                     @onchange="OnSupplierChanged">
 
                                 <option value="0">
-                                    Lieferant auswählen
+                                    @L["SelectSupplier"]
                                 </option>
 
                                 @foreach (var supplier in Suppliers)
@@ -232,7 +233,7 @@
                         <div class="form-group">
 
                             <label>
-                                Bestellte Menge
+                                @L["OrderedQuantity"]
                             </label>
 
                             <input class="form-control"
@@ -245,7 +246,7 @@
                         <div class="form-group">
 
                             <label>
-                                Bereits geliefert
+                                @L["AlreadyDelivered"]
                             </label>
 
                             <input class="form-control"
@@ -258,7 +259,7 @@
                         <div class="form-group">
 
                             <label>
-                                Noch offen
+                                @L["RemainingQuantity"]
                             </label>
 
                             <input class="form-control"
@@ -276,7 +277,7 @@
                     <div class="form-group">
 
                         <label>
-                            Lager <span>*</span>
+                            @L["Warehouse"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -284,7 +285,7 @@
                                 @onchange="OnWarehouseChanged">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in Warehouses)
@@ -310,7 +311,7 @@
                     <div class="form-group">
 
                         <label>
-                            Lagerplatz <span>*</span>
+                            @L["Location"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -319,7 +320,7 @@
                                 disabled="@(Model.WarehouseId <= 0)">
 
                             <option value="0">
-                                Lagerplatz auswählen
+                                @L["SelectLocation"]
                             </option>
 
                             @foreach (var location in Locations)
@@ -351,7 +352,7 @@
                     <div class="form-group">
 
                         <label>
-                            Menge <span>*</span>
+                            @L["Quantity"] <span>*</span>
                         </label>
 
                         <InputNumber @bind-Value="Model.Quantity"
@@ -370,7 +371,7 @@
                         {
                             <small class="form-help">
 
-                                Maximal verfügbar:
+                                @L["MaximumAvailable"]:
                                 <strong>
                                     @RemainingQuantity.ToString("N2")
                                 </strong>
@@ -388,12 +389,12 @@
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.ReferenceNumber"
                                    class="form-control"
-                                   placeholder="z.B. WE-2026-0001" />
+                                   placeholder="@L["IncomingReferencePlaceholder"]" />
 
                     </div>
 
@@ -412,7 +413,7 @@
                     <div class="form-section-title">
 
                         <h2>
-                            Lieferfortschritt
+                            @L["DeliveryProgress"]
                         </h2>
 
                     </div>
@@ -423,7 +424,7 @@
                         <div class="stock-summary-card">
 
                             <span>
-                                Bestellt
+                                @L["Ordered"]
                             </span>
 
                             <strong>
@@ -436,7 +437,7 @@
                         <div class="stock-summary-card">
 
                             <span>
-                                Bereits geliefert
+                                @L["AlreadyDelivered"]
                             </span>
 
                             <strong>
@@ -451,7 +452,7 @@
                         <div class="stock-summary-card">
 
                             <span>
-                                Dieser Eingang
+                                @L["ThisReceipt"]
                             </span>
 
                             <strong>
@@ -464,7 +465,7 @@
                         <div class="stock-summary-card">
 
                             <span>
-                                Danach offen
+                                @L["RemainingAfterReceipt"]
                             </span>
 
                             <strong>
@@ -491,10 +492,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Notiz</h2>
+                    <h2>@L["Note"]</h2>
 
                     <p>
-                        Optionale Informationen zum Wareneingang.
+                        @L["OptionalIncomingGoodsInformation"]
                     </p>
 
                 </div>
@@ -505,7 +506,7 @@
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="5"
-                                   placeholder="Notiz..." />
+                                   placeholder="@L["NotePlaceholder"]" />
 
                 </div>
 
@@ -547,7 +548,7 @@
                 <a href="/stock"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -557,8 +558,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Wird gebucht..."
-                        : "Wareneingang buchen")
+                        ? L["Booking"]
+                        : L["BookIncomingGoods"])
 
                 </button>
 
@@ -572,11 +573,14 @@
 
 
 @code {
+
     [SupplyParameterFromQuery(Name = "purchaseOrderId")]
     public int? QueryPurchaseOrderId { get; set; }
 
     [SupplyParameterFromQuery(Name = "productId")]
     public int? QueryProductId { get; set; }
+
+
     // =========================================================
     // DATA
     // =========================================================
@@ -620,9 +624,7 @@
 
     private decimal RemainingQuantity =>
         SelectedOrderItem == null
-
             ? 0
-
             : Math.Max(
                 0,
                 SelectedOrderItem.Quantity -
@@ -645,15 +647,11 @@
 
         Products =
             await db.Products
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
 
 
@@ -663,15 +661,11 @@
 
         Suppliers =
             await db.Suppliers
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.CompanyName)
-
                 .ToListAsync();
 
 
@@ -681,15 +675,11 @@
 
         Warehouses =
             await db.Warehouses
-
                 .AsNoTracking()
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
 
 
@@ -699,34 +689,25 @@
 
         PurchaseOrders =
             await db.PurchaseOrders
-
                 .AsNoTracking()
-
                 .Include(x =>
                     x.Supplier)
-
                 .Include(x =>
                     x.Items)
-
                     .ThenInclude(x =>
                         x.Product)
-
                 .Where(x =>
                     x.Status ==
                         PurchaseOrderStatus.Bestellt
-
                     ||
-
                     x.Status ==
                         PurchaseOrderStatus.TeilweiseGeliefert)
-
                 .OrderByDescending(x =>
                     x.OrderDate)
-
                 .ThenByDescending(x =>
                     x.Id)
-
                 .ToListAsync();
+
 
         // =====================================================
         // QUERY PARAMETERS FROM PURCHASE ORDER DETAILS
@@ -834,7 +815,9 @@
             Model.ProductId = 0;
 
             Model.SupplierId = 0;
+
             Model.WarehouseId = 0;
+
             Model.WarehouseLocationId = 0;
 
             Model.Quantity = 0;
@@ -855,18 +838,13 @@
 
         SelectedPurchaseOrder =
             await db.PurchaseOrders
-
                 .AsNoTracking()
-
                 .Include(x =>
                     x.Supplier)
-
                 .Include(x =>
                     x.Items)
-
                     .ThenInclude(x =>
                         x.Product)
-
                 .FirstOrDefaultAsync(x =>
                     x.Id ==
                     purchaseOrderId);
@@ -875,7 +853,7 @@
         if (SelectedPurchaseOrder == null)
         {
             ErrorMessage =
-                "Die Bestellung wurde nicht gefunden.";
+                L["PurchaseOrderNotFound"];
 
             return;
         }
@@ -940,15 +918,12 @@
         {
             SelectedOrderItem =
                 SelectedPurchaseOrder.Items
-
                     .FirstOrDefault(x =>
                         x.ProductId ==
-                        Model.ProductId
-
+                            Model.ProductId
                         &&
-
                         x.Quantity >
-                        x.DeliveredQuantity);
+                            x.DeliveredQuantity);
 
 
             if (SelectedOrderItem != null)
@@ -969,7 +944,7 @@
                 Model.Quantity = 0;
 
                 ErrorMessage =
-                    "Für dieses Produkt ist in der Bestellung keine offene Menge vorhanden.";
+                    L["NoOpenQuantityForProduct"];
             }
         }
 
@@ -1053,21 +1028,13 @@
 
         Locations =
             await db.WarehouseLocations
-
                 .Where(x =>
-
                     x.IsActive
-
                     &&
-
                     x.WarehouseId ==
-                        warehouseId
-
-                )
-
+                        warehouseId)
                 .OrderBy(x =>
                     x.Code)
-
                 .ToListAsync();
 
 
@@ -1126,7 +1093,7 @@
             if (Model.ProductId <= 0)
             {
                 ErrorMessage =
-                    "Bitte ein Produkt auswählen.";
+                    L["ProductSelectionRequired"];
 
                 return;
             }
@@ -1139,7 +1106,7 @@
             if (Model.SupplierId <= 0)
             {
                 ErrorMessage =
-                    "Bitte einen Lieferanten auswählen.";
+                    L["SupplierSelectionRequired"];
 
                 return;
             }
@@ -1152,7 +1119,7 @@
             if (Model.WarehouseId <= 0)
             {
                 ErrorMessage =
-                    "Bitte ein Lager auswählen.";
+                    L["WarehouseSelectionRequired"];
 
                 return;
             }
@@ -1165,7 +1132,7 @@
             if (Model.WarehouseLocationId <= 0)
             {
                 ErrorMessage =
-                    "Bitte einen Lagerplatz auswählen.";
+                    L["LocationSelectionRequired"];
 
                 return;
             }
@@ -1178,7 +1145,7 @@
             if (Model.Quantity <= 0)
             {
                 ErrorMessage =
-                    "Die Menge muss größer als 0 sein.";
+                    L["QuantityMustBeGreaterThanZero"];
 
                 return;
             }
@@ -1194,23 +1161,17 @@
 
             var product =
                 await db.Products
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.ProductId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (product == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Produkt wurde nicht gefunden.";
+                    L["SelectedProductNotFound"];
 
                 return;
             }
@@ -1222,23 +1183,17 @@
 
             var supplier =
                 await db.Suppliers
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.SupplierId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (supplier == null)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lieferant wurde nicht gefunden.";
+                    L["SelectedSupplierNotFound"];
 
                 return;
             }
@@ -1257,10 +1212,8 @@
             {
                 purchaseOrder =
                     await db.PurchaseOrders
-
                         .Include(x =>
                             x.Items)
-
                         .FirstOrDefaultAsync(x =>
                             x.Id ==
                             Model.PurchaseOrderId);
@@ -1269,7 +1222,7 @@
                 if (purchaseOrder == null)
                 {
                     ErrorMessage =
-                        "Die Bestellung wurde nicht gefunden.";
+                        L["PurchaseOrderNotFound"];
 
                     return;
                 }
@@ -1281,14 +1234,12 @@
 
                 if (purchaseOrder.Status !=
                         PurchaseOrderStatus.Bestellt
-
                     &&
-
                     purchaseOrder.Status !=
                         PurchaseOrderStatus.TeilweiseGeliefert)
                 {
                     ErrorMessage =
-                        "Diese Bestellung kann keinen Wareneingang mehr erhalten.";
+                        L["PurchaseOrderCannotReceive"];
 
                     return;
                 }
@@ -1302,7 +1253,7 @@
                     Model.SupplierId)
                 {
                     ErrorMessage =
-                        "Der Lieferant stimmt nicht mit der Bestellung überein.";
+                        L["SupplierDoesNotMatchPurchaseOrder"];
 
                     return;
                 }
@@ -1314,7 +1265,6 @@
 
                 orderItem =
                     purchaseOrder.Items
-
                         .FirstOrDefault(x =>
                             x.ProductId ==
                             Model.ProductId);
@@ -1323,7 +1273,7 @@
                 if (orderItem == null)
                 {
                     ErrorMessage =
-                        "Das Produkt gehört nicht zu dieser Bestellung.";
+                        L["ProductNotInPurchaseOrder"];
 
                     return;
                 }
@@ -1343,7 +1293,7 @@
                 if (remaining <= 0)
                 {
                     ErrorMessage =
-                        "Für dieses Produkt ist keine offene Menge mehr vorhanden.";
+                        L["NoOpenQuantityRemaining"];
 
                     return;
                 }
@@ -1357,7 +1307,8 @@
                     remaining)
                 {
                     ErrorMessage =
-                        $"Die Menge darf maximal {remaining:N2} betragen.";
+                        L["QuantityExceedsRemaining",
+                            remaining.ToString("N2")];
 
                     return;
                 }
@@ -1370,23 +1321,17 @@
 
             var warehouse =
                 await db.Warehouses
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.WarehouseId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (warehouse == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["SelectedWarehouseNotFound"];
 
                 return;
             }
@@ -1398,28 +1343,20 @@
 
             var location =
                 await db.WarehouseLocations
-
                     .FirstOrDefaultAsync(x =>
-
                         x.Id ==
                             Model.WarehouseLocationId
-
                         &&
-
                         x.WarehouseId ==
                             Model.WarehouseId
-
                         &&
-
-                        x.IsActive
-
-                    );
+                        x.IsActive);
 
 
             if (location == null)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lagerplatz wurde nicht gefunden.";
+                    L["SelectedLocationNotFound"];
 
                 return;
             }
@@ -1431,18 +1368,12 @@
 
             var stock =
                 await db.Stocks
-
                     .FirstOrDefaultAsync(x =>
-
                         x.ProductId ==
                             Model.ProductId
-
                         &&
-
                         x.WarehouseLocationId ==
-                            Model.WarehouseLocationId
-
-                    );
+                            Model.WarehouseLocationId);
 
 
             // =================================================
@@ -1520,17 +1451,13 @@
                     ReferenceNumber =
                         string.IsNullOrWhiteSpace(
                             Model.ReferenceNumber)
-
                             ? null
-
                             : Model.ReferenceNumber.Trim(),
 
                     Note =
                         string.IsNullOrWhiteSpace(
                             Model.Note)
-
                             ? null
-
                             : Model.Note.Trim(),
 
                     UserId =
@@ -1607,15 +1534,16 @@
             if (purchaseOrder != null)
             {
                 SuccessMessage =
-                    $"Wareneingang von {Model.Quantity:N2} " +
-                    $"für Bestellung {purchaseOrder.OrderNumber} " +
-                    $"wurde erfolgreich gebucht.";
+                    L["PurchaseOrderReceiptSuccess",
+                        Model.Quantity.ToString("N2"),
+                        purchaseOrder.OrderNumber];
             }
             else
             {
                 SuccessMessage =
-                    $"Wareneingang von {Model.Quantity:N2} Stück " +
-                    $"von {supplier.CompanyName} wurde erfolgreich gebucht.";
+                    L["ManualReceiptSuccess",
+                        Model.Quantity.ToString("N2"),
+                        supplier.CompanyName];
             }
 
 
@@ -1637,33 +1565,23 @@
             // Reload open orders because the status may have changed.
             PurchaseOrders =
                 await db.PurchaseOrders
-
                     .AsNoTracking()
-
                     .Include(x =>
                         x.Supplier)
-
                     .Include(x =>
                         x.Items)
-
                         .ThenInclude(x =>
                             x.Product)
-
                     .Where(x =>
                         x.Status ==
                             PurchaseOrderStatus.Bestellt
-
                         ||
-
                         x.Status ==
                             PurchaseOrderStatus.TeilweiseGeliefert)
-
                     .OrderByDescending(x =>
                         x.OrderDate)
-
                     .ThenByDescending(x =>
                         x.Id)
-
                     .ToListAsync();
 
 
@@ -1672,7 +1590,8 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Buchen: {ex.Message}";
+                L["IncomingGoodsBookingError",
+                    ex.Message];
         }
         finally
         {
@@ -1693,40 +1612,50 @@
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Produkt auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "ProductSelectionRequired")]
         public int ProductId { get; set; }
 
 
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte einen Lieferanten auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "SupplierSelectionRequired")]
         public int SupplierId { get; set; }
 
 
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Lager auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "WarehouseSelectionRequired")]
         public int WarehouseId { get; set; }
 
 
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte einen Lagerplatz auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "LocationSelectionRequired")]
         public int WarehouseLocationId { get; set; }
 
 
         [Range(
             0.01,
             double.MaxValue,
-            ErrorMessage =
-                "Die Menge muss größer als 0 sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "QuantityMustBeGreaterThanZero")]
         public decimal Quantity { get; set; }
 
 
@@ -1737,5 +1666,4 @@
         [MaxLength(500)]
         public string? Note { get; set; }
     }
-
 }
