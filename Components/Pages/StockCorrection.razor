@@ -1,35 +1,36 @@
 ﻿@page "/stock/correction"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestandskorrektur</PageTitle>
+<PageTitle>@L["StockCorrection"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Bestandskorrektur</h1>
-            <p>Bestand eines Produkts korrigieren.</p>
+            <h1>@L["StockCorrection"]</h1>
+            <p>@L["StockCorrectionDescription"]</p>
         </div>
 
         <a href="/stock"
            class="btn-secondary">
-
-            ← Zurück
-
+            ← @L["Back"]
         </a>
 
     </div>
-
 
     <div class="form-card">
 
@@ -39,7 +40,6 @@
 
             <DataAnnotationsValidator />
 
-
             <!-- =================================================
                  BESTAND
                  ================================================= -->
@@ -48,24 +48,22 @@
 
                 <div class="form-section-title">
 
-                    <h2>Bestand korrigieren</h2>
+                    <h2>@L["CorrectStock"]</h2>
 
                     <p>
-                        Wählen Sie Produkt und Lagerplatz.
+                        @L["SelectProductAndLocation"]
                     </p>
 
                 </div>
 
-
                 <div class="form-grid">
-
 
                     <!-- PRODUCT -->
 
                     <div class="form-group">
 
                         <label>
-                            Produkt <span>*</span>
+                            @L["Product"] <span>*</span>
                         </label>
 
                         <InputSelect @bind-Value="Model.ProductId"
@@ -73,7 +71,7 @@
                                      @bind:after="SelectionChanged">
 
                             <option value="0">
-                                Produkt auswählen
+                                @L["SelectProduct"]
                             </option>
 
                             @foreach (var product in Products)
@@ -89,13 +87,12 @@
 
                     </div>
 
-
                     <!-- WAREHOUSE -->
 
                     <div class="form-group">
 
                         <label>
-                            Lager <span>*</span>
+                            @L["Warehouse"] <span>*</span>
                         </label>
 
                         <InputSelect @bind-Value="Model.WarehouseId"
@@ -103,7 +100,7 @@
                                      @bind:after="WarehouseChanged">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in Warehouses)
@@ -119,13 +116,12 @@
 
                     </div>
 
-
                     <!-- LOCATION -->
 
                     <div class="form-group">
 
                         <label>
-                            Lagerplatz <span>*</span>
+                            @L["Location"] <span>*</span>
                         </label>
 
                         <InputSelect @bind-Value="Model.WarehouseLocationId"
@@ -133,7 +129,7 @@
                                      @bind:after="SelectionChanged">
 
                             <option value="0">
-                                Lagerplatz auswählen
+                                @L["SelectLocation"]
                             </option>
 
                             @foreach (var location in Locations)
@@ -142,8 +138,7 @@
 
                                     @location.Code
 
-                                    @if (!string.IsNullOrWhiteSpace(
-                                        location.Name))
+                                    @if (!string.IsNullOrWhiteSpace(location.Name))
                                     {
                                         @($" - {location.Name}")
                                     }
@@ -154,17 +149,16 @@
                         </InputSelect>
 
                         <ValidationMessage For="@(() =>
-                                                        Model.WarehouseLocationId)" />
+                                                    Model.WarehouseLocationId)" />
 
                     </div>
-
 
                     <!-- CURRENT STOCK -->
 
                     <div class="form-group">
 
                         <label>
-                            Aktueller Bestand
+                            @L["CurrentStock"]
                         </label>
 
                         <input type="text"
@@ -174,13 +168,12 @@
 
                     </div>
 
-
                     <!-- NEW STOCK -->
 
                     <div class="form-group">
 
                         <label>
-                            Neuer Bestand <span>*</span>
+                            @L["NewStock"] <span>*</span>
                         </label>
 
                         <InputNumber @bind-Value="Model.NewQuantity"
@@ -192,13 +185,12 @@
 
                     </div>
 
-
                     <!-- DIFFERENCE -->
 
                     <div class="form-group">
 
                         <label>
-                            Differenz
+                            @L["Difference"]
                         </label>
 
                         <input type="text"
@@ -212,7 +204,6 @@
 
             </div>
 
-
             <!-- =================================================
                  REFERENCE
                  ================================================= -->
@@ -221,53 +212,51 @@
 
                 <div class="form-section-title">
 
-                    <h2>Referenz</h2>
+                    <h2>@L["Reference"]</h2>
 
                     <p>
-                        Grund und Referenz der Korrektur.
+                        @L["CorrectionReasonAndReference"]
                     </p>
 
                 </div>
 
-
                 <div class="form-grid">
-
 
                     <div class="form-group">
 
                         <label>
-                            Grund <span>*</span>
+                            @L["Reason"] <span>*</span>
                         </label>
 
                         <InputSelect @bind-Value="Model.Reason"
                                      class="form-control">
 
                             <option value="">
-                                Grund auswählen
+                                @L["SelectReason"]
                             </option>
 
                             <option value="Inventur">
-                                Inventur
+                                @L["ReasonInventory"]
                             </option>
 
                             <option value="Beschädigung">
-                                Beschädigung
+                                @L["ReasonDamage"]
                             </option>
 
                             <option value="Verlust">
-                                Verlust
+                                @L["ReasonLoss"]
                             </option>
 
                             <option value="Fund">
-                                Fund
+                                @L["ReasonFound"]
                             </option>
 
                             <option value="Zählfehler">
-                                Zählfehler
+                                @L["ReasonCountingError"]
                             </option>
 
                             <option value="Sonstiges">
-                                Sonstiges
+                                @L["ReasonOther"]
                             </option>
 
                         </InputSelect>
@@ -276,35 +265,34 @@
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.ReferenceNumber"
                                    class="form-control"
-                                   placeholder="z.B. INV-2026-0001" />
+                                   placeholder="@L["ReferenceNumberPlaceholder"]" />
 
                     </div>
 
                 </div>
 
-
                 <div class="form-group">
 
-                    <label>Notiz</label>
+                    <label>
+                        @L["Note"]
+                    </label>
 
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="4"
-                                   placeholder="Optionale Notiz..." />
+                                   placeholder="@L["OptionalNotePlaceholder"]" />
 
                 </div>
 
             </div>
-
 
             <!-- MESSAGES -->
             @if (!string.IsNullOrWhiteSpace(ErrorMessage))
@@ -314,7 +302,6 @@
                 </div>
             }
 
-
             @if (!string.IsNullOrWhiteSpace(SuccessMessage))
             {
                 <div class="form-success">
@@ -322,16 +309,13 @@
                 </div>
             }
 
-
             <!-- ACTIONS -->
 
             <div class="form-actions">
 
                 <a href="/stock"
                    class="btn-secondary">
-
-                    Abbrechen
-
+                    @L["Cancel"]
                 </a>
 
                 <button type="submit"
@@ -339,8 +323,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Wird gespeichert..."
-                        : "Bestand korrigieren")
+                        ? L["Saving"]
+                        : L["CorrectStock"])
 
                 </button>
 
@@ -352,15 +336,12 @@
 
 </div>
 
-
 @code {
 
     private CorrectionModel Model = new();
 
     private List<Product> Products = new();
-
     private List<Warehouse> Warehouses = new();
-
     private List<WarehouseLocation> Locations = new();
 
     private decimal CurrentQuantity;
@@ -368,7 +349,6 @@
     private bool IsSaving;
 
     private string? ErrorMessage;
-
     private string? SuccessMessage;
 
 
@@ -377,12 +357,10 @@
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Products = await db.Products
             .Where(x => x.IsActive)
             .OrderBy(x => x.Name)
             .ToListAsync();
-
 
         Warehouses = await db.Warehouses
             .Where(x => x.IsActive)
@@ -399,20 +377,16 @@
 
         CurrentQuantity = 0;
 
-
         if (Model.WarehouseId <= 0)
             return;
-
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Locations = await db.WarehouseLocations
             .Where(x =>
                 x.IsActive &&
-                x.WarehouseId ==
-                    Model.WarehouseId)
+                x.WarehouseId == Model.WarehouseId)
             .OrderBy(x => x.Code)
             .ToListAsync();
     }
@@ -422,36 +396,28 @@
     {
         CurrentQuantity = 0;
 
-
         if (Model.ProductId <= 0 ||
             Model.WarehouseLocationId <= 0)
         {
             return;
         }
 
-
         await using var db =
             await DbFactory.CreateDbContextAsync();
-
 
         var stock =
             await db.Stocks
                 .FirstOrDefaultAsync(x =>
-                    x.ProductId ==
-                        Model.ProductId &&
+                    x.ProductId == Model.ProductId &&
                     x.WarehouseLocationId ==
                         Model.WarehouseLocationId);
 
-
         if (stock != null)
         {
-            CurrentQuantity =
-                stock.Quantity;
+            CurrentQuantity = stock.Quantity;
         }
 
-
-        Model.NewQuantity =
-            CurrentQuantity;
+        Model.NewQuantity = CurrentQuantity;
     }
 
 
@@ -462,7 +428,6 @@
             var difference =
                 Model.NewQuantity -
                 CurrentQuantity;
-
 
             if (difference > 0)
                 return $"+{difference:N2}";
@@ -477,19 +442,15 @@
         if (IsSaving)
             return;
 
-
         IsSaving = true;
 
         ErrorMessage = null;
-
         SuccessMessage = null;
-
 
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
-
 
             // =================================================
             // PRODUCT
@@ -498,15 +459,13 @@
             var product =
                 await db.Products
                     .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.ProductId &&
+                        x.Id == Model.ProductId &&
                         x.IsActive);
-
 
             if (product == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Produkt wurde nicht gefunden.";
+                    L["SelectedProductNotFound"];
 
                 return;
             }
@@ -519,15 +478,13 @@
             var warehouse =
                 await db.Warehouses
                     .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.WarehouseId &&
+                        x.Id == Model.WarehouseId &&
                         x.IsActive);
-
 
             if (warehouse == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["SelectedWarehouseNotFound"];
 
                 return;
             }
@@ -540,17 +497,14 @@
             var location =
                 await db.WarehouseLocations
                     .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.WarehouseLocationId &&
-                        x.WarehouseId ==
-                            Model.WarehouseId &&
+                        x.Id == Model.WarehouseLocationId &&
+                        x.WarehouseId == Model.WarehouseId &&
                         x.IsActive);
-
 
             if (location == null)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lagerplatz wurde nicht gefunden.";
+                    L["SelectedLocationNotFound"];
 
                 return;
             }
@@ -563,23 +517,18 @@
             var stock =
                 await db.Stocks
                     .FirstOrDefaultAsync(x =>
-                        x.ProductId ==
-                            Model.ProductId &&
+                        x.ProductId == Model.ProductId &&
                         x.WarehouseLocationId ==
                             Model.WarehouseLocationId);
-
 
             var oldQuantity =
                 stock?.Quantity ?? 0;
 
-
             var newQuantity =
                 Model.NewQuantity;
 
-
             var difference =
-                newQuantity -
-                oldQuantity;
+                newQuantity - oldQuantity;
 
 
             // =================================================
@@ -589,7 +538,7 @@
             if (difference == 0)
             {
                 ErrorMessage =
-                    "Der neue Bestand entspricht bereits dem aktuellen Bestand.";
+                    L["StockAlreadyHasQuantity"];
 
                 return;
             }
@@ -626,11 +575,10 @@
                     stock.ReservedQuantity)
                 {
                     ErrorMessage =
-                        "Der neue Bestand kann nicht kleiner als die reservierte Menge sein.";
+                        L["StockCannotBeBelowReserved"];
 
                     return;
                 }
-
 
                 stock.Quantity =
                     newQuantity;
@@ -646,7 +594,6 @@
 
             var movementQuantity =
                 Math.Abs(difference);
-
 
             var movement = new StockMovement
             {
@@ -678,7 +625,6 @@
                     DateTime.UtcNow
             };
 
-
             db.StockMovements.Add(movement);
 
 
@@ -688,22 +634,21 @@
 
             await db.SaveChangesAsync();
 
-
             SuccessMessage =
-                $"Bestand erfolgreich von {oldQuantity:N2} auf {newQuantity:N2} korrigiert.";
-
+                L["StockCorrectionSuccess",
+                    oldQuantity.ToString("N2"),
+                    newQuantity.ToString("N2")];
 
             CurrentQuantity =
                 newQuantity;
 
             Model.NewQuantity =
                 newQuantity;
-
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler bei der Bestandskorrektur: {ex.Message}";
+                L["StockCorrectionError", ex.Message];
         }
         finally
         {
@@ -717,22 +662,21 @@
         var parts =
             new List<string>();
 
-
         if (!string.IsNullOrWhiteSpace(
             Model.ReferenceNumber))
         {
             parts.Add(
-                $"Referenz: {Model.ReferenceNumber.Trim()}");
+                $"{L["ReferenceNumber"]}: " +
+                Model.ReferenceNumber.Trim());
         }
-
 
         if (!string.IsNullOrWhiteSpace(
             Model.Reason))
         {
             parts.Add(
-                $"Grund: {Model.Reason.Trim()}");
+                $"{L["Reason"]}: " +
+                Model.Reason.Trim());
         }
-
 
         if (!string.IsNullOrWhiteSpace(
             Model.Note))
@@ -740,7 +684,6 @@
             parts.Add(
                 Model.Note.Trim());
         }
-
 
         return string.Join(
             " | ",
@@ -753,40 +696,50 @@
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Produkt auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "ProductSelectionRequired")]
         public int ProductId { get; set; }
 
 
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Lager auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "WarehouseSelectionRequired")]
         public int WarehouseId { get; set; }
 
 
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte einen Lagerplatz auswählen.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "LocationSelectionRequired")]
         public int WarehouseLocationId { get; set; }
 
 
         [Range(
             0,
             double.MaxValue,
-            ErrorMessage =
-                "Der Bestand darf nicht negativ sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "StockCannotBeNegative")]
         public decimal NewQuantity { get; set; }
 
 
         [Required(
-            ErrorMessage =
-                "Bitte einen Grund auswählen.")]
-        public string Reason { get; set; }
-            = string.Empty;
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "ReasonSelectionRequired")]
+        public string Reason { get; set; } =
+            string.Empty;
 
 
         [MaxLength(100)]
@@ -796,5 +749,4 @@
         [MaxLength(500)]
         public string? Note { get; set; }
     }
-
 }

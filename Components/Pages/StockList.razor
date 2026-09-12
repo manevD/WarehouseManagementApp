@@ -4,19 +4,20 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
-@using Microsoft.JSInterop
 @using WarehouseManagement.Services
+@using Microsoft.JSInterop
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-
-<PageTitle>Bestand</PageTitle>
-
+<PageTitle>@L["Stock"]</PageTitle>
 
 <div class="stock-page">
 
@@ -27,11 +28,11 @@
         <div>
 
             <h1>
-                Bestand
+                @L["Stock"]
             </h1>
 
             <p>
-                Übersicht über den aktuellen Lagerbestand.
+                @L["CurrentStockOverview"]
             </p>
 
         </div>
@@ -41,9 +42,10 @@
 
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedStockRows.Count == 0)">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedStockRows.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
@@ -51,7 +53,7 @@
             <a href="/stock/incoming"
                class="btn-primary">
 
-                + Wareneingang
+                + @L["IncomingGoods"]
 
             </a>
 
@@ -59,7 +61,7 @@
             <a href="/stock/outgoing"
                class="btn-secondary">
 
-                Warenausgang
+                @L["OutgoingGoods"]
 
             </a>
 
@@ -67,7 +69,7 @@
             <a href="/stock/transfer"
                class="btn-secondary">
 
-                Umlagerung
+                @L["Transfers"]
 
             </a>
 
@@ -77,9 +79,6 @@
 
 
     <!-- FILTER -->
-    <!-- =========================================================
-     FILTER
-     ========================================================= -->
 
     <div class="filter-card">
 
@@ -95,7 +94,7 @@
 
                 <input type="text"
                        class="search-input"
-                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       placeholder="@L["SearchProductSkuBarcode"]"
                        value="@SearchTerm"
                        @oninput="SearchChanged" />
 
@@ -109,7 +108,7 @@
                     @bind:after="FilterChanged">
 
                 <option value="0">
-                    Alle Lager
+                    @L["AllWarehouses"]
                 </option>
 
                 @foreach (var warehouse in Warehouses)
@@ -129,7 +128,7 @@
                     @bind:after="FilterChanged">
 
                 <option value="0">
-                    Alle Lagerplätze
+                    @L["AllLocations"]
                 </option>
 
                 @foreach (var location in FilterLocations)
@@ -156,23 +155,23 @@
                     @bind:after="FilterChanged">
 
                 <option value="all">
-                    Alle Bestände
+                    @L["AllStockStatuses"]
                 </option>
 
                 <option value="ok">
-                    Bestand OK
+                    @L["StockOk"]
                 </option>
 
                 <option value="low">
-                    Niedriger Bestand
+                    @L["LowStock"]
                 </option>
 
                 <option value="available">
-                    Verfügbarer Bestand
+                    @L["AvailableStock"]
                 </option>
 
                 <option value="empty">
-                    Kein Bestand
+                    @L["NoStock"]
                 </option>
 
             </select>
@@ -186,11 +185,10 @@
 
     <div class="stock-summary-grid">
 
-
         <div class="stock-summary-card">
 
             <span>
-                Artikel
+                @L["Items"]
             </span>
 
             <strong>
@@ -203,7 +201,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamtbestand
+                @L["TotalStock"]
             </span>
 
             <strong>
@@ -216,7 +214,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Reserviert
+                @L["Reserved"]
             </span>
 
             <strong>
@@ -229,7 +227,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Verfügbar
+                @L["Available"]
             </span>
 
             <strong>
@@ -242,7 +240,7 @@
         <div class="stock-summary-card stock-warning-card">
 
             <span>
-                Niedriger Bestand
+                @L["LowStock"]
             </span>
 
             <strong>
@@ -251,7 +249,6 @@
 
         </div>
 
-
     </div>
 
 
@@ -259,17 +256,16 @@
 
     <div class="products-card">
 
-
         <div class="products-card-header">
 
             <div>
 
                 <strong>
-                    Bestandsliste
+                    @L["StockList"]
                 </strong>
 
                 <span>
-                    @StockRows.Count Einträge
+                    @L["EntriesCount", StockRows.Count]
                 </span>
 
             </div>
@@ -281,7 +277,7 @@
         {
             <div class="loading-state">
 
-                Bestand wird geladen...
+                @L["StockLoading"]
 
             </div>
         }
@@ -289,72 +285,64 @@
         {
             <div class="empty-products">
 
-
                 <div class="empty-products-icon">
                     📦
                 </div>
 
-
                 <h3>
-                    Kein Bestand gefunden
+                    @L["NoStockFound"]
                 </h3>
 
-
                 <p>
-                    Für die aktuellen Filter wurden keine
-                    Bestandsdaten gefunden.
+                    @L["NoStockForCurrentFilters"]
                 </p>
-
 
             </div>
         }
         else
         {
-
             <div class="products-table-wrapper">
 
-
                 <table class="products-table">
-
 
                     <thead>
 
                         <tr>
 
                             <th>
-                                SKU
+                                @L["SKU"]
                             </th>
 
                             <th>
-                                Produkt
+                                @L["Product"]
                             </th>
 
                             <th>
-                                Lager
+                                @L["Warehouse"]
                             </th>
 
                             <th>
-                                Lagerplatz
+                                @L["Location"]
                             </th>
 
                             <th>
-                                Bestand
+                                @L["StockQuantity"]
                             </th>
 
                             <th>
-                                Reserviert
+                                @L["Reserved"]
                             </th>
 
                             <th>
-                                Verfügbar
+                                @L["Available"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
-                                Aktionen
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -363,7 +351,6 @@
 
 
                     <tbody>
-
 
                         @foreach (var stock in PagedStockRows)
                         {
@@ -381,7 +368,6 @@
 
 
                             <tr>
-
 
                                 <!-- SKU -->
 
@@ -401,7 +387,6 @@
                                 <td>
 
                                     <div class="product-name">
-
 
                                         <div class="product-avatar">
 
@@ -431,7 +416,6 @@
                                             }
 
                                         </div>
-
 
                                     </div>
 
@@ -482,9 +466,7 @@
                                 <td>
 
                                     <strong>
-
                                         @stock.Quantity.ToString("N2")
-
                                     </strong>
 
                                 </td>
@@ -504,9 +486,7 @@
                                 <td>
 
                                     <strong>
-
                                         @stock.AvailableQuantity.ToString("N2")
-
                                     </strong>
 
                                 </td>
@@ -520,7 +500,7 @@
                                     {
                                         <span class="status-badge status-low">
 
-                                            Leer
+                                            @L["Empty"]
 
                                         </span>
                                     }
@@ -528,7 +508,7 @@
                                     {
                                         <span class="status-badge status-low">
 
-                                            Niedrig
+                                            @L["Low"]
 
                                         </span>
                                     }
@@ -536,7 +516,7 @@
                                     {
                                         <span class="status-badge status-warning">
 
-                                            Reserviert
+                                            @L["Reserved"]
 
                                         </span>
                                     }
@@ -544,7 +524,7 @@
                                     {
                                         <span class="status-badge status-active">
 
-                                            OK
+                                            @L["Ok"]
 
                                         </span>
                                     }
@@ -558,10 +538,9 @@
 
                                     <div class="product-actions">
 
-
                                         <a href="/stock/edit/@stock.Id"
                                            class="action-button"
-                                           title="Bestand bearbeiten">
+                                           title="@L["EditStock"]">
 
                                             ✎
 
@@ -569,27 +548,23 @@
 
 
                                         <button class="action-button delete-button"
-                                                title="Bestand auf 0 setzen"
+                                                title="@L["SetStockToZero"]"
                                                 @onclick="() => ConfirmDelete(stock)">
 
                                             🗑
 
                                         </button>
 
-
                                     </div>
 
                                 </td>
 
-
                             </tr>
                         }
-
 
                     </tbody>
 
                 </table>
-
 
             </div>
 
@@ -640,9 +615,9 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
+                @L["PageInfo", CurrentPage, TotalPages]
                 ·
-                @PagedStockRows.Count von @StockRows.Count Einträgen
+                @L["EntriesInfo", PagedStockRows.Count, StockRows.Count]
 
             </div>
 
@@ -657,9 +632,7 @@
     {
         <div class="delete-modal-backdrop">
 
-
             <div class="delete-modal">
-
 
                 <div class="delete-modal-icon">
                     🗑
@@ -667,38 +640,27 @@
 
 
                 <h3>
-                    Bestand auf 0 setzen?
+                    @L["SetStockToZeroQuestion"]
                 </h3>
 
-
                 <p>
-
-                    Möchten Sie den Bestand von
-
-                    <strong>
-                        @(StockToDelete.Product?.Name ?? "-")
-                    </strong>
-
-                    wirklich auf 0 setzen?
-
+                    @L["SetStockToZeroTextStart", StockToDelete.Product?.Name ?? "-"]
                 </p>
 
 
                 <small>
 
-                    Der Bestand wird nicht gelöscht.
-                    Eine Korrekturbewegung wird erstellt.
+                    @L["StockNotDeletedCorrectionCreated"]
 
                 </small>
 
 
                 <div class="delete-modal-actions">
 
-
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </button>
 
@@ -706,19 +668,16 @@
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
 
-                        Bestand auf 0 setzen
+                        @L["SetStockToZero"]
 
                     </button>
 
-
                 </div>
-
 
             </div>
 
         </div>
     }
-
 
 </div>
 
@@ -895,7 +854,6 @@
     {
         IsLoading = true;
 
-
         try
         {
             await using var db =
@@ -1036,9 +994,13 @@
     // =========================================================
     // LIVE SEARCH
     // =========================================================
-    private async Task SearchChanged(ChangeEventArgs args)
+
+    private async Task SearchChanged(
+        ChangeEventArgs args)
     {
-        SearchTerm = args.Value?.ToString() ?? string.Empty;
+        SearchTerm =
+            args.Value?.ToString()
+            ?? string.Empty;
 
         CurrentPage = 1;
 
@@ -1162,26 +1124,26 @@
             ExcelExport.Export(
                 data,
 
-                "Bestand",
+                L["Stock"].Value,
 
-                $"Bestand – Seite {CurrentPage}",
+                $"{L["Stock"].Value} – {L["Page"].Value} {CurrentPage}",
 
-                ("SKU",
+                (L["SKU"].Value,
                     x => x.Product?.SKU ?? "-"),
 
-                ("Produkt",
+                (L["Product"].Value,
                     x => x.Product?.Name ?? "-"),
 
-                ("Barcode",
+                (L["Barcode"].Value,
                     x => x.Product?.Barcode ?? ""),
 
-                ("Lager",
+                (L["Warehouse"].Value,
                     x =>
                         x.WarehouseLocation?
                             .Warehouse?
                             .Name ?? "-"),
 
-                ("Lagerplatz",
+                (L["Location"].Value,
                     x =>
                         x.WarehouseLocation == null
                             ? "-"
@@ -1190,29 +1152,29 @@
                                 ? x.WarehouseLocation.Code
                                 : $"{x.WarehouseLocation.Code} - {x.WarehouseLocation.Name}"),
 
-                ("Bestand",
+                (L["StockQuantity"].Value,
                     x => x.Quantity),
 
-                ("Reserviert",
+                (L["Reserved"].Value,
                     x => x.ReservedQuantity),
 
-                ("Verfügbar",
+                (L["Available"].Value,
                     x => x.AvailableQuantity),
 
-                ("Mindestbestand",
+                (L["MinimumStock"].Value,
                     x =>
                         x.Product?.MinimumStock ?? 0),
 
-                ("Status",
+                (L["Status"].Value,
                     x =>
                         x.Quantity <= 0
-                            ? "Leer"
+                            ? L["Empty"].Value
                             : x.Quantity <
                               (x.Product?.MinimumStock ?? 0)
-                                ? "Niedrig"
+                                ? L["Low"].Value
                                 : x.AvailableQuantity <= 0
-                                    ? "Reserviert"
-                                    : "OK")
+                                    ? L["Reserved"].Value
+                                    : L["Ok"].Value)
             );
 
 
@@ -1224,7 +1186,7 @@
         await JS.InvokeVoidAsync(
             "downloadFile",
 
-            $"Bestand_Seite_{CurrentPage}.xlsx",
+            $"{L["Stock"].Value}_Seite_{CurrentPage}.xlsx",
 
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
@@ -1356,7 +1318,7 @@
                         null,
 
                     Note =
-                        "Bestand manuell auf 0 gesetzt.",
+                        L["StockManuallySetToZero"].Value,
 
                     UserId =
                         null,

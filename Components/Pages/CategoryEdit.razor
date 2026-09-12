@@ -1,21 +1,25 @@
 ﻿@page "/categories/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Kategorie bearbeiten</PageTitle>
+<PageTitle>@L["EditCategory"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Kategorie wird geladen...
+        @L["CategoryLoading"]
     </div>
 }
 else if (Category == null)
@@ -26,12 +30,12 @@ else if (Category == null)
             ⚠
         </div>
 
-        <h3>Kategorie nicht gefunden</h3>
+        <h3>@L["CategoryNotFound"]</h3>
 
         <a href="/categories"
            class="btn-primary">
 
-            Zurück zu Kategorien
+            @L["BackToCategories"]
 
         </a>
 
@@ -45,7 +49,7 @@ else
 
             <div>
 
-                <h1>Kategorie bearbeiten</h1>
+                <h1>@L["EditCategory"]</h1>
 
                 <p>
                     @Category.Name
@@ -56,7 +60,7 @@ else
             <a href="/categories"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
 
@@ -76,10 +80,10 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Kategorieinformationen</h2>
+                        <h2>@L["CategoryInformation"]</h2>
 
                         <p>
-                            Kategoriedaten bearbeiten.
+                            @L["EditCategoryData"]
                         </p>
 
                     </div>
@@ -92,7 +96,7 @@ else
                         <div class="form-group">
 
                             <label>
-                                Name <span>*</span>
+                                @L["Name"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.Name"
@@ -112,7 +116,7 @@ else
                                 <InputCheckbox @bind-Value="Model.IsActive" />
 
                                 <span>
-                                    Kategorie ist aktiv
+                                    @L["CategoryIsActive"]
                                 </span>
 
                             </label>
@@ -130,10 +134,10 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Beschreibung</h2>
+                        <h2>@L["Description"]</h2>
 
                         <p>
-                            Beschreibung der Kategorie.
+                            @L["CategoryDescription"]
                         </p>
 
                     </div>
@@ -163,7 +167,7 @@ else
                     <a href="/categories"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
 
@@ -172,8 +176,8 @@ else
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -250,7 +254,7 @@ else
             if (exists)
             {
                 ErrorMessage =
-                    "Diese Kategorie existiert bereits.";
+                    L["CategoryAlreadyExists"];
 
                 return;
             }
@@ -274,7 +278,7 @@ else
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -286,8 +290,10 @@ else
     private class CategoryModel
     {
         [Required(
-            ErrorMessage =
-                "Name ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "NameRequired")]
 
         [MaxLength(100)]
 

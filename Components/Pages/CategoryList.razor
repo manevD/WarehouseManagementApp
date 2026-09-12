@@ -4,17 +4,20 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
-@using WarehouseManagement.Data
-@using WarehouseManagement.Models
+@using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
+@using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+@using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
 
-<PageTitle>Kategorien</PageTitle>
+<PageTitle>@L["Categories"]</PageTitle>
 
 
 <div class="categories-page">
@@ -24,29 +27,36 @@
     <div class="page-header">
 
         <div>
-            <h1>Kategorien</h1>
+
+            <h1>
+                @L["Categories"]
+            </h1>
 
             <p>
-                Verwalten Sie Ihre Produktkategorien.
+                @L["ManageCategoriesDescription"]
             </p>
+
         </div>
 
 
         <div>
+
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedCategories.Count == 0)">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedCategories.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
+
 
             <a href="/categories/create"
                class="btn-primary">
 
                 <span>+</span>
 
-                Neue Kategorie
+                @L["NewCategory"]
 
             </a>
 
@@ -66,7 +76,7 @@
             </span>
 
             <input type="text"
-                   placeholder="Kategorie suchen..."
+                   placeholder="@L["SearchCategory"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -79,15 +89,15 @@
                 @bind:after="SearchChanged">
 
             <option value="all">
-                Alle Status
+                @L["AllStatuses"]
             </option>
 
             <option value="active">
-                Aktiv
+                @L["Active"]
             </option>
 
             <option value="inactive">
-                Inaktiv
+                @L["Inactive"]
             </option>
 
         </select>
@@ -104,11 +114,11 @@
             <div>
 
                 <strong>
-                    Kategorienliste
+                    @L["CategoryList"]
                 </strong>
 
                 <span>
-                    @Categories.Count Kategorien
+                    @L["CategoriesCount", Categories.Count]
                 </span>
 
             </div>
@@ -119,7 +129,7 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-                Kategorien werden geladen...
+                @L["CategoriesLoading"]
             </div>
         }
         else if (Categories.Count == 0)
@@ -131,17 +141,17 @@
                 </div>
 
                 <h3>
-                    Keine Kategorien gefunden
+                    @L["NoCategoriesFound"]
                 </h3>
 
                 <p>
-                    Es wurden noch keine Kategorien angelegt.
+                    @L["NoCategoriesCreated"]
                 </p>
 
                 <a href="/categories/create"
                    class="btn-primary">
 
-                    + Neue Kategorie
+                    + @L["NewCategory"]
 
                 </a>
 
@@ -158,22 +168,23 @@
                         <tr>
 
                             <th>
-                                Name
+                                @L["Name"]
                             </th>
 
                             <th>
-                                Beschreibung
+                                @L["Description"]
                             </th>
 
                             <th>
-                                Produkte
+                                @L["Products"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -194,11 +205,8 @@
                                     <div class="product-name">
 
                                         <div class="product-avatar">
-
                                             @GetInitials(category.Name)
-
                                         </div>
-
 
                                         <div>
 
@@ -239,9 +247,7 @@
                                 <td>
 
                                     <span class="category-count">
-
                                         @(category.Products?.Count ?? 0)
-
                                     </span>
 
                                 </td>
@@ -254,13 +260,13 @@
                                     @if (category.IsActive)
                                     {
                                         <span class="status-badge status-active">
-                                            Aktiv
+                                            @L["Active"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-inactive">
-                                            Inaktiv
+                                            @L["Inactive"]
                                         </span>
                                     }
 
@@ -275,7 +281,7 @@
 
                                         <a href="/categories/edit/@category.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
+                                           title="@L["Edit"]">
 
                                             ✎
 
@@ -285,7 +291,7 @@
                                         @if (category.IsActive)
                                         {
                                             <button class="action-button delete-button"
-                                                    title="Deaktivieren"
+                                                    title="@L["Deactivate"]"
                                                     @onclick="() => ConfirmDelete(category)">
 
                                                 🗑
@@ -324,7 +330,9 @@
 
                     <div class="pagination-pages">
 
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @for (int page = 1;
+                              page <= TotalPages;
+                              page++)
                         {
                             var pageNumber = page;
 
@@ -355,9 +363,13 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                ·
-                @PagedCategories.Count von @Categories.Count Kategorien
+                @L[
+                    "CategoryPaginationInfo",
+                    CurrentPage,
+                    TotalPages,
+                    PagedCategories.Count,
+                    Categories.Count
+                ]
 
             </div>
         }
@@ -378,28 +390,20 @@
 
 
                 <h3>
-                    Kategorie deaktivieren?
+                    @L["DeactivateCategoryQuestion"]
                 </h3>
 
 
                 <p>
-
-                    Möchten Sie
-
-                    <strong>
-                        @CategoryToDelete.Name
-                    </strong>
-
-                    wirklich deaktivieren?
-
+                    @L[
+                        "DeactivateCategoryText",
+                        CategoryToDelete.Name
+                    ]
                 </p>
 
 
                 <small>
-
-                    Die Kategorie wird nicht gelöscht.
-                    Sie wird nur als inaktiv markiert.
-
+                    @L["CategoryWillNotBeDeleted"]
                 </small>
 
 
@@ -407,10 +411,12 @@
                 {
                     <div class="form-error">
 
-                        Diese Kategorie enthält
-                        @CategoryToDelete.Products.Count Produkt(e).
+                        @L[
+                            "CategoryContainsProducts",
+                            CategoryToDelete.Products.Count
+                        ]
 
-                        Die Kategorie kann trotzdem deaktiviert werden.
+                        @L["CategoryCanStillBeDeactivated"]
 
                     </div>
                 }
@@ -421,7 +427,7 @@
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </button>
 
@@ -429,7 +435,7 @@
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
 
-                        Deaktivieren
+                        @L["Deactivate"]
 
                     </button>
 
@@ -620,7 +626,8 @@
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string name)
+    private string GetInitials(
+        string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -735,21 +742,32 @@
 
                 "Kategorien",
 
-                $"Kategorien – Seite {CurrentPage}",
+                L[
+                    "CategoriesExportTitle",
+                    CurrentPage
+                ].Value,
 
-                ("Name",
-                    x => x.Name ?? ""),
+                (
+                    L["Name"].Value,
+                    x => x.Name ?? ""
+                ),
 
-                ("Beschreibung",
-                    x => x.Description ?? ""),
+                (
+                    L["Description"].Value,
+                    x => x.Description ?? ""
+                ),
 
-                ("Produkte",
-                    x => x.Products?.Count ?? 0),
+                (
+                    L["Products"].Value,
+                    x => x.Products?.Count ?? 0
+                ),
 
-                ("Status",
+                (
+                    L["Status"].Value,
                     x => x.IsActive
-                        ? "Aktiv"
-                        : "Inaktiv")
+                        ? L["Active"].Value
+                        : L["Inactive"].Value
+                )
             );
 
 

@@ -1,21 +1,25 @@
 ﻿@page "/stock/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestand bearbeiten</PageTitle>
+<PageTitle>@L["EditStock"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Bestand wird geladen...
+        @L["StockLoading"]
     </div>
 }
 else if (Stock == null)
@@ -26,10 +30,10 @@ else if (Stock == null)
             ⚠
         </div>
 
-        <h3>Bestand nicht gefunden</h3>
+        <h3>@L["StockNotFound"]</h3>
 
         <a href="/stock" class="btn-primary">
-            Zurück zu Bestand
+            @L["BackToStock"]
         </a>
 
     </div>
@@ -42,7 +46,7 @@ else
 
             <div>
 
-                <h1>Bestand bearbeiten</h1>
+                <h1>@L["EditStock"]</h1>
 
                 <p>
                     @Stock.Product?.Name
@@ -55,7 +59,7 @@ else
             <a href="/stock"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
 
@@ -75,11 +79,10 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Bestandskorrektur</h2>
+                        <h2>@L["StockCorrection"]</h2>
 
                         <p>
-                            Ändern Sie die aktuelle Bestandsmenge.
-                            Eine Korrekturbewegung wird automatisch erstellt.
+                            @L["StockCorrectionDescription"]
                         </p>
 
                     </div>
@@ -91,7 +94,7 @@ else
 
                         <div class="form-group">
 
-                            <label>Produkt</label>
+                            <label>@L["Product"]</label>
 
                             <input class="form-control"
                                    value="@Stock.Product?.Name"
@@ -104,7 +107,7 @@ else
 
                         <div class="form-group">
 
-                            <label>Lagerplatz</label>
+                            <label>@L["Location"]</label>
 
                             <input class="form-control"
                                    value="@($"{Stock.WarehouseLocation?.Code} - {Stock.WarehouseLocation?.Name}")"
@@ -117,7 +120,7 @@ else
 
                         <div class="form-group">
 
-                            <label>Aktueller Bestand</label>
+                            <label>@L["CurrentStock"]</label>
 
                             <input class="form-control"
                                    value="@Stock.Quantity.ToString("N2")"
@@ -131,7 +134,7 @@ else
                         <div class="form-group">
 
                             <label>
-                                Neuer Bestand <span>*</span>
+                                @L["NewStock"] <span>*</span>
                             </label>
 
                             <InputNumber @bind-Value="Model.Quantity"
@@ -152,10 +155,10 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Begründung</h2>
+                        <h2>@L["Reason"]</h2>
 
                         <p>
-                            Grund für die Bestandskorrektur.
+                            @L["StockCorrectionReason"]
                         </p>
 
                     </div>
@@ -163,12 +166,12 @@ else
 
                     <div class="form-group">
 
-                        <label>Notiz</label>
+                        <label>@L["Note"]</label>
 
                         <InputTextArea @bind-Value="Model.Note"
                                        class="form-control textarea"
                                        rows="4"
-                                       placeholder="Grund der Korrektur..." />
+                                       placeholder="@L["CorrectionReasonPlaceholder"]" />
 
                     </div>
 
@@ -188,7 +191,7 @@ else
                     <a href="/stock"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
 
@@ -197,8 +200,8 @@ else
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Bestand speichern")
+                            ? L["Saving"]
+                            : L["SaveStock"])
 
                     </button>
 
@@ -216,6 +219,7 @@ else
 
     [Parameter]
     public int Id { get; set; }
+
 
     private Stock? Stock;
 
@@ -241,7 +245,8 @@ else
 
         if (Stock != null)
         {
-            Model.Quantity = Stock.Quantity;
+            Model.Quantity =
+                Stock.Quantity;
         }
 
         IsLoading = false;
@@ -267,15 +272,17 @@ else
             if (stock == null)
             {
                 ErrorMessage =
-                    "Bestand nicht gefunden.";
+                    L["StockNotFound"];
 
                 return;
             }
 
 
-            var oldQuantity = stock.Quantity;
+            var oldQuantity =
+                stock.Quantity;
 
-            var newQuantity = Model.Quantity;
+            var newQuantity =
+                Model.Quantity;
 
             var difference =
                 newQuantity - oldQuantity;
@@ -283,44 +290,57 @@ else
 
             if (difference != 0)
             {
-                var movement = new StockMovement
-                {
-                    ProductId = stock.ProductId,
+                var movement =
+                    new StockMovement
+                    {
+                        ProductId =
+                            stock.ProductId,
 
-                    Quantity = Math.Abs(difference),
+                        Quantity =
+                            Math.Abs(difference),
 
-                    Type = StockMovementType.Korrektur,
+                        Type =
+                            StockMovementType.Korrektur,
 
-                    FromWarehouseLocationId =
-                        difference < 0
-                            ? stock.WarehouseLocationId
-                            : null,
+                        FromWarehouseLocationId =
+                            difference < 0
+                                ? stock.WarehouseLocationId
+                                : null,
 
-                    ToWarehouseLocationId =
-                        difference > 0
-                            ? stock.WarehouseLocationId
-                            : null,
+                        ToWarehouseLocationId =
+                            difference > 0
+                                ? stock.WarehouseLocationId
+                                : null,
 
-                    Note = string.IsNullOrWhiteSpace(Model.Note)
-                        ? "Manuelle Bestandskorrektur."
-                        : Model.Note.Trim(),
+                        Note =
+                            string.IsNullOrWhiteSpace(
+                                Model.Note)
+                                ? L["ManualStockCorrection"].Value
+                                : Model.Note.Trim(),
 
-                    CreatedAt = DateTime.UtcNow
-                };
+                        CreatedAt =
+                            DateTime.UtcNow
+                    };
 
-                db.StockMovements.Add(movement);
+                db.StockMovements.Add(
+                    movement);
             }
 
 
-            stock.Quantity = newQuantity;
+            stock.Quantity =
+                newQuantity;
 
-            if (stock.ReservedQuantity > stock.Quantity)
+
+            if (stock.ReservedQuantity >
+                stock.Quantity)
             {
                 stock.ReservedQuantity =
                     stock.Quantity;
             }
 
-            stock.UpdatedAt = DateTime.UtcNow;
+
+            stock.UpdatedAt =
+                DateTime.UtcNow;
 
 
             await db.SaveChangesAsync();
@@ -330,7 +350,7 @@ else
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -344,8 +364,11 @@ else
         [Range(
             0,
             double.MaxValue,
-            ErrorMessage =
-                "Bestand darf nicht negativ sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "StockCannotBeNegative")]
+
         public decimal Quantity { get; set; }
 
 

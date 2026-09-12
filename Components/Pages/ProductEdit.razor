@@ -1,31 +1,44 @@
 ﻿@page "/products/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Produkt bearbeiten</PageTitle>
+<PageTitle>@L["EditProduct"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Produkt wird geladen...
+        @L["ProductLoading"]
     </div>
 }
 else if (Product == null)
 {
     <div class="empty-products">
-        <div class="empty-products-icon">⚠</div>
-        <h3>Produkt nicht gefunden</h3>
-        <a href="/products" class="btn-primary">
-            Zurück zu Produkte
+
+        <div class="empty-products-icon">
+            ⚠
+        </div>
+
+        <h3>@L["ProductNotFound"]</h3>
+
+        <a href="/products"
+           class="btn-primary">
+
+            @L["BackToProducts"]
+
         </a>
+
     </div>
 }
 else
@@ -35,15 +48,22 @@ else
         <div class="page-header">
 
             <div>
-                <h1>Produkt bearbeiten</h1>
+
+                <h1>@L["EditProduct"]</h1>
+
                 <p>@Product.Name</p>
+
             </div>
 
-            <a href="/products" class="btn-secondary">
-                ← Zurück
+            <a href="/products"
+               class="btn-secondary">
+
+                ← @L["Back"]
+
             </a>
 
         </div>
+
 
         <div class="form-card">
 
@@ -53,20 +73,28 @@ else
 
                 <DataAnnotationsValidator />
 
+
                 <div class="form-section">
 
                     <div class="form-section-title">
-                        <h2>Produktinformationen</h2>
-                        <p>Produktdaten bearbeiten.</p>
+
+                        <h2>@L["ProductInformation"]</h2>
+
+                        <p>
+                            @L["EditProductData"]
+                        </p>
+
                     </div>
+
 
                     <div class="form-grid">
 
                         <!-- SKU -->
+
                         <div class="form-group">
 
                             <label>
-                                SKU <span>*</span>
+                                @L["SKU"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.SKU"
@@ -78,10 +106,11 @@ else
 
 
                         <!-- NAME -->
+
                         <div class="form-group">
 
                             <label>
-                                Produktname <span>*</span>
+                                @L["ProductName"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.Name"
@@ -93,15 +122,16 @@ else
 
 
                         <!-- CATEGORY -->
+
                         <div class="form-group">
 
-                            <label>Kategorie</label>
+                            <label>@L["Category"]</label>
 
                             <InputSelect @bind-Value="Model.CategoryId"
                                          class="form-control">
 
                                 <option value="">
-                                    Keine Kategorie
+                                    @L["NoCategory"]
                                 </option>
 
                                 @foreach (var category in Categories)
@@ -117,9 +147,10 @@ else
 
 
                         <!-- BARCODE -->
+
                         <div class="form-group">
 
-                            <label>Barcode</label>
+                            <label>@L["Barcode"]</label>
 
                             <InputText @bind-Value="Model.Barcode"
                                        class="form-control" />
@@ -128,9 +159,10 @@ else
 
 
                         <!-- PURCHASE PRICE -->
+
                         <div class="form-group">
 
-                            <label>Einkaufspreis</label>
+                            <label>@L["PurchasePrice"]</label>
 
                             <div class="input-with-suffix">
 
@@ -146,9 +178,10 @@ else
 
 
                         <!-- SALE PRICE -->
+
                         <div class="form-group">
 
-                            <label>Verkaufspreis</label>
+                            <label>@L["SalePrice"]</label>
 
                             <div class="input-with-suffix">
 
@@ -164,9 +197,10 @@ else
 
 
                         <!-- MINIMUM STOCK -->
+
                         <div class="form-group">
 
-                            <label>Mindestbestand</label>
+                            <label>@L["MinimumStock"]</label>
 
                             <InputNumber @bind-Value="Model.MinimumStock"
                                          class="form-control"
@@ -176,6 +210,7 @@ else
 
 
                         <!-- ACTIVE -->
+
                         <div class="form-group checkbox-group">
 
                             <label class="checkbox-label">
@@ -183,7 +218,7 @@ else
                                 <InputCheckbox @bind-Value="Model.IsActive" />
 
                                 <span>
-                                    Artikel ist aktiv
+                                    @L["ProductIsActive"]
                                 </span>
 
                             </label>
@@ -196,17 +231,19 @@ else
 
 
                 <!-- DESCRIPTION -->
+
                 <div class="form-section">
 
                     <div class="form-section-title">
 
-                        <h2>Beschreibung</h2>
+                        <h2>@L["Description"]</h2>
 
                         <p>
-                            Optionale Beschreibung des Artikels.
+                            @L["OptionalProductDescription"]
                         </p>
 
                     </div>
+
 
                     <div class="form-group">
 
@@ -231,7 +268,9 @@ else
 
                     <a href="/products"
                        class="btn-secondary">
-                        Abbrechen
+
+                        @L["Cancel"]
+
                     </a>
 
                     <button type="submit"
@@ -239,8 +278,8 @@ else
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -258,6 +297,7 @@ else
 
     [Parameter]
     public int Id { get; set; }
+
 
     private Product? Product;
 
@@ -323,7 +363,7 @@ else
             if (skuExists)
             {
                 ErrorMessage =
-                    "Diese SKU ist bereits vorhanden.";
+                    L["SkuAlreadyExists"];
 
                 return;
             }
@@ -341,7 +381,7 @@ else
                 if (barcodeExists)
                 {
                     ErrorMessage =
-                        "Dieser Barcode ist bereits vorhanden.";
+                        L["BarcodeAlreadyExists"];
 
                     return;
                 }
@@ -383,7 +423,7 @@ else
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -395,15 +435,25 @@ else
     private class ProductModel
     {
         [Required(
-            ErrorMessage = "SKU ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "SkuRequired")]
+
         [MaxLength(50)]
-        public string SKU { get; set; } = string.Empty;
+        public string SKU { get; set; }
+            = string.Empty;
 
 
         [Required(
-            ErrorMessage = "Produktname ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "ProductNameRequired")]
+
         [MaxLength(200)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
+            = string.Empty;
 
 
         public int? CategoryId { get; set; }

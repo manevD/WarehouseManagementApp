@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
 
 <div class="app-layout">
 
@@ -27,32 +28,132 @@
 
                 <div class="language-switcher">
 
-                    <button type="button"
-                            class="language-button active"
-                            title="Deutsch">
+                    <!-- DEUTSCH -->
 
-                        <span class="language-flag">🇩🇪</span>
-                        <span class="language-name">Deutsch</span>
+                    <form action="/Account/SetLanguage"
+                          method="post">
 
-                    </button>
+                        <AntiforgeryToken />
 
-                    <button type="button"
-                            class="language-button"
-                            title="Mazedonisch">
+                        <input type="hidden"
+                               name="culture"
+                               value="de" />
 
-                        <span class="language-flag">🇲🇰</span>
-                        <span class="language-name">Македонски</span>
+                        <input type="hidden"
+                               name="returnUrl"
+                               value="@GetReturnUrl()" />
 
-                    </button>
+                        <button type="submit"
+                                class="language-button @(IsCurrentCulture("de") ? "active" : "")"
+                                title="Deutsch">
 
-                    <button type="button"
-                            class="language-button"
-                            title="Kroatisch">
+                            <span class="language-flag">
+                                🇩🇪
+                            </span>
 
-                        <span class="language-flag">🇭🇷</span>
-                        <span class="language-name">Hrvatski</span>
+                            <span class="language-name">
+                                Deutsch
+                            </span>
 
-                    </button>
+                        </button>
+
+                    </form>
+
+
+                    <!-- MAKEDONISCH -->
+
+                    <form action="/Account/SetLanguage"
+                          method="post">
+
+                        <AntiforgeryToken />
+
+                        <input type="hidden"
+                               name="culture"
+                               value="mk" />
+
+                        <input type="hidden"
+                               name="returnUrl"
+                               value="@GetReturnUrl()" />
+
+                        <button type="submit"
+                                class="language-button @(IsCurrentCulture("mk") ? "active" : "")"
+                                title="Mazedonisch">
+
+                            <span class="language-flag">
+                                🇲🇰
+                            </span>
+
+                            <span class="language-name">
+                                Македонски
+                            </span>
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- KROATISCH -->
+
+                    <form action="/Account/SetLanguage"
+                          method="post">
+
+                        <AntiforgeryToken />
+
+                        <input type="hidden"
+                               name="culture"
+                               value="hr" />
+
+                        <input type="hidden"
+                               name="returnUrl"
+                               value="@GetReturnUrl()" />
+
+                        <button type="submit"
+                                class="language-button @(IsCurrentCulture("hr") ? "active" : "")"
+                                title="Kroatisch">
+
+                            <span class="language-flag">
+                                🇭🇷
+                            </span>
+
+                            <span class="language-name">
+                                Hrvatski
+                            </span>
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- ENGLISH -->
+
+                    <form action="/Account/SetLanguage"
+                          method="post">
+
+                        <AntiforgeryToken />
+
+                        <input type="hidden"
+                               name="culture"
+                               value="en" />
+
+                        <input type="hidden"
+                               name="returnUrl"
+                               value="@GetReturnUrl()" />
+
+                        <button type="submit"
+                                class="language-button @(IsCurrentCulture("en") ? "active" : "")"
+                                title="English">
+
+                            <span class="language-flag">
+                                🇬🇧
+                            </span>
+
+                            <span class="language-name">
+                                English
+                            </span>
+
+                        </button>
+
+                    </form>
 
                 </div>
 
@@ -76,8 +177,13 @@
                             <button type="submit"
                                     class="logout-button">
 
-                                <span class="logout-icon">↪</span>
-                                <span>Abmelden</span>
+                                <span class="logout-icon">
+                                    ↪
+                                </span>
+
+                                <span>
+                                    Abmelden
+                                </span>
 
                             </button>
 
@@ -118,3 +224,36 @@
     </span>
 
 </div>
+
+
+@code {
+
+    private string GetReturnUrl()
+    {
+        var uri = new Uri(Navigation.Uri);
+
+        var returnUrl =
+            uri.PathAndQuery;
+
+        if (string.IsNullOrWhiteSpace(returnUrl))
+        {
+            return "/";
+        }
+
+        return returnUrl;
+    }
+
+
+    private bool IsCurrentCulture(
+        string culture)
+    {
+        return
+            System.Globalization
+                .CultureInfo
+                .CurrentUICulture
+                .Name
+                .StartsWith(
+                    culture,
+                    StringComparison.OrdinalIgnoreCase);
+    }
+}

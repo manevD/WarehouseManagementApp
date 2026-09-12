@@ -420,4 +420,532 @@
   <data name="ErrorCompletingInventory" xml:space="preserve">
     <value>Inventuru nije moguće završiti: {0}</value>
   </data>
+  <data name="Warehouse" xml:space="preserve">
+    <value>Skladište</value>
+  </data>
+  <data name="DashboardOverviewDescription" xml:space="preserve">
+    <value>Pregled vaše zalihe.</value>
+  </data>
+  <data name="DashboardLoading" xml:space="preserve">
+    <value>Nadzorna ploča se učitava...</value>
+  </data>
+  <data name="TotalStock" xml:space="preserve">
+    <value>Ukupna zaliha</value>
+  </data>
+  <data name="LowStock" xml:space="preserve">
+    <value>Niska zaliha</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>Brze akcije</value>
+  </data>
+  <data name="FrequentlyUsedWarehouseActions" xml:space="preserve">
+    <value>Često korištene skladišne radnje.</value>
+  </data>
+  <data name="BookGoodsIntoStock" xml:space="preserve">
+    <value>Zaprimite robu u skladište</value>
+  </data>
+  <data name="BookGoodsOutOfStock" xml:space="preserve">
+    <value>Izdajte robu iz skladišta</value>
+  </data>
+  <data name="MoveStock" xml:space="preserve">
+    <value>Premjesti zalihu</value>
+  </data>
+  <data name="ShowCurrentStock" xml:space="preserve">
+    <value>Prikaži trenutnu zalihu</value>
+  </data>
+  <data name="ProductsBelowMinimumStock" xml:space="preserve">
+    <value>Proizvodi ispod minimalne zalihe.</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Prikaži sve</value>
+  </data>
+  <data name="EverythingOK" xml:space="preserve">
+    <value>Sve je u redu</value>
+  </data>
+  <data name="NoProductsBelowMinimumStock" xml:space="preserve">
+    <value>Nema proizvoda ispod minimalne zalihe.</value>
+  </data>
+  <data name="MinimumStockShort" xml:space="preserve">
+    <value>Min.</value>
+  </data>
+  <data name="RecentMovements" xml:space="preserve">
+    <value>Posljednja kretanja</value>
+  </data>
+  <data name="RecentWarehouseMovements" xml:space="preserve">
+    <value>Posljednja skladišna kretanja.</value>
+  </data>
+  <data name="NoMovements" xml:space="preserve">
+    <value>Nema kretanja</value>
+  </data>
+  <data name="NoWarehouseMovementsYet" xml:space="preserve">
+    <value>Još nema skladišnih kretanja.</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Pregled</value>
+  </data>
+  <data name="CurrentSystemOverview" xml:space="preserve">
+    <value>Trenutni pregled sustava.</value>
+  </data>
+  <data name="ActiveProductsCount" xml:space="preserve">
+    <value>{0} aktivnih proizvoda</value>
+  </data>
+  <data name="ActiveCategoriesCount" xml:space="preserve">
+    <value>{0} aktivnih kategorija</value>
+  </data>
+  <data name="ActiveWarehousesCount" xml:space="preserve">
+    <value>{0} aktivnih skladišta</value>
+  </data>
+  <data name="ActiveLocationsCount" xml:space="preserve">
+    <value>{0} aktivnih lokacija</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Nepoznato</value>
+  </data>
+  <data name="Correction" xml:space="preserve">
+    <value>Korekcija</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Kretanje</value>
+  </data>
+  <data name="ManageProductsDescription" xml:space="preserve">
+    <value>Upravljajte svojim proizvodima i artiklima.</value>
+  </data>
+  <data name="ExportExcel" xml:space="preserve">
+    <value>Izvezi u Excel</value>
+  </data>
+  <data name="NewProduct" xml:space="preserve">
+    <value>Novi artikl</value>
+  </data>
+  <data name="SearchProduct" xml:space="preserve">
+    <value>Pretraži proizvod...</value>
+  </data>
+  <data name="AllCategories" xml:space="preserve">
+    <value>Sve kategorije</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>Svi statusi</value>
+  </data>
+  <data name="ProductList" xml:space="preserve">
+    <value>Popis proizvoda</value>
+  </data>
+  <data name="ProductsCount" xml:space="preserve">
+    <value>{0} proizvoda</value>
+  </data>
+  <data name="ProductsLoading" xml:space="preserve">
+    <value>Proizvodi se učitavaju...</value>
+  </data>
+  <data name="NoProductsFound" xml:space="preserve">
+    <value>Nisu pronađeni proizvodi</value>
+  </data>
+  <data name="SKU" xml:space="preserve">
+    <value>SKU</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Kategorija</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Barkod</value>
+  </data>
+  <data name="SalePrice" xml:space="preserve">
+    <value>Prodajna cijena</value>
+  </data>
+  <data name="PurchasePrice" xml:space="preserve">
+    <value>Nabavna cijena</value>
+  </data>
+  <data name="MinimumStock" xml:space="preserve">
+    <value>Minimalna zaliha</value>
+  </data>
+  <data name="PaginationInfo" xml:space="preserve">
+    <value>Stranica {0} od {1} · {2} od {3} proizvoda</value>
+  </data>
+  <data name="DeactivateProductQuestion" xml:space="preserve">
+    <value>Deaktivirati proizvod?</value>
+  </data>
+  <data name="DeactivateProductText" xml:space="preserve">
+    <value>Želite li stvarno „{0}“ deaktivirati?</value>
+  </data>
+  <data name="ProductWillNotBeDeleted" xml:space="preserve">
+    <value>Artikl neće biti izbrisan. Samo će biti označen kao neaktivan.</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deaktiviraj</value>
+  </data>
+  <data name="ProductsExportTitle" xml:space="preserve">
+    <value>Proizvodi – Stranica {0}</value>
+  </data>
+  <data name="ManageCategoriesDescription" xml:space="preserve">
+    <value>Upravljajte svojim kategorijama proizvoda.</value>
+  </data>
+  <data name="NewCategory" xml:space="preserve">
+    <value>Nova kategorija</value>
+  </data>
+  <data name="SearchCategory" xml:space="preserve">
+    <value>Pretraži kategoriju...</value>
+  </data>
+  <data name="CategoryList" xml:space="preserve">
+    <value>Popis kategorija</value>
+  </data>
+  <data name="CategoriesCount" xml:space="preserve">
+    <value>{0} kategorija</value>
+  </data>
+  <data name="CategoriesLoading" xml:space="preserve">
+    <value>Kategorije se učitavaju...</value>
+  </data>
+  <data name="NoCategoriesFound" xml:space="preserve">
+    <value>Nisu pronađene kategorije</value>
+  </data>
+  <data name="NoCategoriesCreated" xml:space="preserve">
+    <value>Još nema kreiranih kategorija.</value>
+  </data>
+  <data name="CategoryPaginationInfo" xml:space="preserve">
+    <value>Stranica {0} od {1} · {2} od {3} kategorija</value>
+  </data>
+  <data name="DeactivateCategoryQuestion" xml:space="preserve">
+    <value>Deaktivirati kategoriju?</value>
+  </data>
+  <data name="DeactivateCategoryText" xml:space="preserve">
+    <value>Želite li stvarno deaktivirati „{0}“?</value>
+  </data>
+  <data name="CategoryWillNotBeDeleted" xml:space="preserve">
+    <value>Kategorija neće biti izbrisana. Samo će biti označena kao neaktivna.</value>
+  </data>
+  <data name="CategoryContainsProducts" xml:space="preserve">
+    <value>Ova kategorija sadrži {0} proizvod(a).</value>
+  </data>
+  <data name="CategoryCanStillBeDeactivated" xml:space="preserve">
+    <value>Kategorija se ipak može deaktivirati.</value>
+  </data>
+  <data name="CategoriesExportTitle" xml:space="preserve">
+    <value>Kategorije – Stranica {0}</value>
+  </data>
+  <data name="EditCategory" xml:space="preserve">
+    <value>Uredi kategoriju</value>
+  </data>
+  <data name="CategoryLoading" xml:space="preserve">
+    <value>Kategorija se učitava...</value>
+  </data>
+  <data name="CategoryNotFound" xml:space="preserve">
+    <value>Kategorija nije pronađena</value>
+  </data>
+  <data name="BackToCategories" xml:space="preserve">
+    <value>Natrag na kategorije</value>
+  </data>
+  <data name="CategoryInformation" xml:space="preserve">
+    <value>Informacije o kategoriji</value>
+  </data>
+  <data name="EditCategoryData" xml:space="preserve">
+    <value>Uredite podatke kategorije.</value>
+  </data>
+  <data name="CategoryIsActive" xml:space="preserve">
+    <value>Kategorija je aktivna</value>
+  </data>
+  <data name="CategoryDescription" xml:space="preserve">
+    <value>Opis kategorije.</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Spremi promjene</value>
+  </data>
+  <data name="CategoryAlreadyExists" xml:space="preserve">
+    <value>Ova kategorija već postoji.</value>
+  </data>
+  <data name="ErrorSaving" xml:space="preserve">
+    <value>Greška pri spremanju: {0}</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Naziv je obavezan.</value>
+  </data>
+  <data name="CreateNewProductCategory" xml:space="preserve">
+    <value>Izradite novu kategoriju proizvoda.</value>
+  </data>
+  <data name="BasicCategoryInformation" xml:space="preserve">
+    <value>Osnovne informacije o kategoriji.</value>
+  </data>
+  <data name="CategoryNamePlaceholder" xml:space="preserve">
+    <value>npr. Pića</value>
+  </data>
+  <data name="OptionalCategoryDescription" xml:space="preserve">
+    <value>Neobavezni opis kategorije.</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Opis...</value>
+  </data>
+  <data name="SaveCategory" xml:space="preserve">
+    <value>Spremi kategoriju</value>
+  </data>
+  <data name="EditProduct" xml:space="preserve">
+    <value>Uredi proizvod</value>
+  </data>
+  <data name="ProductLoading" xml:space="preserve">
+    <value>Proizvod se učitava...</value>
+  </data>
+  <data name="ProductNotFound" xml:space="preserve">
+    <value>Proizvod nije pronađen</value>
+  </data>
+  <data name="BackToProducts" xml:space="preserve">
+    <value>Natrag na proizvode</value>
+  </data>
+  <data name="ProductInformation" xml:space="preserve">
+    <value>Informacije o proizvodu</value>
+  </data>
+  <data name="EditProductData" xml:space="preserve">
+    <value>Uredite podatke proizvoda.</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>Naziv proizvoda</value>
+  </data>
+  <data name="NoCategory" xml:space="preserve">
+    <value>Bez kategorije</value>
+  </data>
+  <data name="ProductIsActive" xml:space="preserve">
+    <value>Proizvod je aktivan</value>
+  </data>
+  <data name="OptionalProductDescription" xml:space="preserve">
+    <value>Neobavezni opis proizvoda.</value>
+  </data>
+  <data name="SkuAlreadyExists" xml:space="preserve">
+    <value>This SKU already exists.</value>
+  </data>
+  <data name="BarcodeAlreadyExists" xml:space="preserve">
+    <value>Ovaj barkod već postoji.</value>
+  </data>
+  <data name="SkuRequired" xml:space="preserve">
+    <value>SKU je obavezan.</value>
+  </data>
+  <data name="ProductNameRequired" xml:space="preserve">
+    <value>Naziv proizvoda je obavezan.</value>
+  </data>
+  <data name="CreateNewProduct" xml:space="preserve">
+    <value>Izradite novi proizvod u sustavu.</value>
+  </data>
+  <data name="BasicProductInformation" xml:space="preserve">
+    <value>Osnovne informacije o proizvodu.</value>
+  </data>
+  <data name="ProductNamePlaceholder" xml:space="preserve">
+    <value>Unesite naziv proizvoda</value>
+  </data>
+  <data name="SkuPlaceholder" xml:space="preserve">
+    <value>npr. ART-10001</value>
+  </data>
+  <data name="SelectCategory" xml:space="preserve">
+    <value>Odaberite kategoriju</value>
+  </data>
+  <data name="BarcodePlaceholder" xml:space="preserve">
+    <value>EAN / Barkod</value>
+  </data>
+  <data name="MinimumStockWarning" xml:space="preserve">
+    <value>Upozorenje kada zaliha padne ispod ove vrijednosti.</value>
+  </data>
+  <data name="ProductDescriptionPlaceholder" xml:space="preserve">
+    <value>Opis proizvoda...</value>
+  </data>
+  <data name="SaveProduct" xml:space="preserve">
+    <value>Spremi proizvod</value>
+  </data>
+  <data name="PriceMustBePositive" xml:space="preserve">
+    <value>Cijena mora biti pozitivna.</value>
+  </data>
+  <data name="MinimumStockMustBePositive" xml:space="preserve">
+    <value>Minimalna zaliha mora biti pozitivna.</value>
+  </data>
+  <data name="CurrentStockOverview" xml:space="preserve">
+    <value>Pregled trenutne zalihe.</value>
+  </data>
+  <data name="SearchProductSkuBarcode" xml:space="preserve">
+    <value>Pretraži proizvod, SKU ili barkod...</value>
+  </data>
+  <data name="AllWarehouses" xml:space="preserve">
+    <value>Sva skladišta</value>
+  </data>
+  <data name="AllStockStatuses" xml:space="preserve">
+    <value>Sve zalihe</value>
+  </data>
+  <data name="StockOk" xml:space="preserve">
+    <value>Zaliha je u redu</value>
+  </data>
+  <data name="AvailableStock" xml:space="preserve">
+    <value>Dostupna zaliha</value>
+  </data>
+  <data name="NoStock" xml:space="preserve">
+    <value>Nema zalihe</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Artikli</value>
+  </data>
+  <data name="Reserved" xml:space="preserve">
+    <value>Rezervirano</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Dostupno</value>
+  </data>
+  <data name="StockList" xml:space="preserve">
+    <value>Popis zalihe</value>
+  </data>
+  <data name="EntriesCount" xml:space="preserve">
+    <value>{0} stavki</value>
+  </data>
+  <data name="StockLoading" xml:space="preserve">
+    <value>Zaliha se učitava...</value>
+  </data>
+  <data name="NoStockFound" xml:space="preserve">
+    <value>Zaliha nije pronađena</value>
+  </data>
+  <data name="NoStockForCurrentFilters" xml:space="preserve">
+    <value>Za trenutne filtre nisu pronađeni podaci o zalihi.</value>
+  </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Prazno</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Nisko</value>
+  </data>
+  <data name="EditStock" xml:space="preserve">
+    <value>Uredi zalihu</value>
+  </data>
+  <data name="SetStockToZero" xml:space="preserve">
+    <value>Postavi zalihu na 0</value>
+  </data>
+  <data name="SetStockToZeroQuestion" xml:space="preserve">
+    <value>Postaviti zalihu na 0?</value>
+  </data>
+  <data name="SetStockToZeroTextStart" xml:space="preserve">
+    <value>Želite li zalihu proizvoda {0} stvarno postaviti na 0?</value>
+  </data>
+  <data name="StockNotDeletedCorrectionCreated" xml:space="preserve">
+    <value>Zaliha neće biti izbrisana. Kreirat će se korektivno kretanje.</value>
+  </data>
+  <data name="PageInfo" xml:space="preserve">
+    <value>Stranica {0} od {1}</value>
+  </data>
+  <data name="EntriesInfo" xml:space="preserve">
+    <value>{0} od {1} stavki</value>
+  </data>
+  <data name="StockManuallySetToZero" xml:space="preserve">
+    <value>Zaliha je ručno postavljena na 0.</value>
+  </data>
+  <data name="StockQuantity" xml:space="preserve">
+    <value>Zaliha</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>U redu</value>
+  </data>
+  <data name="StockNotFound" xml:space="preserve">
+    <value>Zaliha nije pronađena.</value>
+  </data>
+  <data name="BackToStock" xml:space="preserve">
+    <value>Natrag na zalihu</value>
+  </data>
+  <data name="StockCorrection" xml:space="preserve">
+    <value>Korekcija zalihe</value>
+  </data>
+  <data name="StockCorrectionDescription" xml:space="preserve">
+    <value>Promijenite trenutnu količinu zalihe. Korektivno kretanje će se automatski kreirati.</value>
+  </data>
+  <data name="CurrentStock" xml:space="preserve">
+    <value>Trenutna zaliha</value>
+  </data>
+  <data name="NewStock" xml:space="preserve">
+    <value>Nova zaliha</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Razlog</value>
+  </data>
+  <data name="StockCorrectionReason" xml:space="preserve">
+    <value>Razlog korekcije zalihe.</value>
+  </data>
+  <data name="CorrectionReasonPlaceholder" xml:space="preserve">
+    <value>Razlog korekcije...</value>
+  </data>
+  <data name="SaveStock" xml:space="preserve">
+    <value>Spremi zalihu</value>
+  </data>
+  <data name="ManualStockCorrection" xml:space="preserve">
+    <value>Ručna korekcija zalihe.</value>
+  </data>
+  <data name="StockCannotBeNegative" xml:space="preserve">
+    <value>Zaliha ne smije biti negativna.</value>
+  </data>
+  <data name="CorrectStock" xml:space="preserve">
+    <value>Ispravi zalihu</value>
+  </data>
+  <data name="SelectProductAndLocation" xml:space="preserve">
+    <value>Odaberite proizvod i skladišnu lokaciju.</value>
+  </data>
+  <data name="SelectProduct" xml:space="preserve">
+    <value>Odaberite proizvod</value>
+  </data>
+  <data name="SelectWarehouse" xml:space="preserve">
+    <value>Odaberite skladište</value>
+  </data>
+  <data name="SelectLocation" xml:space="preserve">
+    <value>Odaberite skladišnu lokaciju</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Referenca</value>
+  </data>
+  <data name="CorrectionReasonAndReference" xml:space="preserve">
+    <value>Razlog i referenca korekcije.</value>
+  </data>
+  <data name="SelectReason" xml:space="preserve">
+    <value>Odaberite razlog</value>
+  </data>
+  <data name="ReasonInventory" xml:space="preserve">
+    <value>Inventura</value>
+  </data>
+  <data name="ReasonDamage" xml:space="preserve">
+    <value>Oštećenje</value>
+  </data>
+  <data name="ReasonLoss" xml:space="preserve">
+    <value>Gubitak</value>
+  </data>
+  <data name="ReasonFound" xml:space="preserve">
+    <value>Pronađeno</value>
+  </data>
+  <data name="ReasonCountingError" xml:space="preserve">
+    <value>Pogreška pri brojanju</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Ostalo</value>
+  </data>
+  <data name="ReferenceNumber" xml:space="preserve">
+    <value>Broj reference</value>
+  </data>
+  <data name="ReferenceNumberPlaceholder" xml:space="preserve">
+    <value>npr. INV-2026-0001</value>
+  </data>
+  <data name="OptionalNotePlaceholder" xml:space="preserve">
+    <value>Neobavezna bilješka...</value>
+  </data>
+  <data name="SelectedProductNotFound" xml:space="preserve">
+    <value>Odabrani proizvod nije pronađen.</value>
+  </data>
+  <data name="SelectedWarehouseNotFound" xml:space="preserve">
+    <value>Odabrano skladište nije pronađeno.</value>
+  </data>
+  <data name="SelectedLocationNotFound" xml:space="preserve">
+    <value>Odabrana skladišna lokacija nije pronađena.</value>
+  </data>
+  <data name="StockAlreadyHasQuantity" xml:space="preserve">
+    <value>Nova zaliha već odgovara trenutnoj zalihi.</value>
+  </data>
+  <data name="StockCannotBeBelowReserved" xml:space="preserve">
+    <value>Nova zaliha ne može biti manja od rezervirane količine.</value>
+  </data>
+  <data name="StockCorrectionSuccess" xml:space="preserve">
+    <value>Zaliha je uspješno ispravljena s {0} na {1}.</value>
+  </data>
+  <data name="StockCorrectionError" xml:space="preserve">
+    <value>Pogreška pri korekciji zalihe: {0}</value>
+  </data>
+  <data name="ProductSelectionRequired" xml:space="preserve">
+    <value>Odaberite proizvod.</value>
+  </data>
+  <data name="WarehouseSelectionRequired" xml:space="preserve">
+    <value>Odaberite skladište.</value>
+  </data>
+  <data name="LocationSelectionRequired" xml:space="preserve">
+    <value>Odaberite skladišnu lokaciju.</value>
+  </data>
+  <data name="ReasonSelectionRequired" xml:space="preserve">
+    <value>Odaberite razlog.</value>
+  </data>
 </root>

@@ -4,8 +4,10 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
@@ -13,9 +15,10 @@
 @inject IJSRuntime JS
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
 
-<PageTitle>Produkte</PageTitle>
+<PageTitle>@L["Products"]</PageTitle>
 
 
 <div class="products-page">
@@ -27,11 +30,11 @@
         <div>
 
             <h1>
-                Produkte
+                @L["Products"]
             </h1>
 
             <p>
-                Verwalten Sie Ihre Produkte und Artikel.
+                @L["ManageProductsDescription"]
             </p>
 
         </div>
@@ -41,9 +44,10 @@
 
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedProducts.Count == 0)">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedProducts.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
@@ -53,7 +57,7 @@
 
                 <span>+</span>
 
-                Neuer Artikel
+                @L["NewProduct"]
 
             </a>
 
@@ -66,16 +70,14 @@
 
     <div class="filter-card">
 
-
         <div class="search-box">
 
             <span class="search-icon">
                 ⌕
             </span>
 
-
             <input type="text"
-                   placeholder="Produkt suchen..."
+                   placeholder="@L["SearchProduct"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -88,9 +90,8 @@
                 @bind:after="FilterChanged">
 
             <option value="0">
-                Alle Kategorien
+                @L["AllCategories"]
             </option>
-
 
             @foreach (var category in Categories)
             {
@@ -107,15 +108,15 @@
                 @bind:after="FilterChanged">
 
             <option value="all">
-                Alle Status
+                @L["AllStatuses"]
             </option>
 
             <option value="active">
-                Aktiv
+                @L["Active"]
             </option>
 
             <option value="inactive">
-                Inaktiv
+                @L["Inactive"]
             </option>
 
         </select>
@@ -127,17 +128,16 @@
 
     <div class="products-card">
 
-
         <div class="products-card-header">
 
             <div>
 
                 <strong>
-                    Produktliste
+                    @L["ProductList"]
                 </strong>
 
                 <span>
-                    @Products.Count Produkte
+                    @L["ProductsCount", Products.Count]
                 </span>
 
             </div>
@@ -149,7 +149,7 @@
         {
             <div class="loading-state">
 
-                Produkte werden geladen...
+                @L["ProductsLoading"]
 
             </div>
         }
@@ -157,26 +157,25 @@
         {
             <div class="empty-products">
 
-
                 <div class="empty-products-icon">
                     📦
                 </div>
 
 
                 <h3>
-                    Keine Produkte gefunden
+                    @L["NoProductsFound"]
                 </h3>
 
 
                 <p>
-                    Es wurden noch keine Produkte angelegt.
+                    @L["NoProductsCreated"]
                 </p>
 
 
                 <a href="/products/create"
                    class="btn-primary">
 
-                    + Neuer Artikel
+                    + @L["NewProduct"]
 
                 </a>
 
@@ -188,43 +187,42 @@
 
             <div class="products-table-wrapper">
 
-
                 <table class="products-table">
-
 
                     <thead>
 
                         <tr>
 
                             <th>
-                                SKU
+                                @L["SKU"]
                             </th>
 
                             <th>
-                                Produkt
+                                @L["Product"]
                             </th>
 
                             <th>
-                                Kategorie
+                                @L["Category"]
                             </th>
 
                             <th>
-                                Barcode
+                                @L["Barcode"]
                             </th>
 
                             <th>
-                                Verkaufspreis
+                                @L["SalePrice"]
                             </th>
 
                             <th>
-                                Mindestbestand
+                                @L["MinimumStock"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -234,20 +232,16 @@
 
                     <tbody>
 
-
                         @foreach (var product in PagedProducts)
                         {
                             <tr>
-
 
                                 <!-- SKU -->
 
                                 <td>
 
                                     <span class="product-sku">
-
                                         @product.SKU
-
                                     </span>
 
                                 </td>
@@ -258,7 +252,6 @@
                                 <td>
 
                                     <div class="product-name">
-
 
                                         <div class="product-avatar">
 
@@ -366,7 +359,7 @@
                                     {
                                         <span class="status-badge status-active">
 
-                                            Aktiv
+                                            @L["Active"]
 
                                         </span>
                                     }
@@ -374,7 +367,7 @@
                                     {
                                         <span class="status-badge status-inactive">
 
-                                            Inaktiv
+                                            @L["Inactive"]
 
                                         </span>
                                     }
@@ -391,7 +384,7 @@
 
                                         <a href="/products/edit/@product.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
+                                           title="@L["Edit"]">
 
                                             ✎
 
@@ -399,7 +392,7 @@
 
 
                                         <button class="action-button delete-button"
-                                                title="Löschen"
+                                                title="@L["Delete"]"
                                                 @onclick="() => ConfirmDelete(product)">
 
                                             🗑
@@ -425,6 +418,7 @@
 
 
             <!-- PAGINATION -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -443,7 +437,9 @@
                     <div class="pagination-pages">
 
 
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @for (int page = 1;
+                              page <= TotalPages;
+                              page++)
                         {
                             var pageNumber = page;
 
@@ -477,9 +473,13 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                ·
-                @PagedProducts.Count von @Products.Count Produkten
+                @L[
+                    "PaginationInfo",
+                    CurrentPage,
+                    TotalPages,
+                    PagedProducts.Count,
+                    Products.Count
+                ]
 
             </div>
 
@@ -489,6 +489,7 @@
 
 
     <!-- DELETE MODAL -->
+
     @if (ShowDeleteModal && ProductToDelete != null)
     {
         <div class="delete-modal-backdrop">
@@ -503,27 +504,17 @@
 
 
                 <h3>
-                    Produkt deaktivieren?
+                    @L["DeactivateProductQuestion"]
                 </h3>
 
-
                 <p>
-
-                    Möchten Sie
-
-                    <strong>
-                        @ProductToDelete.Name
-                    </strong>
-
-                    wirklich deaktivieren?
-
+                    @L["DeactivateProductText", @ProductToDelete.Name]
                 </p>
 
 
                 <small>
 
-                    Der Artikel wird nicht gelöscht.
-                    Er wird nur als inaktiv markiert.
+                    @L["ProductWillNotBeDeleted"]
 
                 </small>
 
@@ -534,7 +525,7 @@
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </button>
 
@@ -542,7 +533,7 @@
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
 
-                        Deaktivieren
+                        @L["Deactivate"]
 
                     </button>
 
@@ -681,7 +672,6 @@
         if (!string.IsNullOrWhiteSpace(
             SearchTerm))
         {
-
             var search =
                 SearchTerm.Trim();
 
@@ -694,7 +684,6 @@
                     x.SKU.Contains(search) ||
                     (x.Barcode != null &&
                      x.Barcode.Contains(search)));
-
         }
 
 
@@ -702,12 +691,10 @@
 
         if (SelectedCategoryId > 0)
         {
-
             query =
                 query.Where(x =>
                     x.CategoryId ==
                     SelectedCategoryId);
-
         }
 
 
@@ -715,19 +702,15 @@
 
         if (SelectedStatus == "active")
         {
-
             query =
                 query.Where(x =>
                     x.IsActive);
-
         }
         else if (SelectedStatus == "inactive")
         {
-
             query =
                 query.Where(x =>
                     !x.IsActive);
-
         }
 
 
@@ -777,7 +760,6 @@
 
     private async Task ExportExcel()
     {
-
         var data =
             PagedProducts
                 .Where(x => x != null)
@@ -796,36 +778,57 @@
 
                 "Produkte",
 
-                $"Produkte – Seite {CurrentPage}",
+                L[
+                    "ProductsExportTitle",
+                    CurrentPage
+                ].Value,
 
-                ("SKU",
-                    x => x.SKU ?? ""),
+                (
+                    L["SKU"].Value,
+                    x => x.SKU ?? ""
+                ),
 
-                ("Produkt",
-                    x => x.Name ?? ""),
+                (
+                    L["Product"].Value,
+                    x => x.Name ?? ""
+                ),
 
-                ("Beschreibung",
-                    x => x.Description ?? ""),
+                (
+                    L["Description"].Value,
+                    x => x.Description ?? ""
+                ),
 
-                ("Kategorie",
-                    x => x.Category?.Name ?? ""),
+                (
+                    L["Category"].Value,
+                    x => x.Category?.Name ?? ""
+                ),
 
-                ("Barcode",
-                    x => x.Barcode ?? ""),
+                (
+                    L["Barcode"].Value,
+                    x => x.Barcode ?? ""
+                ),
 
-                ("Einkaufspreis",
-                    x => x.PurchasePrice),
+                (
+                    L["PurchasePrice"].Value,
+                    x => x.PurchasePrice
+                ),
 
-                ("Verkaufspreis",
-                    x => x.SalePrice),
+                (
+                    L["SalePrice"].Value,
+                    x => x.SalePrice
+                ),
 
-                ("Mindestbestand",
-                    x => x.MinimumStock),
+                (
+                    L["MinimumStock"].Value,
+                    x => x.MinimumStock
+                ),
 
-                ("Status",
+                (
+                    L["Status"].Value,
                     x => x.IsActive
-                        ? "Aktiv"
-                        : "Inaktiv")
+                        ? L["Active"].Value
+                        : L["Inactive"].Value
+                )
             );
 
 
@@ -852,7 +855,6 @@
     private async Task DeleteProduct(
         Product product)
     {
-
         var confirmed =
             await Task.FromResult(true);
 
@@ -880,7 +882,6 @@
     private string GetInitials(
         string name)
     {
-
         if (string.IsNullOrWhiteSpace(name))
         {
             return "?";
@@ -895,7 +896,6 @@
 
         if (words.Length == 1)
         {
-
             return words[0]
                 .Substring(
                     0,
@@ -903,7 +903,6 @@
                         2,
                         words[0].Length))
                 .ToUpper();
-
         }
 
 
@@ -920,7 +919,6 @@
     private void ConfirmDelete(
         Product product)
     {
-
         ProductToDelete =
             product;
 
@@ -930,7 +928,6 @@
 
     private void CancelDelete()
     {
-
         ProductToDelete = null;
 
         ShowDeleteModal = false;
@@ -939,7 +936,6 @@
 
     private async Task DeleteConfirmed()
     {
-
         if (ProductToDelete == null)
         {
             return;

@@ -1,14 +1,20 @@
 ﻿@page "/dashboard"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
+@inject IStringLocalizer<SharedResource> L
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<PageTitle>Dashboard</PageTitle>
+
+<PageTitle>@L["Dashboard"]</PageTitle>
+
 
 <div class="dashboard-page">
 
@@ -17,16 +23,24 @@
     <div class="page-header">
 
         <div>
-            <h1>Dashboard</h1>
-            <p>Übersicht über Ihren Lagerbestand.</p>
+
+            <h1>
+                @L["Dashboard"]
+            </h1>
+
+            <p>
+                @L["DashboardOverviewDescription"]
+            </p>
+
         </div>
+
 
         <div class="dashboard-actions">
 
             <a href="/stock/incoming"
                class="btn-primary">
 
-                + Wareneingang
+                + @L["IncomingGoods"]
 
             </a>
 
@@ -38,7 +52,7 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Dashboard wird geladen...
+            @L["DashboardLoading"]
         </div>
     }
     else
@@ -50,6 +64,7 @@
 
         <div class="dashboard-stats">
 
+
             <div class="dashboard-stat-card">
 
                 <div class="dashboard-stat-icon">
@@ -58,7 +73,9 @@
 
                 <div>
 
-                    <span>Produkte</span>
+                    <span>
+                        @L["Products"]
+                    </span>
 
                     <strong>
                         @ProductCount
@@ -77,7 +94,9 @@
 
                 <div>
 
-                    <span>Gesamtbestand</span>
+                    <span>
+                        @L["TotalStock"]
+                    </span>
 
                     <strong>
                         @TotalStock.ToString("N2")
@@ -96,7 +115,9 @@
 
                 <div>
 
-                    <span>Niedriger Bestand</span>
+                    <span>
+                        @L["LowStock"]
+                    </span>
 
                     <strong>
                         @LowStockCount
@@ -115,7 +136,9 @@
 
                 <div>
 
-                    <span>Lagerplätze</span>
+                    <span>
+                        @L["Locations"]
+                    </span>
 
                     <strong>
                         @LocationCount
@@ -137,14 +160,22 @@
             <div class="dashboard-section-header">
 
                 <div>
-                    <h2>Schnellaktionen</h2>
-                    <p>Häufig verwendete Lageraktionen.</p>
+
+                    <h2>
+                        @L["QuickActions"]
+                    </h2>
+
+                    <p>
+                        @L["FrequentlyUsedWarehouseActions"]
+                    </p>
+
                 </div>
 
             </div>
 
 
             <div class="quick-actions">
+
 
                 <a href="/stock/incoming"
                    class="quick-action">
@@ -156,11 +187,11 @@
                     <div>
 
                         <strong>
-                            Wareneingang
+                            @L["IncomingGoods"]
                         </strong>
 
                         <span>
-                            Ware ins Lager buchen
+                            @L["BookGoodsIntoStock"]
                         </span>
 
                     </div>
@@ -178,11 +209,11 @@
                     <div>
 
                         <strong>
-                            Warenausgang
+                            @L["OutgoingGoods"]
                         </strong>
 
                         <span>
-                            Ware aus dem Lager buchen
+                            @L["BookGoodsOutOfStock"]
                         </span>
 
                     </div>
@@ -200,11 +231,11 @@
                     <div>
 
                         <strong>
-                            Umlagerung
+                            @L["Transfers"]
                         </strong>
 
                         <span>
-                            Bestand verschieben
+                            @L["MoveStock"]
                         </span>
 
                     </div>
@@ -222,16 +253,17 @@
                     <div>
 
                         <strong>
-                            Bestand
+                            @L["Stock"]
                         </strong>
 
                         <span>
-                            Aktuellen Bestand anzeigen
+                            @L["ShowCurrentStock"]
                         </span>
 
                     </div>
 
                 </a>
+
 
             </div>
 
@@ -253,16 +285,18 @@
 
                     <div>
 
-                        <h2>Niedriger Bestand</h2>
+                        <h2>
+                            @L["LowStock"]
+                        </h2>
 
                         <p>
-                            Produkte unter dem Mindestbestand.
+                            @L["ProductsBelowMinimumStock"]
                         </p>
 
                     </div>
 
                     <a href="/stock">
-                        Alle anzeigen →
+                        @L["ShowAll"] →
                     </a>
 
                 </div>
@@ -277,11 +311,11 @@
                         </div>
 
                         <strong>
-                            Alles in Ordnung
+                            @L["EverythingOK"]
                         </strong>
 
                         <span>
-                            Keine Produkte unter dem Mindestbestand.
+                            @L["NoProductsBelowMinimumStock"]
                         </span>
 
                     </div>
@@ -322,7 +356,8 @@
                                     </strong>
 
                                     <small>
-                                        Min. @item.MinimumStock.ToString("N2")
+                                        @L["MinimumStockShort"]
+                                        @item.MinimumStock.ToString("N2")
                                     </small>
 
                                 </div>
@@ -344,16 +379,18 @@
 
                     <div>
 
-                        <h2>Letzte Bewegungen</h2>
+                        <h2>
+                            @L["RecentMovements"]
+                        </h2>
 
                         <p>
-                            Die letzten Lagerbewegungen.
+                            @L["RecentWarehouseMovements"]
                         </p>
 
                     </div>
 
                     <a href="/stock/movements">
-                        Alle anzeigen →
+                        @L["ShowAll"] →
                     </a>
 
                 </div>
@@ -368,11 +405,11 @@
                         </div>
 
                         <strong>
-                            Keine Bewegungen
+                            @L["NoMovements"]
                         </strong>
 
                         <span>
-                            Noch keine Lagerbewegungen vorhanden.
+                            @L["NoWarehouseMovementsYet"]
                         </span>
 
                     </div>
@@ -399,9 +436,13 @@
                                         </strong>
 
                                         <small>
+
                                             @GetMovementName(
                                                 movement.Type)
-                                            @movement.CreatedAt.Date.ToString("dd.MM.yyyy")
+
+                                            @movement.CreatedAt
+                                            .Date
+                                            .ToString("dd.MM.yyyy")
 
                                         </small>
 
@@ -413,6 +454,7 @@
                                 <strong class="@GetMovementClass(movement.Type)">
 
                                     @GetMovementPrefix(movement.Type)
+
                                     @movement.Quantity.ToString("N2")
 
                                 </strong>
@@ -438,10 +480,12 @@
 
                 <div>
 
-                    <h2>Übersicht</h2>
+                    <h2>
+                        @L["Overview"]
+                    </h2>
 
                     <p>
-                        Aktuelle Systemübersicht.
+                        @L["CurrentSystemOverview"]
                     </p>
 
                 </div>
@@ -450,6 +494,7 @@
 
 
             <div class="dashboard-overview-grid">
+
 
                 <a href="/products"
                    class="dashboard-overview-card">
@@ -461,11 +506,14 @@
                     <div>
 
                         <strong>
-                            Produkte
+                            @L["Products"]
                         </strong>
 
                         <small>
-                            @ProductCount aktive Produkte
+                            @L[
+                                "ActiveProductsCount",
+                                ProductCount
+                            ]
                         </small>
 
                     </div>
@@ -487,11 +535,14 @@
                     <div>
 
                         <strong>
-                            Kategorien
+                            @L["Categories"]
                         </strong>
 
                         <small>
-                            @CategoryCount aktive Kategorien
+                            @L[
+                                "ActiveCategoriesCount",
+                                CategoryCount
+                            ]
                         </small>
 
                     </div>
@@ -513,11 +564,14 @@
                     <div>
 
                         <strong>
-                            Lager
+                            @L["Warehouse"]
                         </strong>
 
                         <small>
-                            @WarehouseCount aktive Lager
+                            @L[
+                                "ActiveWarehousesCount",
+                                WarehouseCount
+                            ]
                         </small>
 
                     </div>
@@ -539,11 +593,14 @@
                     <div>
 
                         <strong>
-                            Lagerplätze
+                            @L["Locations"]
                         </strong>
 
                         <small>
-                            @LocationCount aktive Lagerplätze
+                            @L[
+                                "ActiveLocationsCount",
+                                LocationCount
+                            ]
                         </small>
 
                     </div>
@@ -553,6 +610,7 @@
                     </span>
 
                 </a>
+
 
             </div>
 
@@ -664,7 +722,7 @@
                         {
                             ProductName =
                                 first.Product?.Name
-                                ?? "Unbekannt",
+                                ?? L["Unknown"].Value,
 
                             SKU =
                                 first.Product?.SKU
@@ -708,7 +766,8 @@
     }
 
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";
@@ -732,8 +791,9 @@
         }
 
 
-        return $"{words[0][0]}{words[1][0]}"
-            .ToUpper();
+        return
+            $"{words[0][0]}{words[1][0]}"
+                .ToUpper();
     }
 
 
@@ -743,21 +803,21 @@
         return type switch
         {
             StockMovementType.Wareneingang
-                => "Wareneingang",
+                => L["IncomingGoods"],
 
             StockMovementType.Warenausgang
-                => "Warenausgang",
+                => L["OutgoingGoods"],
 
             StockMovementType.Umlagerung
-                => "Umlagerung",
+                => L["Transfers"],
 
             StockMovementType.Inventur
-                => "Inventur",
+                => L["Inventory"],
 
             StockMovementType.Korrektur
-                => "Korrektur",
+                => L["Correction"],
 
-            _ => "Bewegung"
+            _ => L["Movement"]
         };
     }
 

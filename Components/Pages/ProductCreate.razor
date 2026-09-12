@@ -1,27 +1,38 @@
 ﻿@page "/products/create"
 @rendermode InteractiveServer
-@using System.ComponentModel.DataAnnotations
-@using Microsoft.EntityFrameworkCore
-@using WarehouseManagement.Data
-@using WarehouseManagement.Models
 @attribute [Authorize]
+
+@using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+@using WarehouseManagement.Models
+
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Neuer Artikel</PageTitle>
+<PageTitle>@L["NewProduct"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Neuer Artikel</h1>
-            <p>Neuen Artikel im System anlegen.</p>
+            <h1>@L["NewProduct"]</h1>
+
+            <p>
+                @L["CreateNewProduct"]
+            </p>
         </div>
 
-        <a href="/products" class="btn-secondary">
-            ← Zurück
+        <a href="/products"
+           class="btn-secondary">
+
+            ← @L["Back"]
+
         </a>
 
     </div>
@@ -35,26 +46,33 @@
 
             <DataAnnotationsValidator />
 
+
             <div class="form-section">
 
                 <div class="form-section-title">
-                    <h2>Produktinformationen</h2>
-                    <p>Grundlegende Informationen zum Artikel.</p>
+
+                    <h2>@L["ProductInformation"]</h2>
+
+                    <p>
+                        @L["BasicProductInformation"]
+                    </p>
+
                 </div>
 
 
                 <div class="form-grid">
 
                     <!-- SKU -->
+
                     <div class="form-group">
 
                         <label>
-                            SKU <span>*</span>
+                            @L["SKU"] <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.SKU"
                                    class="form-control"
-                                   placeholder="z.B. ART-10001" />
+                                   placeholder="@L["SkuPlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.SKU)" />
 
@@ -62,15 +80,16 @@
 
 
                     <!-- NAME -->
+
                     <div class="form-group">
 
                         <label>
-                            Produktname <span>*</span>
+                            @L["ProductName"] <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.Name"
                                    class="form-control"
-                                   placeholder="Produktname eingeben" />
+                                   placeholder="@L["ProductNamePlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.Name)" />
 
@@ -78,15 +97,16 @@
 
 
                     <!-- CATEGORY -->
+
                     <div class="form-group">
 
-                        <label>Kategorie</label>
+                        <label>@L["Category"]</label>
 
                         <InputSelect @bind-Value="Model.CategoryId"
                                      class="form-control">
 
                             <option value="">
-                                Kategorie auswählen
+                                @L["SelectCategory"]
                             </option>
 
                             @foreach (var category in Categories)
@@ -102,21 +122,23 @@
 
 
                     <!-- BARCODE -->
+
                     <div class="form-group">
 
-                        <label>Barcode</label>
+                        <label>@L["Barcode"]</label>
 
                         <InputText @bind-Value="Model.Barcode"
                                    class="form-control"
-                                   placeholder="EAN / Barcode" />
+                                   placeholder="@L["BarcodePlaceholder"]" />
 
                     </div>
 
 
                     <!-- PURCHASE PRICE -->
+
                     <div class="form-group">
 
-                        <label>Einkaufspreis</label>
+                        <label>@L["PurchasePrice"]</label>
 
                         <div class="input-with-suffix">
 
@@ -132,9 +154,10 @@
 
 
                     <!-- SALE PRICE -->
+
                     <div class="form-group">
 
-                        <label>Verkaufspreis</label>
+                        <label>@L["SalePrice"]</label>
 
                         <div class="input-with-suffix">
 
@@ -150,29 +173,33 @@
 
 
                     <!-- MINIMUM STOCK -->
+
                     <div class="form-group">
 
-                        <label>Mindestbestand</label>
+                        <label>@L["MinimumStock"]</label>
 
                         <InputNumber @bind-Value="Model.MinimumStock"
                                      class="form-control"
                                      step="1" />
 
                         <small>
-                            Warnung wenn Bestand darunter fällt.
+                            @L["MinimumStockWarning"]
                         </small>
 
                     </div>
 
 
                     <!-- ACTIVE -->
+
                     <div class="form-group checkbox-group">
 
                         <label class="checkbox-label">
 
                             <InputCheckbox @bind-Value="Model.IsActive" />
 
-                            <span>Artikel ist aktiv</span>
+                            <span>
+                                @L["ProductIsActive"]
+                            </span>
 
                         </label>
 
@@ -184,23 +211,25 @@
 
 
             <!-- DESCRIPTION -->
+
             <div class="form-section">
 
                 <div class="form-section-title">
 
-                    <h2>Beschreibung</h2>
+                    <h2>@L["Description"]</h2>
 
                     <p>
-                        Optionale Beschreibung des Artikels.
+                        @L["OptionalProductDescription"]
                     </p>
 
                 </div>
+
 
                 <div class="form-group">
 
                     <InputTextArea @bind-Value="Model.Description"
                                    class="form-control textarea"
-                                   placeholder="Produktbeschreibung..."
+                                   placeholder="@L["ProductDescriptionPlaceholder"]"
                                    rows="5" />
 
                 </div>
@@ -209,6 +238,7 @@
 
 
             <!-- VALIDATION SUMMARY -->
+
             <ValidationSummary />
 
 
@@ -221,11 +251,14 @@
 
 
             <!-- ACTIONS -->
+
             <div class="form-actions">
 
                 <a href="/products"
                    class="btn-secondary">
-                    Abbrechen
+
+                    @L["Cancel"]
+
                 </a>
 
                 <button type="submit"
@@ -233,8 +266,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Produkt speichern")
+                        ? L["Saving"]
+                        : L["SaveProduct"])
 
                 </button>
 
@@ -269,8 +302,6 @@
 
     private async Task SaveProduct()
     {
-        Console.WriteLine("SAVE PRODUCT CALLED");
-
         if (IsSaving)
             return;
 
@@ -282,14 +313,18 @@
             var sku = Model.SKU.Trim();
             var name = Model.Name.Trim();
 
+
             var skuExists = await Db.Products
                 .AnyAsync(x => x.SKU == sku);
 
             if (skuExists)
             {
-                ErrorMessage = "Diese SKU ist bereits vorhanden.";
+                ErrorMessage =
+                    L["SkuAlreadyExists"];
+
                 return;
             }
+
 
             if (!string.IsNullOrWhiteSpace(Model.Barcode))
             {
@@ -300,10 +335,13 @@
 
                 if (barcodeExists)
                 {
-                    ErrorMessage = "Dieser Barcode ist bereits vorhanden.";
+                    ErrorMessage =
+                        L["BarcodeAlreadyExists"];
+
                     return;
                 }
             }
+
 
             var product = new Product
             {
@@ -321,12 +359,23 @@
                         : Model.Barcode.Trim(),
 
                 CategoryId = Model.CategoryId,
-                PurchasePrice = Model.PurchasePrice,
-                SalePrice = Model.SalePrice,
-                MinimumStock = Model.MinimumStock,
-                IsActive = Model.IsActive,
-                CreatedAt = DateTime.UtcNow
+
+                PurchasePrice =
+                    Model.PurchasePrice,
+
+                SalePrice =
+                    Model.SalePrice,
+
+                MinimumStock =
+                    Model.MinimumStock,
+
+                IsActive =
+                    Model.IsActive,
+
+                CreatedAt =
+                    DateTime.UtcNow
             };
+
 
             Db.Products.Add(product);
 
@@ -336,7 +385,8 @@
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Fehler beim Speichern: {ex.InnerException}";
+            ErrorMessage =
+                L["ErrorSaving", ex.InnerException?.Message ?? ex.Message];
         }
         finally
         {
@@ -348,13 +398,21 @@
     private class ProductModel
     {
         [Required(
-            ErrorMessage = "SKU ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "SkuRequired")]
+
         [MaxLength(50)]
         public string SKU { get; set; } = string.Empty;
 
 
         [Required(
-            ErrorMessage = "Produktname ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "ProductNameRequired")]
+
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
 
@@ -369,21 +427,33 @@
         [Range(
             0,
             double.MaxValue,
-            ErrorMessage = "Preis muss positiv sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "PriceMustBePositive")]
+
         public decimal PurchasePrice { get; set; }
 
 
         [Range(
             0,
             double.MaxValue,
-            ErrorMessage = "Preis muss positiv sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "PriceMustBePositive")]
+
         public decimal SalePrice { get; set; }
 
 
         [Range(
             0,
             double.MaxValue,
-            ErrorMessage = "Mindestbestand muss positiv sein.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "MinimumStockMustBePositive")]
+
         public decimal MinimumStock { get; set; }
 
 

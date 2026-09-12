@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
@@ -53,7 +54,42 @@ namespace Microsoft.AspNetCore.Routing
                         ? "/"
                         : returnUrl);
             });
+            accountGroup.MapPost("/SetLanguage", (
+    HttpContext httpContext,
+    [FromForm] string culture,
+    [FromForm] string returnUrl) =>
+            {
+                var supportedCultures = new[]
+                {
+        "de",
+        "mk",
+        "hr",
+        "en"
+    };
 
+                if (!supportedCultures.Contains(culture))
+                {
+                    culture = "de";
+                }
+
+                var requestCulture =
+                    new RequestCulture(culture);
+
+                httpContext.Response.Cookies.Append(
+                    CookieRequestCultureProvider.DefaultCookieName,
+                    CookieRequestCultureProvider.MakeCookieValue(
+                        requestCulture));
+
+                // Sicherheitscheck:
+                // Nur lokale URLs erlauben.
+                if (string.IsNullOrWhiteSpace(returnUrl)
+                    || !returnUrl.StartsWith("/"))
+                {
+                    returnUrl = "/";
+                }
+
+                return Results.LocalRedirect(returnUrl);
+            });
             accountGroup.MapPost("/PasskeyCreationOptions", async (
                 HttpContext context,
                 [FromServices] UserManager<ApplicationUser> userManager,

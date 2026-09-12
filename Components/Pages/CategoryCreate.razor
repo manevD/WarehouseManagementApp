@@ -1,30 +1,37 @@
 ﻿@page "/categories/create"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
-@using WarehouseManagement.Data
-@using WarehouseManagement.Models
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+@using WarehouseManagement.Models
 
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Neue Kategorie</PageTitle>
+<PageTitle>@L["NewCategory"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Neue Kategorie</h1>
-            <p>Neue Produktkategorie anlegen.</p>
+            <h1>@L["NewCategory"]</h1>
+
+            <p>
+                @L["CreateNewProductCategory"]
+            </p>
         </div>
 
         <a href="/categories"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -44,10 +51,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Kategorieinformationen</h2>
+                    <h2>@L["CategoryInformation"]</h2>
 
                     <p>
-                        Grundlegende Informationen zur Kategorie.
+                        @L["BasicCategoryInformation"]
                     </p>
 
                 </div>
@@ -59,12 +66,12 @@
                     <div class="form-group">
 
                         <label>
-                            Name <span>*</span>
+                            @L["Name"] <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.Name"
                                    class="form-control"
-                                   placeholder="z.B. Getränke" />
+                                   placeholder="@L["CategoryNamePlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.Name)" />
 
@@ -79,7 +86,7 @@
                             <InputCheckbox @bind-Value="Model.IsActive" />
 
                             <span>
-                                Kategorie ist aktiv
+                                @L["CategoryIsActive"]
                             </span>
 
                         </label>
@@ -97,10 +104,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Beschreibung</h2>
+                    <h2>@L["Description"]</h2>
 
                     <p>
-                        Optionale Beschreibung der Kategorie.
+                        @L["OptionalCategoryDescription"]
                     </p>
 
                 </div>
@@ -110,7 +117,7 @@
 
                     <InputTextArea @bind-Value="Model.Description"
                                    class="form-control textarea"
-                                   placeholder="Beschreibung..."
+                                   placeholder="@L["DescriptionPlaceholder"]"
                                    rows="5" />
 
                     <ValidationMessage For="@(() => Model.Description)" />
@@ -133,7 +140,7 @@
                 <a href="/categories"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -142,8 +149,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Kategorie speichern")
+                        ? L["Saving"]
+                        : L["SaveCategory"])
 
                 </button>
 
@@ -185,7 +192,7 @@
             if (exists)
             {
                 ErrorMessage =
-                    "Diese Kategorie existiert bereits.";
+                    L["CategoryAlreadyExists"];
 
                 return;
             }
@@ -213,7 +220,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -225,8 +232,10 @@
     private class CategoryModel
     {
         [Required(
-            ErrorMessage =
-                "Name ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "NameRequired")]
 
         [MaxLength(100)]
 
