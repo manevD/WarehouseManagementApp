@@ -4,8 +4,10 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
@@ -13,8 +15,9 @@
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Kunden</PageTitle>
+<PageTitle>@L["Customers"]</PageTitle>
 
 <div class="product-list-page">
 
@@ -23,23 +26,22 @@
     <div class="page-header">
 
         <div>
-            <h1>Kunden</h1>
-            <p>Verwalten Sie Ihre Kunden.</p>
+            <h1>@L["Customers"]</h1>
+            <p>@L["ManageCustomersDescription"]</p>
         </div>
 
         <div>
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedCustomers.Count == 0)">
-
-                📊 Excel exportieren
-
+                    @onclick="ExportExcel"
+                    disabled="@(PagedCustomers.Count == 0)">
+                📊 @L["ExportExcel"]
             </button>
+
             <a href="/customers/create"
                class="btn-primary">
-                + Neuer Kunde
+                + @L["NewCustomer"]
             </a>
-
         </div>
 
     </div>
@@ -55,7 +57,7 @@
 
             <input type="text"
                    class="search-input"
-                   placeholder="Kunde, Ansprechpartner, E-Mail oder Telefonnummer suchen..."
+                   placeholder="@L["SearchCustomerPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -68,15 +70,15 @@
                 @bind:after="FilterChanged">
 
             <option value="all">
-                Alle Kunden
+                @L["AllCustomers"]
             </option>
 
             <option value="active">
-                Nur aktive
+                @L["ActiveOnly"]
             </option>
 
             <option value="inactive">
-                Nur inaktive
+                @L["InactiveOnly"]
             </option>
 
         </select>
@@ -90,7 +92,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Kunden</span>
+            <span>@L["Customers"]</span>
 
             <strong>
                 @Customers.Count
@@ -101,7 +103,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Aktiv</span>
+            <span>@L["Active"]</span>
 
             <strong>
                 @ActiveCount
@@ -112,7 +114,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Inaktiv</span>
+            <span>@L["Inactive"]</span>
 
             <strong>
                 @InactiveCount
@@ -132,11 +134,11 @@
             <div>
 
                 <strong>
-                    Kundenliste
+                    @L["CustomerList"]
                 </strong>
 
                 <span>
-                    @Customers.Count Einträge
+                    @Customers.Count @L["EntriesCount"]
                 </span>
 
             </div>
@@ -147,7 +149,7 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-                Kunden werden geladen...
+                @L["CustomersLoading"]
             </div>
         }
         else if (Customers.Count == 0)
@@ -159,11 +161,11 @@
                 </div>
 
                 <h3>
-                    Keine Kunden gefunden
+                    @L["NoCustomersFound"]
                 </h3>
 
                 <p>
-                    Für die aktuelle Suche wurden keine Kunden gefunden.
+                    @L["NoCustomersForSearch"]
                 </p>
 
             </div>
@@ -178,15 +180,15 @@
 
                         <tr>
 
-                            <th>Nr.</th>
-                            <th>Firma</th>
-                            <th>Ansprechpartner</th>
-                            <th>E-Mail</th>
-                            <th>Telefon</th>
-                            <th>Ort</th>
-                            <th>USt-IdNr.</th>
-                            <th>Status</th>
-                            <th>Aktionen</th>
+                            <th>@L["Number"]</th>
+                            <th>@L["Company"]</th>
+                            <th>@L["ContactPerson"]</th>
+                            <th>@L["Email"]</th>
+                            <th>@L["Phone"]</th>
+                            <th>@L["City"]</th>
+                            <th>@L["VatNumber"]</th>
+                            <th>@L["Status"]</th>
+                            <th>@L["Actions"]</th>
 
                         </tr>
 
@@ -326,13 +328,13 @@
                                     @if (customer.IsActive)
                                     {
                                         <span class="status-badge status-active">
-                                            Aktiv
+                                            @L["Active"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-low">
-                                            Inaktiv
+                                            @L["Inactive"]
                                         </span>
                                     }
 
@@ -347,20 +349,16 @@
 
                                         <a href="/customers/edit/@customer.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
-
+                                           title="@L["Edit"]">
                                             ✎
-
                                         </a>
 
 
                                         <button type="button"
                                                 class="action-button delete-button"
-                                                title="Deaktivieren"
+                                                title="@L["Deactivate"]"
                                                 @onclick="() => DeactivateCustomer(customer)">
-
                                             🗑
-
                                         </button>
 
                                     </div>
@@ -425,8 +423,8 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedCustomers.Count von @Customers.Count Kunden
+                @L["PageInfo", CurrentPage, TotalPages]
+                · @PagedCustomers.Count @L["OfCustomers", Customers.Count]
 
             </div>
         }
@@ -637,47 +635,47 @@
 
         var fileBytes = ExcelExport.Export(
             data,
-            "Kunden",
-            $"Kunden – Seite {CurrentPage}",
+            L["Customers"],
+            $"{L["Customers"]} – {L["Page"]} {CurrentPage}",
 
-            ("Nr.", x =>
+            ($"{L["Number"]}", x =>
                 string.IsNullOrWhiteSpace(x.CustomerNumber)
                     ? $"#{x.Id}"
                     : x.CustomerNumber),
 
-            ("Firma", x =>
+            ($"{L["Company"]}", x =>
                 x.CompanyName ?? ""),
 
-            ("Ansprechpartner", x =>
+            ($"{L["ContactPerson"]}", x =>
                 x.ContactPerson ?? ""),
 
-            ("E-Mail", x =>
+            ($"{L["Email"]}", x =>
                 x.Email ?? ""),
 
-            ("Telefon", x =>
+            ($"{L["Phone"]}", x =>
                 x.Phone ?? ""),
 
-            ("Straße", x =>
+            ($"{L["Street"]}", x =>
                 x.Street ?? ""),
 
-            ("PLZ", x =>
+            ($"{L["PostalCode"]}", x =>
                 x.PostalCode ?? ""),
 
-            ("Ort", x =>
+            ($"{L["City"]}", x =>
                 x.City ?? ""),
 
-            ("Land", x =>
+            ($"{L["Country"]}", x =>
                 x.Country ?? ""),
 
-            ("USt-IdNr.", x =>
+            ($"{L["VatNumber"]}", x =>
                 x.VatNumber ?? ""),
 
-            ("Status", x =>
+            ($"{L["Status"]}", x =>
                 x.IsActive
-                    ? "Aktiv"
-                    : "Inaktiv"),
+                    ? L["Active"]
+                    : L["Inactive"]),
 
-            ("Notiz", x =>
+            ($"{L["Note"]}", x =>
                 x.Note ?? "")
         );
 
@@ -688,7 +686,7 @@
 
         await JS.InvokeVoidAsync(
             "downloadFile",
-            $"Kunden_Seite_{CurrentPage}.xlsx",
+            $"{L["Customers"]}_Seite_{CurrentPage}.xlsx",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             base64);
     }

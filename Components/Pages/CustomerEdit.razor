@@ -1,16 +1,20 @@
 ﻿@page "/customers/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Kunde bearbeiten</PageTitle>
+<PageTitle>@L["EditCustomer"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -18,7 +22,7 @@
 
         <div>
 
-            <h1>Kunde bearbeiten</h1>
+            <h1>@L["EditCustomer"]</h1>
 
             @if (Customer != null)
             {
@@ -32,7 +36,7 @@
         <a href="/customers"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -42,7 +46,7 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Kunde wird geladen...
+            @L["CustomerLoading"]
         </div>
     }
     else if (Customer == null)
@@ -50,13 +54,13 @@
         <div class="empty-products">
 
             <h3>
-                Kunde nicht gefunden
+                @L["CustomerNotFound"]
             </h3>
 
             <a href="/customers"
                class="btn-secondary">
 
-                Zurück zu Kunden
+                @L["BackToCustomers"]
 
             </a>
 
@@ -81,7 +85,7 @@
 
                     <div class="form-section-title">
 
-                        <h2>Kundeninformationen</h2>
+                        <h2>@L["CustomerInformation"]</h2>
 
                     </div>
 
@@ -92,7 +96,7 @@
                         <div class="form-group">
 
                             <label>
-                                Firmenname <span>*</span>
+                                @L["CompanyName"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.CompanyName"
@@ -106,7 +110,7 @@
                         <div class="form-group">
 
                             <label>
-                                Kundennummer
+                                @L["CustomerNumber"]
                             </label>
 
                             <InputText @bind-Value="Model.CustomerNumber"
@@ -120,7 +124,7 @@
                         <div class="form-group">
 
                             <label>
-                                Ansprechpartner
+                                @L["ContactPerson"]
                             </label>
 
                             <InputText @bind-Value="Model.ContactPerson"
@@ -132,7 +136,7 @@
                         <div class="form-group">
 
                             <label>
-                                USt-IdNr.
+                                @L["VatNumber"]
                             </label>
 
                             <InputText @bind-Value="Model.VatNumber"
@@ -153,7 +157,7 @@
 
                     <div class="form-section-title">
 
-                        <h2>Kontakt</h2>
+                        <h2>@L["Contact"]</h2>
 
                     </div>
 
@@ -164,7 +168,7 @@
                         <div class="form-group">
 
                             <label>
-                                E-Mail
+                                @L["Email"]
                             </label>
 
                             <InputText @bind-Value="Model.Email"
@@ -179,7 +183,7 @@
                         <div class="form-group">
 
                             <label>
-                                Telefon
+                                @L["Phone"]
                             </label>
 
                             <InputText @bind-Value="Model.Phone"
@@ -200,7 +204,7 @@
 
                     <div class="form-section-title">
 
-                        <h2>Adresse</h2>
+                        <h2>@L["Address"]</h2>
 
                     </div>
 
@@ -211,7 +215,7 @@
                         <div class="form-group">
 
                             <label>
-                                Straße
+                                @L["Street"]
                             </label>
 
                             <InputText @bind-Value="Model.Street"
@@ -223,7 +227,7 @@
                         <div class="form-group">
 
                             <label>
-                                PLZ
+                                @L["PostalCode"]
                             </label>
 
                             <InputText @bind-Value="Model.PostalCode"
@@ -235,7 +239,7 @@
                         <div class="form-group">
 
                             <label>
-                                Ort
+                                @L["City"]
                             </label>
 
                             <InputText @bind-Value="Model.City"
@@ -247,7 +251,7 @@
                         <div class="form-group">
 
                             <label>
-                                Land
+                                @L["Country"]
                             </label>
 
                             <InputText @bind-Value="Model.Country"
@@ -268,7 +272,7 @@
 
                     <div class="form-section-title">
 
-                        <h2>Notiz</h2>
+                        <h2>@L["Note"]</h2>
 
                     </div>
 
@@ -297,7 +301,7 @@
                             <InputCheckbox @bind-Value="Model.IsActive" />
 
                             <span>
-                                Kunde ist aktiv
+                                @L["CustomerIsActive"]
                             </span>
 
                         </label>
@@ -320,7 +324,7 @@
                     <a href="/customers"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
 
@@ -329,8 +333,8 @@
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -370,7 +374,6 @@
     private async Task LoadCustomer()
     {
         IsLoading = true;
-
 
         try
         {
@@ -462,7 +465,7 @@
             if (entity == null)
             {
                 ErrorMessage =
-                    "Kunde wurde nicht gefunden.";
+                    L["CustomerNotFound"];
 
                 return;
             }
@@ -487,7 +490,7 @@
                 if (exists)
                 {
                     ErrorMessage =
-                        "Diese Kundennummer existiert bereits.";
+                        L["CustomerNumberAlreadyExists"];
 
                     return;
                 }
@@ -580,7 +583,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -592,8 +595,8 @@
     private class CustomerEditModel
     {
         [Required(
-            ErrorMessage =
-                "Firmenname ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "CompanyNameRequired")]
         [MaxLength(200)]
         public string CompanyName { get; set; }
             = string.Empty;
@@ -608,8 +611,8 @@
 
 
         [EmailAddress(
-            ErrorMessage =
-                "Ungültige E-Mail-Adresse.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidEmailAddress")]
         [MaxLength(200)]
         public string? Email { get; set; }
 

@@ -1080,4 +1080,301 @@
   <data name="OutgoingGoodsBookingError" xml:space="preserve">
     <value>Pogreška pri knjiženju: {0}</value>
   </data>
+  <data name="StockTransfer" xml:space="preserve">
+    <value>Premještanje zalihe</value>
+  </data>
+  <data name="StockTransferDescription" xml:space="preserve">
+    <value>Premjestite robu s jedne skladišne lokacije na drugu.</value>
+  </data>
+  <data name="SelectProductSourceTarget" xml:space="preserve">
+    <value>Odaberite proizvod, izvornu i odredišnu lokaciju.</value>
+  </data>
+  <data name="FromWarehouse" xml:space="preserve">
+    <value>Iz skladišta</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Izvorna lokacija</value>
+  </data>
+  <data name="ToWarehouse" xml:space="preserve">
+    <value>Odredišno skladište</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Odredišna lokacija</value>
+  </data>
+  <data name="QuantityExceedsAvailableStock" xml:space="preserve">
+    <value>Količina premašuje raspoloživu zalihu.</value>
+  </data>
+  <data name="OptionalTransferInformation" xml:space="preserve">
+    <value>Dodatne informacije o premještanju.</value>
+  </data>
+  <data name="BookTransfer" xml:space="preserve">
+    <value>Knjiži premještanje</value>
+  </data>
+  <data name="SourceWarehouseSelectionRequired" xml:space="preserve">
+    <value>Odaberite izvorno skladište.</value>
+  </data>
+  <data name="SourceLocationSelectionRequired" xml:space="preserve">
+    <value>Odaberite izvornu skladišnu lokaciju.</value>
+  </data>
+  <data name="TargetWarehouseSelectionRequired" xml:space="preserve">
+    <value>Odaberite odredišno skladište.</value>
+  </data>
+  <data name="TargetLocationSelectionRequired" xml:space="preserve">
+    <value>Odaberite odredišnu skladišnu lokaciju.</value>
+  </data>
+  <data name="SameLocationError" xml:space="preserve">
+    <value>Izvorna i odredišna lokacija ne smiju biti iste.</value>
+  </data>
+  <data name="NoStockAtSourceLocation" xml:space="preserve">
+    <value>Na izvornoj lokaciji nema zalihe.</value>
+  </data>
+  <data name="NoAvailableStockAtSourceLocation" xml:space="preserve">
+    <value>Na izvornoj lokaciji nema raspoložive zalihe.</value>
+  </data>
+  <data name="SourceLocationNotFound" xml:space="preserve">
+    <value>Izvorna skladišna lokacija nije pronađena.</value>
+  </data>
+  <data name="TargetLocationNotFound" xml:space="preserve">
+    <value>Odredišna skladišna lokacija nije pronađena.</value>
+  </data>
+  <data name="StockTransferSuccess" xml:space="preserve">
+    <value>Premještanje od {0} komada uspješno je evidentirano.</value>
+  </data>
+  <data name="StockTransferBookingError" xml:space="preserve">
+    <value>Pogreška pri knjiženju: {0}</value>
+  </data>
+  <data name="StockMovements" xml:space="preserve">
+    <value>Kretanja zalihe</value>
+  </data>
+  <data name="StockMovementsDescription" xml:space="preserve">
+    <value>Povijest svih kretanja zalihe.</value>
+  </data>
+  <data name="SearchMovementsPlaceholder" xml:space="preserve">
+    <value>Pretražite proizvod, SKU, barkod, dobavljača, narudžbu ili referencu...</value>
+  </data>
+  <data name="AllMovements" xml:space="preserve">
+    <value>Sva kretanja</value>
+  </data>
+  <data name="AllSuppliers" xml:space="preserve">
+    <value>Svi dobavljači</value>
+  </data>
+  <data name="FiltersActive" xml:space="preserve">
+    <value>Filter je aktivan</value>
+  </data>
+  <data name="MovementsCount" xml:space="preserve">
+    <value>{0} kretanja</value>
+  </data>
+  <data name="MovementHistory" xml:space="preserve">
+    <value>Povijest kretanja</value>
+  </data>
+  <data name="MovementsLoading" xml:space="preserve">
+    <value>Kretanja se učitavaju...</value>
+  </data>
+  <data name="NoMovementsFound" xml:space="preserve">
+    <value>Nema pronađenih kretanja</value>
+  </data>
+  <data name="NoMovementsForFilters" xml:space="preserve">
+    <value>Za odabrane filtre nisu pronađena kretanja.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Vrsta</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Stranica</value>
+  </data>
+  <data name="ManageSuppliersDescription" xml:space="preserve">
+    <value>Upravljajte svojim dobavljačima.</value>
+  </data>
+  <data name="NewSupplier" xml:space="preserve">
+    <value>Novi dobavljač</value>
+  </data>
+  <data name="SearchSupplierPlaceholder" xml:space="preserve">
+    <value>Pretražite dobavljača, kontakt osobu, e-mail ili telefon...</value>
+  </data>
+  <data name="ActiveOnly" xml:space="preserve">
+    <value>Samo aktivni</value>
+  </data>
+  <data name="InactiveOnly" xml:space="preserve">
+    <value>Samo neaktivni</value>
+  </data>
+  <data name="SupplierList" xml:space="preserve">
+    <value>Popis dobavljača</value>
+  </data>
+  <data name="SuppliersLoading" xml:space="preserve">
+    <value>Dobavljači se učitavaju...</value>
+  </data>
+  <data name="NoSuppliersFound" xml:space="preserve">
+    <value>Nema pronađenih dobavljača</value>
+  </data>
+  <data name="NoSuppliersForSearch" xml:space="preserve">
+    <value>Za trenutnu pretragu nisu pronađeni dobavljači.</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Br.</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Tvrtka</value>
+  </data>
+  <data name="ContactPerson" xml:space="preserve">
+    <value>Kontakt osoba</value>
+  </data>
+  <data name="VatNumber" xml:space="preserve">
+    <value>PDV broj</value>
+  </data>
+  <data name="PaginationInfoSuppliers" xml:space="preserve">
+    <value>Stranica {0} od {1} · {2} od {3} dobavljača</value>
+  </data>
+  <data name="EditSupplier" xml:space="preserve">
+    <value>Uredi dobavljača</value>
+  </data>
+  <data name="SupplierLoading" xml:space="preserve">
+    <value>Dobavljač se učitava...</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>Dobavljač nije pronađen</value>
+  </data>
+  <data name="BackToSuppliers" xml:space="preserve">
+    <value>Natrag na dobavljače</value>
+  </data>
+  <data name="SupplierInformation" xml:space="preserve">
+    <value>Informacije o dobavljaču</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Naziv tvrtke</value>
+  </data>
+  <data name="SupplierNumber" xml:space="preserve">
+    <value>Broj dobavljača</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresa</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Ulica</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>Poštanski broj</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Država</value>
+  </data>
+  <data name="SupplierIsActive" xml:space="preserve">
+    <value>Dobavljač je aktivan</value>
+  </data>
+  <data name="SupplierNumberAlreadyExists" xml:space="preserve">
+    <value>Ovaj broj dobavljača već postoji.</value>
+  </data>
+  <data name="CreateNewSupplierDescription" xml:space="preserve">
+    <value>Dodajte novog dobavljača.</value>
+  </data>
+  <data name="BasicSupplierInformation" xml:space="preserve">
+    <value>Osnovne informacije o dobavljaču.</value>
+  </data>
+  <data name="SupplierContactInformation" xml:space="preserve">
+    <value>Kontaktne informacije o dobavljaču.</value>
+  </data>
+  <data name="CompanyNamePlaceholder" xml:space="preserve">
+    <value>npr. Mustermann GmbH</value>
+  </data>
+  <data name="SupplierNumberPlaceholder" xml:space="preserve">
+    <value>npr. L-0001</value>
+  </data>
+  <data name="ContactPersonPlaceholder" xml:space="preserve">
+    <value>npr. Max Mustermann</value>
+  </data>
+  <data name="VatNumberPlaceholder" xml:space="preserve">
+    <value>npr. DE123456789</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>info@firma.de</value>
+  </data>
+  <data name="PhonePlaceholder" xml:space="preserve">
+    <value>+49 123 456789</value>
+  </data>
+  <data name="StreetPlaceholder" xml:space="preserve">
+    <value>Ulica 1</value>
+  </data>
+  <data name="PostalCodePlaceholder" xml:space="preserve">
+    <value>12345</value>
+  </data>
+  <data name="CityPlaceholder" xml:space="preserve">
+    <value>Zagreb</value>
+  </data>
+  <data name="CountryPlaceholder" xml:space="preserve">
+    <value>Hrvatska</value>
+  </data>
+  <data name="SaveSupplier" xml:space="preserve">
+    <value>Spremi dobavljača</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Grad</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Broj telefona</value>
+  </data>
+  <data name="ManageCustomersDescription" xml:space="preserve">
+    <value>Upravljajte svojim kupcima.</value>
+  </data>
+  <data name="NewCustomer" xml:space="preserve">
+    <value>Novi kupac</value>
+  </data>
+  <data name="SearchCustomerPlaceholder" xml:space="preserve">
+    <value>Pretražite kupca, kontakt osobu, e-poštu ili broj telefona...</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>Svi kupci</value>
+  </data>
+  <data name="CustomerList" xml:space="preserve">
+    <value>Popis kupaca</value>
+  </data>
+  <data name="CustomersLoading" xml:space="preserve">
+    <value>Učitavanje kupaca...</value>
+  </data>
+  <data name="NoCustomersFound" xml:space="preserve">
+    <value>Nisu pronađeni kupci</value>
+  </data>
+  <data name="NoCustomersForSearch" xml:space="preserve">
+    <value>Za trenutnu pretragu nisu pronađeni kupci.</value>
+  </data>
+  <data name="OfCustomers" xml:space="preserve">
+    <value>od {0} kupaca</value>
+  </data>
+  <data name="EditCustomer" xml:space="preserve">
+    <value>Uredi kupca</value>
+  </data>
+  <data name="CustomerLoading" xml:space="preserve">
+    <value>Učitavanje kupca...</value>
+  </data>
+  <data name="CustomerNotFound" xml:space="preserve">
+    <value>Kupac nije pronađen.</value>
+  </data>
+  <data name="BackToCustomers" xml:space="preserve">
+    <value>Natrag na kupce</value>
+  </data>
+  <data name="CustomerInformation" xml:space="preserve">
+    <value>Podaci o kupcu</value>
+  </data>
+  <data name="CustomerNumber" xml:space="preserve">
+    <value>Broj kupca</value>
+  </data>
+  <data name="CustomerIsActive" xml:space="preserve">
+    <value>Kupac je aktivan</value>
+  </data>
+  <data name="CustomerNumberAlreadyExists" xml:space="preserve">
+    <value>Ovaj broj kupca već postoji.</value>
+  </data>
+  <data name="CreateCustomerDescription" xml:space="preserve">
+    <value>Dodajte novog kupca.</value>
+  </data>
+  <data name="BasicCustomerInformation" xml:space="preserve">
+    <value>Osnovni podaci o kupcu.</value>
+  </data>
+  <data name="CustomerNumberPlaceholder" xml:space="preserve">
+    <value>npr. K-0001</value>
+  </data>
+  <data name="SaveCustomer" xml:space="preserve">
+    <value>Spremi kupca</value>
+  </data>
 </root>

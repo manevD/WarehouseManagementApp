@@ -1080,4 +1080,301 @@
   <data name="OutgoingGoodsBookingError" xml:space="preserve">
     <value>Fehler beim Buchen: {0}</value>
   </data>
+  <data name="StockTransfer" xml:space="preserve">
+    <value>Umlagerung</value>
+  </data>
+  <data name="StockTransferDescription" xml:space="preserve">
+    <value>Ware von einem Lagerplatz auf einen anderen verschieben.</value>
+  </data>
+  <data name="SelectProductSourceTarget" xml:space="preserve">
+    <value>Wählen Sie Produkt, Quell- und Ziellagerplatz.</value>
+  </data>
+  <data name="FromWarehouse" xml:space="preserve">
+    <value>Von Lager</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Von Lagerplatz</value>
+  </data>
+  <data name="ToWarehouse" xml:space="preserve">
+    <value>Nach Lager</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Nach Lagerplatz</value>
+  </data>
+  <data name="QuantityExceedsAvailableStock" xml:space="preserve">
+    <value>Die Menge überschreitet den verfügbaren Bestand.</value>
+  </data>
+  <data name="OptionalTransferInformation" xml:space="preserve">
+    <value>Optionale Informationen zur Umlagerung.</value>
+  </data>
+  <data name="BookTransfer" xml:space="preserve">
+    <value>Umlagerung buchen</value>
+  </data>
+  <data name="SourceWarehouseSelectionRequired" xml:space="preserve">
+    <value>Bitte ein Quelllager auswählen.</value>
+  </data>
+  <data name="SourceLocationSelectionRequired" xml:space="preserve">
+    <value>Bitte einen Quelllagerplatz auswählen.</value>
+  </data>
+  <data name="TargetWarehouseSelectionRequired" xml:space="preserve">
+    <value>Bitte ein Ziellager auswählen.</value>
+  </data>
+  <data name="TargetLocationSelectionRequired" xml:space="preserve">
+    <value>Bitte einen Ziellagerplatz auswählen.</value>
+  </data>
+  <data name="SameLocationError" xml:space="preserve">
+    <value>Quell- und Ziellagerplatz dürfen nicht identisch sein.</value>
+  </data>
+  <data name="NoStockAtSourceLocation" xml:space="preserve">
+    <value>Am Quelllagerplatz ist kein Bestand vorhanden.</value>
+  </data>
+  <data name="NoAvailableStockAtSourceLocation" xml:space="preserve">
+    <value>Am Quelllagerplatz ist kein verfügbarer Bestand vorhanden.</value>
+  </data>
+  <data name="SourceLocationNotFound" xml:space="preserve">
+    <value>Der Quelllagerplatz wurde nicht gefunden.</value>
+  </data>
+  <data name="TargetLocationNotFound" xml:space="preserve">
+    <value>Der Ziellagerplatz wurde nicht gefunden.</value>
+  </data>
+  <data name="StockTransferSuccess" xml:space="preserve">
+    <value>Umlagerung von {0} Stück wurde erfolgreich gebucht.</value>
+  </data>
+  <data name="StockTransferBookingError" xml:space="preserve">
+    <value>Fehler beim Buchen: {0}</value>
+  </data>
+  <data name="StockMovements" xml:space="preserve">
+    <value>Bestandsbewegungen</value>
+  </data>
+  <data name="StockMovementsDescription" xml:space="preserve">
+    <value>Historie aller Lagerbewegungen.</value>
+  </data>
+  <data name="SearchMovementsPlaceholder" xml:space="preserve">
+    <value>Produkt, SKU, Barcode, Lieferant, Bestellung oder Referenz suchen...</value>
+  </data>
+  <data name="AllMovements" xml:space="preserve">
+    <value>Alle Bewegungen</value>
+  </data>
+  <data name="AllSuppliers" xml:space="preserve">
+    <value>Alle Lieferanten</value>
+  </data>
+  <data name="FiltersActive" xml:space="preserve">
+    <value>Filter aktiv</value>
+  </data>
+  <data name="MovementsCount" xml:space="preserve">
+    <value>{0} Bewegungen</value>
+  </data>
+  <data name="MovementHistory" xml:space="preserve">
+    <value>Bewegungshistorie</value>
+  </data>
+  <data name="MovementsLoading" xml:space="preserve">
+    <value>Bewegungen werden geladen...</value>
+  </data>
+  <data name="NoMovementsFound" xml:space="preserve">
+    <value>Keine Bewegungen gefunden</value>
+  </data>
+  <data name="NoMovementsForFilters" xml:space="preserve">
+    <value>Für die gewählten Filter wurden keine Bewegungen gefunden.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Seite</value>
+  </data>
+  <data name="ManageSuppliersDescription" xml:space="preserve">
+    <value>Verwalten Sie Ihre Lieferanten.</value>
+  </data>
+  <data name="NewSupplier" xml:space="preserve">
+    <value>Neuer Lieferant</value>
+  </data>
+  <data name="SearchSupplierPlaceholder" xml:space="preserve">
+    <value>Lieferant, Ansprechpartner, E-Mail oder Telefonnummer suchen...</value>
+  </data>
+  <data name="ActiveOnly" xml:space="preserve">
+    <value>Nur aktive</value>
+  </data>
+  <data name="InactiveOnly" xml:space="preserve">
+    <value>Nur inaktive</value>
+  </data>
+  <data name="SupplierList" xml:space="preserve">
+    <value>Lieferantenliste</value>
+  </data>
+  <data name="SuppliersLoading" xml:space="preserve">
+    <value>Lieferanten werden geladen...</value>
+  </data>
+  <data name="NoSuppliersFound" xml:space="preserve">
+    <value>Keine Lieferanten gefunden</value>
+  </data>
+  <data name="NoSuppliersForSearch" xml:space="preserve">
+    <value>Für die aktuelle Suche wurden keine Lieferanten gefunden.</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Nr.</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Firma</value>
+  </data>
+  <data name="ContactPerson" xml:space="preserve">
+    <value>Ansprechpartner</value>
+  </data>
+  <data name="VatNumber" xml:space="preserve">
+    <value>USt-IdNr.</value>
+  </data>
+  <data name="PaginationInfoSuppliers" xml:space="preserve">
+    <value>Seite {0} von {1} · {2} von {3} Lieferanten</value>
+  </data>
+  <data name="EditSupplier" xml:space="preserve">
+    <value>Lieferant bearbeiten</value>
+  </data>
+  <data name="SupplierLoading" xml:space="preserve">
+    <value>Lieferant wird geladen...</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>Lieferant nicht gefunden</value>
+  </data>
+  <data name="BackToSuppliers" xml:space="preserve">
+    <value>Zurück zu Lieferanten</value>
+  </data>
+  <data name="SupplierInformation" xml:space="preserve">
+    <value>Lieferanteninformationen</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Firmenname</value>
+  </data>
+  <data name="SupplierNumber" xml:space="preserve">
+    <value>Lieferantennummer</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Straße</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>PLZ</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="SupplierIsActive" xml:space="preserve">
+    <value>Lieferant ist aktiv</value>
+  </data>
+  <data name="SupplierNumberAlreadyExists" xml:space="preserve">
+    <value>Diese Lieferantennummer existiert bereits.</value>
+  </data>
+  <data name="CreateNewSupplierDescription" xml:space="preserve">
+    <value>Neuen Lieferanten anlegen.</value>
+  </data>
+  <data name="BasicSupplierInformation" xml:space="preserve">
+    <value>Grundlegende Informationen zum Lieferanten.</value>
+  </data>
+  <data name="SupplierContactInformation" xml:space="preserve">
+    <value>Kontaktinformationen des Lieferanten.</value>
+  </data>
+  <data name="CompanyNamePlaceholder" xml:space="preserve">
+    <value>z.B. Mustermann GmbH</value>
+  </data>
+  <data name="SupplierNumberPlaceholder" xml:space="preserve">
+    <value>z.B. L-0001</value>
+  </data>
+  <data name="ContactPersonPlaceholder" xml:space="preserve">
+    <value>z.B. Max Mustermann</value>
+  </data>
+  <data name="VatNumberPlaceholder" xml:space="preserve">
+    <value>z.B. DE123456789</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>info@firma.de</value>
+  </data>
+  <data name="PhonePlaceholder" xml:space="preserve">
+    <value>+49 123 456789</value>
+  </data>
+  <data name="StreetPlaceholder" xml:space="preserve">
+    <value>Musterstraße 1</value>
+  </data>
+  <data name="PostalCodePlaceholder" xml:space="preserve">
+    <value>12345</value>
+  </data>
+  <data name="CityPlaceholder" xml:space="preserve">
+    <value>Berlin</value>
+  </data>
+  <data name="CountryPlaceholder" xml:space="preserve">
+    <value>Deutschland</value>
+  </data>
+  <data name="SaveSupplier" xml:space="preserve">
+    <value>Lieferant speichern</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Stadt</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="ManageCustomersDescription" xml:space="preserve">
+    <value>Verwalten Sie Ihre Kunden.</value>
+  </data>
+  <data name="NewCustomer" xml:space="preserve">
+    <value>Neuer Kunde</value>
+  </data>
+  <data name="SearchCustomerPlaceholder" xml:space="preserve">
+    <value>Kunde, Ansprechpartner, E-Mail oder Telefonnummer suchen...</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>Alle Kunden</value>
+  </data>
+  <data name="CustomerList" xml:space="preserve">
+    <value>Kundenliste</value>
+  </data>
+  <data name="CustomersLoading" xml:space="preserve">
+    <value>Kunden werden geladen...</value>
+  </data>
+  <data name="NoCustomersFound" xml:space="preserve">
+    <value>Keine Kunden gefunden</value>
+  </data>
+  <data name="NoCustomersForSearch" xml:space="preserve">
+    <value>Für die aktuelle Suche wurden keine Kunden gefunden.</value>
+  </data>
+  <data name="OfCustomers" xml:space="preserve">
+    <value>von {0} Kunden</value>
+  </data>
+  <data name="EditCustomer" xml:space="preserve">
+    <value>Kunde bearbeiten</value>
+  </data>
+  <data name="CustomerLoading" xml:space="preserve">
+    <value>Kunde wird geladen...</value>
+  </data>
+  <data name="CustomerNotFound" xml:space="preserve">
+    <value>Kunde wurde nicht gefunden.</value>
+  </data>
+  <data name="BackToCustomers" xml:space="preserve">
+    <value>Zurück zu Kunden</value>
+  </data>
+  <data name="CustomerInformation" xml:space="preserve">
+    <value>Kundeninformationen</value>
+  </data>
+  <data name="CustomerNumber" xml:space="preserve">
+    <value>Kundennummer</value>
+  </data>
+  <data name="CustomerIsActive" xml:space="preserve">
+    <value>Kunde ist aktiv</value>
+  </data>
+  <data name="CustomerNumberAlreadyExists" xml:space="preserve">
+    <value>Diese Kundennummer existiert bereits.</value>
+  </data>
+  <data name="CreateCustomerDescription" xml:space="preserve">
+    <value>Neuen Kunden anlegen.</value>
+  </data>
+  <data name="BasicCustomerInformation" xml:space="preserve">
+    <value>Grundlegende Informationen zum Kunden.</value>
+  </data>
+  <data name="CustomerNumberPlaceholder" xml:space="preserve">
+    <value>z.B. K-0001</value>
+  </data>
+  <data name="SaveCustomer" xml:space="preserve">
+    <value>Kunde speichern</value>
+  </data>
 </root>

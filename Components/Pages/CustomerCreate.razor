@@ -1,29 +1,33 @@
 ﻿@page "/customers/create"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Neuer Kunde</PageTitle>
+<PageTitle>@L["NewCustomer"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Neuer Kunde</h1>
-            <p>Neuen Kunden anlegen.</p>
+            <h1>@L["NewCustomer"]</h1>
+            <p>@L["CreateCustomerDescription"]</p>
         </div>
 
         <a href="/customers"
            class="btn-secondary">
-            ← Zurück
+            ← @L["Back"]
         </a>
 
     </div>
@@ -46,10 +50,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Kundeninformationen</h2>
+                    <h2>@L["CustomerInformation"]</h2>
 
                     <p>
-                        Grundlegende Informationen zum Kunden.
+                        @L["BasicCustomerInformation"]
                     </p>
 
                 </div>
@@ -61,12 +65,12 @@
                     <div class="form-group">
 
                         <label>
-                            Firmenname <span>*</span>
+                            @L["CompanyName"] <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.CompanyName"
                                    class="form-control"
-                                   placeholder="z.B. Muster GmbH" />
+                                   placeholder="@L["CompanyNamePlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.CompanyName)" />
 
@@ -76,12 +80,12 @@
                     <div class="form-group">
 
                         <label>
-                            Kundennummer
+                            @L["CustomerNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.CustomerNumber"
                                    class="form-control"
-                                   placeholder="z.B. K-0001" />
+                                   placeholder="@L["CustomerNumberPlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.CustomerNumber)" />
 
@@ -91,12 +95,12 @@
                     <div class="form-group">
 
                         <label>
-                            Ansprechpartner
+                            @L["ContactPerson"]
                         </label>
 
                         <InputText @bind-Value="Model.ContactPerson"
                                    class="form-control"
-                                   placeholder="z.B. Max Mustermann" />
+                                   placeholder="@L["ContactPersonPlaceholder"]" />
 
                     </div>
 
@@ -104,12 +108,12 @@
                     <div class="form-group">
 
                         <label>
-                            USt-IdNr.
+                            @L["VatNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.VatNumber"
                                    class="form-control"
-                                   placeholder="z.B. DE123456789" />
+                                   placeholder="@L["VatNumberPlaceholder"]" />
 
                     </div>
 
@@ -126,7 +130,7 @@
 
                 <div class="form-section-title">
 
-                    <h2>Kontakt</h2>
+                    <h2>@L["Contact"]</h2>
 
                 </div>
 
@@ -137,13 +141,13 @@
                     <div class="form-group">
 
                         <label>
-                            E-Mail
+                            @L["Email"]
                         </label>
 
                         <InputText @bind-Value="Model.Email"
                                    class="form-control"
                                    type="email"
-                                   placeholder="info@firma.de" />
+                                   placeholder="@L["EmailPlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.Email)" />
 
@@ -153,12 +157,12 @@
                     <div class="form-group">
 
                         <label>
-                            Telefon
+                            @L["Phone"]
                         </label>
 
                         <InputText @bind-Value="Model.Phone"
                                    class="form-control"
-                                   placeholder="+49 123 456789" />
+                                   placeholder="@L["PhonePlaceholder"]" />
 
                     </div>
 
@@ -175,7 +179,7 @@
 
                 <div class="form-section-title">
 
-                    <h2>Adresse</h2>
+                    <h2>@L["Address"]</h2>
 
                 </div>
 
@@ -186,12 +190,12 @@
                     <div class="form-group">
 
                         <label>
-                            Straße
+                            @L["Street"]
                         </label>
 
                         <InputText @bind-Value="Model.Street"
                                    class="form-control"
-                                   placeholder="Musterstraße 1" />
+                                   placeholder="@L["StreetPlaceholder"]" />
 
                     </div>
 
@@ -199,12 +203,12 @@
                     <div class="form-group">
 
                         <label>
-                            PLZ
+                            @L["PostalCode"]
                         </label>
 
                         <InputText @bind-Value="Model.PostalCode"
                                    class="form-control"
-                                   placeholder="12345" />
+                                   placeholder="@L["PostalCodePlaceholder"]" />
 
                     </div>
 
@@ -212,12 +216,12 @@
                     <div class="form-group">
 
                         <label>
-                            Ort
+                            @L["City"]
                         </label>
 
                         <InputText @bind-Value="Model.City"
                                    class="form-control"
-                                   placeholder="Berlin" />
+                                   placeholder="@L["CityPlaceholder"]" />
 
                     </div>
 
@@ -225,12 +229,12 @@
                     <div class="form-group">
 
                         <label>
-                            Land
+                            @L["Country"]
                         </label>
 
                         <InputText @bind-Value="Model.Country"
                                    class="form-control"
-                                   placeholder="Deutschland" />
+                                   placeholder="@L["CountryPlaceholder"]" />
 
                     </div>
 
@@ -247,7 +251,7 @@
 
                 <div class="form-section-title">
 
-                    <h2>Notiz</h2>
+                    <h2>@L["Note"]</h2>
 
                 </div>
 
@@ -257,7 +261,7 @@
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="5"
-                                   placeholder="Optionale Notiz..." />
+                                   placeholder="@L["OptionalNotePlaceholder"]" />
 
                 </div>
 
@@ -277,7 +281,7 @@
                         <InputCheckbox @bind-Value="Model.IsActive" />
 
                         <span>
-                            Kunde ist aktiv
+                            @L["CustomerIsActive"]
                         </span>
 
                     </label>
@@ -299,7 +303,7 @@
 
                 <a href="/customers"
                    class="btn-secondary">
-                    Abbrechen
+                    @L["Cancel"]
                 </a>
 
                 <button type="submit"
@@ -307,8 +311,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Kunde speichern")
+                        ? L["Saving"]
+                        : L["SaveCustomer"])
 
                 </button>
 
@@ -363,7 +367,7 @@
                 if (exists)
                 {
                     ErrorMessage =
-                        "Diese Kundennummer existiert bereits.";
+                        L["CustomerNumberAlreadyExists"];
 
                     return;
                 }
@@ -454,7 +458,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -466,8 +470,8 @@
     private class CustomerModel
     {
         [Required(
-            ErrorMessage =
-                "Firmenname ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "CompanyNameRequired")]
         [MaxLength(200)]
         public string CompanyName { get; set; }
             = string.Empty;
@@ -482,8 +486,8 @@
 
 
         [EmailAddress(
-            ErrorMessage =
-                "Ungültige E-Mail-Adresse.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidEmailAddress")]
         [MaxLength(200)]
         public string? Email { get; set; }
 

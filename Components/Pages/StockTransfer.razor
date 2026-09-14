@@ -1,15 +1,19 @@
 ﻿@page "/stock/transfer"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Umlagerung</PageTitle>
+<PageTitle>@L["StockTransfer"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -21,10 +25,10 @@
 
         <div>
 
-            <h1>Umlagerung</h1>
+            <h1>@L["StockTransfer"]</h1>
 
             <p>
-                Ware von einem Lagerplatz auf einen anderen verschieben.
+                @L["StockTransferDescription"]
             </p>
 
         </div>
@@ -32,7 +36,7 @@
         <a href="/stock"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -56,10 +60,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Umlagerung</h2>
+                    <h2>@L["StockTransfer"]</h2>
 
                     <p>
-                        Wählen Sie Produkt, Quell- und Ziellagerplatz.
+                        @L["SelectProductSourceTarget"]
                     </p>
 
                 </div>
@@ -75,7 +79,7 @@
                     <div class="form-group">
 
                         <label>
-                            Produkt <span>*</span>
+                            @L["Product"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -83,7 +87,7 @@
                                 @onchange="OnProductChanged">
 
                             <option value="0">
-                                Produkt auswählen
+                                @L["SelectProduct"]
                             </option>
 
                             @foreach (var product in Products)
@@ -107,7 +111,7 @@
                     <div class="form-group">
 
                         <label>
-                            Von Lager <span>*</span>
+                            @L["FromWarehouse"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -116,7 +120,7 @@
                                 disabled="@(Model.ProductId <= 0)">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in FromWarehouses)
@@ -140,7 +144,7 @@
                     <div class="form-group">
 
                         <label>
-                            Von Lagerplatz <span>*</span>
+                            @L["FromLocation"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -149,7 +153,7 @@
                                 disabled="@(Model.FromWarehouseId <= 0)">
 
                             <option value="0">
-                                Lagerplatz auswählen
+                                @L["SelectLocation"]
                             </option>
 
                             @foreach (var location in FromLocations)
@@ -172,10 +176,7 @@
                              FromLocations.Count == 0)
                         {
                             <div class="form-hint">
-
-                                Für dieses Produkt ist in diesem Lager
-                                kein verfügbarer Bestand vorhanden.
-
+                                @L["NoAvailableStockAtWarehouse"]
                             </div>
                         }
 
@@ -191,7 +192,7 @@
                     <div class="form-group">
 
                         <label>
-                            Verfügbarer Bestand
+                            @L["AvailableStock"]
                         </label>
 
                         <input class="form-control"
@@ -208,7 +209,7 @@
                     <div class="form-group">
 
                         <label>
-                            Menge <span>*</span>
+                            @L["Quantity"] <span>*</span>
                         </label>
 
                         <InputNumber @bind-Value="Model.Quantity"
@@ -224,7 +225,7 @@
                         {
                             <div class="form-error">
 
-                                Die Menge überschreitet den verfügbaren Bestand.
+                                @L["QuantityExceedsAvailableStock"]
 
                             </div>
                         }
@@ -239,7 +240,7 @@
                     <div class="form-group">
 
                         <label>
-                            Nach Lager <span>*</span>
+                            @L["ToWarehouse"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -248,7 +249,7 @@
                                 disabled="@(Model.ProductId <= 0)">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in Warehouses)
@@ -272,7 +273,7 @@
                     <div class="form-group">
 
                         <label>
-                            Nach Lagerplatz <span>*</span>
+                            @L["ToLocation"] <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -281,7 +282,7 @@
                                 disabled="@(Model.ToWarehouseId <= 0)">
 
                             <option value="0">
-                                Lagerplatz auswählen
+                                @L["SelectLocation"]
                             </option>
 
                             @foreach (var location in ToLocations)
@@ -312,12 +313,12 @@
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.ReferenceNumber"
                                    class="form-control"
-                                   placeholder="z.B. UL-2026-0001" />
+                                   placeholder="@L["ReferenceNumberPlaceholder"]" />
 
                     </div>
 
@@ -334,10 +335,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Notiz</h2>
+                    <h2>@L["Note"]</h2>
 
                     <p>
-                        Optionale Informationen zur Umlagerung.
+                        @L["OptionalTransferInformation"]
                     </p>
 
                 </div>
@@ -347,7 +348,7 @@
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="4"
-                                   placeholder="Notiz..." />
+                                   placeholder="@L["NotePlaceholder"]" />
 
                 </div>
 
@@ -385,7 +386,7 @@
                 <a href="/stock"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -394,8 +395,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Wird gebucht..."
-                        : "Umlagerung buchen")
+                        ? L["Booking"]
+                        : L["BookTransfer"])
 
                 </button>
 
@@ -452,18 +453,15 @@
 
         Products =
             await db.Products
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
 
 
-        // Destination Lager
-        // werden erst nach Produktauswahl geladen.
+        // Destination warehouses and locations
+        // are loaded after product selection.
 
         Warehouses.Clear();
 
@@ -506,7 +504,7 @@
 
 
         // =====================================================
-        // RESET VON
+        // RESET SOURCE
         // =====================================================
 
         Model.FromWarehouseId =
@@ -517,7 +515,7 @@
 
 
         // =====================================================
-        // RESET NACH
+        // RESET TARGET
         // =====================================================
 
         Model.ToWarehouseId =
@@ -557,16 +555,15 @@
 
 
         // =====================================================
-        // VON LAGER
+        // SOURCE WAREHOUSES
         //
-        // Nur Lager, in denen der ausgewählte Artikel
-        // mindestens einen aktiven Lagerplatz mit
-        // verfügbarem Bestand besitzt.
+        // Only warehouses where the selected product
+        // has at least one active location with
+        // available stock.
         // =====================================================
 
         FromWarehouses =
             await db.Warehouses
-
                 .Where(warehouse =>
 
                     warehouse.IsActive
@@ -604,29 +601,23 @@
                     )
 
                 )
-
                 .OrderBy(warehouse =>
                     warehouse.Name)
-
                 .ToListAsync();
 
 
         // =====================================================
-        // NACH LAGER
+        // TARGET WAREHOUSES
         //
-        // Für das Ziellager können alle aktiven Lager
-        // ausgewählt werden.
+        // All active warehouses can be selected.
         // =====================================================
 
         Warehouses =
             await db.Warehouses
-
                 .Where(x =>
                     x.IsActive)
-
                 .OrderBy(x =>
                     x.Name)
-
                 .ToListAsync();
 
 
@@ -635,7 +626,7 @@
 
 
     // =========================================================
-    // VON LAGER CHANGED
+    // SOURCE WAREHOUSE CHANGED
     // =========================================================
 
     private async Task OnFromWarehouseChanged(
@@ -682,20 +673,33 @@
         }
 
 
+        // Make sure the selected warehouse
+        // is actually available for the product.
+
+        if (!FromWarehouses.Any(x =>
+                x.Id == warehouseId))
+        {
+            Model.FromWarehouseId = 0;
+
+            StateHasChanged();
+
+            return;
+        }
+
+
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
 
         // =====================================================
-        // VON LAGERPLÄTZE
+        // SOURCE LOCATIONS
         //
-        // Nur Lagerplätze, an denen der ausgewählte Artikel
-        // tatsächlich verfügbaren Bestand besitzt.
+        // Only locations where the selected product
+        // has available stock.
         // =====================================================
 
         FromLocations =
             await db.WarehouseLocations
-
                 .Where(location =>
 
                     location.IsActive
@@ -725,10 +729,8 @@
                     )
 
                 )
-
                 .OrderBy(location =>
                     location.Code)
-
                 .ToListAsync();
 
 
@@ -737,7 +739,7 @@
 
 
     // =========================================================
-    // VON LAGERPLATZ CHANGED
+    // SOURCE LOCATION CHANGED
     // =========================================================
 
     private async Task OnFromLocationChanged(
@@ -751,6 +753,17 @@
         if (!int.TryParse(
                 e.Value?.ToString(),
                 out var locationId))
+        {
+            locationId = 0;
+        }
+
+
+        // Make sure the selected location
+        // belongs to the selected source warehouse.
+
+        if (locationId > 0 &&
+            !FromLocations.Any(x =>
+                x.Id == locationId))
         {
             locationId = 0;
         }
@@ -785,7 +798,7 @@
 
 
     // =========================================================
-    // NACH LAGER CHANGED
+    // TARGET WAREHOUSE CHANGED
     // =========================================================
 
     private async Task OnToWarehouseChanged(
@@ -823,17 +836,29 @@
         }
 
 
+        // Make sure the selected warehouse is active.
+
+        if (!Warehouses.Any(x =>
+                x.Id == warehouseId))
+        {
+            Model.ToWarehouseId = 0;
+
+            StateHasChanged();
+
+            return;
+        }
+
+
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
 
         // =====================================================
-        // ALLE AKTIVEN ZIEL-LAGERPLÄTZE
+        // ALL ACTIVE TARGET LOCATIONS
         // =====================================================
 
         ToLocations =
             await db.WarehouseLocations
-
                 .Where(location =>
 
                     location.IsActive
@@ -844,10 +869,8 @@
                         warehouseId
 
                 )
-
                 .OrderBy(location =>
                     location.Code)
-
                 .ToListAsync();
 
 
@@ -856,7 +879,7 @@
 
 
     // =========================================================
-    // NACH LAGERPLATZ CHANGED
+    // TARGET LOCATION CHANGED
     // =========================================================
 
     private Task OnToLocationChanged(
@@ -866,6 +889,16 @@
                 e.Value?.ToString(),
                 out var locationId))
         {
+            // Make sure the location is one
+            // of the currently loaded target locations.
+
+            if (locationId > 0 &&
+                !ToLocations.Any(x =>
+                    x.Id == locationId))
+            {
+                locationId = 0;
+            }
+
             Model.ToWarehouseLocationId =
                 locationId;
         }
@@ -874,6 +907,11 @@
             Model.ToWarehouseLocationId =
                 0;
         }
+
+
+        ErrorMessage = null;
+
+        SuccessMessage = null;
 
 
         StateHasChanged();
@@ -906,7 +944,6 @@
 
         var stock =
             await db.Stocks
-
                 .FirstOrDefaultAsync(x =>
 
                     x.ProductId ==
@@ -954,7 +991,7 @@
             if (Model.ProductId <= 0)
             {
                 ErrorMessage =
-                    "Bitte ein Produkt auswählen.";
+                    L["ProductSelectionRequired"];
 
                 return;
             }
@@ -967,7 +1004,7 @@
             if (Model.FromWarehouseId <= 0)
             {
                 ErrorMessage =
-                    "Bitte ein Quelllager auswählen.";
+                    L["SourceWarehouseSelectionRequired"];
 
                 return;
             }
@@ -980,7 +1017,7 @@
             if (Model.FromWarehouseLocationId <= 0)
             {
                 ErrorMessage =
-                    "Bitte einen Quelllagerplatz auswählen.";
+                    L["SourceLocationSelectionRequired"];
 
                 return;
             }
@@ -993,7 +1030,7 @@
             if (Model.ToWarehouseId <= 0)
             {
                 ErrorMessage =
-                    "Bitte ein Ziellager auswählen.";
+                    L["TargetWarehouseSelectionRequired"];
 
                 return;
             }
@@ -1006,7 +1043,7 @@
             if (Model.ToWarehouseLocationId <= 0)
             {
                 ErrorMessage =
-                    "Bitte einen Ziellagerplatz auswählen.";
+                    L["TargetLocationSelectionRequired"];
 
                 return;
             }
@@ -1020,7 +1057,7 @@
                 Model.ToWarehouseLocationId)
             {
                 ErrorMessage =
-                    "Quell- und Ziellagerplatz dürfen nicht identisch sein.";
+                    L["SameLocationError"];
 
                 return;
             }
@@ -1033,7 +1070,7 @@
             if (Model.Quantity <= 0)
             {
                 ErrorMessage =
-                    "Die Menge muss größer als 0 sein.";
+                    L["QuantityMustBeGreaterThanZero"];
 
                 return;
             }
@@ -1044,12 +1081,71 @@
 
 
             // =================================================
+            // PRODUCT
+            // =================================================
+
+            var product =
+                await db.Products
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Model.ProductId &&
+                        x.IsActive);
+
+
+            if (product == null)
+            {
+                ErrorMessage =
+                    L["SelectedProductNotFound"];
+
+                return;
+            }
+
+
+            // =================================================
+            // SOURCE WAREHOUSE
+            // =================================================
+
+            var sourceWarehouse =
+                await db.Warehouses
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Model.FromWarehouseId &&
+                        x.IsActive);
+
+
+            if (sourceWarehouse == null)
+            {
+                ErrorMessage =
+                    L["SelectedWarehouseNotFound"];
+
+                return;
+            }
+
+
+            // =================================================
+            // TARGET WAREHOUSE
+            // =================================================
+
+            var targetWarehouse =
+                await db.Warehouses
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Model.ToWarehouseId &&
+                        x.IsActive);
+
+
+            if (targetWarehouse == null)
+            {
+                ErrorMessage =
+                    L["SelectedWarehouseNotFound"];
+
+                return;
+            }
+
+
+            // =================================================
             // SOURCE STOCK
             // =================================================
 
             var sourceStock =
                 await db.Stocks
-
                     .FirstOrDefaultAsync(x =>
 
                         x.ProductId ==
@@ -1066,7 +1162,7 @@
             if (sourceStock == null)
             {
                 ErrorMessage =
-                    "Am Quelllagerplatz ist kein Bestand vorhanden.";
+                    L["NoStockAtSourceLocation"];
 
                 return;
             }
@@ -1083,7 +1179,7 @@
             if (available <= 0)
             {
                 ErrorMessage =
-                    "Am Quelllagerplatz ist kein verfügbarer Bestand vorhanden.";
+                    L["NoAvailableStockAtSourceLocation"];
 
                 return;
             }
@@ -1092,8 +1188,10 @@
             if (Model.Quantity > available)
             {
                 ErrorMessage =
-                    $"Nicht genügend verfügbarer Bestand. " +
-                    $"Verfügbar: {available:N2}.";
+                    L[
+                        "InsufficientAvailableStock",
+                        available.ToString("N2")
+                    ];
 
                 return;
             }
@@ -1105,7 +1203,6 @@
 
             var fromLocation =
                 await db.WarehouseLocations
-
                     .FirstOrDefaultAsync(x =>
 
                         x.Id ==
@@ -1126,7 +1223,7 @@
             if (fromLocation == null)
             {
                 ErrorMessage =
-                    "Der Quelllagerplatz wurde nicht gefunden.";
+                    L["SourceLocationNotFound"];
 
                 return;
             }
@@ -1138,7 +1235,6 @@
 
             var toLocation =
                 await db.WarehouseLocations
-
                     .FirstOrDefaultAsync(x =>
 
                         x.Id ==
@@ -1159,7 +1255,7 @@
             if (toLocation == null)
             {
                 ErrorMessage =
-                    "Der Ziellagerplatz wurde nicht gefunden.";
+                    L["TargetLocationNotFound"];
 
                 return;
             }
@@ -1171,7 +1267,6 @@
 
             var targetStock =
                 await db.Stocks
-
                     .FirstOrDefaultAsync(x =>
 
                         x.ProductId ==
@@ -1270,17 +1365,13 @@
                         ReferenceNumber =
                             string.IsNullOrWhiteSpace(
                                 Model.ReferenceNumber)
-
                                 ? null
-
                                 : Model.ReferenceNumber.Trim(),
 
                         Note =
                             string.IsNullOrWhiteSpace(
                                 Model.Note)
-
                                 ? null
-
                                 : Model.Note.Trim(),
 
                         UserId =
@@ -1321,7 +1412,10 @@
 
 
             SuccessMessage =
-                $"Umlagerung von {movedQuantity:N2} Stück wurde erfolgreich gebucht.";
+                L[
+                    "StockTransferSuccess",
+                    movedQuantity.ToString("N2")
+                ];
 
 
             // =================================================
@@ -1349,7 +1443,10 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Buchen: {ex.Message}";
+                L[
+                    "StockTransferBookingError",
+                    ex.Message
+                ];
         }
         finally
         {

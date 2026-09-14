@@ -4,8 +4,10 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
@@ -13,8 +15,9 @@
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lieferanten</PageTitle>
+<PageTitle>@L["Suppliers"]</PageTitle>
 
 <div class="product-list-page">
 
@@ -23,23 +26,33 @@
     <div class="page-header">
 
         <div>
-            <h1>Lieferanten</h1>
-            <p>Verwalten Sie Ihre Lieferanten.</p>
+
+            <h1>@L["Suppliers"]</h1>
+
+            <p>
+                @L["ManageSuppliersDescription"]
+            </p>
+
         </div>
 
         <div>
-        <button type="button"
-                    class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedSuppliers.Count == 0)">
 
-                📊 Excel exportieren
+            <button type="button"
+                    class="btn-secondary"
+                    @onclick="ExportExcel"
+                    disabled="@(PagedSuppliers.Count == 0)">
+
+                📊 @L["ExportExcel"]
 
             </button>
 
             <a href="/suppliers/create"
                class="btn-primary">
-                + Neuer Lieferant
+
+                + @L["NewSupplier"]
+
             </a>
+
         </div>
 
     </div>
@@ -51,11 +64,13 @@
 
         <div class="search-box">
 
-            <span class="search-icon">⌕</span>
+            <span class="search-icon">
+                ⌕
+            </span>
 
             <input type="text"
                    class="search-input"
-                   placeholder="Lieferant, Ansprechpartner, E-Mail oder Telefonnummer suchen..."
+                   placeholder="@L["SearchSupplierPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -68,15 +83,15 @@
                 @bind:after="FilterChanged">
 
             <option value="all">
-                Alle Lieferanten
+                @L["AllSuppliers"]
             </option>
 
             <option value="active">
-                Nur aktive
+                @L["ActiveOnly"]
             </option>
 
             <option value="inactive">
-                Nur inaktive
+                @L["InactiveOnly"]
             </option>
 
         </select>
@@ -90,7 +105,9 @@
 
         <div class="stock-summary-card">
 
-            <span>Lieferanten</span>
+            <span>
+                @L["Suppliers"]
+            </span>
 
             <strong>
                 @Suppliers.Count
@@ -101,7 +118,9 @@
 
         <div class="stock-summary-card">
 
-            <span>Aktiv</span>
+            <span>
+                @L["Active"]
+            </span>
 
             <strong>
                 @ActiveCount
@@ -112,7 +131,9 @@
 
         <div class="stock-summary-card">
 
-            <span>Inaktiv</span>
+            <span>
+                @L["Inactive"]
+            </span>
 
             <strong>
                 @InactiveCount
@@ -132,11 +153,11 @@
             <div>
 
                 <strong>
-                    Lieferantenliste
+                    @L["SupplierList"]
                 </strong>
 
                 <span>
-                    @Suppliers.Count Einträge
+                    @L["EntriesCount", Suppliers.Count]
                 </span>
 
             </div>
@@ -147,7 +168,9 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-                Lieferanten werden geladen...
+
+                @L["SuppliersLoading"]
+
             </div>
         }
         else if (Suppliers.Count == 0)
@@ -159,11 +182,11 @@
                 </div>
 
                 <h3>
-                    Keine Lieferanten gefunden
+                    @L["NoSuppliersFound"]
                 </h3>
 
                 <p>
-                    Für die aktuelle Suche wurden keine Lieferanten gefunden.
+                    @L["NoSuppliersForSearch"]
                 </p>
 
             </div>
@@ -178,23 +201,41 @@
 
                         <tr>
 
-                            <th>Nr.</th>
+                            <th>
+                                @L["Number"]
+                            </th>
 
-                            <th>Firma</th>
+                            <th>
+                                @L["Company"]
+                            </th>
 
-                            <th>Ansprechpartner</th>
+                            <th>
+                                @L["ContactPerson"]
+                            </th>
 
-                            <th>E-Mail</th>
+                            <th>
+                                @L["Email"]
+                            </th>
 
-                            <th>Telefon</th>
+                            <th>
+                                @L["Phone"]
+                            </th>
 
-                            <th>Ort</th>
+                            <th>
+                                @L["City"]
+                            </th>
 
-                            <th>USt-IdNr.</th>
+                            <th>
+                                @L["VatNumber"]
+                            </th>
 
-                            <th>Status</th>
+                            <th>
+                                @L["Status"]
+                            </th>
 
-                            <th>Aktionen</th>
+                            <th>
+                                @L["Actions"]
+                            </th>
 
                         </tr>
 
@@ -207,29 +248,33 @@
                         {
                             <tr>
 
-                                <!-- NUMMER -->
+                                <!-- NUMBER -->
 
                                 <td>
 
                                     <span class="product-sku">
+
                                         @(string.IsNullOrWhiteSpace(
                                             supplier.SupplierNumber)
                                             ? $"#{supplier.Id}"
                                             : supplier.SupplierNumber)
+
                                     </span>
 
                                 </td>
 
 
-                                <!-- FIRMA -->
+                                <!-- COMPANY -->
 
                                 <td>
 
                                     <div class="product-name">
 
                                         <div class="product-avatar">
+
                                             @GetInitials(
                                                 supplier.CompanyName)
+
                                         </div>
 
                                         <div>
@@ -253,7 +298,7 @@
                                 </td>
 
 
-                                <!-- ANSPRECHPARTNER -->
+                                <!-- CONTACT PERSON -->
 
                                 <td>
 
@@ -278,13 +323,15 @@
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span>
+                                            -
+                                        </span>
                                     }
 
                                 </td>
 
 
-                                <!-- TELEFON -->
+                                <!-- PHONE -->
 
                                 <td>
 
@@ -296,7 +343,7 @@
                                 </td>
 
 
-                                <!-- ORT -->
+                                <!-- CITY -->
 
                                 <td>
 
@@ -309,7 +356,9 @@
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span>
+                                            -
+                                        </span>
                                     }
 
                                 </td>
@@ -334,13 +383,13 @@
                                     @if (supplier.IsActive)
                                     {
                                         <span class="status-badge status-active">
-                                            Aktiv
+                                            @L["Active"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-low">
-                                            Inaktiv
+                                            @L["Inactive"]
                                         </span>
                                     }
 
@@ -355,7 +404,7 @@
 
                                         <a href="/suppliers/edit/@supplier.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
+                                           title="@L["Edit"]">
 
                                             ✎
 
@@ -364,7 +413,7 @@
 
                                         <button type="button"
                                                 class="action-button delete-button"
-                                                title="Löschen"
+                                                title="@L["Delete"]"
                                                 @onclick="() => DeleteSupplier(supplier)">
 
                                             🗑
@@ -433,8 +482,13 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedSuppliers.Count von @Suppliers.Count Lieferanten
+                @L[
+                    "PaginationInfoSuppliers",
+                    CurrentPage,
+                    TotalPages,
+                    PagedSuppliers.Count,
+                    Suppliers.Count
+                ]
 
             </div>
         }
@@ -446,7 +500,16 @@
 
 @code {
 
+    // =========================================================
+    // SETTINGS
+    // =========================================================
+
     private const int PageSize = 10;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private int CurrentPage = 1;
 
@@ -459,13 +522,23 @@
     private bool IsLoading = true;
 
 
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
     private int ActiveCount =>
-        Suppliers.Count(x => x.IsActive);
+        Suppliers.Count(x =>
+            x.IsActive);
 
 
     private int InactiveCount =>
-        Suppliers.Count(x => !x.IsActive);
+        Suppliers.Count(x =>
+            !x.IsActive);
 
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
 
     private int TotalPages =>
         Math.Max(
@@ -482,11 +555,19 @@
             .ToList();
 
 
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
         await LoadSuppliers();
     }
 
+
+    // =========================================================
+    // LOAD SUPPLIERS
+    // =========================================================
 
     private async Task LoadSuppliers()
     {
@@ -499,15 +580,19 @@
 
 
             var query =
-                db.Suppliers.AsQueryable();
+                db.Suppliers
+                    .AsQueryable();
 
 
+            // =================================================
             // SEARCH
+            // =================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
+
 
                 query =
                     query.Where(x =>
@@ -517,65 +602,81 @@
                         ||
 
                         (
-                            x.ContactPerson != null &&
+                            x.ContactPerson != null
+                            &&
                             x.ContactPerson.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.Email != null &&
+                            x.Email != null
+                            &&
                             x.Email.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.Phone != null &&
+                            x.Phone != null
+                            &&
                             x.Phone.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.City != null &&
+                            x.City != null
+                            &&
                             x.City.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.SupplierNumber != null &&
+                            x.SupplierNumber != null
+                            &&
                             x.SupplierNumber.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.VatNumber != null &&
+                            x.VatNumber != null
+                            &&
                             x.VatNumber.Contains(search)
                         )
+
                     );
             }
 
 
+            // =================================================
             // STATUS
+            // =================================================
 
             if (SelectedStatus == "active")
             {
                 query =
-                    query.Where(x => x.IsActive);
+                    query.Where(x =>
+                        x.IsActive);
             }
             else if (SelectedStatus == "inactive")
             {
                 query =
-                    query.Where(x => !x.IsActive);
+                    query.Where(x =>
+                        !x.IsActive);
             }
 
 
+            // =================================================
+            // LOAD
+            // =================================================
+
             Suppliers =
                 await query
-                    .OrderBy(x => x.CompanyName)
+                    .OrderBy(x =>
+                        x.CompanyName)
                     .ToListAsync();
 
 
@@ -588,6 +689,10 @@
     }
 
 
+    // =========================================================
+    // SEARCH CHANGED
+    // =========================================================
+
     private async Task SearchChanged()
     {
         CurrentPage = 1;
@@ -595,6 +700,10 @@
         await LoadSuppliers();
     }
 
+
+    // =========================================================
+    // FILTER CHANGED
+    // =========================================================
 
     private async Task FilterChanged()
     {
@@ -604,10 +713,17 @@
     }
 
 
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
     private void GoToPage(int page)
     {
-        if (page < 1 || page > TotalPages)
+        if (page < 1 ||
+            page > TotalPages)
+        {
             return;
+        }
 
         CurrentPage = page;
     }
@@ -631,61 +747,69 @@
     }
 
 
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
     private async Task ExportExcel()
     {
-        var data = PagedSuppliers
-            .Where(x => x != null)
-            .ToList();
+        var data =
+            PagedSuppliers
+                .Where(x => x != null)
+                .ToList();
+
 
         if (data.Count == 0)
             return;
 
 
-        var fileBytes = ExcelExport.Export(
-            data,
-            "Lieferanten",
-            $"Lieferanten – Seite {CurrentPage}",
+        var fileBytes =
+            ExcelExport.Export(
+                data,
+                "Lieferanten",
+                $"{L["Suppliers"]} – {L["Page"]} {CurrentPage}",
 
-            ("Nr.", x =>
-                string.IsNullOrWhiteSpace(x.SupplierNumber)
-                    ? $"#{x.Id}"
-                    : x.SupplierNumber),
+                ("Nr.", x =>
+                    string.IsNullOrWhiteSpace(
+                        x.SupplierNumber)
+                        ? $"#{x.Id}"
+                        : x.SupplierNumber),
 
-            ("Firma", x =>
-                x.CompanyName ?? ""),
+                ("Firma", x =>
+                    x.CompanyName ?? ""),
 
-            ("Ansprechpartner", x =>
-                x.ContactPerson ?? ""),
+                ("Ansprechpartner", x =>
+                    x.ContactPerson ?? ""),
 
-            ("E-Mail", x =>
-                x.Email ?? ""),
+                ("E-Mail", x =>
+                    x.Email ?? ""),
 
-            ("Telefon", x =>
-                x.Phone ?? ""),
+                ("Telefon", x =>
+                    x.Phone ?? ""),
 
-            ("Straße", x =>
-                x.Street ?? ""),
+                ("Straße", x =>
+                    x.Street ?? ""),
 
-            ("PLZ", x =>
-                x.PostalCode ?? ""),
+                ("PLZ", x =>
+                    x.PostalCode ?? ""),
 
-            ("Ort", x =>
-                x.City ?? ""),
+                ("Ort", x =>
+                    x.City ?? ""),
 
-            ("Land", x =>
-                x.Country ?? ""),
+                ("Land", x =>
+                    x.Country ?? ""),
 
-            ("USt-IdNr.", x =>
-                x.VatNumber ?? ""),
+                ("USt-IdNr.", x =>
+                    x.VatNumber ?? ""),
 
-            ("Status", x =>
-                x.IsActive
-                    ? "Aktiv"
-                    : "Inaktiv"),
+                ("Status", x =>
+                    x.IsActive
+                        ? L["Active"].Value
+                        : L["Inactive"].Value),
 
-            ("Notiz", x =>
-                x.Note ?? "")
-        );
+                ("Notiz", x =>
+                    x.Note ?? "")
+            );
 
 
         var base64 =
@@ -694,20 +818,22 @@
 
         await JS.InvokeVoidAsync(
             "downloadFile",
-            $"Lieferanten_Seite_{CurrentPage}.xlsx",
+            $"{L["Suppliers"]}_{L["Page"]}_{CurrentPage}.xlsx",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             base64);
     }
 
 
-    private async Task DeleteSupplier(Supplier supplier)
+    // =========================================================
+    // DELETE / DEACTIVATE SUPPLIER
+    // =========================================================
+
+    private async Task DeleteSupplier(
+        Supplier supplier)
     {
-        var confirmed =
-            await Task.FromResult(true);
-
-        if (!confirmed)
-            return;
-
+        // Soft delete.
+        // The existing page currently does not show
+        // a confirmation dialog.
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
@@ -716,16 +842,16 @@
         var entity =
             await db.Suppliers
                 .FirstOrDefaultAsync(
-                    x => x.Id == supplier.Id);
+                    x =>
+                        x.Id == supplier.Id);
 
 
         if (entity == null)
             return;
 
 
-        // Soft delete
-
-        entity.IsActive = false;
+        entity.IsActive =
+            false;
 
 
         await db.SaveChangesAsync();
@@ -735,7 +861,12 @@
     }
 
 
-    private string GetInitials(string? name)
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";
@@ -761,7 +892,7 @@
 
         return
             $"{words[0][0]}{words[1][0]}"
-            .ToUpper();
+                .ToUpper();
     }
 
 }

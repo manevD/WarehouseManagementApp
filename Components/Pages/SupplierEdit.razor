@@ -1,16 +1,20 @@
 ﻿@page "/suppliers/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lieferant bearbeiten</PageTitle>
+<PageTitle>@L["EditSupplier"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -18,7 +22,7 @@
 
         <div>
 
-            <h1>Lieferant bearbeiten</h1>
+            <h1>@L["EditSupplier"]</h1>
 
             @if (Supplier != null)
             {
@@ -32,7 +36,7 @@
         <a href="/suppliers"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -42,7 +46,9 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Lieferant wird geladen...
+
+            @L["SupplierLoading"]
+
         </div>
     }
     else if (Supplier == null)
@@ -50,13 +56,13 @@
         <div class="empty-products">
 
             <h3>
-                Lieferant nicht gefunden
+                @L["SupplierNotFound"]
             </h3>
 
             <a href="/suppliers"
                class="btn-secondary">
 
-                Zurück zu Lieferanten
+                @L["BackToSuppliers"]
 
             </a>
 
@@ -82,7 +88,9 @@
 
                     <div class="form-section-title">
 
-                        <h2>Lieferanteninformationen</h2>
+                        <h2>
+                            @L["SupplierInformation"]
+                        </h2>
 
                     </div>
 
@@ -93,7 +101,7 @@
                         <div class="form-group">
 
                             <label>
-                                Firmenname <span>*</span>
+                                @L["CompanyName"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.CompanyName"
@@ -107,7 +115,7 @@
                         <div class="form-group">
 
                             <label>
-                                Lieferantennummer
+                                @L["SupplierNumber"]
                             </label>
 
                             <InputText @bind-Value="Model.SupplierNumber"
@@ -121,7 +129,7 @@
                         <div class="form-group">
 
                             <label>
-                                Ansprechpartner
+                                @L["ContactPerson"]
                             </label>
 
                             <InputText @bind-Value="Model.ContactPerson"
@@ -133,7 +141,7 @@
                         <div class="form-group">
 
                             <label>
-                                USt-IdNr.
+                                @L["VatNumber"]
                             </label>
 
                             <InputText @bind-Value="Model.VatNumber"
@@ -154,7 +162,9 @@
 
                     <div class="form-section-title">
 
-                        <h2>Kontakt</h2>
+                        <h2>
+                            @L["Contact"]
+                        </h2>
 
                     </div>
 
@@ -165,7 +175,7 @@
                         <div class="form-group">
 
                             <label>
-                                E-Mail
+                                @L["Email"]
                             </label>
 
                             <InputText @bind-Value="Model.Email"
@@ -180,7 +190,7 @@
                         <div class="form-group">
 
                             <label>
-                                Telefon
+                                @L["Phone"]
                             </label>
 
                             <InputText @bind-Value="Model.Phone"
@@ -201,7 +211,9 @@
 
                     <div class="form-section-title">
 
-                        <h2>Adresse</h2>
+                        <h2>
+                            @L["Address"]
+                        </h2>
 
                     </div>
 
@@ -212,7 +224,7 @@
                         <div class="form-group">
 
                             <label>
-                                Straße
+                                @L["Street"]
                             </label>
 
                             <InputText @bind-Value="Model.Street"
@@ -224,7 +236,7 @@
                         <div class="form-group">
 
                             <label>
-                                PLZ
+                                @L["PostalCode"]
                             </label>
 
                             <InputText @bind-Value="Model.PostalCode"
@@ -236,7 +248,7 @@
                         <div class="form-group">
 
                             <label>
-                                Ort
+                                @L["City"]
                             </label>
 
                             <InputText @bind-Value="Model.City"
@@ -248,7 +260,7 @@
                         <div class="form-group">
 
                             <label>
-                                Land
+                                @L["Country"]
                             </label>
 
                             <InputText @bind-Value="Model.Country"
@@ -269,7 +281,9 @@
 
                     <div class="form-section-title">
 
-                        <h2>Notiz</h2>
+                        <h2>
+                            @L["Note"]
+                        </h2>
 
                     </div>
 
@@ -298,7 +312,7 @@
                             <InputCheckbox @bind-Value="Model.IsActive" />
 
                             <span>
-                                Lieferant ist aktiv
+                                @L["SupplierIsActive"]
                             </span>
 
                         </label>
@@ -324,17 +338,18 @@
                     <a href="/suppliers"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
+
 
                     <button type="submit"
                             class="btn-primary"
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -366,16 +381,23 @@
     private string? ErrorMessage;
 
 
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
         await LoadSupplier();
     }
 
 
+    // =========================================================
+    // LOAD SUPPLIER
+    // =========================================================
+
     private async Task LoadSupplier()
     {
         IsLoading = true;
-
 
         try
         {
@@ -441,6 +463,10 @@
     }
 
 
+    // =========================================================
+    // UPDATE SUPPLIER
+    // =========================================================
+
     private async Task UpdateSupplier()
     {
         if (IsSaving)
@@ -467,13 +493,15 @@
             if (entity == null)
             {
                 ErrorMessage =
-                    "Lieferant wurde nicht gefunden.";
+                    L["SupplierNotFound"];
 
                 return;
             }
 
 
-            // Supplier number prüfen
+            // =================================================
+            // SUPPLIER NUMBER
+            // =================================================
 
             if (!string.IsNullOrWhiteSpace(
                 Model.SupplierNumber))
@@ -492,12 +520,16 @@
                 if (exists)
                 {
                     ErrorMessage =
-                        "Diese Lieferantennummer existiert bereits.";
+                        L["SupplierNumberAlreadyExists"];
 
                     return;
                 }
             }
 
+
+            // =================================================
+            // UPDATE DATA
+            // =================================================
 
             entity.CompanyName =
                 Model.CompanyName.Trim();
@@ -585,7 +617,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["ErrorSaving", ex.Message];
         }
         finally
         {
@@ -594,11 +626,17 @@
     }
 
 
+    // =========================================================
+    // FORM MODEL
+    // =========================================================
+
     private class SupplierEditModel
     {
         [Required(
-            ErrorMessage =
-                "Firmenname ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "CompanyNameRequired")]
         [MaxLength(200)]
         public string CompanyName { get; set; }
             = string.Empty;
@@ -613,8 +651,10 @@
 
 
         [EmailAddress(
-            ErrorMessage =
-                "Ungültige E-Mail-Adresse.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "InvalidEmailAddress")]
         [MaxLength(200)]
         public string? Email { get; set; }
 
@@ -630,17 +670,22 @@
         [MaxLength(20)]
         public string? PostalCode { get; set; }
 
+
         [MaxLength(100)]
         public string? City { get; set; }
+
 
         [MaxLength(100)]
         public string? Country { get; set; }
 
+
         [MaxLength(50)]
         public string? VatNumber { get; set; }
 
+
         [MaxLength(500)]
         public string? Note { get; set; }
+
 
         public bool IsActive { get; set; }
     }
