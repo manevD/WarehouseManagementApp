@@ -3,23 +3,25 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> L
 
-
-<PageTitle>Login</PageTitle>
+<PageTitle>@L["Login"]</PageTitle>
 
 
 <style>
 
     /* =========================================================
-           LOGIN PAGE
-           ========================================================= */
+               LOGIN PAGE
+               ========================================================= */
 
     .login-page {
         min-height: 100vh;
@@ -38,8 +40,8 @@
 
 
     /* =========================================================
-           BRAND
-           ========================================================= */
+               BRAND
+               ========================================================= */
 
     .login-brand {
         display: flex;
@@ -79,8 +81,8 @@
 
 
     /* =========================================================
-           CARD
-           ========================================================= */
+               CARD
+               ========================================================= */
 
     .login-card {
         background: white;
@@ -112,8 +114,8 @@
 
 
     /* =========================================================
-           FORM
-           ========================================================= */
+               FORM
+               ========================================================= */
 
     .login-form-group {
         margin-bottom: 17px;
@@ -163,8 +165,8 @@
 
 
     /* =========================================================
-           REMEMBER ME
-           ========================================================= */
+               REMEMBER ME
+               ========================================================= */
 
     .login-options {
         display: flex;
@@ -192,8 +194,8 @@
 
 
     /* =========================================================
-           BUTTON
-           ========================================================= */
+               BUTTON
+               ========================================================= */
 
     .login-button {
         width: 100%;
@@ -215,8 +217,8 @@
 
 
     /* =========================================================
-           ERROR
-           ========================================================= */
+               ERROR
+               ========================================================= */
 
     .login-error {
         background: #fef2f2;
@@ -230,8 +232,8 @@
 
 
     /* =========================================================
-           LINKS
-           ========================================================= */
+               LINKS
+               ========================================================= */
 
     .login-links {
         display: flex;
@@ -255,8 +257,8 @@
 
 
     /* =========================================================
-           PASSKEY / EXTERNAL LOGIN
-           ========================================================= */
+               PASSKEY / EXTERNAL LOGIN
+               ========================================================= */
 
     .login-divider {
         display: flex;
@@ -309,8 +311,8 @@
 
 
     /* =========================================================
-           MOBILE
-           ========================================================= */
+               MOBILE
+               ========================================================= */
 
     @@media (max-width: 500px) {
 
@@ -346,7 +348,7 @@
             </div>
 
             <div class="login-brand-subtitle">
-                Lagerverwaltung
+                @L["WarehouseManagement"]
             </div>
 
         </div>
@@ -362,11 +364,11 @@
             <div class="login-header">
 
                 <h1>
-                    Willkommen zurück
+                    @L["WelcomeBack"]
                 </h1>
 
                 <p>
-                    Melden Sie sich an, um fortzufahren.
+                    @L["LoginToContinue"]
                 </p>
 
             </div>
@@ -403,7 +405,7 @@
                     <label for="Input.Email"
                            class="login-form-label">
 
-                        E-Mail
+                        @L["Email"]
 
                     </label>
 
@@ -412,7 +414,7 @@
                                class="login-input"
                                autocomplete="username webauthn"
                                aria-required="true"
-                               placeholder="E-Mail-Adresse" />
+                               placeholder="@L["EmailAddressPlaceholder"]" />
 
                     <ValidationMessage For="() => Input.Email"
                                        class="login-validation" />
@@ -429,7 +431,7 @@
                     <label for="Input.Password"
                            class="login-form-label">
 
-                        Passwort
+                        @L["Password"]
 
                     </label>
 
@@ -439,7 +441,7 @@
                                class="login-input"
                                autocomplete="current-password"
                                aria-required="true"
-                               placeholder="Passwort" />
+                               placeholder="@L["PasswordPlaceholder"]" />
 
                     <ValidationMessage For="() => Input.Password"
                                        class="login-validation" />
@@ -458,7 +460,7 @@
                         <InputCheckbox @bind-Value="Input.RememberMe" />
 
                         <span>
-                            Angemeldet bleiben
+                            @L["RememberMe"]
                         </span>
 
                     </label>
@@ -473,7 +475,7 @@
                 <button type="submit"
                         class="login-button">
 
-                    Anmelden
+                    @L["LoginButton"]
 
                 </button>
 
@@ -483,7 +485,7 @@
                      ================================================= -->
 
                 <div class="login-divider">
-                    ODER
+                    @L["Or"]
                 </div>
 
 
@@ -494,7 +496,7 @@
                 <div class="login-links">
 
                     <a href="Account/ForgotPassword">
-                        Passwort vergessen?
+                        @L["ForgotPassword"]
                     </a>
 
                 </div>
@@ -562,7 +564,8 @@
         if (!string.IsNullOrEmpty(Input.Passkey?.Error))
         {
             errorMessage =
-                $"Fehler: {Input.Passkey.Error}";
+                L["PasskeyError",
+                    Input.Passkey.Error];
 
             return;
         }
@@ -627,7 +630,7 @@
         else
         {
             errorMessage =
-                "Fehler: E-Mail oder Passwort ist falsch.";
+                L["InvalidLogin"];
         }
     }
 
@@ -636,19 +639,29 @@
     {
 
         [Required(
-            ErrorMessage = "E-Mail ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "EmailRequired")]
+
         [EmailAddress(
-            ErrorMessage = "Bitte geben Sie eine gültige E-Mail-Adresse ein.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidEmailAddress")]
+
         public string Email { get; set; } = "";
 
 
         [Required(
-            ErrorMessage = "Passwort ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "PasswordRequired")]
+
         [DataType(DataType.Password)]
+
         public string Password { get; set; } = "";
 
 
-        [Display(Name = "Angemeldet bleiben")]
+        [Display(
+            Name = "RememberMe",
+            ResourceType = typeof(SharedResource))]
+
         public bool RememberMe { get; set; }
 
 

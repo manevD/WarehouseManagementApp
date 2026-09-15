@@ -1,14 +1,19 @@
 ﻿@page "/inventory/edit/{Id:int}"
 @attribute [Authorize]
+@rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Inventur bearbeiten</PageTitle>
+<PageTitle>@L["EditInventory"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -21,7 +26,7 @@
         <div>
 
             <h1>
-                Inventur #@Id bearbeiten
+                @L["EditInventory"] #@Id
             </h1>
 
             <p>
@@ -36,7 +41,9 @@
 
                 <a href="/inventory/details/@Inventory.Id"
                    class="btn-secondary">
-                    ← Zurück
+
+                    ← @L["Back"]
+
                 </a>
 
                 <button type="button"
@@ -45,8 +52,8 @@
                         @onclick="Save">
 
                     @(IsSaving
-                        ? "Wird gespeichert..."
-                        : "Speichern")
+                        ? L["Saving"]
+                        : L["Save"])
 
                 </button>
 
@@ -61,7 +68,7 @@
         <div class="form-card">
 
             <div class="loading-state">
-                Inventur wird geladen...
+                @L["LoadingInventory"]
             </div>
 
         </div>
@@ -77,16 +84,18 @@
                 </div>
 
                 <h3>
-                    Inventur nicht gefunden
+                    @L["InventoryNotFound"]
                 </h3>
 
                 <p>
-                    Die gewünschte Inventur konnte nicht gefunden werden.
+                    @L["RequestedInventoryNotFound"]
                 </p>
 
                 <a href="/inventory"
                    class="btn-primary">
-                    ← Zurück zu Inventuren
+
+                    ← @L["BackToInventories"]
+
                 </a>
 
             </div>
@@ -127,10 +136,12 @@
 
                 <div class="form-section-title">
 
-                    <h2>Status</h2>
+                    <h2>
+                        @L["Status"]
+                    </h2>
 
                     <p>
-                        Aktueller Status der Inventur.
+                        @L["CurrentInventoryStatus"]
                     </p>
 
                 </div>
@@ -141,7 +152,7 @@
                     <div class="form-group">
 
                         <label>
-                            Status
+                            @L["Status"]
                         </label>
 
                         <div class="form-control"
@@ -150,19 +161,19 @@
                             @if (Inventory.Status == InventoryStatus.Entwurf)
                             {
                                 <span class="status-badge status-draft">
-                                    Entwurf
+                                    @L["Draft"]
                                 </span>
                             }
                             else if (Inventory.Status == InventoryStatus.InBearbeitung)
                             {
                                 <span class="status-badge status-warning">
-                                    In Bearbeitung
+                                    @L["InProgress"]
                                 </span>
                             }
                             else
                             {
                                 <span class="status-badge status-active">
-                                    Abgeschlossen
+                                    @L["Completed"]
                                 </span>
                             }
 
@@ -174,7 +185,7 @@
                     <div class="form-group">
 
                         <label>
-                            Erstellt am
+                            @L["CreatedAt"]
                         </label>
 
                         <input type="text"
@@ -188,7 +199,7 @@
                     <div class="form-group">
 
                         <label>
-                            Lager
+                            @L["Warehouse"]
                         </label>
 
                         <input type="text"
@@ -197,8 +208,7 @@
                                disabled />
 
                         <small>
-                            Das Lager kann nach dem Start der Inventur
-                            nicht mehr geändert werden.
+                            @L["WarehouseCannotBeChanged"]
                         </small>
 
                     </div>
@@ -209,7 +219,7 @@
                         <div class="form-group">
 
                             <label>
-                                Abgeschlossen am
+                                @L["CompletedAt"]
                             </label>
 
                             <input type="text"
@@ -233,11 +243,12 @@
 
                 <div class="form-section-title">
 
-                    <h2>Inventurdaten</h2>
+                    <h2>
+                        @L["InventoryData"]
+                    </h2>
 
                     <p>
-                        Bearbeiten Sie die zusätzlichen Informationen
-                        dieser Inventur.
+                        @L["EditInventoryAdditionalInformation"]
                     </p>
 
                 </div>
@@ -248,18 +259,18 @@
                     <div class="form-group">
 
                         <label for="note">
-                            Notiz
+                            @L["Note"]
                         </label>
 
                         <textarea id="note"
                                   class="form-control textarea"
                                   rows="4"
                                   maxlength="500"
-                                  placeholder="Optionale Notiz..."
+                                  placeholder="@L["OptionalNote"]"
                                   @bind="Note"></textarea>
 
                         <small>
-                            Maximal 500 Zeichen.
+                            @L["Maximum500Characters"]
                         </small>
 
                     </div>
@@ -277,10 +288,12 @@
 
                 <div class="form-section-title">
 
-                    <h2>Inventurpositionen</h2>
+                    <h2>
+                        @L["InventoryPositions"]
+                    </h2>
 
                     <p>
-                        Übersicht aller Positionen dieser Inventur.
+                        @L["InventoryPositionsOverview"]
                     </p>
 
                 </div>
@@ -295,11 +308,11 @@
                         </div>
 
                         <h3>
-                            Keine Positionen vorhanden
+                            @L["NoPositionsAvailable"]
                         </h3>
 
                         <p>
-                            Diese Inventur enthält keine Positionen.
+                            @L["InventoryContainsNoPositions"]
                         </p>
 
                     </div>
@@ -315,27 +328,27 @@
                                 <tr>
 
                                     <th>
-                                        Artikel
+                                        @L["Product"]
                                     </th>
 
                                     <th>
-                                        SKU
+                                        @L["SKU"]
                                     </th>
 
                                     <th>
-                                        Lagerplatz
+                                        @L["StorageLocation"]
                                     </th>
 
                                     <th>
-                                        Systembestand
+                                        @L["SystemStock"]
                                     </th>
 
                                     <th>
-                                        Gezählt
+                                        @L["Counted"]
                                     </th>
 
                                     <th>
-                                        Differenz
+                                        @L["Difference"]
                                     </th>
 
                                 </tr>
@@ -436,7 +449,7 @@
                                             else
                                             {
                                                 <span class="text-muted">
-                                                    Noch nicht gezählt
+                                                    @L["NotYetCounted"]
                                                 </span>
                                             }
 
@@ -495,7 +508,9 @@
 
                 <a href="/inventory/details/@Inventory.Id"
                    class="btn-secondary">
-                    Abbrechen
+
+                    @L["Cancel"]
+
                 </a>
 
                 <button type="button"
@@ -504,8 +519,8 @@
                         @onclick="Save">
 
                     @(IsSaving
-                        ? "Wird gespeichert..."
-                        : "Speichern")
+                        ? L["Saving"]
+                        : L["Save"])
 
                 </button>
 
@@ -587,7 +602,8 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Die Inventur konnte nicht geladen werden: {ex.Message}";
+                L["InventoryLoadError",
+                    ex.GetBaseException().Message].Value;
         }
         finally
         {
@@ -613,7 +629,7 @@
         if (Inventory.Status == InventoryStatus.Abgeschlossen)
         {
             ErrorMessage =
-                "Eine abgeschlossene Inventur kann nicht mehr bearbeitet werden.";
+                L["CompletedInventoryCannotBeEdited"].Value;
 
             return;
         }
@@ -622,7 +638,7 @@
         if (Note?.Length > 500)
         {
             ErrorMessage =
-                "Die Notiz darf maximal 500 Zeichen enthalten.";
+                L["NoteMaximum500Characters"].Value;
 
             return;
         }
@@ -642,7 +658,7 @@
             if (dbInventory == null)
             {
                 ErrorMessage =
-                    "Die Inventur wurde nicht gefunden.";
+                    L["InventoryNotFound"].Value;
 
                 return;
             }
@@ -651,7 +667,7 @@
             if (dbInventory.Status == InventoryStatus.Abgeschlossen)
             {
                 ErrorMessage =
-                    "Die Inventur wurde bereits abgeschlossen.";
+                    L["InventoryAlreadyCompleted"].Value;
 
                 return;
             }
@@ -678,12 +694,13 @@
 
 
             SuccessMessage =
-                "Die Inventur wurde erfolgreich gespeichert.";
+                L["InventorySavedSuccessfully"].Value;
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Die Inventur konnte nicht gespeichert werden: {ex.Message}";
+                L["InventorySaveError",
+                    ex.GetBaseException().Message].Value;
         }
         finally
         {
@@ -724,4 +741,5 @@
             $"{words[0][0]}{words[1][0]}"
                 .ToUpper();
     }
+
 }

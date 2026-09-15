@@ -1,13 +1,16 @@
 ﻿@page "/Account/Manage/PersonalData"
 
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> L
 
 
-<PageTitle>Persönliche Daten</PageTitle>
+<PageTitle>@L["PersonalData"]</PageTitle>
 
 
 <div class="personal-data-page">
@@ -20,11 +23,11 @@
     <div class="personal-data-header">
 
         <h1>
-            Persönliche Daten
+            @L["PersonalData"]
         </h1>
 
         <p>
-            Verwalten Sie die persönlichen Daten Ihres Kontos.
+            @L["ManagePersonalDataDescription"]
         </p>
 
     </div>
@@ -51,11 +54,11 @@
         <div class="personal-data-card-title">
 
             <h2>
-                Ihre persönlichen Daten
+                @L["YourPersonalData"]
             </h2>
 
             <span>
-                Sie können Ihre gespeicherten Daten herunterladen oder Ihr Konto löschen.
+                @L["PersonalDataActionsDescription"]
             </span>
 
         </div>
@@ -67,9 +70,7 @@
 
         <div class="personal-data-text">
 
-            Ihr Konto enthält persönliche Daten, die Sie uns zur Verfügung
-            gestellt haben. Auf dieser Seite können Sie diese Daten
-            herunterladen oder Ihr Konto löschen.
+            @L["PersonalDataInformation"]
 
         </div>
 
@@ -81,11 +82,10 @@
         <div class="personal-data-warning">
 
             <strong>
-                Achtung:
+                @L["Warning"]
             </strong>
 
-            Das Löschen dieser Daten entfernt Ihr Konto dauerhaft.
-            Dieser Vorgang kann nicht rückgängig gemacht werden.
+            @L["DeleteAccountWarning"]
 
         </div>
 
@@ -107,7 +107,7 @@
                 <button class="personal-data-download"
                         type="submit">
 
-                    Daten herunterladen
+                    @L["DownloadPersonalData"]
 
                 </button>
 
@@ -119,7 +119,7 @@
             <a href="Account/Manage/DeletePersonalData"
                class="personal-data-delete">
 
-                Konto löschen
+                @L["DeleteAccount"]
 
             </a>
 

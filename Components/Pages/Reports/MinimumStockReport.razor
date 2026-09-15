@@ -5,16 +5,19 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 @using StockModel = WarehouseManagement.Models.Stock
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Niedrigbestand</PageTitle>
+<PageTitle>@L["LowStockReport"]</PageTitle>
 
 <div class="stock-page">
 
@@ -27,11 +30,11 @@
         <div>
 
             <h1>
-                Niedrigbestand
+                @L["LowStockReport"]
             </h1>
 
             <p>
-                Produkte mit niedrigem oder kritischem Lagerbestand
+                @L["LowStockReportDescription"]
             </p>
 
         </div>
@@ -43,14 +46,14 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedStocks.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
             <a href="/reports"
                class="btn-secondary">
 
-                ← Berichte
+                ← @L["Reports"]
 
             </a>
 
@@ -74,7 +77,7 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       placeholder="@L["SearchProductSkuBarcodePlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
@@ -85,7 +88,7 @@
                     @bind="SelectedWarehouseId">
 
                 <option value="0">
-                    Alle Lager
+                    @L["AllWarehouses"]
                 </option>
 
                 @foreach (var warehouse in Warehouses)
@@ -102,7 +105,7 @@
                     @bind="SelectedLocationId">
 
                 <option value="0">
-                    Alle Lagerplätze
+                    @L["AllLocations"]
                 </option>
 
                 @foreach (var location in FilteredLocations)
@@ -137,7 +140,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Niedrigbestand
+                @L["LowStock"]
             </span>
 
             <strong>
@@ -145,7 +148,7 @@
             </strong>
 
             <small>
-                Betroffene Positionen
+                @L["AffectedPositions"]
             </small>
 
         </div>
@@ -156,7 +159,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Kritisch
+                @L["Critical"]
             </span>
 
             <strong class="text-danger">
@@ -164,7 +167,7 @@
             </strong>
 
             <small>
-                Kein verfügbarer Bestand
+                @L["NoAvailableStock"]
             </small>
 
         </div>
@@ -175,7 +178,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamtbestand
+                @L["TotalStock"]
             </span>
 
             <strong>
@@ -183,7 +186,7 @@
             </strong>
 
             <small>
-                Aktueller Bestand
+                @L["CurrentStock"]
             </small>
 
         </div>
@@ -194,7 +197,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Verfügbar
+                @L["Available"]
             </span>
 
             <strong>
@@ -202,7 +205,7 @@
             </strong>
 
             <small>
-                Nach Reservierungen
+                @L["AfterReservations"]
             </small>
 
         </div>
@@ -213,7 +216,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Fehlmenge
+                @L["Shortage"]
             </span>
 
             <strong class="text-danger">
@@ -221,7 +224,7 @@
             </strong>
 
             <small>
-                Bis zum Mindestbestand
+                @L["UntilMinimumStock"]
             </small>
 
         </div>
@@ -240,11 +243,11 @@
             <div>
 
                 <strong>
-                    Niedrigbestand
+                    @L["LowStock"]
                 </strong>
 
                 <span>
-                    @FilteredStocks.Count Einträge
+                    @FilteredStocks.Count @L["Entries"]
                 </span>
 
             </div>
@@ -256,7 +259,7 @@
         {
             <div class="loading-state">
 
-                Niedrigbestände werden geladen...
+                @L["LoadingLowStock"]
 
             </div>
         }
@@ -271,12 +274,11 @@
                 </div>
 
                 <h3>
-                    Keine Niedrigbestände
+                    @L["NoLowStock"]
                 </h3>
 
                 <p>
-                    Für die gewählten Filter wurden keine Produkte
-                    mit niedrigem Lagerbestand gefunden.
+                    @L["NoLowStockForFilters"]
                 </p>
 
             </div>
@@ -297,43 +299,43 @@
                         <tr>
 
                             <th>
-                                Produkt
+                                @L["Product"]
                             </th>
 
                             <th>
-                                SKU
+                                @L["SKU"]
                             </th>
 
                             <th>
-                                Lager
+                                @L["Warehouse"]
                             </th>
 
                             <th>
-                                Lagerplatz
+                                @L["StorageLocation"]
                             </th>
 
                             <th>
-                                Bestand
+                                @L["Stock"]
                             </th>
 
                             <th>
-                                Reserviert
+                                @L["Reserved"]
                             </th>
 
                             <th>
-                                Verfügbar
+                                @L["Available"]
                             </th>
 
                             <th>
-                                Mindestbestand
+                                @L["MinimumStock"]
                             </th>
 
                             <th>
-                                Fehlmenge
+                                @L["Shortage"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                         </tr>
@@ -515,13 +517,13 @@
                                     @if (stock.AvailableQuantity <= 0)
                                     {
                                         <span class="status-badge status-inactive">
-                                            Kritisch
+                                            @L["Critical"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-warning">
-                                            Niedrig
+                                            @L["Low"]
                                         </span>
                                     }
 
@@ -585,8 +587,11 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedStocks.Count von @FilteredStocks.Count Items
+                @L["PageOf", CurrentPage, TotalPages]
+                ·
+                @L["PaginationItems",
+                    PagedStocks.Count,
+                    FilteredStocks.Count]
 
             </div>
 
@@ -985,56 +990,56 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Niedrigbestand",
-                    $"Niedrigbestand – Seite {CurrentPage}",
+                    L["LowStockReport"].Value,
+                    $"{L["LowStockReport"].Value} – {L["Page"].Value} {CurrentPage}",
 
                     (
-                        "Produkt",
+                        L["Product"].Value,
                         x => x.Product?.Name ?? ""
                     ),
 
                     (
-                        "SKU",
+                        L["SKU"].Value,
                         x => x.Product?.SKU ?? ""
                     ),
 
                     (
-                        "Barcode",
+                        L["Barcode"].Value,
                         x => x.Product?.Barcode ?? ""
                     ),
 
                     (
-                        "Lager",
+                        L["Warehouse"].Value,
                         x => x.WarehouseLocation?.Warehouse?.Name ?? ""
                     ),
 
                     (
-                        "Lagerplatz",
+                        L["StorageLocation"].Value,
                         x => x.WarehouseLocation?.Code ?? ""
                     ),
 
                     (
-                        "Bestand",
+                        L["Stock"].Value,
                         x => x.Quantity
                     ),
 
                     (
-                        "Reserviert",
+                        L["Reserved"].Value,
                         x => x.ReservedQuantity
                     ),
 
                     (
-                        "Verfügbar",
+                        L["Available"].Value,
                         x => x.AvailableQuantity
                     ),
 
                     (
-                        "Mindestbestand",
+                        L["MinimumStock"].Value,
                         x => x.Product?.MinimumStock ?? 0
                     ),
 
                     (
-                        "Fehlmenge",
+                        L["Shortage"].Value,
                         x => Math.Max(
                             0,
                             (x.Product?.MinimumStock ?? 0)
@@ -1042,10 +1047,10 @@
                     ),
 
                     (
-                        "Status",
+                        L["Status"].Value,
                         x => x.AvailableQuantity <= 0
-                            ? "Kritisch"
-                            : "Niedrig"
+                            ? L["Critical"].Value
+                            : L["Low"].Value
                     )
                 );
 
@@ -1056,7 +1061,7 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Niedrigbestand_Seite_{CurrentPage}.xlsx",
+                $"{L["LowStockReport"].Value}_{L["Page"].Value}_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 base64);
         }

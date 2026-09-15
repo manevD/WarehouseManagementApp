@@ -1,21 +1,25 @@
 ﻿@page "/warehouses/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lager bearbeiten</PageTitle>
+<PageTitle>@L["EditWarehouse"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Lager wird geladen...
+        @L["LoadingWarehouse"]
     </div>
 }
 else if (Warehouse == null)
@@ -26,11 +30,11 @@ else if (Warehouse == null)
             ⚠
         </div>
 
-        <h3>Lager nicht gefunden</h3>
+        <h3>@L["WarehouseNotFound"]</h3>
 
         <a href="/warehouses"
            class="btn-primary">
-            Zurück zu Lager
+            @L["BackToWarehouses"]
         </a>
 
     </div>
@@ -43,7 +47,9 @@ else
 
             <div>
 
-                <h1>Lager bearbeiten</h1>
+                <h1>
+                    @L["EditWarehouse"]
+                </h1>
 
                 <p>
                     @Warehouse.Name
@@ -53,7 +59,7 @@ else
 
             <a href="/warehouses"
                class="btn-secondary">
-                ← Zurück
+                ← @L["Back"]
             </a>
 
         </div>
@@ -71,10 +77,12 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Lagerinformationen</h2>
+                        <h2>
+                            @L["WarehouseInformation"]
+                        </h2>
 
                         <p>
-                            Lagerdaten bearbeiten.
+                            @L["EditWarehouseInformationDescription"]
                         </p>
 
                     </div>
@@ -87,7 +95,7 @@ else
                         <div class="form-group">
 
                             <label>
-                                Name <span>*</span>
+                                @L["Name"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.Name"
@@ -107,7 +115,7 @@ else
                                 <InputCheckbox @bind-Value="Model.IsActive" />
 
                                 <span>
-                                    Lager ist aktiv
+                                    @L["WarehouseIsActive"]
                                 </span>
 
                             </label>
@@ -125,7 +133,9 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Beschreibung</h2>
+                        <h2>
+                            @L["Description"]
+                        </h2>
 
                     </div>
 
@@ -152,7 +162,7 @@ else
 
                     <a href="/warehouses"
                        class="btn-secondary">
-                        Abbrechen
+                        @L["Cancel"]
                     </a>
 
                     <button type="submit"
@@ -160,8 +170,8 @@ else
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -207,7 +217,8 @@ else
         {
             Model = new WarehouseModel
             {
-                Name = Warehouse.Name,
+                Name =
+                    Warehouse.Name,
 
                 Description =
                     Warehouse.Description,
@@ -227,28 +238,35 @@ else
         if (Warehouse == null || IsSaving)
             return;
 
+
         IsSaving = true;
+
         ErrorMessage = null;
+
 
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
-            var name = Model.Name.Trim();
+
+            var name =
+                Model.Name.Trim();
 
 
             // Prüfen auf doppelte Namen
 
-            var exists = await db.Warehouses
-                .AnyAsync(x =>
-                    x.Id != Id &&
-                    x.Name == name);
+            var exists =
+                await db.Warehouses
+                    .AnyAsync(x =>
+                        x.Id != Id &&
+                        x.Name == name);
+
 
             if (exists)
             {
                 ErrorMessage =
-                    "Ein anderes Lager mit diesem Namen existiert bereits.";
+                    L["WarehouseNameAlreadyExists"];
 
                 return;
             }
@@ -259,22 +277,28 @@ else
                     .FirstOrDefaultAsync(x =>
                         x.Id == Id);
 
+
             if (warehouse == null)
             {
                 ErrorMessage =
-                    "Lager nicht gefunden.";
+                    L["WarehouseNotFound"];
 
                 return;
             }
 
 
-            warehouse.Name = name;
+            warehouse.Name =
+                name;
+
 
             warehouse.Description =
                 string.IsNullOrWhiteSpace(
                     Model.Description)
+
                     ? null
+
                     : Model.Description.Trim();
+
 
             warehouse.IsActive =
                 Model.IsActive;
@@ -282,12 +306,14 @@ else
 
             await db.SaveChangesAsync();
 
-            Navigation.NavigateTo("/warehouses");
+
+            Navigation.NavigateTo(
+                "/warehouses");
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                $"{L["ErrorSaving"]}: {ex.Message}";
         }
         finally
         {
@@ -299,8 +325,10 @@ else
     private class WarehouseModel
     {
         [Required(
-            ErrorMessage =
-                "Name ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "NameRequired")]
 
         [MaxLength(100)]
         public string Name { get; set; }

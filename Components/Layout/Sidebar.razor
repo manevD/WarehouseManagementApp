@@ -1,17 +1,26 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+
 @inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<SharedResource> L
+
 @rendermode InteractiveServer
 
 <aside class="sidebar">
+
     <button type="button"
             class="sidebar-close-button"
-            aria-label="Menü schließen"
+            aria-label="@L["CloseMenu"]"
+            title="@L["CloseMenu"]"
             onclick="warehouseCloseSidebar()">
         ×
     </button>
+
+
     <div class="sidebar-brand">
 
         <div class="brand-icon">
@@ -28,8 +37,10 @@
 
     <nav class="sidebar-nav">
 
+        <!-- ÜBERSICHT -->
+
         <div class="nav-section">
-            ÜBERSICHT
+            @L["Overview"]
         </div>
 
         <NavLink href="/dashboard"
@@ -37,108 +48,148 @@
                  class="nav-item">
 
             <span class="nav-icon">⌂</span>
-            <span>Dashboard</span>
+            <span>@L["Dashboard"]</span>
 
         </NavLink>
 
 
+        <!-- LAGER -->
+
         <div class="nav-section">
-            LAGER
+            @L["WarehouseSection"]
         </div>
 
         <NavLink href="/products" class="nav-item">
+
             <span class="nav-icon">▦</span>
-            <span>Produkte</span>
+            <span>@L["Products"]</span>
+
         </NavLink>
 
         <NavLink href="/categories" class="nav-item">
+
             <span class="nav-icon">▤</span>
-            <span>Kategorien</span>
+            <span>@L["Categories"]</span>
+
         </NavLink>
 
         <NavLink href="/warehouses" class="nav-item">
+
             <span class="nav-icon">▥</span>
-            <span>Lager</span>
+            <span>@L["Warehouses"]</span>
+
         </NavLink>
 
         <NavLink href="/locations" class="nav-item">
+
             <span class="nav-icon">⌖</span>
-            <span>Lagerplätze</span>
+            <span>@L["StorageLocations"]</span>
+
         </NavLink>
 
 
+        <!-- BESTAND -->
+
         <div class="nav-section">
-            BESTAND
+            @L["StockSection"]
         </div>
 
         <NavLink href="/stock" class="nav-item">
+
             <span class="nav-icon">▣</span>
-            <span>Bestand</span>
+            <span>@L["Stock"]</span>
+
         </NavLink>
 
         <NavLink href="/stock/incoming" class="nav-item">
+
             <span class="nav-icon">↓</span>
-            <span>Wareneingang</span>
+            <span>@L["IncomingGoods"]</span>
+
         </NavLink>
 
         <NavLink href="/stock/outgoing" class="nav-item">
+
             <span class="nav-icon">↑</span>
-            <span>Warenausgang</span>
+            <span>@L["OutgoingGoods"]</span>
+
         </NavLink>
 
         <NavLink href="/stock/transfer" class="nav-item">
+
             <span class="nav-icon">↔</span>
-            <span>Umlagerung</span>
+            <span>@L["Transfers"]</span>
+
         </NavLink>
 
         <NavLink href="/stock/movements" class="nav-item">
+
             <span class="nav-icon">↕</span>
-            <span>Bewegungen</span>
+            <span>@L["Movements"]</span>
+
         </NavLink>
 
 
+        <!-- VERWALTUNG -->
+
         <div class="nav-section">
-            VERWALTUNG
+            @L["Administration"]
         </div>
 
         <NavLink href="/suppliers" class="nav-item">
+
             <span class="nav-icon">♙</span>
-            <span>Lieferanten</span>
+            <span>@L["Suppliers"]</span>
+
         </NavLink>
 
         <NavLink href="/customers" class="nav-item">
+
             <span class="nav-icon">♙</span>
-            <span>Kunden</span>
+            <span>@L["Customers"]</span>
+
         </NavLink>
 
         <NavLink href="/orders" class="nav-item">
+
             <span class="nav-icon">☷</span>
-            <span>Bestellungen</span>
+            <span>@L["Orders"]</span>
+
         </NavLink>
 
         <NavLink href="/purchase-orders" class="nav-item">
+
             <span class="nav-icon">☷</span>
-            <span>Lieferant-Bestellungen</span>
+            <span>@L["SupplierOrders"]</span>
+
         </NavLink>
 
 
+        <!-- ANALYSE -->
+
         <div class="nav-section">
-            ANALYSE
+            @L["Analysis"]
         </div>
 
         <NavLink href="/inventory" class="nav-item">
+
             <span class="nav-icon">✓</span>
-            <span>Inventur</span>
+            <span>@L["Inventory"]</span>
+
         </NavLink>
 
         <NavLink href="/reports" class="nav-item">
+
             <span class="nav-icon">▥</span>
-            <span>Berichte</span>
+            <span>@L["Reports"]</span>
+
         </NavLink>
 
 
+        <!-- EINSTELLUNGEN -->
+
         <div class="nav-section">
-            EINSTELLUNGEN
+            @L["Settings"]
         </div>
 
         <button type="button"
@@ -147,7 +198,7 @@
 
             <span class="nav-icon">⚙</span>
 
-            <span>Einstellungen</span>
+            <span>@L["Settings"]</span>
 
             <span class="settings-arrow @(SettingsOpen ? "open" : "")">
                 ▼
@@ -165,64 +216,71 @@
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>Profil</span>
+                    <span>@L["Profile"]</span>
 
                 </NavLink>
+
 
                 <NavLink href="/Account/Manage/ChangePassword"
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>Passwort ändern</span>
+                    <span>@L["ChangePassword"]</span>
 
                 </NavLink>
+
 
                 <NavLink href="/Account/Manage/Email"
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>E-Mail ändern</span>
+                    <span>@L["ChangeEmail"]</span>
 
                 </NavLink>
+
 
                 <NavLink href="/Account/Manage/PersonalData"
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>Persönliche Daten</span>
+                    <span>@L["PersonalData"]</span>
 
                 </NavLink>
+
 
                 <NavLink href="/users"
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>Benutzerverwaltung</span>
+                    <span>@L["UserManagement"]</span>
 
                 </NavLink>
+
 
                 <NavLink href="/roles"
                          class="nav-item">
 
                     <span class="nav-icon">•</span>
-                    <span>Rollenverwaltung</span>
+                    <span>@L["RoleManagement"]</span>
 
                 </NavLink>
 
             </div>
         }
-        
+
     </nav>
 
 </aside>
+
+
 @code {
 
     private bool SettingsOpen = false;
+
 
     private void ToggleSettings()
     {
         SettingsOpen = !SettingsOpen;
     }
 
- 
 }

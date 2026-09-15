@@ -250,10 +250,12 @@ else
 
 
                         <div class="supplier-detail-content">
+                            &nbsp;
 
                             <strong>
                                 @Order.Supplier.CompanyName
                             </strong>
+                                                            &nbsp;
 
 
                             @if (!string.IsNullOrWhiteSpace(
@@ -267,6 +269,7 @@ else
                                 </span>
                             }
 
+                            &nbsp;
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.ContactPerson))
@@ -277,7 +280,9 @@ else
                                     @Order.Supplier.ContactPerson
 
                                 </span>
+
                             }
+                                                            &nbsp;
 
 
                             @if (!string.IsNullOrWhiteSpace(
@@ -287,7 +292,7 @@ else
                                     @Order.Supplier.Email
                                 </span>
                             }
-
+                            &nbsp;
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.Phone))
@@ -296,6 +301,7 @@ else
                                     @Order.Supplier.Phone
                                 </span>
                             }
+                            &nbsp;
 
                         </div>
 

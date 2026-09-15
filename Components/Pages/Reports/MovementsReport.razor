@@ -8,12 +8,15 @@
 @using WarehouseManagement.Models
 @using Microsoft.JSInterop
 @using WarehouseManagement.Services
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bericht Warenbewegungen</PageTitle>
+<PageTitle>@L["StockMovementsReport"]</PageTitle>
 
 <div class="stock-page">
 
@@ -26,11 +29,11 @@
         <div>
 
             <h1>
-                Warenbewegungen
+                @L["StockMovementsReport"]
             </h1>
 
             <p>
-                Übersicht und Historie aller Lagerbewegungen.
+                @L["StockMovementsReportDescription"]
             </p>
 
         </div>
@@ -42,13 +45,15 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedMovements.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
             <a href="/reports"
                class="btn-secondary">
-                              ← Berichte
+
+                ← @L["Reports"]
+
             </a>
 
         </div>
@@ -71,7 +76,7 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Produkt, SKU, Barcode, Lieferant oder Referenz suchen..."
+                       placeholder="@L["SearchProductSkuBarcodeSupplierReferencePlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
@@ -82,27 +87,27 @@
                     @bind="SelectedType">
 
                 <option value="0">
-                    Alle Bewegungen
+                    @L["AllMovements"]
                 </option>
 
                 <option value="@((int)StockMovementType.Wareneingang)">
-                    Wareneingang
+                    @L["IncomingGoods"]
                 </option>
 
                 <option value="@((int)StockMovementType.Warenausgang)">
-                    Warenausgang
+                    @L["OutgoingGoods"]
                 </option>
 
                 <option value="@((int)StockMovementType.Umlagerung)">
-                    Umlagerung
+                    @L["Transfer"]
                 </option>
 
                 <option value="@((int)StockMovementType.Inventur)">
-                    Inventur
+                    @L["Inventory"]
                 </option>
 
                 <option value="@((int)StockMovementType.Korrektur)">
-                    Korrektur
+                    @L["Correction"]
                 </option>
 
             </select>
@@ -112,7 +117,7 @@
                     @bind="SelectedWarehouseId">
 
                 <option value="0">
-                    Alle Lager
+                    @L["AllWarehouses"]
                 </option>
 
                 @foreach (var warehouse in Warehouses)
@@ -129,7 +134,7 @@
                     @bind="SelectedLocationId">
 
                 <option value="0">
-                    Alle Lagerplätze
+                    @L["AllLocations"]
                 </option>
 
                 @foreach (var location in Locations)
@@ -160,7 +165,7 @@
             <div class="filter-date-group">
 
                 <label>
-                    Von
+                    @L["From"]
                 </label>
 
                 <input type="date"
@@ -173,7 +178,7 @@
             <div class="filter-date-group">
 
                 <label>
-                    Bis
+                    @L["To"]
                 </label>
 
                 <input type="date"
@@ -190,7 +195,8 @@
                         @onclick="ResetFilters">
 
                     <i class="bi bi-arrow-counterclockwise me-1"></i>
-                    Filter zurücksetzen
+
+                    @L["ResetFilters"]
 
                 </button>
             }
@@ -207,7 +213,7 @@
     {
         <div class="loading-state">
 
-            Bewegungen werden geladen...
+            @L["LoadingMovements"]
 
         </div>
     }
@@ -223,7 +229,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Bewegungen
+                    @L["Movements"]
                 </span>
 
                 <strong>
@@ -236,7 +242,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Wareneingänge
+                    @L["IncomingGoods"]
                 </span>
 
                 <strong>
@@ -249,7 +255,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Warenausgänge
+                    @L["OutgoingGoods"]
                 </span>
 
                 <strong>
@@ -262,7 +268,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Umlagerungen
+                    @L["Transfers"]
                 </span>
 
                 <strong>
@@ -275,7 +281,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Inventur
+                    @L["Inventory"]
                 </span>
 
                 <strong>
@@ -298,16 +304,17 @@
                 <div class="empty-products">
 
                     <div class="empty-products-icon">
+
                         <i class="bi bi-arrow-left-right"></i>
+
                     </div>
 
                     <h3>
-                        Keine Bewegungen gefunden
+                        @L["NoMovementsFound"]
                     </h3>
 
                     <p>
-                        Für die gewählten Filter wurden keine
-                        Bewegungen gefunden.
+                        @L["NoMovementsForFilters"]
                     </p>
 
                 </div>
@@ -324,39 +331,39 @@
                             <tr>
 
                                 <th>
-                                    Datum
+                                    @L["Date"]
                                 </th>
 
                                 <th>
-                                    Produkt
+                                    @L["Product"]
                                 </th>
 
                                 <th>
-                                    Typ
+                                    @L["Type"]
                                 </th>
 
                                 <th>
-                                    Menge
+                                    @L["Quantity"]
                                 </th>
 
                                 <th>
-                                    Von
+                                    @L["From"]
                                 </th>
 
                                 <th>
-                                    Nach
+                                    @L["To"]
                                 </th>
 
                                 <th>
-                                    Lieferant
+                                    @L["Supplier"]
                                 </th>
 
                                 <th>
-                                    Referenz
+                                    @L["Reference"]
                                 </th>
 
                                 <th>
-                                    Notiz
+                                    @L["Note"]
                                 </th>
 
                             </tr>
@@ -428,7 +435,8 @@
                                                 <span class="movement-badge movement-in">
 
                                                     <i class="bi bi-arrow-down-circle me-1"></i>
-                                                    Wareneingang
+
+                                                    @L["IncomingGoods"]
 
                                                 </span>
 
@@ -440,7 +448,8 @@
                                                 <span class="movement-badge movement-out">
 
                                                     <i class="bi bi-arrow-up-circle me-1"></i>
-                                                    Warenausgang
+
+                                                    @L["OutgoingGoods"]
 
                                                 </span>
 
@@ -452,7 +461,8 @@
                                                 <span class="movement-badge movement-transfer">
 
                                                     <i class="bi bi-arrow-left-right me-1"></i>
-                                                    Umlagerung
+
+                                                    @L["Transfer"]
 
                                                 </span>
 
@@ -464,7 +474,8 @@
                                                 <span class="movement-badge movement-inventory">
 
                                                     <i class="bi bi-clipboard-check me-1"></i>
-                                                    Inventur
+
+                                                    @L["Inventory"]
 
                                                 </span>
 
@@ -476,7 +487,8 @@
                                                 <span class="movement-badge movement-correction">
 
                                                     <i class="bi bi-pencil-square me-1"></i>
-                                                    Korrektur
+
+                                                    @L["Correction"]
 
                                                 </span>
 
@@ -486,7 +498,9 @@
                                             default:
 
                                                 <span class="movement-badge">
+
                                                     @movement.Type
+
                                                 </span>
 
                                                 break;
@@ -708,8 +722,13 @@
 
                 <div class="pagination-info">
 
-                    Seite @CurrentPage von @TotalPages
-                    · @PagedMovements.Count von @FilteredMovements.Count Bewegungen
+                    @L["PageOf", CurrentPage, TotalPages]
+
+                    ·
+
+                    @L["PaginationMovements",
+                        PagedMovements.Count,
+                        FilteredMovements.Count]
 
                 </div>
 
@@ -751,6 +770,7 @@
                 return;
 
             _searchTerm = value;
+
             CurrentPage = 1;
         }
     }
@@ -768,6 +788,7 @@
                 return;
 
             _tableSearchTerm = value;
+
             CurrentPage = 1;
         }
     }
@@ -785,6 +806,7 @@
                 return;
 
             _selectedType = value;
+
             CurrentPage = 1;
         }
     }
@@ -802,6 +824,7 @@
                 return;
 
             _selectedWarehouseId = value;
+
             CurrentPage = 1;
         }
     }
@@ -819,6 +842,7 @@
                 return;
 
             _selectedLocationId = value;
+
             CurrentPage = 1;
         }
     }
@@ -836,6 +860,7 @@
                 return;
 
             _fromDate = value;
+
             CurrentPage = 1;
         }
     }
@@ -853,6 +878,7 @@
                 return;
 
             _toDate = value;
+
             CurrentPage = 1;
         }
     }
@@ -1365,60 +1391,62 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Warenbewegungen",
-                    $"Warenbewegungen – Seite {CurrentPage}",
+
+                    L["StockMovementsReport"].Value,
+
+                    $"{L["StockMovementsReport"].Value} – {L["Page"].Value} {CurrentPage}",
 
                     (
-                        "Datum",
+                        L["Date"].Value,
                         x => x.CreatedAt
                     ),
 
                     (
-                        "SKU",
+                        L["SKU"].Value,
                         x => x.Product?.SKU ?? ""
                     ),
 
                     (
-                        "Produkt",
+                        L["Product"].Value,
                         x => x.Product?.Name ?? ""
                     ),
 
                     (
-                        "Typ",
-                        x => x.Type.ToString()
+                        L["Type"].Value,
+                        x => GetMovementTypeText(x.Type)
                     ),
 
                     (
-                        "Menge",
+                        L["Quantity"].Value,
                         x => x.Quantity
                     ),
 
                     (
-                        "Von",
+                        L["From"].Value,
                         x => x.FromWarehouseLocation == null
                             ? ""
                             : $"{x.FromWarehouseLocation.Code} - {x.FromWarehouseLocation.Warehouse?.Name ?? ""}"
                     ),
 
                     (
-                        "Nach",
+                        L["To"].Value,
                         x => x.ToWarehouseLocation == null
                             ? ""
                             : $"{x.ToWarehouseLocation.Code} - {x.ToWarehouseLocation.Warehouse?.Name ?? ""}"
                     ),
 
                     (
-                        "Lieferant",
+                        L["Supplier"].Value,
                         x => x.Supplier?.CompanyName ?? ""
                     ),
 
                     (
-                        "Referenz",
+                        L["Reference"].Value,
                         x => x.ReferenceNumber ?? ""
                     ),
 
                     (
-                        "Notiz",
+                        L["Note"].Value,
                         x => x.Note ?? ""
                     )
                 );
@@ -1430,8 +1458,11 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Warenbewegungen_Seite_{CurrentPage}.xlsx",
+
+                $"{L["StockMovementsReport"].Value}_{L["Page"].Value}_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
@@ -1439,6 +1470,36 @@
             Console.WriteLine(
                 $"Fehler beim Excel-Export: {ex}");
         }
+    }
+
+
+    // =========================================================
+    // MOVEMENT TYPE TEXT
+    // =========================================================
+
+    private string GetMovementTypeText(
+        StockMovementType type)
+    {
+        return type switch
+        {
+            StockMovementType.Wareneingang =>
+                L["IncomingGoods"].Value,
+
+            StockMovementType.Warenausgang =>
+                L["OutgoingGoods"].Value,
+
+            StockMovementType.Umlagerung =>
+                L["Transfer"].Value,
+
+            StockMovementType.Inventur =>
+                L["Inventory"].Value,
+
+            StockMovementType.Korrektur =>
+                L["Correction"].Value,
+
+            _ =>
+                type.ToString()
+        };
     }
 
 

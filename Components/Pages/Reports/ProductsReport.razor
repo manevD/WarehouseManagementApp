@@ -8,12 +8,15 @@
 @using WarehouseManagement.Models
 @using Microsoft.JSInterop
 @using WarehouseManagement.Services
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Produktbericht</PageTitle>
+<PageTitle>@L["ProductReport"]</PageTitle>
 
 <div class="stock-page">
 
@@ -24,11 +27,15 @@
     <div class="page-header">
 
         <div>
-            <h1>Produktbericht</h1>
+
+            <h1>
+                @L["ProductReport"]
+            </h1>
 
             <p>
-                Bestände und Bewegungen einzelner Produkte analysieren.
+                @L["ProductReportDescription"]
             </p>
+
         </div>
 
         <div class="page-header-actions">
@@ -37,14 +44,15 @@
                     class="btn-secondary"
                     @onclick="ExportExcel"
                     disabled="@(PagedProducts.Count == 0)">
-                📊 Excel exportieren
+
+                📊 @L["ExportExcel"]
+
             </button>
 
             <a href="/reports"
                class="btn-secondary">
 
-                ← Berichte
-
+                ← @L["Reports"]
 
             </a>
 
@@ -68,16 +76,19 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       placeholder="@L["SearchProductSkuBarcodePlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
             </div>
 
+
             <select class="filter-select"
                     @bind="SelectedWarehouseId">
 
-                <option value="0">Alle Lager</option>
+                <option value="0">
+                    @L["AllWarehouses"]
+                </option>
 
                 @foreach (var warehouse in Warehouses)
                 {
@@ -88,10 +99,13 @@
 
             </select>
 
+
             <select class="filter-select"
                     @bind="SelectedCategoryId">
 
-                <option value="0">Alle Kategorien</option>
+                <option value="0">
+                    @L["AllCategories"]
+                </option>
 
                 @foreach (var category in Categories)
                 {
@@ -116,7 +130,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Produkte
+                @L["Products"]
             </span>
 
             <strong>
@@ -124,7 +138,7 @@
             </strong>
 
             <small>
-                Gefilterte Produkte
+                @L["FilteredProducts"]
             </small>
 
         </div>
@@ -133,7 +147,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamtbestand
+                @L["TotalStock"]
             </span>
 
             <strong>
@@ -141,7 +155,7 @@
             </strong>
 
             <small>
-                Aktuelle Menge
+                @L["CurrentQuantity"]
             </small>
 
         </div>
@@ -150,7 +164,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Wareneingänge
+                @L["IncomingGoods"]
             </span>
 
             <strong>
@@ -158,7 +172,7 @@
             </strong>
 
             <small>
-                Eingänge
+                @L["IncomingEntries"]
             </small>
 
         </div>
@@ -167,7 +181,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Warenausgänge
+                @L["OutgoingGoods"]
             </span>
 
             <strong>
@@ -175,7 +189,7 @@
             </strong>
 
             <small>
-                Ausgänge
+                @L["OutgoingEntries"]
             </small>
 
         </div>
@@ -184,7 +198,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Bewegungen
+                @L["Movements"]
             </span>
 
             <strong>
@@ -192,7 +206,7 @@
             </strong>
 
             <small>
-                Gesamtbewegungen
+                @L["TotalMovements"]
             </small>
 
         </div>
@@ -211,11 +225,11 @@
             <div>
 
                 <strong>
-                    Produktbericht
+                    @L["ProductReport"]
                 </strong>
 
                 <span>
-                    @FilteredProducts.Count Einträge
+                    @FilteredProducts.Count @L["Entries"]
                 </span>
 
             </div>
@@ -226,7 +240,9 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-                Produktdaten werden geladen...
+
+                @L["LoadingProductData"]
+
             </div>
         }
         else if (PagedProducts.Count == 0)
@@ -234,21 +250,24 @@
             <div class="empty-products">
 
                 <div class="empty-products-icon">
+
                     <i class="bi bi-box-seam"></i>
+
                 </div>
 
                 <h3>
-                    Keine Produkte gefunden
+                    @L["NoProductsFound"]
                 </h3>
 
                 <p>
-                    Für die gewählten Filter wurden keine Produkte gefunden.
+                    @L["NoProductsForFilters"]
                 </p>
 
             </div>
         }
         else
         {
+
             <div class="products-table-wrapper">
 
                 <table class="products-table">
@@ -258,39 +277,39 @@
                         <tr>
 
                             <th>
-                                Produkt
+                                @L["Product"]
                             </th>
 
                             <th>
-                                SKU
+                                @L["SKU"]
                             </th>
 
                             <th>
-                                Kategorie
+                                @L["Category"]
                             </th>
 
                             <th>
-                                Bestand
+                                @L["Stock"]
                             </th>
 
                             <th>
-                                Reserviert
+                                @L["Reserved"]
                             </th>
 
                             <th>
-                                Verfügbar
+                                @L["Available"]
                             </th>
 
                             <th>
-                                Lagerwert
+                                @L["StockValue"]
                             </th>
 
                             <th>
-                                Bewegungen
+                                @L["Movements"]
                             </th>
 
                             <th>
-                                Letzte Bewegung
+                                @L["LastMovement"]
                             </th>
 
                         </tr>
@@ -337,7 +356,9 @@
                                     <div class="product-name">
 
                                         <div class="product-avatar">
+
                                             @GetInitials(product.Name)
+
                                         </div>
 
                                         <div>
@@ -346,7 +367,8 @@
                                                 @product.Name
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(product.Barcode))
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                product.Barcode))
                                             {
                                                 <small>
                                                     @product.Barcode
@@ -437,7 +459,8 @@
                                         <div class="movement-location">
 
                                             <strong>
-                                                @GetMovementTypeName(lastMovement.Type)
+                                                @GetMovementTypeName(
+                                                    lastMovement.Type)
                                             </strong>
 
                                             <small>
@@ -467,9 +490,9 @@
             </div>
 
 
-            <!-- =====================================================
+            <!-- =================================================
                  PAGINATION
-                 ===================================================== -->
+                 ================================================= -->
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -478,8 +501,11 @@
                             class="pagination-button"
                             disabled="@(CurrentPage <= 1)"
                             @onclick="PreviousPage">
+
                         ‹
+
                     </button>
+
 
                     <div class="pagination-pages">
 
@@ -488,26 +514,37 @@
                             <button type="button"
                                     class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                     @onclick="() => GoToPage(pageNumber)">
+
                                 @pageNumber
+
                             </button>
                         }
 
                     </div>
 
+
                     <button type="button"
                             class="pagination-button"
                             disabled="@(CurrentPage >= TotalPages)"
                             @onclick="NextPage">
+
                         ›
+
                     </button>
 
                 </div>
             }
 
+
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedProducts.Count von @FilteredProducts.Count Produkte
+                @L["PageOf", CurrentPage, TotalPages]
+
+                ·
+
+                @L["PaginationProducts",
+                    PagedProducts.Count,
+                    FilteredProducts.Count]
 
             </div>
 
@@ -551,6 +588,7 @@
                 return;
 
             _searchTerm = value;
+
             CurrentPage = 1;
         }
     }
@@ -568,6 +606,7 @@
                 return;
 
             _selectedWarehouseId = value;
+
             CurrentPage = 1;
         }
     }
@@ -585,6 +624,7 @@
                 return;
 
             _selectedCategoryId = value;
+
             CurrentPage = 1;
         }
     }
@@ -654,42 +694,50 @@
     {
         get
         {
-            var query = Products.AsEnumerable();
+            var query =
+                Products.AsEnumerable();
 
 
+            // =====================================================
             // SEARCH
+            // =====================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                var search = SearchTerm.Trim();
+                var search =
+                    SearchTerm.Trim();
 
-                query = query.Where(x =>
-                    x.Name.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase)
-
-                    ||
-
-                    x.SKU.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase)
-
-                    ||
-
-                    (
-                        !string.IsNullOrWhiteSpace(x.Barcode)
-
-                        &&
-
-                        x.Barcode.Contains(
+                query =
+                    query.Where(x =>
+                        x.Name.Contains(
                             search,
                             StringComparison.OrdinalIgnoreCase)
-                    )
-                );
+
+                        ||
+
+                        x.SKU.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+
+                        ||
+
+                        (
+                            !string.IsNullOrWhiteSpace(
+                                x.Barcode)
+
+                            &&
+
+                            x.Barcode.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+                        )
+                    );
             }
 
 
+            // =====================================================
             // WAREHOUSE
+            // =====================================================
 
             if (SelectedWarehouseId > 0)
             {
@@ -700,21 +748,27 @@
                             &&
                             x.WarehouseLocation.WarehouseId ==
                                 SelectedWarehouseId)
-                        .Select(x => x.ProductId)
+                        .Select(x =>
+                            x.ProductId)
                         .Distinct()
                         .ToHashSet();
 
-                query = query.Where(x =>
-                    productIds.Contains(x.Id));
+                query =
+                    query.Where(x =>
+                        productIds.Contains(x.Id));
             }
 
 
+            // =====================================================
             // CATEGORY
+            // =====================================================
 
             if (SelectedCategoryId > 0)
             {
-                query = query.Where(x =>
-                    x.CategoryId == SelectedCategoryId);
+                query =
+                    query.Where(x =>
+                        x.CategoryId ==
+                            SelectedCategoryId);
             }
 
 
@@ -732,8 +786,10 @@
     private decimal TotalQuantity =>
         FilteredProducts.Sum(product =>
             Stocks
-                .Where(x => x.ProductId == product.Id)
-                .Sum(x => x.Quantity));
+                .Where(x =>
+                    x.ProductId == product.Id)
+                .Sum(x =>
+                    x.Quantity));
 
 
     private int MovementCount =>
@@ -823,7 +879,8 @@
             Stocks =
                 await context.Stocks
                     .AsNoTracking()
-                    .Include(x => x.WarehouseLocation)
+                    .Include(x =>
+                        x.WarehouseLocation)
                     .ToListAsync();
 
 
@@ -895,31 +952,33 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Produkte",
-                    $"Produktbericht – Seite {CurrentPage}",
+
+                    L["Products"].Value,
+
+                    $"{L["ProductReport"].Value} – {L["Page"].Value} {CurrentPage}",
 
                     (
-                        "Produkt",
+                        L["Product"].Value,
                         x => x.Name
                     ),
 
                     (
-                        "SKU",
+                        L["SKU"].Value,
                         x => x.SKU
                     ),
 
                     (
-                        "Barcode",
+                        L["Barcode"].Value,
                         x => x.Barcode ?? ""
                     ),
 
                     (
-                        "Kategorie",
+                        L["Category"].Value,
                         x => x.Category?.Name ?? ""
                     ),
 
                     (
-                        "Bestand",
+                        L["Stock"].Value,
                         x => Stocks
                             .Where(s =>
                                 s.ProductId == x.Id)
@@ -928,7 +987,7 @@
                     ),
 
                     (
-                        "Reserviert",
+                        L["Reserved"].Value,
                         x => Stocks
                             .Where(s =>
                                 s.ProductId == x.Id)
@@ -937,23 +996,22 @@
                     ),
 
                     (
-                        "Verfügbar",
-                        x =>
-                            Stocks
-                                .Where(s =>
-                                    s.ProductId == x.Id)
-                                .Sum(s =>
-                                    s.Quantity -
-                                    s.ReservedQuantity)
+                        L["Available"].Value,
+                        x => Stocks
+                            .Where(s =>
+                                s.ProductId == x.Id)
+                            .Sum(s =>
+                                s.Quantity -
+                                s.ReservedQuantity)
                     ),
 
                     (
-                        "Einkaufspreis",
+                        L["PurchasePrice"].Value,
                         x => x.PurchasePrice
                     ),
 
                     (
-                        "Lagerwert",
+                        L["StockValue"].Value,
                         x =>
                             Stocks
                                 .Where(s =>
@@ -965,19 +1023,19 @@
                     ),
 
                     (
-                        "Verkaufspreis",
+                        L["SalePrice"].Value,
                         x => x.SalePrice
                     ),
 
                     (
-                        "Bewegungen",
+                        L["Movements"].Value,
                         x => Movements
                             .Count(m =>
                                 m.ProductId == x.Id)
                     ),
 
                     (
-                        "Wareneingänge",
+                        L["IncomingGoods"].Value,
                         x => Movements
                             .Count(m =>
                                 m.ProductId == x.Id
@@ -987,7 +1045,7 @@
                     ),
 
                     (
-                        "Warenausgänge",
+                        L["OutgoingGoods"].Value,
                         x => Movements
                             .Count(m =>
                                 m.ProductId == x.Id
@@ -997,7 +1055,7 @@
                     ),
 
                     (
-                        "Letzte Bewegung",
+                        L["LastMovement"].Value,
                         x =>
                             Movements
                                 .Where(m =>
@@ -1017,8 +1075,11 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Produktbericht_Seite_{CurrentPage}.xlsx",
+
+                $"{L["ProductReport"].Value}_{L["Page"].Value}_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
@@ -1038,10 +1099,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -1053,6 +1116,7 @@
                         words[0].Length))
                 .ToUpper();
         }
+
 
         return
             $"{words[0][0]}{words[1][0]}"
@@ -1066,19 +1130,19 @@
         return type switch
         {
             StockMovementType.Wareneingang =>
-                "Wareneingang",
+                L["IncomingGoods"].Value,
 
             StockMovementType.Warenausgang =>
-                "Warenausgang",
+                L["OutgoingGoods"].Value,
 
             StockMovementType.Umlagerung =>
-                "Umlagerung",
+                L["Transfer"].Value,
 
             StockMovementType.Inventur =>
-                "Inventur",
+                L["Inventory"].Value,
 
             StockMovementType.Korrektur =>
-                "Korrektur",
+                L["Correction"].Value,
 
             _ =>
                 type.ToString()

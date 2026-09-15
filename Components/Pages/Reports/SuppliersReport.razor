@@ -5,15 +5,18 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lieferantenbericht</PageTitle>
+<PageTitle>@L["SupplierReport"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -26,11 +29,11 @@
         <div>
 
             <h1>
-                Lieferanten
+                @L["Suppliers"]
             </h1>
 
             <p>
-                Übersicht der Lieferanten und Warenbewegungen
+                @L["SupplierReportDescription"]
             </p>
 
         </div>
@@ -42,14 +45,14 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedSuppliers.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
             <a href="/suppliers/create"
                class="btn-primary">
 
-                Neuer Lieferant
+                @L["NewSupplier"]
 
             </a>
 
@@ -75,7 +78,7 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Lieferant, Nummer, Kontakt oder E-Mail suchen..."
+                       placeholder="@L["SearchSupplierPlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
@@ -86,15 +89,15 @@
                     @bind="StatusFilter">
 
                 <option value="Alle">
-                    Alle Lieferanten
+                    @L["AllSuppliers"]
                 </option>
 
                 <option value="Aktiv">
-                    Aktive Lieferanten
+                    @L["ActiveSuppliers"]
                 </option>
 
                 <option value="Inaktiv">
-                    Inaktive Lieferanten
+                    @L["InactiveSuppliers"]
                 </option>
 
             </select>
@@ -113,7 +116,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Lieferanten
+                @L["Suppliers"]
             </span>
 
             <strong>
@@ -121,7 +124,7 @@
             </strong>
 
             <small>
-                Gefilterte Lieferanten
+                @L["FilteredSuppliers"]
             </small>
 
         </div>
@@ -130,7 +133,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Aktiv
+                @L["Active"]
             </span>
 
             <strong>
@@ -138,7 +141,7 @@
             </strong>
 
             <small>
-                Aktive Lieferanten
+                @L["ActiveSuppliers"]
             </small>
 
         </div>
@@ -147,7 +150,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Wareneingänge
+                @L["IncomingGoods"]
             </span>
 
             <strong>
@@ -155,7 +158,7 @@
             </strong>
 
             <small>
-                Bewegungen
+                @L["Movements"]
             </small>
 
         </div>
@@ -164,7 +167,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Eingegangene Menge
+                @L["ReceivedQuantity"]
             </span>
 
             <strong>
@@ -172,7 +175,7 @@
             </strong>
 
             <small>
-                Gesamtmenge
+                @L["TotalQuantity"]
             </small>
 
         </div>
@@ -181,7 +184,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Bestellungen
+                @L["PurchaseOrders"]
             </span>
 
             <strong>
@@ -189,7 +192,7 @@
             </strong>
 
             <small>
-                Zugeordnete Bestellungen
+                @L["AssignedPurchaseOrders"]
             </small>
 
         </div>
@@ -208,11 +211,11 @@
             <div>
 
                 <strong>
-                    Lieferantenübersicht
+                    @L["SuppliersOverview"]
                 </strong>
 
                 <span>
-                    @FilteredSuppliers.Count Einträge
+                    @L["PaginationEntries", FilteredSuppliers.Count]
                 </span>
 
             </div>
@@ -224,7 +227,7 @@
         {
             <div class="loading-state">
 
-                Lieferanten werden geladen...
+                @L["LoadingSuppliers"]
 
             </div>
         }
@@ -239,11 +242,11 @@
                 </div>
 
                 <h3>
-                    Keine Lieferanten gefunden
+                    @L["NoSuppliersFound"]
                 </h3>
 
                 <p>
-                    Für die aktuelle Suche wurden keine Lieferanten gefunden.
+                    @L["NoSuppliersForSearch"]
                 </p>
 
             </div>
@@ -260,43 +263,43 @@
                         <tr>
 
                             <th>
-                                Lieferant
+                                @L["Supplier"]
                             </th>
 
                             <th>
-                                Lieferantennummer
+                                @L["SupplierNumber"]
                             </th>
 
                             <th>
-                                Ansprechpartner
+                                @L["ContactPerson"]
                             </th>
 
                             <th>
-                                Kontakt
+                                @L["Contact"]
                             </th>
 
                             <th>
-                                Adresse
+                                @L["Address"]
                             </th>
 
                             <th>
-                                Wareneingänge
+                                @L["IncomingGoods"]
                             </th>
 
                             <th>
-                                Menge
+                                @L["Quantity"]
                             </th>
 
                             <th>
-                                Bestellungen
+                                @L["PurchaseOrders"]
                             </th>
 
                             <th>
-                                Letzte Bewegung
+                                @L["LastMovement"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
@@ -516,7 +519,9 @@
                                 <td>
 
                                     <strong>
-                                        @incomingMovements.Sum(x => x.Quantity).ToString("N2")
+                                        @incomingMovements
+                                        .Sum(x => x.Quantity)
+                                        .ToString("N2")
                                     </strong>
 
                                 </td>
@@ -569,13 +574,13 @@
                                     @if (supplier.IsActive)
                                     {
                                         <span class="status-badge status-active">
-                                            Aktiv
+                                            @L["Active"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-inactive">
-                                            Inaktiv
+                                            @L["Inactive"]
                                         </span>
                                     }
 
@@ -591,7 +596,7 @@
 
                                         <i class="bi bi-pencil me-1"></i>
 
-                                        Bearbeiten
+                                        @L["Edit"]
 
                                     </a>
 
@@ -655,8 +660,8 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedSuppliers.Count von @FilteredSuppliers.Count Lieferanten
+                @L["PageOf", CurrentPage, TotalPages]
+                · @L["PaginationSuppliers", PagedSuppliers.Count, FilteredSuppliers.Count]
 
             </div>
 
@@ -1039,61 +1044,61 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Lieferanten",
-                    $"Lieferantenbericht – Seite {CurrentPage}",
+                    L["Suppliers"].Value,
+                    $"{L["SupplierReport"].Value} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Lieferant",
+                        L["Supplier"].Value,
                         x => x.CompanyName
                     ),
 
                     (
-                        "Lieferantennummer",
+                        L["SupplierNumber"].Value,
                         x => x.SupplierNumber ?? ""
                     ),
 
                     (
-                        "Ansprechpartner",
+                        L["ContactPerson"].Value,
                         x => x.ContactPerson ?? ""
                     ),
 
                     (
-                        "E-Mail",
+                        L["Email"].Value,
                         x => x.Email ?? ""
                     ),
 
                     (
-                        "Telefon",
+                        L["Phone"].Value,
                         x => x.Phone ?? ""
                     ),
 
                     (
-                        "Straße",
+                        L["Street"].Value,
                         x => x.Street ?? ""
                     ),
 
                     (
-                        "PLZ",
+                        L["PostalCode"].Value,
                         x => x.PostalCode ?? ""
                     ),
 
                     (
-                        "Stadt",
+                        L["City"].Value,
                         x => x.City ?? ""
                     ),
 
                     (
-                        "Land",
+                        L["Country"].Value,
                         x => x.Country ?? ""
                     ),
 
                     (
-                        "USt-IdNr.",
+                        L["VatNumber"].Value,
                         x => x.VatNumber ?? ""
                     ),
 
                     (
-                        "Wareneingänge",
+                        L["IncomingGoods"].Value,
                         x => Movements
                             .Count(m =>
                                 m.SupplierId == x.Id
@@ -1103,7 +1108,7 @@
                     ),
 
                     (
-                        "Eingegangene Menge",
+                        L["ReceivedQuantity"].Value,
                         x => Movements
                             .Where(m =>
                                 m.SupplierId == x.Id
@@ -1115,7 +1120,7 @@
                     ),
 
                     (
-                        "Bestellungen",
+                        L["PurchaseOrders"].Value,
                         x => Movements
                             .Where(m =>
                                 m.SupplierId == x.Id
@@ -1128,19 +1133,19 @@
                     ),
 
                     (
-                        "Status",
+                        L["Status"].Value,
                         x => x.IsActive
-                            ? "Aktiv"
-                            : "Inaktiv"
+                            ? L["Active"].Value
+                            : L["Inactive"].Value
                     ),
 
                     (
-                        "Erstellt am",
+                        L["CreatedAt"].Value,
                         x => x.CreatedAt
                     ),
 
                     (
-                        "Notiz",
+                        L["Note"].Value,
                         x => x.Note ?? ""
                     )
                 );
@@ -1152,7 +1157,7 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Lieferantenbericht_Seite_{CurrentPage}.xlsx",
+                $"{L["SupplierReport"].Value}_Seite_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 base64);
         }
@@ -1174,19 +1179,19 @@
         return type switch
         {
             StockMovementType.Wareneingang =>
-                "Wareneingang",
+                L["IncomingGoods"].Value,
 
             StockMovementType.Warenausgang =>
-                "Warenausgang",
+                L["OutgoingGoods"].Value,
 
             StockMovementType.Umlagerung =>
-                "Umlagerung",
+                L["Transfer"].Value,
 
             StockMovementType.Inventur =>
-                "Inventur",
+                L["Inventory"].Value,
 
             StockMovementType.Korrektur =>
-                "Korrektur",
+                L["Correction"].Value,
 
             _ =>
                 type.ToString()

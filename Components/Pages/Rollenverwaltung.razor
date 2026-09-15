@@ -6,15 +6,18 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Services
 
 @inject RoleManager<IdentityRole> RoleManager
 @inject UserManager<ApplicationUser> UserManager
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Rollenverwaltung</PageTitle>
+<PageTitle>@L["RoleManagement"]</PageTitle>
 
 <div class="stock-page">
 
@@ -27,11 +30,11 @@
         <div>
 
             <h1>
-                Rollenverwaltung
+                @L["RoleManagement"]
             </h1>
 
             <p>
-                Rollen und Berechtigungen verwalten
+                @L["ManageRolesAndPermissions"]
             </p>
 
         </div>
@@ -45,7 +48,7 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedRoles.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
@@ -56,7 +59,7 @@
                     class="btn-primary"
                     @onclick="OpenCreate">
 
-                + Neue Rolle
+                + @L["NewRole"]
 
             </button>
 
@@ -80,7 +83,7 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Rolle suchen..."
+                       placeholder="@L["SearchRolePlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
@@ -102,11 +105,11 @@
             <div>
 
                 <strong>
-                    Rollen
+                    @L["Roles"]
                 </strong>
 
                 <span>
-                    @FilteredRoles.Count Einträge
+                    @FilteredRoles.Count @L["EntriesCount"]
                 </span>
 
             </div>
@@ -118,7 +121,7 @@
         {
             <div class="loading-state">
 
-                Rollen werden geladen...
+                @L["RolesLoading"]
 
             </div>
         }
@@ -133,18 +136,17 @@
                 </div>
 
                 <h3>
-                    Keine Rollen gefunden
+                    @L["NoRolesFound"]
                 </h3>
 
                 <p>
-                    Es wurden keine Rollen gefunden.
+                    @L["NoRolesAvailable"]
                 </p>
 
             </div>
         }
         else
         {
-
             <div class="products-table-wrapper">
 
                 <table class="products-table">
@@ -154,19 +156,19 @@
                         <tr>
 
                             <th>
-                                Rolle
+                                @L["Role"]
                             </th>
 
                             <th>
-                                Benutzer
+                                @L["Users"]
                             </th>
 
                             <th>
-                                Erstellt
+                                @L["Created"]
                             </th>
 
                             <th>
-                                Aktionen
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -233,7 +235,7 @@
 
                                         <button type="button"
                                                 class="action-button"
-                                                title="Bearbeiten"
+                                                title="@L["Edit"]"
                                                 @onclick="() => OpenEdit(role)">
 
                                             ✎
@@ -243,7 +245,7 @@
 
                                         <button type="button"
                                                 class="action-button delete-button"
-                                                title="Löschen"
+                                                title="@L["Delete"]"
                                                 @onclick="() => OpenDelete(role)">
 
                                             🗑
@@ -267,7 +269,6 @@
             <!-- =====================================================
                  PAGINATION
                  ===================================================== -->
-
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -313,8 +314,15 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedRoles.Count von @FilteredRoles.Count Items
+                @L["PageInfo",
+                    CurrentPage,
+                    TotalPages]
+
+                ·
+
+                @L["RoleEntriesInfo",
+                    PagedRoles.Count,
+                    FilteredRoles.Count]
 
             </div>
 
@@ -328,7 +336,6 @@
 <!-- =============================================================
      CREATE / EDIT MODAL
      ============================================================= -->
-
 @if (ShowRoleModal)
 {
     <div class="modal-backdrop">
@@ -341,14 +348,14 @@
 
                     <h2>
                         @(IsEditMode
-                            ? "Rolle bearbeiten"
-                            : "Neue Rolle")
+                            ? L["EditRole"]
+                            : L["NewRole"])
                     </h2>
 
                     <p>
                         @(IsEditMode
-                            ? "Namen der Rolle ändern"
-                            : "Neue Rolle anlegen")
+                            ? L["ChangeRoleName"]
+                            : L["CreateNewRole"])
                     </p>
 
                 </div>
@@ -378,12 +385,12 @@
                 <div class="form-group">
 
                     <label>
-                        Rollenname
+                        @L["RoleName"]
                     </label>
 
                     <input class="form-control"
                            @bind="EditModel.Name"
-                           placeholder="z. B. Lagerleiter" />
+                           placeholder="@L["RoleNamePlaceholder"]" />
 
                 </div>
 
@@ -396,7 +403,7 @@
                         class="btn-secondary"
                         @onclick="CloseModal">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </button>
 
@@ -407,8 +414,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Speichern")
+                        ? L["Saving"]
+                        : L["Save"])
 
                 </button>
 
@@ -423,7 +430,6 @@
 <!-- =============================================================
      DELETE MODAL
      ============================================================= -->
-
 @if (ShowDeleteModal)
 {
     <div class="modal-backdrop">
@@ -435,11 +441,11 @@
                 <div>
 
                     <h2>
-                        Rolle löschen
+                        @L["DeleteRole"]
                     </h2>
 
                     <p>
-                        Diese Aktion kann nicht rückgängig gemacht werden.
+                        @L["DeleteRoleCannotBeUndone"]
                     </p>
 
                 </div>
@@ -468,13 +474,13 @@
 
                 <p>
 
-                    Möchten Sie die Rolle
+                    @L["DeleteRoleQuestion"]
 
                     <strong>
                         @DeleteRole?.Name
                     </strong>
 
-                    wirklich löschen?
+                    @L["DeleteRoleQuestionEnd"]
 
                 </p>
 
@@ -487,7 +493,7 @@
                         class="btn-secondary"
                         @onclick="CloseDelete">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </button>
 
@@ -497,7 +503,7 @@
                         @onclick="DeleteRoleAsync"
                         disabled="@IsSaving">
 
-                    Löschen
+                    @L["Delete"]
 
                 </button>
 
@@ -576,17 +582,21 @@
     {
         get
         {
-            var query = Roles.AsEnumerable();
+            var query =
+                Roles.AsEnumerable();
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
-                var search = SearchTerm.Trim();
+                var search =
+                    SearchTerm.Trim();
 
-                query = query.Where(role =>
-                    role.Name?.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase)
-                    ?? false);
+                query =
+                    query.Where(role =>
+                        role.Name?.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+                        ?? false);
             }
 
             return query
@@ -615,7 +625,8 @@
 
     private List<int> GetPageNumbers()
     {
-        var pages = new List<int>();
+        var pages =
+            new List<int>();
 
         var start =
             Math.Max(
@@ -627,7 +638,9 @@
                 TotalPages,
                 CurrentPage + 2);
 
-        for (var i = start; i <= end; i++)
+        for (var i = start;
+             i <= end;
+             i++)
         {
             pages.Add(i);
         }
@@ -676,8 +689,11 @@
 
             foreach (var role in Roles)
             {
-                if (string.IsNullOrWhiteSpace(role.Name))
+                if (string.IsNullOrWhiteSpace(
+                    role.Name))
+                {
                     continue;
+                }
 
                 var users =
                     await UserManager.GetUsersInRoleAsync(
@@ -730,7 +746,8 @@
             new RoleEditModel
             {
                 Name =
-                    role.Name ?? string.Empty
+                    role.Name ??
+                    string.Empty
             };
 
         ShowRoleModal = true;
@@ -752,10 +769,12 @@
             var roleName =
                 EditModel.Name.Trim();
 
-            if (string.IsNullOrWhiteSpace(roleName))
+
+            if (string.IsNullOrWhiteSpace(
+                roleName))
             {
                 ErrorMessage =
-                    "Rollenname ist erforderlich.";
+                    L["RoleNameRequired"];
 
                 return;
             }
@@ -764,7 +783,7 @@
             if (roleName.Length > 256)
             {
                 ErrorMessage =
-                    "Der Rollenname darf maximal 256 Zeichen lang sein.";
+                    L["RoleNameMaxLength"];
 
                 return;
             }
@@ -780,7 +799,8 @@
             }
 
 
-            if (string.IsNullOrWhiteSpace(ErrorMessage))
+            if (string.IsNullOrWhiteSpace(
+                ErrorMessage))
             {
                 ShowRoleModal = false;
 
@@ -811,7 +831,7 @@
         if (exists)
         {
             ErrorMessage =
-                "Eine Rolle mit diesem Namen existiert bereits.";
+                L["RoleAlreadyExists"];
 
             return;
         }
@@ -825,7 +845,8 @@
 
 
         var result =
-            await RoleManager.CreateAsync(role);
+            await RoleManager.CreateAsync(
+                role);
 
 
         if (!result.Succeeded)
@@ -848,10 +869,11 @@
     private async Task UpdateRole(
         string roleName)
     {
-        if (string.IsNullOrWhiteSpace(EditRoleId))
+        if (string.IsNullOrWhiteSpace(
+            EditRoleId))
         {
             ErrorMessage =
-                "Rolle wurde nicht gefunden.";
+                L["RoleNotFound"];
 
             return;
         }
@@ -865,7 +887,7 @@
         if (role == null)
         {
             ErrorMessage =
-                "Rolle wurde nicht gefunden.";
+                L["RoleNotFound"];
 
             return;
         }
@@ -881,13 +903,14 @@
             existingRole.Id != role.Id)
         {
             ErrorMessage =
-                "Eine andere Rolle mit diesem Namen existiert bereits.";
+                L["AnotherRoleAlreadyExists"];
 
             return;
         }
 
 
-        role.Name = roleName;
+        role.Name =
+            roleName;
 
 
         var result =
@@ -949,16 +972,17 @@
                 DeleteRole.Name;
 
 
-            if (string.IsNullOrWhiteSpace(roleName))
+            if (string.IsNullOrWhiteSpace(
+                roleName))
             {
                 ErrorMessage =
-                    "Rollenname wurde nicht gefunden.";
+                    L["RoleNameNotFound"];
 
                 return;
             }
 
 
-            // ADMIN-ROLLE SCHÜTZEN
+            // ADMIN ROLE PROTECTION
 
             if (string.Equals(
                     roleName,
@@ -966,13 +990,13 @@
                     StringComparison.OrdinalIgnoreCase))
             {
                 ErrorMessage =
-                    "Die Rolle 'Admin' kann nicht gelöscht werden.";
+                    L["AdminRoleCannotBeDeleted"];
 
                 return;
             }
 
 
-            // PRÜFEN, OB BENUTZER DIE ROLLE VERWENDEN
+            // CHECK WHETHER USERS USE THIS ROLE
 
             var users =
                 await UserManager.GetUsersInRoleAsync(
@@ -982,7 +1006,8 @@
             if (users.Count > 0)
             {
                 ErrorMessage =
-                    $"Die Rolle kann nicht gelöscht werden, da {users.Count} Benutzer diese Rolle verwenden.";
+                    L["RoleCannotBeDeletedUsers",
+                        users.Count];
 
                 return;
             }
@@ -1043,8 +1068,11 @@
     private int GetUserCount(
         string? roleName)
     {
-        if (string.IsNullOrWhiteSpace(roleName))
+        if (string.IsNullOrWhiteSpace(
+            roleName))
+        {
             return 0;
+        }
 
         return RoleUserCounts.TryGetValue(
             roleName,
@@ -1107,16 +1135,18 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Rollen",
-                    $"Rollenverwaltung – Seite {CurrentPage}",
+
+                    L["Roles"],
+
+                    $"{L["RoleManagement"]} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Rolle",
+                        L["Role"],
                         x => x.Name ?? ""
                     ),
 
                     (
-                        "Benutzer",
+                        L["Users"],
                         x => GetUserCount(x.Name)
                     )
                 );
@@ -1129,14 +1159,17 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Rollen_Seite_{CurrentPage}.xlsx",
+
+                $"{L["RolesFileName"]}_Seite_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Excel-Export: {ex}");
+                $"{L["ExcelExportError"]}: {ex}");
         }
     }
 

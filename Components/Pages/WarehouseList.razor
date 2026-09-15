@@ -5,17 +5,18 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-
-<PageTitle>Lager</PageTitle>
-
+<PageTitle>@L["Warehouses"]</PageTitle>
 
 <div class="categories-page">
 
@@ -26,23 +27,23 @@
         <div>
 
             <h1>
-                Lager
+                @L["Warehouses"]
             </h1>
 
             <p>
-                Verwalten Sie Ihre Lager und Standorte.
+                @L["WarehousesOverviewDescription"]
             </p>
 
         </div>
 
-
         <div>
 
-          <button type="button"
+            <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedWarehouses.Count == 0)">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedWarehouses.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
@@ -52,7 +53,7 @@
 
                 <span>+</span>
 
-                Neues Lager
+                @L["NewWarehouse"]
 
             </a>
 
@@ -71,9 +72,8 @@
                 ⌕
             </span>
 
-
             <input type="text"
-                   placeholder="Lager suchen..."
+                   placeholder="@L["SearchWarehousePlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -86,15 +86,15 @@
                 @bind:after="FilterChanged">
 
             <option value="all">
-                Alle Status
+                @L["AllStatuses"]
             </option>
 
             <option value="active">
-                Aktiv
+                @L["Active"]
             </option>
 
             <option value="inactive">
-                Inaktiv
+                @L["Inactive"]
             </option>
 
         </select>
@@ -106,17 +106,16 @@
 
     <div class="products-card">
 
-
         <div class="products-card-header">
 
             <div>
 
                 <strong>
-                    Lagerliste
+                    @L["WarehouseList"]
                 </strong>
 
                 <span>
-                    @Warehouses.Count Lager
+                    @L["PaginationWarehouses", Warehouses.Count]
                 </span>
 
             </div>
@@ -128,7 +127,7 @@
         {
             <div class="loading-state">
 
-                Lager werden geladen...
+                @L["LoadingWarehouses"]
 
             </div>
         }
@@ -136,29 +135,24 @@
         {
             <div class="empty-products">
 
-
                 <div class="empty-products-icon">
                     🏢
                 </div>
 
-
                 <h3>
-                    Keine Lager gefunden
+                    @L["NoWarehousesFound"]
                 </h3>
 
-
                 <p>
-                    Für die aktuellen Filter wurden keine Lager gefunden.
+                    @L["NoWarehousesForFilters"]
                 </p>
-
 
                 <a href="/warehouses/create"
                    class="btn-primary">
 
-                    + Neues Lager
+                    + @L["NewWarehouse"]
 
                 </a>
-
 
             </div>
         }
@@ -167,28 +161,26 @@
 
             <div class="products-table-wrapper">
 
-
                 <table class="products-table">
-
 
                     <thead>
 
                         <tr>
 
                             <th>
-                                Name
+                                @L["Name"]
                             </th>
 
                             <th>
-                                Beschreibung
+                                @L["Description"]
                             </th>
 
                             <th>
-                                Lagerplätze
+                                @L["StorageLocations"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
@@ -201,18 +193,15 @@
 
                     <tbody>
 
-
                         @foreach (var warehouse in PagedWarehouses)
                         {
                             <tr>
-
 
                                 <!-- NAME -->
 
                                 <td>
 
                                     <div class="product-name">
-
 
                                         <div class="product-avatar">
 
@@ -221,7 +210,6 @@
 
                                         </div>
 
-
                                         <div>
 
                                             <strong>
@@ -229,7 +217,6 @@
                                             </strong>
 
                                         </div>
-
 
                                     </div>
 
@@ -276,7 +263,7 @@
                                     {
                                         <span class="status-badge status-active">
 
-                                            Aktiv
+                                            @L["Active"]
 
                                         </span>
                                     }
@@ -284,7 +271,7 @@
                                     {
                                         <span class="status-badge status-inactive">
 
-                                            Inaktiv
+                                            @L["Inactive"]
 
                                         </span>
                                     }
@@ -298,10 +285,9 @@
 
                                     <div class="product-actions">
 
-
                                         <a href="/warehouses/edit/@warehouse.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
+                                           title="@L["Edit"]">
 
                                             ✎
 
@@ -309,27 +295,23 @@
 
 
                                         <button class="action-button delete-button"
-                                                title="Deaktivieren"
+                                                title="@L["Deactivate"]"
                                                 @onclick="() => ConfirmDelete(warehouse)">
 
                                             🗑
 
                                         </button>
 
-
                                     </div>
 
                                 </td>
 
-
                             </tr>
                         }
-
 
                     </tbody>
 
                 </table>
-
 
             </div>
 
@@ -338,7 +320,6 @@
             @if (TotalPages > 1)
             {
                 <div class="pagination">
-
 
                     <!-- PREVIOUS -->
 
@@ -356,7 +337,6 @@
 
                     <div class="pagination-pages">
 
-
                         @foreach (var pageNumber in GetPageNumbers())
                         {
                             <button type="button"
@@ -367,7 +347,6 @@
 
                             </button>
                         }
-
 
                     </div>
 
@@ -383,7 +362,6 @@
 
                     </button>
 
-
                 </div>
             }
 
@@ -392,9 +370,18 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
+                @L["PageOf", CurrentPage, TotalPages]
+
                 ·
-                @PagedWarehouses.Count von @Warehouses.Count Lager
+
+                @L[
+                    "PaginationWarehouses",
+                    PagedWarehouses.Count
+                ]
+
+                /
+
+                @Warehouses.Count
 
             </div>
 
@@ -408,37 +395,31 @@
     {
         <div class="delete-modal-backdrop">
 
-
             <div class="delete-modal">
-
 
                 <div class="delete-modal-icon">
                     🗑
                 </div>
 
-
                 <h3>
-                    Lager deaktivieren?
+                    @L["DeactivateWarehouseQuestion"]
                 </h3>
-
 
                 <p>
 
-                    Möchten Sie
+                    @L["DeactivateWarehouseText"]
 
                     <strong>
                         @(WarehouseToDelete.Name ?? "-")
                     </strong>
 
-                    wirklich deaktivieren?
+                    @L["DeactivateWarehouseConfirm"]
 
                 </p>
 
-
                 <small>
 
-                    Das Lager wird nicht gelöscht.
-                    Es wird nur als inaktiv markiert.
+                    @L["WarehouseWillNotBeDeleted"]
 
                 </small>
 
@@ -447,11 +428,12 @@
                 {
                     <div class="form-error">
 
-                        Dieses Lager enthält
-                        @(WarehouseToDelete.Locations?.Count ?? 0)
-                        Lagerplatz/Lagerplätze.
+                        @L[
+                            "WarehouseContainsLocations",
+                            WarehouseToDelete.Locations?.Count ?? 0
+                        ]
 
-                        Diese bleiben erhalten.
+                        @L["LocationsWillRemain"]
 
                     </div>
                 }
@@ -459,11 +441,10 @@
 
                 <div class="delete-modal-actions">
 
-
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </button>
 
@@ -471,19 +452,16 @@
                     <button class="btn-danger"
                             @onclick="DeleteConfirmed">
 
-                        Deaktivieren
+                        @L["Deactivate"]
 
                     </button>
 
-
                 </div>
-
 
             </div>
 
         </div>
     }
-
 
 </div>
 
@@ -527,24 +505,20 @@
     {
         var pages = new List<int>();
 
-
         var start =
             Math.Max(
                 1,
                 CurrentPage - 2);
-
 
         var end =
             Math.Min(
                 TotalPages,
                 CurrentPage + 2);
 
-
         for (var i = start; i <= end; i++)
         {
             pages.Add(i);
         }
-
 
         return pages;
     }
@@ -575,12 +549,10 @@
             page = 1;
         }
 
-
         if (page > TotalPages)
         {
             page = TotalPages;
         }
-
 
         CurrentPage = page;
     }
@@ -627,7 +599,6 @@
     {
         IsLoading = true;
 
-
         try
         {
             await using var db =
@@ -647,7 +618,6 @@
             {
                 var search =
                     SearchTerm.Trim();
-
 
                 query =
                     query.Where(x =>
@@ -727,7 +697,6 @@
                 .Where(x => x != null)
                 .ToList();
 
-
         if (data.Count == 0)
         {
             return;
@@ -738,35 +707,51 @@
             ExcelExport.Export(
                 data,
 
-                "Lager",
+                L["Warehouses"].Value,
 
-                $"Lager – Seite {CurrentPage}",
+                $"{L["Warehouses"].Value} – {L["Page"]} {CurrentPage}",
 
-                ("Name",
-                    x => x.Name ?? ""),
+                (
+                    L["Name"].Value,
+                    x => x.Name ?? ""
+                ),
 
-                ("Beschreibung",
-                    x => x.Description ?? ""),
+                (
+                    L["Description"].Value,
+                    x => x.Description ?? ""
+                ),
 
-                ("Lagerplätze",
-                    x => x.Locations?.Count ?? 0),
+                (
+                    L["StorageLocations"].Value,
+                    x => x.Locations?.Count ?? 0
+                ),
 
-                ("Status",
+                (
+                    L["Status"].Value,
                     x => x.IsActive
-                        ? "Aktiv"
-                        : "Inaktiv"),
+                        ? L["Active"].Value
+                        : L["Inactive"].Value
+                ),
 
-                ("Adresse",
-                    x => x.Address ?? ""),
+                (
+                    L["Address"].Value,
+                    x => x.Address ?? ""
+                ),
 
-                ("PLZ",
-                    x => x.PostalCode ?? ""),
+                (
+                    L["PostalCode"].Value,
+                    x => x.PostalCode ?? ""
+                ),
 
-                ("Stadt",
-                    x => x.City ?? ""),
+                (
+                    L["City"].Value,
+                    x => x.City ?? ""
+                ),
 
-                ("Land",
-                    x => x.Country ?? "")
+                (
+                    L["Country"].Value,
+                    x => x.Country ?? ""
+                )
             );
 
 
@@ -778,7 +763,7 @@
         await JS.InvokeVoidAsync(
             "downloadFile",
 
-            $"Lager_Seite_{CurrentPage}.xlsx",
+            $"{L["Warehouses"].Value}_Seite_{CurrentPage}.xlsx",
 
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 

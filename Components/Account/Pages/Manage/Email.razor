@@ -5,15 +5,19 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IEmailSender<ApplicationUser> EmailSender
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> L
 
 
-<PageTitle>E-Mail ändern</PageTitle>
+<PageTitle>@L["ChangeEmail"]</PageTitle>
+
 
 <div class="email-page">
 
@@ -25,11 +29,11 @@
     <div class="email-header">
 
         <h1>
-            E-Mail ändern
+            @L["ChangeEmail"]
         </h1>
 
         <p>
-            Verwalten und ändern Sie Ihre E-Mail-Adresse.
+            @L["ManageAndChangeEmailDescription"]
         </p>
 
     </div>
@@ -52,11 +56,11 @@
         <div class="email-card-title">
 
             <h2>
-                E-Mail-Adresse
+                @L["EmailAddress"]
             </h2>
 
             <span>
-                Ihre aktuelle E-Mail-Adresse und die neue E-Mail-Adresse.
+                @L["CurrentAndNewEmailDescription"]
             </span>
 
         </div>
@@ -100,7 +104,7 @@
                 <label for="email"
                        class="email-form-label">
 
-                    Aktuelle E-Mail-Adresse
+                    @L["CurrentEmailAddress"]
 
                 </label>
 
@@ -114,7 +118,7 @@
                                value="@email"
                                id="email"
                                class="email-input"
-                               placeholder="E-Mail-Adresse"
+                               placeholder="@L["EmailAddressPlaceholder"]"
                                disabled />
 
                     </div>
@@ -129,7 +133,7 @@
                             </span>
 
                             <span>
-                                Bestätigt
+                                @L["Confirmed"]
                             </span>
 
                         </div>
@@ -140,7 +144,7 @@
                                 class="verification-button"
                                 form="send-verification-form">
 
-                            Bestätigungs-E-Mail senden
+                            @L["SendConfirmationEmail"]
 
                         </button>
                     }
@@ -159,7 +163,7 @@
                 <label for="Input.NewEmail"
                        class="email-form-label">
 
-                    Neue E-Mail-Adresse
+                    @L["NewEmailAddress"]
 
                 </label>
 
@@ -169,7 +173,7 @@
                            class="email-input"
                            autocomplete="email"
                            aria-required="true"
-                           placeholder="Neue E-Mail-Adresse" />
+                           placeholder="@L["NewEmailAddressPlaceholder"]" />
 
 
                 <ValidationMessage For="() => Input.NewEmail"
@@ -187,7 +191,7 @@
                 <button type="submit"
                         class="email-save-button">
 
-                    E-Mail ändern
+                    @L["ChangeEmailButton"]
 
                 </button>
 
@@ -258,7 +262,7 @@
             Input.NewEmail == email)
         {
             message =
-                "Ihre E-Mail-Adresse wurde nicht geändert.";
+                L["EmailNotChanged"];
 
             return;
         }
@@ -310,7 +314,7 @@
 
 
         message =
-            "Der Bestätigungslink wurde an Ihre neue E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.";
+            L["NewEmailConfirmationSent"];
     }
 
 
@@ -367,7 +371,7 @@
 
 
         message =
-            "Die Bestätigungs-E-Mail wurde gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.";
+            L["EmailConfirmationSent"];
     }
 
 
@@ -375,11 +379,17 @@
     {
 
         [Required(
-            ErrorMessage = "Die neue E-Mail-Adresse ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "NewEmailRequired")]
+
         [EmailAddress(
-            ErrorMessage = "Bitte geben Sie eine gültige E-Mail-Adresse ein.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidEmailAddress")]
+
         [Display(
-            Name = "Neue E-Mail-Adresse")]
+            Name = "NewEmailAddress",
+            ResourceType = typeof(SharedResource))]
+
         public string? NewEmail { get; set; }
 
     }

@@ -7,7 +7,9 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Services
 
 @inject UserManager<ApplicationUser> UserManager
@@ -15,8 +17,9 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Benutzerverwaltung</PageTitle>
+<PageTitle>@L["UserManagement"]</PageTitle>
 
 <div class="stock-page">
 
@@ -29,11 +32,11 @@
         <div>
 
             <h1>
-                Benutzerverwaltung
+                @L["UserManagement"]
             </h1>
 
             <p>
-                Benutzer und Rollen verwalten
+                @L["ManageUsersAndRoles"]
             </p>
 
         </div>
@@ -47,7 +50,7 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedUsers.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
@@ -58,7 +61,7 @@
                     class="btn-primary"
                     @onclick="OpenCreate">
 
-                + Neuer Benutzer
+                + @L["NewUser"]
 
             </button>
 
@@ -82,7 +85,7 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Benutzer, E-Mail oder Rolle suchen..."
+                       placeholder="@L["SearchUserPlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
@@ -104,11 +107,11 @@
             <div>
 
                 <strong>
-                    Benutzer
+                    @L["Users"]
                 </strong>
 
                 <span>
-                    @FilteredUsers.Count Einträge
+                    @FilteredUsers.Count @L["EntriesCount"]
                 </span>
 
             </div>
@@ -120,7 +123,7 @@
         {
             <div class="loading-state">
 
-                Benutzer werden geladen...
+                @L["UsersLoading"]
 
             </div>
         }
@@ -135,22 +138,17 @@
                 </div>
 
                 <h3>
-                    Keine Benutzer gefunden
+                    @L["NoUsersFound"]
                 </h3>
 
                 <p>
-                    Es wurden keine Benutzer gefunden.
+                    @L["NoUsersAvailable"]
                 </p>
 
             </div>
         }
         else
         {
-
-            <!-- =====================================================
-                 TABLE
-                 ===================================================== -->
-
             <div class="products-table-wrapper">
 
                 <table class="products-table">
@@ -160,23 +158,23 @@
                         <tr>
 
                             <th>
-                                Benutzer
+                                @L["User"]
                             </th>
 
                             <th>
-                                E-Mail
+                                @L["Email"]
                             </th>
 
                             <th>
-                                Rollen
+                                @L["Roles"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
-                                Aktionen
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -208,6 +206,7 @@
                                             <strong>
                                                 @user.UserName
                                             </strong>
+
                                         </div>
 
                                     </div>
@@ -258,7 +257,7 @@
                                     else
                                     {
                                         <span class="text-muted">
-                                            Keine Rolle
+                                            @L["NoRole"]
                                         </span>
                                     }
 
@@ -272,13 +271,13 @@
                                     @if (IsUserActive(user))
                                     {
                                         <span class="status-badge status-active">
-                                            Aktiv
+                                            @L["Active"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-inactive">
-                                            Inaktiv
+                                            @L["Inactive"]
                                         </span>
                                     }
 
@@ -288,19 +287,27 @@
                                 <!-- ACTIONS -->
 
                                 <td>
+
                                     <div class="product-actions">
+
                                         <button type="button"
                                                 class="action-button"
-                                                title="Bearbeiten"
+                                                title="@L["Edit"]"
                                                 @onclick="() => OpenEdit(user)">
+
                                             ✎
+
                                         </button>
 
-                                        <button class="action-button delete-button"
-                                                title="Löschen"
+                                        <button type="button"
+                                                class="action-button delete-button"
+                                                title="@L["Delete"]"
                                                 @onclick="() => OpenDelete(user)">
+
                                             🗑
+
                                         </button>
+
                                     </div>
 
                                 </td>
@@ -363,8 +370,15 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedUsers.Count von @FilteredUsers.Count Items
+                @L["PageInfo",
+                    CurrentPage,
+                    TotalPages]
+
+                ·
+
+                @L["UserEntriesInfo",
+                    PagedUsers.Count,
+                    FilteredUsers.Count]
 
             </div>
 
@@ -390,14 +404,14 @@
 
                     <h2>
                         @(IsEditMode
-                            ? "Benutzer bearbeiten"
-                            : "Neuer Benutzer")
+                            ? L["EditUser"]
+                            : L["NewUser"])
                     </h2>
 
                     <p>
                         @(IsEditMode
-                            ? "Benutzerdaten und Rolle ändern"
-                            : "Neuen Benutzer anlegen")
+                            ? L["ChangeUserDataAndRole"]
+                            : L["CreateNewUser"])
                     </p>
 
                 </div>
@@ -428,7 +442,7 @@
                 <div class="form-group">
 
                     <label>
-                        Benutzername
+                        @L["Username"]
                     </label>
 
                     <input class="form-control"
@@ -443,7 +457,7 @@
                 <div class="form-group">
 
                     <label>
-                        E-Mail
+                        @L["Email"]
                     </label>
 
                     <input type="email"
@@ -459,7 +473,7 @@
                     <div class="form-group">
 
                         <label>
-                            Passwort
+                            @L["Password"]
                         </label>
 
                         <input type="password"
@@ -475,14 +489,14 @@
                 <div class="form-group">
 
                     <label>
-                        Rolle
+                        @L["Role"]
                     </label>
 
                     <select class="form-control"
                             @bind="EditModel.Role">
 
                         <option value="">
-                            Keine Rolle
+                            @L["NoRole"]
                         </option>
 
                         @foreach (var role in Roles)
@@ -507,7 +521,7 @@
                            @bind="EditModel.IsActive" />
 
                     <label for="userActive">
-                        Benutzer ist aktiv
+                        @L["UserIsActive"]
                     </label>
 
                 </div>
@@ -521,7 +535,7 @@
                         class="btn-secondary"
                         @onclick="CloseModal">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </button>
 
@@ -531,8 +545,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Speichern")
+                        ? L["Saving"]
+                        : L["Save"])
 
                 </button>
 
@@ -558,11 +572,11 @@
                 <div>
 
                     <h2>
-                        Benutzer löschen
+                        @L["DeleteUser"]
                     </h2>
 
                     <p>
-                        Diese Aktion kann nicht rückgängig gemacht werden.
+                        @L["DeleteUserCannotBeUndone"]
                     </p>
 
                 </div>
@@ -589,13 +603,13 @@
 
                 <p>
 
-                    Möchten Sie den Benutzer
+                    @L["DeleteUserQuestion"]
 
                     <strong>
                         @DeleteUser?.UserName
                     </strong>
 
-                    wirklich löschen?
+                    @L["DeleteUserQuestionEnd"]
 
                 </p>
 
@@ -608,7 +622,7 @@
                         class="btn-secondary"
                         @onclick="CloseDelete">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </button>
 
@@ -617,7 +631,7 @@
                         @onclick="DeleteUserAsync"
                         disabled="@IsSaving">
 
-                    Löschen
+                    @L["Delete"]
 
                 </button>
 
@@ -762,7 +776,8 @@
 
     private List<int> GetPageNumbers()
     {
-        var pages = new List<int>();
+        var pages =
+            new List<int>();
 
         var start =
             Math.Max(
@@ -774,7 +789,9 @@
                 TotalPages,
                 CurrentPage + 2);
 
-        for (var i = start; i <= end; i++)
+        for (var i = start;
+             i <= end;
+             i++)
         {
             pages.Add(i);
         }
@@ -898,10 +915,12 @@
             new UserEditModel
             {
                 UserName =
-                    user.UserName ?? string.Empty,
+                    user.UserName ??
+                    string.Empty,
 
                 Email =
-                    user.Email ?? string.Empty,
+                    user.Email ??
+                    string.Empty,
 
                 Role =
                     roles.FirstOrDefault()
@@ -931,7 +950,7 @@
                 EditModel.UserName))
             {
                 ErrorMessage =
-                    "Benutzername ist erforderlich.";
+                    L["UsernameRequired"];
 
                 return;
             }
@@ -975,7 +994,7 @@
             EditModel.Password))
         {
             ErrorMessage =
-                "Passwort ist erforderlich.";
+                L["PasswordRequired"];
 
             return;
         }
@@ -1058,7 +1077,7 @@
             EditUserId))
         {
             ErrorMessage =
-                "Benutzer wurde nicht gefunden.";
+                L["UserNotFound"];
 
             return;
         }
@@ -1072,7 +1091,7 @@
         if (user == null)
         {
             ErrorMessage =
-                "Benutzer wurde nicht gefunden.";
+                L["UserNotFound"];
 
             return;
         }
@@ -1192,6 +1211,7 @@
         if (DeleteUser == null)
             return;
 
+
         IsSaving = true;
 
         ErrorMessage = null;
@@ -1214,7 +1234,7 @@
                 DeleteUser.Id)
             {
                 ErrorMessage =
-                    "Sie können Ihren eigenen Benutzer nicht löschen.";
+                    L["CannotDeleteOwnUser"];
 
                 return;
             }
@@ -1355,21 +1375,23 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Benutzer",
-                    $"Benutzerverwaltung – Seite {CurrentPage}",
+
+                    L["Users"],
+
+                    $"{L["UserManagement"]} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Benutzer",
+                        L["User"],
                         x => x.UserName ?? ""
                     ),
 
                     (
-                        "E-Mail",
+                        L["Email"],
                         x => x.Email ?? ""
                     ),
 
                     (
-                        "Rollen",
+                        L["Roles"],
                         x =>
                             UserRoles.TryGetValue(
                                 x.Id,
@@ -1378,42 +1400,47 @@
                                     ? string.Join(
                                         ", ",
                                         roles)
-                                    : "Keine Rolle"
+                                    : L["NoRole"].Value
                     ),
 
                     (
-                        "Status",
+                        L["Status"],
                         x =>
                             IsUserActive(x)
-                                ? "Aktiv"
-                                : "Inaktiv"
+                                ? L["Active"].Value
+                                : L["Inactive"].Value
                     ),
 
                     (
-                        "E-Mail bestätigt",
+                        L["EmailConfirmed"],
                         x => x.EmailConfirmed
                     ),
 
                     (
-                        "Telefon",
+                        L["Phone"],
                         x => x.PhoneNumber ?? ""
                     )
                 );
+
 
             var base64 =
                 Convert.ToBase64String(
                     bytes);
 
+
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Benutzer_Seite_{CurrentPage}.xlsx",
+
+                $"{L["UsersFileName"]}_Seite_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Excel-Export: {ex}");
+                $"{L["ExcelExportError"]}: {ex}");
         }
     }
 

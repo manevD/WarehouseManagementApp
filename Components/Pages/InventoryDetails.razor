@@ -245,7 +245,7 @@ else
                         </span>
 
                         <strong>
-                            @TotalSystemQuantity.ToString("N2")
+                            @TotalSystemQuantity
                         </strong>
 
                     </div>
@@ -258,7 +258,7 @@ else
                         </span>
 
                         <strong>
-                            @TotalCountedQuantity.ToString("N2")
+                            @TotalCountedQuantity
                         </strong>
 
                     </div>
@@ -529,8 +529,7 @@ else
                                         <td>
 
                                             <strong>
-                                                @item.SystemQuantity
-                                                .ToString("N2")
+                                                @item.SystemQuantity.ToString("N2")
                                             </strong>
 
                                         </td>
@@ -544,8 +543,7 @@ else
                                                 InventoryStatus.Abgeschlossen)
                                             {
                                                 <strong>
-                                                    @(item.CountedQuantity?
-                                                        .ToString("N2") ?? "-")
+                                                    @(item.CountedQuantity?.ToString("N2") ?? "-")
                                                 </strong>
                                             }
                                             else

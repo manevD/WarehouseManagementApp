@@ -4,16 +4,19 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
-@using Microsoft.JSInterop
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lagerwert</PageTitle>
+<PageTitle>@L["StockValueReport"]</PageTitle>
 
 <div class="stock-page">
 
@@ -24,11 +27,15 @@
     <div class="page-header">
 
         <div>
-            <h1>Lagerwert</h1>
+
+            <h1>
+                @L["StockValueReport"]
+            </h1>
 
             <p>
-                Gesamtwert des aktuellen Lagerbestands
+                @L["StockValueReportDescription"]
             </p>
+
         </div>
 
         <div class="page-header-actions">
@@ -37,13 +44,15 @@
                     class="btn-secondary"
                     @onclick="ExportExcel"
                     disabled="@(PagedStocks.Count == 0)">
-                📊 Excel exportieren
+
+                📊 @L["ExportExcel"]
+
             </button>
 
             <a href="/reports"
                class="btn-secondary">
 
-                ← Berichte
+                ← @L["Reports"]
 
             </a>
 
@@ -67,16 +76,19 @@
                 </span>
 
                 <input type="text"
-                       placeholder="Produkt, SKU oder Barcode suchen..."
+                       placeholder="@L["SearchProductSkuBarcodePlaceholder"]"
                        @bind="SearchTerm"
                        @bind:event="oninput" />
 
             </div>
 
+
             <select class="filter-select"
                     @bind="SelectedWarehouseId">
 
-                <option value="0">Alle Lager</option>
+                <option value="0">
+                    @L["AllWarehouses"]
+                </option>
 
                 @foreach (var warehouse in Warehouses)
                 {
@@ -87,19 +99,25 @@
 
             </select>
 
+
             <select class="filter-select"
                     @bind="SelectedLocationId">
 
-                <option value="0">Alle Lagerplätze</option>
+                <option value="0">
+                    @L["AllLocations"]
+                </option>
 
                 @foreach (var location in FilteredLocations)
                 {
                     <option value="@location.Id">
+
                         @location.Code
+
                         @if (!string.IsNullOrWhiteSpace(location.Name))
                         {
                             @($" - {location.Name}")
                         }
+
                     </option>
                 }
 
@@ -121,15 +139,15 @@
         <div class="stock-summary-card">
 
             <span>
-                Lagerwert
+                @L["StockValue"]
             </span>
 
             <strong>
-                @(TotalPurchaseValue.ToString("N2")) €
+                @TotalPurchaseValue.ToString("N2") €
             </strong>
 
             <small>
-                Zum Einkaufspreis
+                @L["AtPurchasePrice"]
             </small>
 
         </div>
@@ -140,15 +158,15 @@
         <div class="stock-summary-card">
 
             <span>
-                Verkaufswert
+                @L["SaleValue"]
             </span>
 
             <strong>
-                @(TotalSaleValue.ToString("N2")) €
+                @TotalSaleValue.ToString("N2") €
             </strong>
 
             <small>
-                Zum Verkaufspreis
+                @L["AtSalePrice"]
             </small>
 
         </div>
@@ -159,15 +177,15 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamtbestand
+                @L["TotalStock"]
             </span>
 
             <strong>
-                @(TotalQuantity.ToString("N2"))
+                @TotalQuantity.ToString("N2")
             </strong>
 
             <small>
-                Aktuelle Menge
+                @L["CurrentQuantity"]
             </small>
 
         </div>
@@ -178,7 +196,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Positionen
+                @L["Positions"]
             </span>
 
             <strong>
@@ -186,7 +204,7 @@
             </strong>
 
             <small>
-                Lagerpositionen
+                @L["StockPositions"]
             </small>
 
         </div>
@@ -205,11 +223,11 @@
             <div>
 
                 <strong>
-                    Lagerwert
+                    @L["StockValueOverview"]
                 </strong>
 
                 <span>
-                    @FilteredStocks.Count Einträge
+                    @L["PaginationEntries", FilteredStocks.Count]
                 </span>
 
             </div>
@@ -220,7 +238,9 @@
         @if (IsLoading)
         {
             <div class="loading-state">
-                Lagerwerte werden geladen...
+
+                @L["LoadingStockValues"]
+
             </div>
         }
         else if (PagedStocks.Count == 0)
@@ -232,18 +252,18 @@
                 </div>
 
                 <h3>
-                    Keine Lagerbestände
+                    @L["NoStockBalances"]
                 </h3>
 
                 <p>
-                    Für die gewählten Filter wurden keine
-                    Lagerbestände gefunden.
+                    @L["NoStockBalancesForFilters"]
                 </p>
 
             </div>
         }
         else
         {
+
             <div class="products-table-wrapper">
 
                 <table class="products-table">
@@ -253,39 +273,39 @@
                         <tr>
 
                             <th>
-                                Produkt
+                                @L["Product"]
                             </th>
 
                             <th>
-                                SKU
+                                @L["SKU"]
                             </th>
 
                             <th>
-                                Lager
+                                @L["Warehouse"]
                             </th>
 
                             <th>
-                                Lagerplatz
+                                @L["StorageLocation"]
                             </th>
 
                             <th>
-                                Bestand
+                                @L["Stock"]
                             </th>
 
                             <th>
-                                Einkaufspreis
+                                @L["PurchasePrice"]
                             </th>
 
                             <th>
-                                Lagerwert
+                                @L["StockValue"]
                             </th>
 
                             <th>
-                                Verkaufspreis
+                                @L["SalePrice"]
                             </th>
 
                             <th>
-                                Verkaufswert
+                                @L["SaleValue"]
                             </th>
 
                         </tr>
@@ -298,13 +318,18 @@
                         @foreach (var stock in PagedStocks)
                         {
                             var product = stock.Product;
-                            var location = stock.WarehouseLocation;
+
+                            var location =
+                                stock.WarehouseLocation;
 
                             var purchaseValue =
-                                stock.Quantity * product!.PurchasePrice;
+                                stock.Quantity *
+                                product!.PurchasePrice;
 
                             var saleValue =
-                                stock.Quantity * product.SalePrice;
+                                stock.Quantity *
+                                product.SalePrice;
+
 
                             <tr>
 
@@ -324,7 +349,8 @@
                                                 @product.Name
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(product.Barcode))
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                product.Barcode))
                                             {
                                                 <small>
                                                     @product.Barcode
@@ -375,7 +401,8 @@
                                                 @location.Code
                                             </strong>
 
-                                            @if (!string.IsNullOrWhiteSpace(location.Name))
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                location.Name))
                                             {
                                                 <small>
                                                     @location.Name
@@ -399,7 +426,7 @@
                                 <td>
 
                                     <strong>
-                                        @(stock.Quantity.ToString("N2"))
+                                        @stock.Quantity.ToString("N2")
                                     </strong>
 
                                 </td>
@@ -408,7 +435,7 @@
                                 <!-- PURCHASE PRICE -->
 
                                 <td>
-                                    @(product.PurchasePrice.ToString("N2")) €
+                                    @product.PurchasePrice.ToString("N2") €
                                 </td>
 
 
@@ -417,7 +444,7 @@
                                 <td>
 
                                     <strong>
-                                        @(purchaseValue.ToString("N2")) €
+                                        @purchaseValue.ToString("N2") €
                                     </strong>
 
                                 </td>
@@ -426,7 +453,7 @@
                                 <!-- SALE PRICE -->
 
                                 <td>
-                                    @(product.SalePrice.ToString("N2")) €
+                                    @product.SalePrice.ToString("N2") €
                                 </td>
 
 
@@ -435,7 +462,7 @@
                                 <td>
 
                                     <strong>
-                                        @(saleValue.ToString("N2")) €
+                                        @saleValue.ToString("N2") €
                                     </strong>
 
                                 </td>
@@ -461,8 +488,11 @@
                             class="pagination-button"
                             disabled="@(CurrentPage <= 1)"
                             @onclick="PreviousPage">
+
                         ‹
+
                     </button>
+
 
                     <div class="pagination-pages">
 
@@ -471,25 +501,43 @@
                             <button type="button"
                                     class="pagination-button @(pageNumber == CurrentPage ? "active" : "")"
                                     @onclick="() => GoToPage(pageNumber)">
+
                                 @pageNumber
+
                             </button>
                         }
 
                     </div>
 
+
                     <button type="button"
                             class="pagination-button"
                             disabled="@(CurrentPage >= TotalPages)"
                             @onclick="NextPage">
+
                         ›
+
                     </button>
 
                 </div>
             }
 
+
             <div class="pagination-info">
-                Seite @CurrentPage von @TotalPages
-                · @PagedStocks.Count von @FilteredStocks.Count Einträge
+
+                @L["PageOf", CurrentPage, TotalPages]
+
+                ·
+
+                @L[
+                    "PaginationEntries",
+                    PagedStocks.Count
+                ]
+
+                /
+
+                @FilteredStocks.Count
+
             </div>
 
         }
@@ -528,6 +576,7 @@
                 return;
 
             _searchTerm = value;
+
             CurrentPage = 1;
         }
     }
@@ -547,6 +596,7 @@
             _selectedWarehouseId = value;
 
             SelectedLocationId = 0;
+
             CurrentPage = 1;
         }
     }
@@ -564,6 +614,7 @@
                 return;
 
             _selectedLocationId = value;
+
             CurrentPage = 1;
         }
     }
@@ -597,7 +648,8 @@
                 return Locations;
 
             return Locations.Where(x =>
-                x.WarehouseId == SelectedWarehouseId);
+                x.WarehouseId ==
+                SelectedWarehouseId);
         }
     }
 
@@ -610,73 +662,88 @@
     {
         get
         {
-            var query = Stocks
-                .Where(x => x.Product != null);
+            var query =
+                Stocks
+                    .Where(x =>
+                        x.Product != null);
 
 
+            // =====================================================
             // SEARCH
+            // =====================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                var search = SearchTerm.Trim();
+                var search =
+                    SearchTerm.Trim();
 
-                query = query.Where(x =>
-                    x.Product != null
-                    &&
-                    (
-                        x.Product.Name.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-
-                        ||
-
-                        x.Product.SKU.Contains(
-                            search,
-                            StringComparison.OrdinalIgnoreCase)
-
-                        ||
-
+                query =
+                    query.Where(x =>
+                        x.Product != null
+                        &&
                         (
-                            !string.IsNullOrWhiteSpace(
-                                x.Product.Barcode)
-
-                            &&
-
-                            x.Product.Barcode.Contains(
+                            x.Product.Name.Contains(
                                 search,
                                 StringComparison.OrdinalIgnoreCase)
+
+                            ||
+
+                            x.Product.SKU.Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+
+                            ||
+
+                            (
+                                !string.IsNullOrWhiteSpace(
+                                    x.Product.Barcode)
+
+                                &&
+
+                                x.Product.Barcode.Contains(
+                                    search,
+                                    StringComparison.OrdinalIgnoreCase)
+                            )
                         )
-                    )
-                );
+                    );
             }
 
 
+            // =====================================================
             // WAREHOUSE
+            // =====================================================
 
             if (SelectedWarehouseId > 0)
             {
-                query = query.Where(x =>
-                    x.WarehouseLocation != null
-                    &&
-                    x.WarehouseLocation.WarehouseId ==
-                        SelectedWarehouseId);
+                query =
+                    query.Where(x =>
+                        x.WarehouseLocation != null
+                        &&
+                        x.WarehouseLocation.WarehouseId ==
+                            SelectedWarehouseId);
             }
 
 
+            // =====================================================
             // LOCATION
+            // =====================================================
 
             if (SelectedLocationId > 0)
             {
-                query = query.Where(x =>
-                    x.WarehouseLocationId ==
+                query =
+                    query.Where(x =>
+                        x.WarehouseLocationId ==
                         SelectedLocationId);
             }
 
 
             return query
-                .OrderBy(x => x.Product!.Name)
+                .OrderBy(x =>
+                    x.Product!.Name)
+
                 .ThenBy(x =>
                     x.WarehouseLocation!.Code)
+
                 .ToList();
         }
     }
@@ -691,7 +758,9 @@
             .Skip(
                 (CurrentPage - 1) *
                 PageSize)
+
             .Take(PageSize)
+
             .ToList();
 
 
@@ -705,7 +774,8 @@
 
     private List<int> GetPageNumbers()
     {
-        var pages = new List<int>();
+        var pages =
+            new List<int>();
 
         var start =
             Math.Max(
@@ -717,7 +787,9 @@
                 TotalPages,
                 CurrentPage + 2);
 
-        for (var i = start; i <= end; i++)
+        for (var i = start;
+             i <= end;
+             i++)
         {
             pages.Add(i);
         }
@@ -773,9 +845,15 @@
 
             Warehouses =
                 await context.Warehouses
+
                     .AsNoTracking()
-                    .Where(x => x.IsActive)
-                    .OrderBy(x => x.Name)
+
+                    .Where(x =>
+                        x.IsActive)
+
+                    .OrderBy(x =>
+                        x.Name)
+
                     .ToListAsync();
 
 
@@ -785,10 +863,18 @@
 
             Locations =
                 await context.WarehouseLocations
+
                     .AsNoTracking()
-                    .Include(x => x.Warehouse)
-                    .Where(x => x.IsActive)
-                    .OrderBy(x => x.Code)
+
+                    .Include(x =>
+                        x.Warehouse)
+
+                    .Where(x =>
+                        x.IsActive)
+
+                    .OrderBy(x =>
+                        x.Code)
+
                     .ToListAsync();
 
 
@@ -798,14 +884,27 @@
 
             Stocks =
                 await context.Stocks
+
                     .AsNoTracking()
-                    .Include(x => x.Product)
-                    .Include(x => x.WarehouseLocation)
-                        .ThenInclude(x => x.Warehouse)
-                    .Where(x => x.Product != null)
-                    .OrderBy(x => x.Product!.Name)
+
+                    .Include(x =>
+                        x.Product)
+
+                    .Include(x =>
+                        x.WarehouseLocation)
+
+                        .ThenInclude(x =>
+                            x.Warehouse)
+
+                    .Where(x =>
+                        x.Product != null)
+
+                    .OrderBy(x =>
+                        x.Product!.Name)
+
                     .ThenBy(x =>
                         x.WarehouseLocation!.Code)
+
                     .ToListAsync();
         }
         finally
@@ -863,77 +962,88 @@
             if (data.Count == 0)
                 return;
 
+
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Lagerwert",
-                    $"Lagerwertbericht – Seite {CurrentPage}",
+
+                    L["StockValueReport"].Value,
+
+                    $"{L["StockValueReport"].Value} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Produkt",
+                        L["Product"].Value,
                         x => x.Product?.Name ?? ""
                     ),
 
                     (
-                        "SKU",
+                        L["SKU"].Value,
                         x => x.Product?.SKU ?? ""
                     ),
 
                     (
-                        "Barcode",
+                        L["Barcode"].Value,
                         x => x.Product?.Barcode ?? ""
                     ),
 
                     (
-                        "Lager",
-                        x => x.WarehouseLocation?.Warehouse?.Name ?? ""
+                        L["Warehouse"].Value,
+                        x =>
+                            x.WarehouseLocation?
+                                .Warehouse?
+                                .Name ?? ""
                     ),
 
                     (
-                        "Lagerplatz",
-                        x => x.WarehouseLocation?.Code ?? ""
+                        L["StorageLocation"].Value,
+                        x =>
+                            x.WarehouseLocation?.Code ?? ""
                     ),
 
                     (
-                        "Lagerplatzname",
-                        x => x.WarehouseLocation?.Name ?? ""
-                    ),
-
-                    (
-                        "Bestand",
+                        L["Stock"].Value,
                         x => x.Quantity
                     ),
 
                     (
-                        "Einkaufspreis",
-                        x => x.Product?.PurchasePrice ?? 0
+                        L["PurchasePrice"].Value,
+                        x =>
+                            x.Product?.PurchasePrice ?? 0
                     ),
 
                     (
-                        "Lagerwert",
-                        x => x.Quantity *
+                        L["StockValue"].Value,
+                        x =>
+                            x.Quantity *
                             (x.Product?.PurchasePrice ?? 0)
                     ),
 
                     (
-                        "Verkaufspreis",
-                        x => x.Product?.SalePrice ?? 0
+                        L["SalePrice"].Value,
+                        x =>
+                            x.Product?.SalePrice ?? 0
                     ),
 
                     (
-                        "Verkaufswert",
-                        x => x.Quantity *
+                        L["SaleValue"].Value,
+                        x =>
+                            x.Quantity *
                             (x.Product?.SalePrice ?? 0)
                     )
                 );
 
+
             var base64 =
                 Convert.ToBase64String(bytes);
 
+
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Lagerwert_Seite_{CurrentPage}.xlsx",
+
+                $"{L["StockValueReport"].Value}_Seite_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
@@ -953,10 +1063,12 @@
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
+
         var words =
             name.Split(
                 ' ',
                 StringSplitOptions.RemoveEmptyEntries);
+
 
         if (words.Length == 1)
         {
@@ -968,6 +1080,7 @@
                         words[0].Length))
                 .ToUpper();
         }
+
 
         return
             $"{words[0][0]}{words[1][0]}"

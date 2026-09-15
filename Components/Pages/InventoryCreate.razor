@@ -1,5 +1,6 @@
 ﻿@page "/inventory/create"
 @rendermode InteractiveServer
+
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
@@ -7,10 +8,12 @@
 @using WarehouseManagement.Models
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
+
 @inject ApplicationDbContext Db
 @inject NavigationManager Navigation
 @inject IStringLocalizer<SharedResource> L
-<PageTitle>Neue Inventur</PageTitle>
+
+<PageTitle>@L["NewInventory"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -22,10 +25,10 @@
 
         <div>
 
-            <h1>Neue Inventur</h1>
+            <h1>@L["NewInventory"]</h1>
 
             <p>
-                Neue Inventur für ein Lager erstellen.
+                @L["CreateNewInventoryDescription"]
             </p>
 
         </div>
@@ -34,7 +37,7 @@
         <a href="/inventory"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -57,11 +60,12 @@
 
                 <div>
 
-                    <h2>Inventurinformationen</h2>
+                    <h2>
+                        @L["InventoryInformation"]
+                    </h2>
 
                     <p>
-                        Wählen Sie das Lager aus und hinterlegen Sie
-                        bei Bedarf eine Notiz.
+                        @L["InventoryInformationDescription"]
                     </p>
 
                 </div>
@@ -76,14 +80,14 @@
                 <div class="form-group">
 
                     <label>
-                        Lager <span>*</span>
+                        @L["Warehouse"] <span>*</span>
                     </label>
 
                     <select class="form-control"
                             @bind="SelectedWarehouseId">
 
                         <option value="0">
-                            Lager auswählen
+                            @L["SelectWarehouse"]
                         </option>
 
                         @foreach (var warehouse in Warehouses)
@@ -117,7 +121,7 @@
                                 <i class="bi bi-info-circle me-1"></i>
 
                                 @selectedWarehouse.Locations.Count
-                                aktive Lagerplätze
+                                @L["ActiveStorageLocations"]
 
                             </div>
                         }
@@ -131,18 +135,18 @@
                 <div class="form-group">
 
                     <label>
-                        Notiz
+                        @L["Note"]
                     </label>
 
                     <textarea class="form-control"
                               rows="4"
                               maxlength="500"
-                              placeholder="Optionale Notiz zur Inventur..."
+                              placeholder="@L["InventoryNotePlaceholder"]"
                               @bind="Note">
                     </textarea>
 
                     <div class="form-help">
-                        Maximal 500 Zeichen.
+                        @L["Maximum500Characters"]
                     </div>
 
                 </div>
@@ -162,11 +166,12 @@
 
                 <div>
 
-                    <h2>So funktioniert die Inventur</h2>
+                    <h2>
+                        @L["HowInventoryWorks"]
+                    </h2>
 
                     <p>
-                        Die vorhandenen Bestände werden automatisch
-                        als Systembestand übernommen.
+                        @L["HowInventoryWorksDescription"]
                     </p>
 
                 </div>
@@ -186,15 +191,11 @@
                 <div>
 
                     <strong>
-                        Was passiert beim Start?
+                        @L["WhatHappensWhenStarted"]
                     </strong>
 
                     <p>
-                        Für das ausgewählte Lager werden automatisch
-                        die vorhandenen Lagerbestände als
-                        <strong>Systembestand</strong> übernommen.
-                        Danach können die tatsächlich gezählten
-                        Mengen eingetragen werden.
+                        @L["InventoryStartExplanation"]
                     </p>
 
                 </div>
@@ -217,12 +218,11 @@
                     <div>
 
                         <strong>
-                            Lager auswählen
+                            @L["SelectWarehouse"]
                         </strong>
 
                         <p>
-                            Wählen Sie das Lager aus,
-                            das gezählt werden soll.
+                            @L["SelectWarehouseDescription"]
                         </p>
 
                     </div>
@@ -241,12 +241,11 @@
                     <div>
 
                         <strong>
-                            Bestand zählen
+                            @L["CountStock"]
                         </strong>
 
                         <p>
-                            Tragen Sie später die tatsächlich
-                            gezählte Menge ein.
+                            @L["CountStockDescription"]
                         </p>
 
                     </div>
@@ -265,12 +264,11 @@
                     <div>
 
                         <strong>
-                            Inventur abschließen
+                            @L["CompleteInventory"]
                         </strong>
 
                         <p>
-                            Differenzen werden anschließend
-                            automatisch im Lagerbestand korrigiert.
+                            @L["CompleteInventoryDescription"]
                         </p>
 
                     </div>
@@ -306,7 +304,7 @@
             <a href="/inventory"
                class="btn-secondary">
 
-                Abbrechen
+                @L["Cancel"]
 
             </a>
 
@@ -322,7 +320,7 @@
                     </span>
 
                     <span>
-                        Wird erstellt...
+                        @L["Creating"]
                     </span>
                 }
                 else
@@ -330,7 +328,7 @@
                     <i class="bi bi-play-fill me-1"></i>
 
                     <span>
-                        Inventur starten
+                        @L["StartInventory"]
                     </span>
                 }
 
@@ -418,7 +416,7 @@
         if (SelectedWarehouseId <= 0)
         {
             ErrorMessage =
-                "Bitte wählen Sie ein Lager aus.";
+                L["WarehouseRequired"].Value;
 
             return;
         }
@@ -440,7 +438,7 @@
             if (warehouse == null)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["WarehouseNotFound"].Value;
 
                 return;
             }
@@ -466,7 +464,7 @@
             if (!locationIds.Any())
             {
                 ErrorMessage =
-                    "Für dieses Lager sind keine aktiven Lagerplätze vorhanden.";
+                    L["NoActiveStorageLocations"].Value;
 
                 return;
             }
@@ -502,7 +500,7 @@
             if (!stocks.Any())
             {
                 ErrorMessage =
-                    "Für dieses Lager wurden keine Artikelbestände gefunden.";
+                    L["NoStockFoundForWarehouse"].Value;
 
                 return;
             }
@@ -583,12 +581,14 @@
         }
         catch (Exception ex)
         {
-    ErrorMessage = $"Die Inventur konnte nicht erstellt werden: {ex.GetBaseException().Message}";
+            ErrorMessage =
+                L["InventoryCreationError",
+                    ex.GetBaseException().Message].Value;
         }
         finally
         {
             IsSaving = false;
         }
     }
-    
+
 }

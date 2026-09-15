@@ -5,21 +5,24 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Inventurbericht</PageTitle>
+<PageTitle>@L["InventoryReport"]</PageTitle>
 
 <style>
 
     /* =========================================================
-           INVENTORY REPORT FILTER
-           ========================================================= */
+               INVENTORY REPORT FILTER
+               ========================================================= */
 
     .inventory-report-filter {
         display: flex;
@@ -53,10 +56,9 @@
         white-space: nowrap;
     }
 
-
     /* =========================================================
-           RESPONSIVE
-           ========================================================= */
+               RESPONSIVE
+               ========================================================= */
 
     @@media (max-width: 1000px) {
 
@@ -68,7 +70,6 @@
             width: fit-content;
         }
     }
-
 
     @@media (max-width: 600px) {
 
@@ -95,16 +96,14 @@
         <div>
 
             <h1>
-                Inventurbericht
+                @L["InventoryReport"]
             </h1>
 
             <p>
-                Übersicht über durchgeführte Inventuren und
-                Bestandsabweichungen.
+                @L["InventoryReportDescription"]
             </p>
 
         </div>
-
 
         <div class="page-header-actions">
 
@@ -113,15 +112,14 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedInventories.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
-
 
             <a href="/reports"
                class="btn-secondary">
 
-                ← Berichte
+                ← @L["Reports"]
 
             </a>
 
@@ -134,7 +132,7 @@
     {
         <div class="loading-state">
 
-            Inventuren werden geladen...
+            @L["LoadingInventories"]
 
         </div>
     }
@@ -158,7 +156,7 @@
                     </span>
 
                     <input type="text"
-                           placeholder="Lager oder Notiz suchen..."
+                           placeholder="@L["SearchWarehouseOrNotePlaceholder"]"
                            @bind="SearchTerm"
                            @bind:event="oninput"
                            @bind:after="SearchChanged" />
@@ -173,7 +171,7 @@
                         @bind:after="FilterChanged">
 
                     <option value="0">
-                        Alle Lager
+                        @L["AllWarehouses"]
                     </option>
 
                     @foreach (var warehouse in Warehouses)
@@ -193,7 +191,7 @@
                         @bind:after="FilterChanged">
 
                     <option value="all">
-                        Alle Status
+                        @L["AllStatuses"]
                     </option>
 
                     @foreach (var status in StatusOptions)
@@ -212,7 +210,7 @@
                         class="btn-secondary inventory-report-reset"
                         @onclick="ResetFilters">
 
-                    Filter zurücksetzen
+                    @L["ResetFilters"]
 
                 </button>
 
@@ -229,11 +227,11 @@
             <div class="filter-info">
 
                 <span>
-                    Filter aktiv
+                    @L["FilterActive"]
                 </span>
 
                 <strong>
-                    @FilteredInventories.Count Inventuren
+                    @FilteredInventories.Count @L["Inventories"]
                 </strong>
 
             </div>
@@ -249,7 +247,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Inventuren
+                    @L["Inventories"]
                 </span>
 
                 <strong>
@@ -262,7 +260,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Abgeschlossen
+                    @L["Completed"]
                 </span>
 
                 <strong>
@@ -275,7 +273,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Positionen
+                    @L["Positions"]
                 </span>
 
                 <strong>
@@ -288,7 +286,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Abweichende Positionen
+                    @L["DifferentPositions"]
                 </span>
 
                 <strong>
@@ -301,7 +299,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Gesamtdifferenz
+                    @L["TotalDifference"]
                 </span>
 
                 <strong>
@@ -324,11 +322,11 @@
                 <div>
 
                     <strong>
-                        Inventurhistorie
+                        @L["InventoryHistory"]
                     </strong>
 
                     <span>
-                        @FilteredInventories.Count Einträge
+                        @FilteredInventories.Count @L["Entries"]
                     </span>
 
                 </div>
@@ -346,15 +344,12 @@
 
                     </div>
 
-
                     <h3>
-                        Keine Inventuren gefunden
+                        @L["NoInventoriesFound"]
                     </h3>
 
-
                     <p>
-                        Für die aktuellen Filter wurden keine
-                        Inventuren gefunden.
+                        @L["NoInventoriesMatchFilters"]
                     </p>
 
                 </div>
@@ -371,39 +366,39 @@
                             <tr>
 
                                 <th>
-                                    Inventur
+                                    @L["Inventory"]
                                 </th>
 
                                 <th>
-                                    Lager
+                                    @L["Warehouse"]
                                 </th>
 
                                 <th>
-                                    Status
+                                    @L["Status"]
                                 </th>
 
                                 <th>
-                                    Positionen
+                                    @L["Positions"]
                                 </th>
 
                                 <th>
-                                    Systembestand
+                                    @L["SystemStock"]
                                 </th>
 
                                 <th>
-                                    Gezählt
+                                    @L["Counted"]
                                 </th>
 
                                 <th>
-                                    Differenz
+                                    @L["Difference"]
                                 </th>
 
                                 <th>
-                                    Erstellt am
+                                    @L["CreatedAt"]
                                 </th>
 
                                 <th>
-                                    Abgeschlossen am
+                                    @L["CompletedAt"]
                                 </th>
 
                             </tr>
@@ -448,13 +443,11 @@
 
                                             </div>
 
-
                                             <div>
 
                                                 <strong>
-                                                    Inventur #@inventory.Id
+                                                    @L["Inventory"] #@inventory.Id
                                                 </strong>
-
 
                                                 @if (!string.IsNullOrWhiteSpace(
                                                     inventory.Note))
@@ -495,7 +488,7 @@
 
                                                 <i class="bi bi-pencil me-1"></i>
 
-                                                Entwurf
+                                                @L["Draft"]
 
                                             </span>
                                         }
@@ -506,7 +499,7 @@
 
                                                 <i class="bi bi-arrow-repeat me-1"></i>
 
-                                                In Bearbeitung
+                                                @L["InProgress"]
 
                                             </span>
                                         }
@@ -517,7 +510,7 @@
 
                                                 <i class="bi bi-check-circle me-1"></i>
 
-                                                Abgeschlossen
+                                                @L["Completed"]
 
                                             </span>
                                         }
@@ -712,8 +705,11 @@
 
                 <div class="pagination-info">
 
-                    Seite @CurrentPage von @TotalPages
-                    · @PagedInventories.Count von @FilteredInventories.Count Inventuren
+                    @L["PageOf", CurrentPage, TotalPages]
+                    ·
+                    @L["PaginationInventories",
+                        PagedInventories.Count,
+                        FilteredInventories.Count]
 
                 </div>
 
@@ -754,13 +750,13 @@
         return status switch
         {
             "Entwurf" =>
-                "Entwurf",
+                L["Draft"].Value,
 
             "InBearbeitung" =>
-                "In Bearbeitung",
+                L["InProgress"].Value,
 
             "Abgeschlossen" =>
-                "Abgeschlossen",
+                L["Completed"].Value,
 
             _ =>
                 status
@@ -1167,39 +1163,39 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Inventurbericht",
-                    $"Inventurbericht – Seite {CurrentPage}",
+                    L["InventoryReport"].Value,
+                    $"{L["InventoryReport"].Value} – {L["Page"].Value} {CurrentPage}",
 
                     (
-                        "Inventur",
-                        x => $"Inventur #{x.Id}"
+                        L["Inventory"].Value,
+                        x => $"{L["Inventory"].Value} #{x.Id}"
                     ),
 
                     (
-                        "Lager",
+                        L["Warehouse"].Value,
                         x => x.Warehouse?.Name ?? ""
                     ),
 
                     (
-                        "Status",
+                        L["Status"].Value,
                         x => GetStatusText(
                             x.Status.ToString())
                     ),
 
                     (
-                        "Positionen",
+                        L["Positions"].Value,
                         x => x.Items?.Count ?? 0
                     ),
 
                     (
-                        "Systembestand",
+                        L["SystemStock"].Value,
                         x => x.Items?
                             .Sum(i =>
                                 i.SystemQuantity) ?? 0
                     ),
 
                     (
-                        "Gezählt",
+                        L["Counted"].Value,
                         x => x.Items?
                             .Where(i =>
                                 i.CountedQuantity.HasValue)
@@ -1208,24 +1204,24 @@
                     ),
 
                     (
-                        "Differenz",
+                        L["Difference"].Value,
                         x => x.Items?
                             .Sum(i =>
                                 i.Difference) ?? 0
                     ),
 
                     (
-                        "Erstellt am",
+                        L["CreatedAt"].Value,
                         x => x.CreatedAt
                     ),
 
                     (
-                        "Abgeschlossen am",
+                        L["CompletedAt"].Value,
                         x => x.CompletedAt
                     ),
 
                     (
-                        "Notiz",
+                        L["Note"].Value,
                         x => x.Note ?? ""
                     )
                 );
@@ -1237,7 +1233,7 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Inventurbericht_Seite_{CurrentPage}.xlsx",
+                $"{L["InventoryReport"].Value}_{L["Page"].Value}_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 base64);
         }

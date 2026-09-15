@@ -2,21 +2,24 @@
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> L
 
 
-<PageTitle>Profil</PageTitle>
+<PageTitle>@L["Profile"]</PageTitle>
 
 
 <style>
 
     /* =========================================================
-           PROFILE PAGE
-           ========================================================= */
+               PROFILE PAGE
+               ========================================================= */
 
     .profile-page {
         max-width: 900px;
@@ -44,8 +47,8 @@
 
 
     /* =========================================================
-           PROFILE CARD
-           ========================================================= */
+               PROFILE CARD
+               ========================================================= */
 
     .profile-card {
         background: white;
@@ -77,8 +80,8 @@
 
 
     /* =========================================================
-           FORM
-           ========================================================= */
+               FORM
+               ========================================================= */
 
     .profile-form-group {
         margin-bottom: 18px;
@@ -130,8 +133,8 @@
 
 
     /* =========================================================
-           BUTTON
-           ========================================================= */
+               BUTTON
+               ========================================================= */
 
     .profile-actions {
         display: flex;
@@ -160,8 +163,8 @@
 
 
     /* =========================================================
-           STATUS
-           ========================================================= */
+               STATUS
+               ========================================================= */
 
     .profile-status {
         margin-bottom: 18px;
@@ -169,8 +172,8 @@
 
 
     /* =========================================================
-           MOBILE
-           ========================================================= */
+               MOBILE
+               ========================================================= */
 
     @@media (max-width: 650px) {
 
@@ -200,11 +203,11 @@
     <div class="profile-header">
 
         <h1>
-            Profil
+            @L["Profile"]
         </h1>
 
         <p>
-            Verwalten Sie Ihre persönlichen Kontoinformationen.
+            @L["ManagePersonalAccountInformation"]
         </p>
 
     </div>
@@ -231,11 +234,11 @@
         <div class="profile-card-title">
 
             <h2>
-                Kontoinformationen
+                @L["AccountInformation"]
             </h2>
 
             <span>
-                Ihre grundlegenden Kontodaten
+                @L["BasicAccountData"]
             </span>
 
         </div>
@@ -261,7 +264,7 @@
                 <label for="username"
                        class="profile-form-label">
 
-                    Benutzername
+                    @L["Username"]
 
                 </label>
 
@@ -269,7 +272,7 @@
                        value="@username"
                        id="username"
                        class="profile-input"
-                       placeholder="Benutzername"
+                       placeholder="@L["Username"]"
                        disabled />
 
             </div>
@@ -284,14 +287,14 @@
                 <label for="Input.PhoneNumber"
                        class="profile-form-label">
 
-                    Telefonnummer
+                    @L["Phone"]
 
                 </label>
 
                 <InputText @bind-Value="Input.PhoneNumber"
                            id="Input.PhoneNumber"
                            class="profile-input"
-                           placeholder="Telefonnummer" />
+                           placeholder="@L["Phone"]" />
 
                 <ValidationMessage For="() => Input.PhoneNumber"
                                    class="profile-validation" />
@@ -308,7 +311,7 @@
                 <button type="submit"
                         class="profile-save-button">
 
-                    Speichern
+                    @L["Save"]
 
                 </button>
 
@@ -395,7 +398,7 @@
             if (!setPhoneResult.Succeeded)
             {
                 RedirectManager.RedirectToCurrentPageWithStatus(
-                    "Fehler: Telefonnummer konnte nicht gespeichert werden.",
+                    L["PhoneSaveError"],
                     HttpContext);
 
                 return;
@@ -407,7 +410,7 @@
 
 
         RedirectManager.RedirectToCurrentPageWithStatus(
-            "Ihr Profil wurde erfolgreich aktualisiert.",
+            L["ProfileUpdatedSuccessfully"],
             HttpContext);
     }
 
@@ -416,9 +419,13 @@
     {
 
         [Phone(
-            ErrorMessage = "Bitte geben Sie eine gültige Telefonnummer ein.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "InvalidPhoneNumber")]
+
         [Display(
-            Name = "Telefonnummer")]
+            Name = "Phone",
+            ResourceType = typeof(SharedResource))]
+
         public string? PhoneNumber { get; set; }
 
     }

@@ -1,21 +1,25 @@
 ﻿@page "/locations/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Lagerplatz bearbeiten</PageTitle>
+<PageTitle>@L["EditStorageLocation"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Lagerplatz wird geladen...
+        @L["LoadingStorageLocation"]
     </div>
 }
 else if (Location == null)
@@ -26,12 +30,14 @@ else if (Location == null)
             ⚠
         </div>
 
-        <h3>Lagerplatz nicht gefunden</h3>
+        <h3>
+            @L["StorageLocationNotFound"]
+        </h3>
 
         <a href="/locations"
            class="btn-primary">
 
-            Zurück
+            @L["Back"]
 
         </a>
 
@@ -45,7 +51,9 @@ else
 
             <div>
 
-                <h1>Lagerplatz bearbeiten</h1>
+                <h1>
+                    @L["EditStorageLocation"]
+                </h1>
 
                 <p>
                     @Location.Code
@@ -58,7 +66,7 @@ else
             <a href="/locations"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
 
@@ -78,7 +86,9 @@ else
 
                     <div class="form-section-title">
 
-                        <h2>Lagerplatzinformationen</h2>
+                        <h2>
+                            @L["StorageLocationInformation"]
+                        </h2>
 
                     </div>
 
@@ -90,14 +100,14 @@ else
                         <div class="form-group">
 
                             <label>
-                                Lager <span>*</span>
+                                @L["Warehouse"] <span>*</span>
                             </label>
 
                             <InputSelect @bind-Value="Model.WarehouseId"
                                          class="form-control">
 
                                 <option value="0">
-                                    Lager auswählen
+                                    @L["SelectWarehouse"]
                                 </option>
 
                                 @foreach (var warehouse in Warehouses)
@@ -119,7 +129,7 @@ else
                         <div class="form-group">
 
                             <label>
-                                Code <span>*</span>
+                                @L["Code"] <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.Code"
@@ -134,7 +144,9 @@ else
 
                         <div class="form-group">
 
-                            <label>Name</label>
+                            <label>
+                                @L["Name"]
+                            </label>
 
                             <InputText @bind-Value="Model.Name"
                                        class="form-control" />
@@ -151,7 +163,7 @@ else
                                 <InputCheckbox @bind-Value="Model.IsActive" />
 
                                 <span>
-                                    Lagerplatz ist aktiv
+                                    @L["StorageLocationIsActive"]
                                 </span>
 
                             </label>
@@ -163,13 +175,18 @@ else
                 </div>
 
 
+                <!-- DESCRIPTION -->
+
                 <div class="form-section">
 
                     <div class="form-section-title">
 
-                        <h2>Beschreibung</h2>
+                        <h2>
+                            @L["Description"]
+                        </h2>
 
                     </div>
+
 
                     <div class="form-group">
 
@@ -195,17 +212,18 @@ else
                     <a href="/locations"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
+
 
                     <button type="submit"
                             class="btn-primary"
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -224,6 +242,7 @@ else
     [Parameter]
     public int Id { get; set; }
 
+
     private WarehouseLocation? Location;
 
     private List<Warehouse> Warehouses = new();
@@ -237,22 +256,28 @@ else
     private string? ErrorMessage;
 
 
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
 
-        Location = await db.WarehouseLocations
-            .Include(x => x.Warehouse)
-            .FirstOrDefaultAsync(x =>
-                x.Id == Id);
+        Location =
+            await db.WarehouseLocations
+                .Include(x => x.Warehouse)
+                .FirstOrDefaultAsync(
+                    x => x.Id == Id);
 
 
-        Warehouses = await db.Warehouses
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.Name)
-            .ToListAsync();
+        Warehouses =
+            await db.Warehouses
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
 
 
         if (Location != null)
@@ -281,13 +306,20 @@ else
     }
 
 
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     private async Task UpdateLocation()
     {
         if (Location == null || IsSaving)
             return;
 
+
         IsSaving = true;
+
         ErrorMessage = null;
+
 
         try
         {
@@ -296,68 +328,105 @@ else
 
 
             var code =
-                Model.Code.Trim().ToUpper();
+                Model.Code
+                    .Trim()
+                    .ToUpper();
 
+
+            // =====================================================
+            // WAREHOUSE EXISTS
+            // =====================================================
 
             var warehouseExists =
-                await db.Warehouses.AnyAsync(x =>
-                    x.Id == Model.WarehouseId &&
-                    x.IsActive);
+                await db.Warehouses
+                    .AnyAsync(x =>
+                        x.Id ==
+                            Model.WarehouseId
+                        &&
+                        x.IsActive);
+
 
             if (!warehouseExists)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["SelectedWarehouseNotFound"];
 
                 return;
             }
 
 
+            // =====================================================
+            // DUPLICATE CODE
+            // =====================================================
+
             var codeExists =
-                await db.WarehouseLocations.AnyAsync(x =>
-                    x.Id != Id &&
-                    x.WarehouseId ==
-                        Model.WarehouseId &&
-                    x.Code == code);
+                await db.WarehouseLocations
+                    .AnyAsync(x =>
+                        x.Id != Id
+                        &&
+                        x.WarehouseId ==
+                            Model.WarehouseId
+                        &&
+                        x.Code == code);
+
 
             if (codeExists)
             {
                 ErrorMessage =
-                    "Dieser Lagerplatz-Code existiert in diesem Lager bereits.";
+                    L["StorageLocationCodeAlreadyExists"];
 
                 return;
             }
 
 
+            // =====================================================
+            // LOAD LOCATION
+            // =====================================================
+
             var location =
                 await db.WarehouseLocations
-                    .FirstOrDefaultAsync(x =>
-                        x.Id == Id);
+                    .FirstOrDefaultAsync(
+                        x => x.Id == Id);
+
 
             if (location == null)
             {
                 ErrorMessage =
-                    "Lagerplatz nicht gefunden.";
+                    L["StorageLocationNotFound"];
 
                 return;
             }
 
 
+            // =====================================================
+            // UPDATE
+            // =====================================================
+
             location.WarehouseId =
                 Model.WarehouseId;
+
 
             location.Code =
                 code;
 
+
             location.Name =
-                string.IsNullOrWhiteSpace(Model.Name)
+                string.IsNullOrWhiteSpace(
+                    Model.Name)
+
                     ? null
+
                     : Model.Name.Trim();
 
+
             location.Description =
-                string.IsNullOrWhiteSpace(Model.Description)
+                string.IsNullOrWhiteSpace(
+                    Model.Description)
+
                     ? null
+
                     : Model.Description.Trim();
+
 
             location.IsActive =
                 Model.IsActive;
@@ -365,12 +434,14 @@ else
 
             await db.SaveChangesAsync();
 
-            Navigation.NavigateTo("/locations");
+
+            Navigation.NavigateTo(
+                "/locations");
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                $"{L["ErrorSaving"]}: {ex.Message}";
         }
         finally
         {
@@ -379,29 +450,45 @@ else
     }
 
 
+    // =========================================================
+    // MODEL
+    // =========================================================
+
     private class LocationModel
     {
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Lager auswählen.")]
+
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+
+            ErrorMessageResourceName =
+                "WarehouseRequired")]
+
         public int WarehouseId { get; set; }
 
 
         [Required(
-            ErrorMessage =
-                "Code ist erforderlich.")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+
+            ErrorMessageResourceName =
+                "CodeRequired")]
+
         [MaxLength(50)]
+
         public string Code { get; set; }
             = string.Empty;
 
 
         [MaxLength(200)]
+
         public string? Name { get; set; }
 
 
         [MaxLength(500)]
+
         public string? Description { get; set; }
 
 

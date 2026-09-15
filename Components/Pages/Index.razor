@@ -1,305 +1,2248 @@
 @page "/"
 @rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Components.Forms
+
 @inject NavigationManager Navigation
+
 @layout PublicLayout
 
-<PageTitle>Warehouse Management | Lagerverwaltung, die mitwächst</PageTitle>
+<PageTitle>Warehouse Management | Die digitale Lösung für moderne Lager</PageTitle>
+
 
 <div class="page-wrapper">
-    <!-- Header Navigation -->
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
     <header class="header">
+
         <div class="container header-container">
-            <a class="brand" href="#top" aria-label="Warehouse Management Startseite">
-                <div class="brand-logo">⌂</div>
-                <div class="brand-text">Warehouse<span>Management</span></div>
+
+            <a class="brand"
+               href="#top"
+               aria-label="Warehouse Management Startseite">
+
+                <div class="brand-logo">
+                    W
+                </div>
+
+                <div class="brand-text">
+                    Warehouse<span>Management</span>
+                </div>
+
             </a>
 
+
             <nav class="nav-menu @(MenuOpen ? "active" : string.Empty)">
-                <a href="#loesung" @onclick="CloseMenu">Lösung</a>
-                <a href="#branchen" @onclick="CloseMenu">Branchen</a>
-                <a href="#funktionen" @onclick="CloseMenu">Funktionen</a>
-                <a href="#ablauf" @onclick="CloseMenu">Ablauf</a>
-                <a href="#faq" @onclick="CloseMenu">FAQ</a>
-                <a href="#demo" @onclick="CloseMenu">Demo</a>
+
+                <a href="#loesung"
+                   @onclick="CloseMenu">
+                    Lösung
+                </a>
+
+                <a href="#funktionen"
+                   @onclick="CloseMenu">
+                    Funktionen
+                </a>
+
+                <a href="#prozesse"
+                   @onclick="CloseMenu">
+                    Prozesse
+                </a>
+
+                <a href="#branchen"
+                   @onclick="CloseMenu">
+                    Branchen
+                </a>
+
+                <a href="#reports"
+                   @onclick="CloseMenu">
+                    Reports
+                </a>
+
+                <a href="#faq"
+                   @onclick="CloseMenu">
+                    FAQ
+                </a>
+
             </nav>
 
+
             <div class="header-actions">
-                <span class="language">DE</span>
-                <a class="btn btn-primary" href="#demo">Demo buchen <span>→</span></a>
-                <button class="mobile-toggle" type="button" aria-label="Menü öffnen" @onclick="ToggleMenu">☰</button>
+
+                <span class="language">
+                    DE
+                </span>
+
+                <a class="btn btn-primary"
+                   href="#demo">
+
+                    Demo buchen
+                    <span>→</span>
+
+                </a>
+
+
+                <button class="mobile-toggle"
+                        type="button"
+                        aria-label="Menü öffnen"
+                        @onclick="ToggleMenu">
+
+                    ☰
+
+                </button>
+
             </div>
+
         </div>
+
     </header>
 
+
+
     <main id="top">
-        <!-- Hero Section -->
+
+
+        <!-- =========================================================
+             HERO
+             ========================================================= -->
+
         <section class="hero">
+
             <div class="container hero-grid">
+
                 <div class="hero-content">
-                    <span class="badge">Die Lagerverwaltung für morgen</span>
-                    <h1 class="hero-title">Lager im Griff.<br /><span>Geschäft im Fluss.</span></h1>
+
+                    <span class="badge">
+                        Digitale Lagerverwaltung für moderne Unternehmen
+                    </span>
+
+
+                    <h1 class="hero-title">
+
+                        Ihr Lager.
+                        <br />
+
+                        <span>
+                            Ein System. Volle Kontrolle.
+                        </span>
+
+                    </h1>
+
+
                     <p class="hero-subtitle">
-                        Warehouse Management bringt Produkte, Bestände, Bestellungen und Menschen in einem System zusammen – damit Ihr Lager mit Ihrem Unternehmen wächst.
+
+                        Warehouse Management verbindet Produkte, Lager,
+                        Lagerplätze, Bestände, Einkauf, Bestellungen,
+                        Wareneingang, Warenausgang und Inventur
+                        in einer zentralen Plattform.
+
                     </p>
+
+
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="#demo">Persönliche Demo buchen <span>→</span></a>
-                        <a class="btn btn-secondary" href="#funktionen">Mehr erfahren <span>→</span></a>
+
+                        <a class="btn btn-primary"
+                           href="#demo">
+
+                            Persönliche Demo buchen
+                            <span>→</span>
+
+                        </a>
+
+
+                        <a class="btn btn-secondary"
+                           href="#funktionen">
+
+                            Funktionen entdecken
+                            <span>→</span>
+
+                        </a>
+
                     </div>
-                    <div class="microproof"><span class="avatars">MK&nbsp; LS&nbsp; AN&nbsp; +4</span> Für Teams, die den Überblick behalten wollen.</div>
+
+
+                    <div class="microproof">
+
+                        <span class="avatars">
+                            Lager&nbsp;&nbsp;Einkauf&nbsp;&nbsp;Verkauf&nbsp;&nbsp;Management
+                        </span>
+
+                        <span>
+                            Eine Plattform für Ihre täglichen Prozesse.
+                        </span>
+
+                    </div>
+
                 </div>
+
+
 
                 <div class="hero-media">
+
                     <div class="glass-card mockup-card">
-                        <img src="/images/DemoImg.png" alt="Warehouse Management Dashboard mit Bestandsübersicht und Lagerbewegungen" class="dashboard-img" />
+
+                        <img src="/images/DemoImg.png"
+                             alt="Warehouse Management Dashboard"
+                             class="dashboard-img" />
+
+
                         <div class="floating-badge badge-top">
-                            <span class="status-dot"></span> ✓ 100 % Bestandsklarheit
+
+                            <span class="status-dot"></span>
+
+                            Bestände jederzeit im Blick
+
                         </div>
+
+
                         <div class="floating-badge badge-bottom">
-                            + 1 System für alle Prozesse
+
+                            ✓ Einkauf · Lager · Verkauf · Reports
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </section>
 
-        <!-- Industry Strip -->
+
+
+        <!-- =========================================================
+             TRUST / INTRO
+             ========================================================= -->
+
         <section class="industry-strip">
+
             <div class="container strip-inner">
-                <p>Eine Plattform für <strong>mehr Kontrolle, weniger Suchaufwand und schnellere Abläufe.</strong></p>
-                <div class="logos"><span>GROSSHANDEL</span><span>BAUSTOFFE</span><span>PRODUKTION</span><span>E-COMMERCE</span></div>
+
+                <p>
+                    Eine zentrale Plattform für
+                    <strong>
+                        strukturierte Lagerprozesse,
+                        aktuelle Bestände und klare Entscheidungen.
+                    </strong>
+                </p>
+
+
+                <div class="logos">
+
+                    <span>GROSSHANDEL</span>
+                    <span>BAUSTOFFHANDEL</span>
+                    <span>ERSATZTEILE</span>
+                    <span>PRODUKTION</span>
+                    <span>E-COMMERCE</span>
+
+                </div>
+
             </div>
+
         </section>
 
-        <!-- Lösung Section -->
-        <section class="section" id="loesung">
+
+
+        <!-- =========================================================
+             PROBLEM / SOLUTION
+             ========================================================= -->
+
+        <section class="section"
+                 id="loesung">
+
             <div class="container">
+
                 <div class="section-heading">
-                    <span class="section-tag">Eine Lösung. Viele Möglichkeiten.</span>
-                    <h2>Vom Wareneingang bis zum Versand – alles an einem Ort.</h2>
-                    <p>Schluss mit Excel-Listen, Insellösungen und dem Suchen nach dem aktuellen Bestand. Warehouse Management macht Ihre Lagerprozesse sichtbar, planbar und skalierbar.</p>
+
+                    <span class="section-tag">
+                        Mehr als eine Lagerliste
+                    </span>
+
+
+                    <h2>
+                        Vom Einkauf bis zum Warenausgang –
+                        alles miteinander verbunden.
+                    </h2>
+
+
+                    <p>
+
+                        Moderne Lagerverwaltung bedeutet nicht nur,
+                        den aktuellen Bestand zu kennen.
+                        Sie bedeutet, jeden relevanten Prozess
+                        miteinander zu verbinden.
+
+                    </p>
+
                 </div>
+
+
                 <div class="benefits-grid">
+
+
                     <article class="benefit-card glass-card">
-                        <div class="icon-box">▦</div>
-                        <h3>Ein Bestand. Eine Wahrheit.</h3>
-                        <p>Sehen Sie jederzeit, was auf Lager ist, wo es liegt und was sich bewegt – in Echtzeit und ohne Rückfragen.</p>
-                    </article>
-                    <article class="benefit-card glass-card">
-                        <div class="icon-box green">⌘</div>
-                        <h3>Prozesse, die mitdenken.</h3>
-                        <p>Wareneingang, Umlagerung, Inventur und Warenausgang: standardisieren Sie Abläufe und reduzieren Sie Fehler.</p>
-                    </article>
-                    <article class="benefit-card glass-card">
-                        <div class="icon-box orange">✦</div>
-                        <h3>Bereit für Ihr Wachstum.</h3>
-                        <p>Starten Sie fokussiert und erweitern Sie flexibel – mit Rollen, Workflows, Excel-Import und Integrationen.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
 
-        <!-- Branchen Section -->
-        <section class="section industries-section" id="branchen">
-            <div class="container">
-                <div class="section-heading">
-                    <span class="section-tag">Für Ihre Branche gebaut</span>
-                    <h2>Ein System, das Ihre Realität versteht.</h2>
-                    <p>Ob viele Artikel, schnelle Bewegungen oder komplexe Abläufe: Warehouse Management passt sich an Ihre Prozesse an – nicht umgekehrt.</p>
-                </div>
-                <div class="industry-grid">
-                    <article class="industry-card"><span>01</span><h3>Großhandel</h3><p>Viele Artikel, viele Aufträge, volle Kontrolle. Optimieren Sie Einkauf, Bestand und Lieferung.</p><b>→</b></article>
-                    <article class="industry-card"><span>02</span><h3>Baustoffhandel</h3><p>Sperrige Waren und viele Lagerplätze? Behalten Sie Mengen, Orte und Bewegungen im Blick.</p><b>→</b></article>
-                    <article class="industry-card"><span>03</span><h3>Ersatzteilhandel</h3><p>Tausende SKUs zuverlässig verwalten. Finden, prüfen und versenden Sie jedes Teil schneller.</p><b>→</b></article>
-                    <article class="industry-card"><span>04</span><h3>Produktionsbetriebe</h3><p>Material rein, Produktion läuft, Fertigware raus. Bilden Sie Ihren Materialfluss digital ab.</p><b>→</b></article>
-                    <article class="industry-card"><span>05</span><h3>Online-Händler</h3><p>Stock, Orders und Fulfillment verbinden – für weniger Fehlbestände und zufriedene Kunden.</p><b>→</b></article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Stats Section -->
-        <section class="stats-section">
-            <div class="container stats-grid">
-                <div><strong>1</strong><span style="color:black;">zentrale Plattform</span></div>
-                <div><strong>24/7</strong><span style="color:black;">Bestandsübersicht</span></div>
-                <div><strong>100 %</strong><span style="color:black;">Prozessklarheit</span></div>
-                <div><strong>5</strong><span style="color:black;">Branchen im Fokus</span></div>
-            </div>
-        </section>
-
-        <!-- Funktionen Section -->
-        <section class="section" id="funktionen">
-            <div class="container feature-split">
-                <div class="feature-text">
-                    <span class="section-tag">Volle Kontrolle im Alltag</span>
-                    <h2>Weniger Verwaltung. Mehr Bewegung.</h2>
-                    <p>Vom ersten Artikel bis zur letzten Lieferung: Ihr Team arbeitet mit klaren Informationen und einfachen Schritten. Das Dashboard zeigt, was wichtig ist – sofort.</p>
-                    <ul class="checklist">
-                        <li>✓ Artikel- &amp; Produktverwaltung</li>
-                        <li>✓ Lagerplätze &amp; Bestände</li>
-                        <li>✓ Wareneingang &amp; -ausgang</li>
-                        <li>✓ Inventur &amp; Bewegungen</li>
-                        <li>✓ Rollen &amp; Rechte</li>
-                        <li>✓ Individuelle Workflows</li>
-                    </ul>
-                </div>
-                <div class="ops-card glass-card">
-                    <div class="ops-top"><span>BESTANDSENTWICKLUNG</span><b class="live-tag">● LIVE</b></div>
-                    <div class="ops-number">96,8 %</div>
-                    <small>Bestandsgenauigkeit · aktueller Monat</small>
-                    <div class="bar-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                    <div class="chart-label"><span>KW 32</span><span>KW 33</span><span>KW 34</span><span>KW 35</span></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Ablauf Section -->
-        <section class="section workflow-section" id="ablauf">
-            <div class="container">
-                <div class="section-heading centered-heading">
-                    <span class="section-tag">So einfach kann Lager sein</span>
-                    <h2>Ein klarer Ablauf für jeden Schritt.</h2>
-                    <p>Vom Eintreffen der Ware bis zum Versand unterstützt Warehouse Management Ihr Team mit einem durchgängigen Prozess.</p>
-                </div>
-                <div class="workflow-grid">
-                    <article class="workflow-step"><span class="step-number">01</span><div class="step-icon">↓</div><h3>Wareneingang</h3><p>Lieferungen erfassen, Mengen prüfen und direkt dem richtigen Lagerplatz zuordnen.</p></article>
-                    <article class="workflow-step"><span class="step-number">02</span><div class="step-icon">⌘</div><h3>Einlagern &amp; bewegen</h3><p>Bestände umlagern, Plätze organisieren und jede Bewegung nachvollziehbar dokumentieren.</p></article>
-                    <article class="workflow-step"><span class="step-number">03</span><div class="step-icon">▦</div><h3>Bestand verwalten</h3><p>Artikel, Mindestbestände, Kategorien und Lieferanten in einer aktuellen Übersicht steuern.</p></article>
-                    <article class="workflow-step"><span class="step-number">04</span><div class="step-icon">↑</div><h3>Warenausgang</h3><p>Aufträge sicher kommissionieren und Waren schnell, korrekt und transparent ausbuchen.</p></article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Modulen Section -->
-        <section class="section modules-section">
-            <div class="container modules-grid">
-                <div class="module-copy">
-                    <span class="section-tag">Alles, was Ihr Team braucht</span>
-                    <h2>Ein System. Viele starke Werkzeuge.</h2>
-                    <p>Mit klaren Modulen behalten Sie die Kontrolle über Ihre täglichen Abläufe – ohne unnötige Komplexität.</p>
-                </div>
-                <div class="module-list">
-                    <div class="module-item"><b>01</b><span><strong>Artikelverwaltung</strong><small>SKU, Kategorien, Einheiten und Mindestbestände</small></span><em>→</em></div>
-                    <div class="module-item"><b>02</b><span><strong>Lager &amp; Lagerplätze</strong><small>Zonen, Plätze und Bestände auf einen Blick</small></span><em>→</em></div>
-                    <div class="module-item"><b>03</b><span><strong>Lieferanten &amp; Kunden</strong><small>Stammdaten zentral und sauber organisiert</small></span><em>→</em></div>
-                    <div class="module-item"><b>04</b><span><strong>Rollen, Rechte &amp; Workflows</strong><small>Jeder sieht und erledigt genau das Richtige</small></span><em>→</em></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section class="section faq-section" id="faq">
-            <div class="container faq-grid">
-                <div>
-                    <span class="section-tag">Häufige Fragen</span>
-                    <h2>Klarheit beginnt mit Antworten.</h2>
-                    <p>Sie möchten wissen, ob Warehouse Management zu Ihrem Betrieb passt? Hier finden Sie die wichtigsten Antworten.</p>
-                    <a class="btn btn-secondary" href="#demo">Frage im Demo-Termin klären →</a>
-                </div>
-                <div class="faq-list">
-                    <details open><summary>Für welche Unternehmen ist die Lösung geeignet?</summary><p>Für Unternehmen mit eigenem Lager und vielen Artikelbewegungen – vom Großhandel über Baustoff- und Ersatzteilhandel bis zu Produktion und E-Commerce.</p></details>
-                    <details><summary>Kann ich meine bestehenden Daten übernehmen?</summary><p>Ja. Artikel- und Stammdaten können strukturiert per Excel importiert und Schritt für Schritt geprüft werden.</p></details>
-                    <details><summary>Kann ich mehrere Benutzer verwalten?</summary><p>Ja. Rollen und Rechte ermöglichen individuelle Zugriffe für Lager, Einkauf, Verkauf, Verwaltung und Management.</p></details>
-                    <details><summary>Wie läuft die Demo ab?</summary><p>In rund 30 Minuten besprechen wir Ihre Prozesse und zeigen Ihnen anhand Ihres Anwendungsfalls, wie die Lösung unterstützen kann.</p></details>
-                </div>
-            </div>
-        </section>
-
-        <!-- Demo Form Section -->
-        <section class="demo-section" id="demo">
-            <div class="container">
-                <div class="demo-wrapper">
-                    <div class="demo-info">
-                        <span class="section-tag">Lernen Sie uns kennen</span>
-                        <h2>Sehen Sie, <em>was möglich ist.</em></h2>
-                        <p>In 30 Minuten zeigen wir Ihnen, wie Warehouse Management Ihre Abläufe vereinfachen kann – abgestimmt auf Ihre Branche und Ihre Prozesse.</p>
-                        <p class="demo-note">◷ Persönlich. Unverbindlich. Auf Deutsch.</p>
-                        <div class="demo-benefits">
-                            <span>✓ Ohne Vorbereitung</span>
-                            <span>✓ Auf Ihre Branche zugeschnitten</span>
-                            <span>✓ Konkrete nächste Schritte</span>
+                        <div class="icon-box">
+                            ▦
                         </div>
+
+                        <h3>
+                            Ein zentraler Datenbestand
+                        </h3>
+
+                        <p>
+
+                            Produkte, Kategorien, Lager,
+                            Lagerplätze, Lieferanten, Kunden
+                            und Bestellungen werden zentral
+                            verwaltet.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="benefit-card glass-card">
+
+                        <div class="icon-box green">
+                            ↔
+                        </div>
+
+                        <h3>
+                            Jeder Warenfluss nachvollziehbar
+                        </h3>
+
+                        <p>
+
+                            Wareneingänge, Warenausgänge,
+                            Umlagerungen, Korrekturen und
+                            Inventuren werden dokumentiert.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="benefit-card glass-card">
+
+                        <div class="icon-box orange">
+                            ◈
+                        </div>
+
+                        <h3>
+                            Informationen für Entscheidungen
+                        </h3>
+
+                        <p>
+
+                            Bestandsberichte, Lagerwert,
+                            Bewegungen, Niedrigbestände,
+                            Produkte und Lieferanten
+                            übersichtlich auswerten.
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             COMPLETE WAREHOUSE FLOW
+             ========================================================= -->
+
+        <section class="section workflow-section"
+                 id="prozesse">
+
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Der komplette Warenfluss
+                    </span>
+
+
+                    <h2>
+                        Ein durchgängiger Prozess statt
+                        vieler Einzellösungen.
+                    </h2>
+
+
+                    <p>
+
+                        Jeder Schritt baut auf dem vorherigen auf.
+                        So bleibt Ihr Bestand nachvollziehbar
+                        und Ihre Mitarbeiter arbeiten mit denselben Daten.
+
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-grid">
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            01
+                        </span>
+
+                        <div class="step-icon">
+                            ↓
+                        </div>
+
+                        <h3>
+                            Einkauf
+                        </h3>
+
+                        <p>
+
+                            Lieferanten verwalten,
+                            Bestellungen erstellen und
+                            benötigte Waren planen.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            02
+                        </span>
+
+                        <div class="step-icon">
+                            📦
+                        </div>
+
+                        <h3>
+                            Wareneingang
+                        </h3>
+
+                        <p>
+
+                            Gelieferte Mengen erfassen
+                            und Waren dem richtigen
+                            Lager beziehungsweise Lagerplatz zuordnen.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            03
+                        </span>
+
+                        <div class="step-icon">
+                            ⌖
+                        </div>
+
+                        <h3>
+                            Einlagern
+                        </h3>
+
+                        <p>
+
+                            Bestände gezielt auf Lagerplätze
+                            verteilen und jederzeit wissen,
+                            wo sich ein Artikel befindet.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            04
+                        </span>
+
+                        <div class="step-icon">
+                            ↔
+                        </div>
+
+                        <h3>
+                            Umlagern
+                        </h3>
+
+                        <p>
+
+                            Waren zwischen Lagerplätzen
+                            oder Lagern bewegen und jede
+                            Bewegung dokumentieren.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            05
+                        </span>
+
+                        <div class="step-icon">
+                            ☷
+                        </div>
+
+                        <h3>
+                            Bestellung
+                        </h3>
+
+                        <p>
+
+                            Kundenbestellungen verwalten,
+                            Positionen prüfen und verfügbare
+                            Bestände berücksichtigen.
+
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="workflow-step">
+
+                        <span class="step-number">
+                            06
+                        </span>
+
+                        <div class="step-icon">
+                            ↑
+                        </div>
+
+                        <h3>
+                            Warenausgang
+                        </h3>
+
+                        <p>
+
+                            Waren kontrolliert ausbuchen
+                            und den Bestand automatisch
+                            aktuell halten.
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             FEATURES
+             ========================================================= -->
+
+        <section class="section"
+                 id="funktionen">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        Die wichtigsten Werkzeuge
+                    </span>
+
+
+                    <h2>
+                        Alles, was ein modernes Lager braucht.
+                    </h2>
+
+
+                    <p>
+
+                        Von der Stammdatenverwaltung bis zur
+                        detaillierten Bestandsanalyse –
+                        Warehouse Management bündelt Ihre Prozesse
+                        in einem System.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="industry-grid">
+
+
+                    <article class="industry-card">
+
+                        <span>01</span>
+
+                        <h3>
+                            Produkte & Kategorien
+                        </h3>
+
+                        <p>
+
+                            Produkte zentral verwalten,
+                            kategorisieren und mit SKU,
+                            Barcode, Preisen und Mindestbeständen
+                            organisieren.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>02</span>
+
+                        <h3>
+                            Lager & Lagerplätze
+                        </h3>
+
+                        <p>
+
+                            Mehrere Lager und strukturierte
+                            Lagerplätze verwalten.
+                            Finden Sie schnell heraus,
+                            wo ein Artikel liegt.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>03</span>
+
+                        <h3>
+                            Bestandsverwaltung
+                        </h3>
+
+                        <p>
+
+                            Aktuellen Bestand,
+                            reservierte Mengen,
+                            verfügbare Mengen und
+                            Mindestbestände überwachen.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>04</span>
+
+                        <h3>
+                            Lieferanten
+                        </h3>
+
+                        <p>
+
+                            Lieferanten zentral verwalten
+                            und mit Ihren Beschaffungsprozessen
+                            verbinden.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>05</span>
+
+                        <h3>
+                            Kunden & Bestellungen
+                        </h3>
+
+                        <p>
+
+                            Kunden und Aufträge strukturiert
+                            verwalten und Bestände bei der
+                            Auftragsabwicklung berücksichtigen.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>06</span>
+
+                        <h3>
+                            Inventur
+                        </h3>
+
+                        <p>
+
+                            Inventuren erstellen,
+                            Systembestand mit gezählten Mengen
+                            vergleichen und Differenzen nachvollziehen.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>07</span>
+
+                        <h3>
+                            Warenbewegungen
+                        </h3>
+
+                        <p>
+
+                            Eingänge, Ausgänge, Umlagerungen,
+                            Inventuren und Korrekturen
+                            nachvollziehbar dokumentieren.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>08</span>
+
+                        <h3>
+                            Rollen & Benutzer
+                        </h3>
+
+                        <p>
+
+                            Benutzer verwalten und Zugriffe
+                            über Rollen und Berechtigungen
+                            strukturieren.
+
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             PURCHASE ORDERS
+             ========================================================= -->
+
+        <section class="section modules-section">
+
+            <div class="container modules-grid">
+
+
+                <div class="module-copy">
+
+                    <span class="section-tag">
+                        Einkauf digital organisieren
+                    </span>
+
+
+                    <h2>
+                        Lieferanten-Bestellungen
+                        ohne den Überblick zu verlieren.
+                    </h2>
+
+
+                    <p>
+
+                        Erstellen und verwalten Sie
+                        Bestellungen bei Lieferanten und
+                        behalten Sie gelieferte sowie noch
+                        offene Mengen im Blick.
+
+                    </p>
+
+
+                    <ul class="checklist">
+
+                        <li>
+                            ✓ Lieferantenverwaltung
+                        </li>
+
+                        <li>
+                            ✓ Lieferanten-Bestellungen
+                        </li>
+
+                        <li>
+                            ✓ Bestellpositionen
+                        </li>
+
+                        <li>
+                            ✓ Bestellstatus
+                        </li>
+
+                        <li>
+                            ✓ Teil-Lieferungen
+                        </li>
+
+                        <li>
+                            ✓ Gelieferte Mengen
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="ops-card glass-card">
+
+                    <div class="ops-top">
+
+                        <span>
+                            LIEFERANTEN-BESTELLUNG
+                        </span>
+
+                        <b class="live-tag">
+                            AKTUELL
+                        </b>
+
                     </div>
+
+
+                    <div class="ops-number">
+                        Bestellung
+                    </div>
+
+
+                    <small>
+                        Lieferant · Positionen · Mengen · Status
+                    </small>
+
+
+                    <div style="margin-top:30px;">
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                            <span>Bestellt</span>
+                            <strong>100</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                            <span>Geliefert</span>
+                            <strong>70</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;">
+                            <span>Offen</span>
+                            <strong>30</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             STOCK
+             ========================================================= -->
+
+        <section class="section">
+
+            <div class="container feature-split">
+
+
+                <div class="feature-text">
+
+                    <span class="section-tag">
+                        Bestände verstehen
+                    </span>
+
+
+                    <h2>
+                        Nicht nur Bestand sehen.
+                        Bestand verstehen.
+                    </h2>
+
+
+                    <p>
+
+                        Warehouse Management unterscheidet
+                        zwischen vorhandenem, reserviertem
+                        und verfügbarem Bestand.
+
+                        So erhalten Sie ein realistischeres
+                        Bild Ihrer Lagerkapazität.
+
+                    </p>
+
+
+                    <ul class="checklist">
+
+                        <li>
+                            ✓ Gesamtbestand
+                        </li>
+
+                        <li>
+                            ✓ Reservierter Bestand
+                        </li>
+
+                        <li>
+                            ✓ Verfügbarer Bestand
+                        </li>
+
+                        <li>
+                            ✓ Mindestbestand
+                        </li>
+
+                        <li>
+                            ✓ Niedrigbestand
+                        </li>
+
+                        <li>
+                            ✓ Fehlmengen
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="ops-card glass-card">
+
+                    <div class="ops-top">
+
+                        <span>
+                            BESTANDSÜBERSICHT
+                        </span>
+
+                        <b class="live-tag">
+                            LIVE
+                        </b>
+
+                    </div>
+
+
+                    <div class="ops-number">
+                        Bestandsstatus
+                    </div>
+
+
+                    <small>
+                        Zentrale Übersicht für Ihre Lagerbestände
+                    </small>
+
+
+                    <div style="margin-top:30px;">
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Gesamtbestand</span>
+                            <strong>8.642</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Reserviert</span>
+                            <strong>1.186</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Verfügbar</span>
+                            <strong>7.456</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;">
+                            <span>Niedrigbestand</span>
+                            <strong>24</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             REPORTS
+             ========================================================= -->
+
+        <section class="section industries-section"
+                 id="reports">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        Reports & Analysen
+                    </span>
+
+
+                    <h2>
+                        Aus Ihren Lagerdaten werden
+                        klare Informationen.
+                    </h2>
+
+
+                    <p>
+
+                        Finden Sie schneller heraus,
+                        was passiert, wo Probleme entstehen
+                        und welchen Wert Ihr aktueller
+                        Lagerbestand besitzt.
+
+                    </p>
+
+                </div>
+
+
+                <div class="industry-grid">
+
+
+                    <article class="industry-card">
+
+                        <span>01</span>
+
+                        <h3>
+                            Bestandsbericht
+                        </h3>
+
+                        <p>
+                            Aktuelle Bestände nach Lager,
+                            Lagerplatz und Produkt.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>02</span>
+
+                        <h3>
+                            Lagerwert
+                        </h3>
+
+                        <p>
+                            Einkaufswert und Verkaufswert
+                            Ihres aktuellen Lagerbestands.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>03</span>
+
+                        <h3>
+                            Warenbewegungen
+                        </h3>
+
+                        <p>
+                            Historie von Eingängen,
+                            Ausgängen, Umlagerungen,
+                            Inventuren und Korrekturen.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>04</span>
+
+                        <h3>
+                            Niedrigbestand
+                        </h3>
+
+                        <p>
+                            Produkte erkennen, deren
+                            Bestand unter den definierten
+                            Mindestbestand fällt.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>05</span>
+
+                        <h3>
+                            Produktbericht
+                        </h3>
+
+                        <p>
+                            Bestände und Bewegungen
+                            einzelner Produkte analysieren.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>06</span>
+
+                        <h3>
+                            Lieferantenbericht
+                        </h3>
+
+                        <p>
+                            Lieferanten und deren
+                            Warenbewegungen übersichtlich
+                            analysieren.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             INVENTORY
+             ========================================================= -->
+
+        <section class="section">
+
+            <div class="container modules-grid">
+
+
+                <div class="module-copy">
+
+                    <span class="section-tag">
+                        Inventur neu gedacht
+                    </span>
+
+
+                    <h2>
+                        Inventur mit System statt
+                        Listen und manueller Suche.
+                    </h2>
+
+
+                    <p>
+
+                        Erstellen Sie eine Inventur,
+                        wählen Sie das gewünschte Lager,
+                        erfassen Sie die gezählten Mengen
+                        und vergleichen Sie diese direkt
+                        mit dem Systembestand.
+
+                    </p>
+
+
+                    <ul class="checklist">
+
+                        <li>
+                            ✓ Inventur erstellen
+                        </li>
+
+                        <li>
+                            ✓ Lager auswählen
+                        </li>
+
+                        <li>
+                            ✓ Positionen erfassen
+                        </li>
+
+                        <li>
+                            ✓ Systembestand vergleichen
+                        </li>
+
+                        <li>
+                            ✓ Differenzen erkennen
+                        </li>
+
+                        <li>
+                            ✓ Inventur abschließen
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="ops-card glass-card">
+
+                    <div class="ops-top">
+
+                        <span>
+                            INVENTUR
+                        </span>
+
+                        <b class="live-tag">
+                            KONTROLLE
+                        </b>
+
+                    </div>
+
+
+                    <div class="ops-number">
+                        Differenz
+                    </div>
+
+
+                    <small>
+                        Systembestand vs. gezählter Bestand
+                    </small>
+
+
+                    <div style="margin-top:35px;">
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
+                            <span>Systembestand</span>
+                            <strong>1.250</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
+                            <span>Gezählt</span>
+                            <strong>1.244</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;">
+                            <span>Differenz</span>
+                            <strong>-6</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             EXCEL / DATA
+             ========================================================= -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Daten bleiben zugänglich
+                    </span>
+
+
+                    <h2>
+                        Digitale Prozesse ohne
+                        Ihre bestehenden Daten zu verlieren.
+                    </h2>
+
+
+                    <p>
+
+                        Excel bleibt dort verfügbar,
+                        wo es sinnvoll ist.
+                        Informationen können strukturiert
+                        importiert und relevante Daten
+                        für weitere Verarbeitung exportiert werden.
+
+                    </p>
+
+                </div>
+
+
+                <div class="benefits-grid">
+
+
+                    <article class="benefit-card glass-card">
+
+                        <div class="icon-box">
+                            ↓
+                        </div>
+
+                        <h3>
+                            Excel Import
+                        </h3>
+
+                        <p>
+                            Bestehende Stammdaten strukturiert
+                            in das System übernehmen.
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="benefit-card glass-card">
+
+                        <div class="icon-box green">
+                            ↑
+                        </div>
+
+                        <h3>
+                            Excel Export
+                        </h3>
+
+                        <p>
+                            Berichte und relevante
+                            Systemdaten für weitere
+                            Verarbeitung exportieren.
+                        </p>
+
+                    </article>
+
+
+
+                    <article class="benefit-card glass-card">
+
+                        <div class="icon-box orange">
+                            ↗
+                        </div>
+
+                        <h3>
+                            Klare Datenstrukturen
+                        </h3>
+
+                        <p>
+                            Einheitliche Stammdaten schaffen
+                            eine zuverlässige Grundlage
+                            für Ihre täglichen Prozesse.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             INDUSTRIES
+             ========================================================= -->
+
+        <section class="section industries-section"
+                 id="branchen">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        Für unterschiedliche Geschäftsmodelle
+                    </span>
+
+
+                    <h2>
+                        Ein System, das sich an
+                        Ihren Betrieb anpasst.
+                    </h2>
+
+
+                    <p>
+
+                        Die Prozesse unterscheiden sich von
+                        Unternehmen zu Unternehmen.
+                        Die Grundlage bleibt jedoch dieselbe:
+                        Produkte, Bestände, Bewegungen und klare Abläufe.
+
+                    </p>
+
+                </div>
+
+
+                <div class="industry-grid">
+
+
+                    <article class="industry-card">
+
+                        <span>01</span>
+
+                        <h3>
+                            Großhandel
+                        </h3>
+
+                        <p>
+                            Viele Artikel, viele Bestellungen
+                            und hohe Warenbewegungen zentral
+                            organisieren.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>02</span>
+
+                        <h3>
+                            Baustoffhandel
+                        </h3>
+
+                        <p>
+                            Große Warenmengen und viele
+                            Lagerplätze strukturiert verwalten.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>03</span>
+
+                        <h3>
+                            Ersatzteilhandel
+                        </h3>
+
+                        <p>
+                            Viele SKUs schnell finden,
+                            Bestände kontrollieren und
+                            Bewegungen nachvollziehen.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>04</span>
+
+                        <h3>
+                            Produktionsunternehmen
+                        </h3>
+
+                        <p>
+                            Materialien, Lagerbestände
+                            und Warenbewegungen strukturiert
+                            abbilden.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>05</span>
+
+                        <h3>
+                            E-Commerce
+                        </h3>
+
+                        <p>
+                            Produkte, Bestellungen,
+                            Bestand und Fulfillment
+                            miteinander verbinden.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+
+
+                    <article class="industry-card">
+
+                        <span>06</span>
+
+                        <h3>
+                            Technischer Handel
+                        </h3>
+
+                        <p>
+                            Artikelvielfalt und komplexe
+                            Lagerstrukturen übersichtlich
+                            verwalten.
+                        </p>
+
+                        <b>→</b>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             USER / SECURITY
+             ========================================================= -->
+
+        <section class="section">
+
+            <div class="container feature-split">
+
+
+                <div class="feature-text">
+
+                    <span class="section-tag">
+                        Für Teams gemacht
+                    </span>
+
+
+                    <h2>
+                        Die richtigen Informationen
+                        für die richtigen Benutzer.
+                    </h2>
+
+
+                    <p>
+
+                        Nicht jeder Mitarbeiter benötigt
+                        Zugriff auf dieselben Funktionen.
+
+                        Mit Benutzerverwaltung, Rollen
+                        und Berechtigungen lässt sich
+                        der Zugriff strukturiert organisieren.
+
+                    </p>
+
+
+                    <ul class="checklist">
+
+                        <li>
+                            ✓ Benutzerverwaltung
+                        </li>
+
+                        <li>
+                            ✓ Rollenverwaltung
+                        </li>
+
+                        <li>
+                            ✓ Berechtigungen
+                        </li>
+
+                        <li>
+                            ✓ Lagerbezogene Prozesse
+                        </li>
+
+                        <li>
+                            ✓ Einkauf & Verwaltung
+                        </li>
+
+                        <li>
+                            ✓ Management & Reports
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="ops-card glass-card">
+
+                    <div class="ops-top">
+
+                        <span>
+                            BENUTZER & ROLLEN
+                        </span>
+
+                        <b class="live-tag">
+                            SICHER
+                        </b>
+
+                    </div>
+
+
+                    <div class="ops-number">
+                        Zugriff
+                    </div>
+
+
+                    <small>
+                        Strukturierte Benutzer- und Rollenverwaltung
+                    </small>
+
+
+                    <div style="margin-top:35px;">
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Lager</span>
+                            <strong>✓</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Einkauf</span>
+                            <strong>✓</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                            <span>Verkauf</span>
+                            <strong>✓</strong>
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;">
+                            <span>Management</span>
+                            <strong>✓</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             WHY
+             ========================================================= -->
+
+        <section class="stats-section">
+
+            <div class="container stats-grid">
+
+                <div>
+
+                    <strong>
+                        1
+                    </strong>
+
+                    <span style="color:black;">
+                        zentrale Plattform
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        24/7
+                    </strong>
+
+                    <span style="color:black;">
+                        Zugriff auf Ihre Daten
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        360°
+                    </strong>
+
+                    <span style="color:black;">
+                        Überblick über Ihre Prozesse
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        ∞
+                    </strong>
+
+                    <span style="color:black;">
+                        Möglichkeiten zur Erweiterung
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             FAQ
+             ========================================================= -->
+
+        <section class="section faq-section"
+                 id="faq">
+
+            <div class="container faq-grid">
+
+
+                <div>
+
+                    <span class="section-tag">
+                        Häufige Fragen
+                    </span>
+
+
+                    <h2>
+                        Was möchten Sie über
+                        Warehouse Management wissen?
+                    </h2>
+
+
+                    <p>
+
+                        In einer persönlichen Demo können
+                        wir zusätzlich Ihre individuellen
+                        Anforderungen und Prozesse besprechen.
+
+                    </p>
+
+
+                    <a class="btn btn-secondary"
+                       href="#demo">
+
+                        Demo anfragen →
+                    </a>
+
+                </div>
+
+
+
+                <div class="faq-list">
+
+
+                    <details open>
+
+                        <summary>
+                            Für welche Unternehmen ist die Lösung geeignet?
+                        </summary>
+
+                        <p>
+
+                            Warehouse Management eignet sich insbesondere
+                            für Unternehmen mit eigenem Lager,
+                            vielen Artikeln oder regelmäßigen
+                            Warenbewegungen – unter anderem Großhandel,
+                            Baustoffhandel, Ersatzteilhandel,
+                            Produktion und E-Commerce.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Kann ich mehrere Lager verwalten?
+                        </summary>
+
+                        <p>
+
+                            Ja. Lager können separat verwaltet
+                            und mit ihren jeweiligen Lagerplätzen
+                            organisiert werden.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Kann ich Lagerplätze verwalten?
+                        </summary>
+
+                        <p>
+
+                            Ja. Lagerplätze können angelegt,
+                            aktiviert, deaktiviert und
+                            bestimmten Lagern zugeordnet werden.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Kann ich Lieferanten-Bestellungen verwalten?
+                        </summary>
+
+                        <p>
+
+                            Ja. Lieferanten-Bestellungen,
+                            Positionen, Mengen und Lieferstatus
+                            können zentral verwaltet werden.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Kann ich Kundenbestellungen verwalten?
+                        </summary>
+
+                        <p>
+
+                            Ja. Kunden und Bestellungen können
+                            verwaltet und mit den
+                            Bestandsprozessen verbunden werden.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Gibt es Inventur und Bestandsberichte?
+                        </summary>
+
+                        <p>
+
+                            Ja. Das System bietet Inventuren,
+                            Bestandsberichte, Lagerwert,
+                            Warenbewegungen, Niedrigbestand,
+                            Produkt- und Lieferantenberichte.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Können mehrere Benutzer mit dem System arbeiten?
+                        </summary>
+
+                        <p>
+
+                            Ja. Benutzer und Rollen können
+                            zentral verwaltet und Zugriffe
+                            entsprechend den Aufgaben organisiert werden.
+
+                        </p>
+
+                    </details>
+
+
+
+                    <details>
+
+                        <summary>
+                            Kann ich Daten nach Excel exportieren?
+                        </summary>
+
+                        <p>
+
+                            Ja. Relevante Listen und Reports
+                            können für die weitere Verarbeitung
+                            nach Excel exportiert werden.
+
+                        </p>
+
+                    </details>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+             DEMO
+             ========================================================= -->
+
+        <section class="demo-section"
+                 id="demo">
+
+            <div class="container">
+
+                <div class="demo-wrapper">
+
+
+                    <div class="demo-info">
+
+                        <span class="section-tag">
+                            Persönliche Demo
+                        </span>
+
+
+                        <h2>
+                            Sehen Sie selbst,
+                            <em>was Ihr Lager heute schon können kann.</em>
+                        </h2>
+
+
+                        <p>
+
+                            In einer persönlichen Demo zeigen wir
+                            Ihnen die wichtigsten Funktionen von
+                            Warehouse Management und besprechen,
+                            wie Ihre bestehenden Prozesse abgebildet
+                            werden können.
+
+                        </p>
+
+
+                        <p class="demo-note">
+                            ◷ Persönlich · Unverbindlich · Auf Deutsch
+                        </p>
+
+
+                        <div class="demo-benefits">
+
+                            <span>
+                                ✓ Keine Vorbereitung notwendig
+                            </span>
+
+                            <span>
+                                ✓ An Ihrem Anwendungsfall orientiert
+                            </span>
+
+                            <span>
+                                ✓ Konkrete nächste Schritte
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
 
                     <div class="demo-card glass-card">
-                        <h3>Demo-Termin anfragen</h3>
-                        <p class="card-subtitle">Wir melden uns innerhalb eines Werktags bei Ihnen.</p>
 
-                        <EditForm Model="DemoRequestItem" OnValidSubmit="SubmitDemo" FormName="SubmitDemoForm"  OnInvalidSubmit="InvalidForm">
+                        <h3>
+                            Demo-Termin anfragen
+                        </h3>
+
+
+                        <p class="card-subtitle">
+                            Wir melden uns innerhalb eines Werktags bei Ihnen.
+                        </p>
+
+
+                        <EditForm Model="DemoRequestItem"
+                                  OnValidSubmit="SubmitDemo"
+                                  FormName="SubmitDemoForm"
+                                  OnInvalidSubmit="InvalidForm">
+
                             <DataAnnotationsValidator />
 
+
                             <div class="form-group">
-                                <label>Vor- und Nachname *</label>
-                                <InputText @bind-Value="DemoRequestItem.Name" class="form-control" placeholder="Anna Müller" />
-                                <ValidationMessage For="@(() => DemoRequestItem.Name)" class="val-msg" />
+
+                                <label>
+                                    Vor- und Nachname *
+                                </label>
+
+                                <InputText @bind-Value="DemoRequestItem.Name"
+                                           class="form-control"
+                                           placeholder="Anna Müller" />
+
+                                <ValidationMessage For="@(() => DemoRequestItem.Name)"
+                                                   class="val-msg" />
+
                             </div>
+
+
 
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Unternehmen *</label>
-                                    <InputText @bind-Value="DemoRequestItem.Company" class="form-control" placeholder="Muster GmbH" />
-                                    <ValidationMessage For="@(() => DemoRequestItem.Company)" class="val-msg" />
-                                </div>
+
 
                                 <div class="form-group">
-                                    <label>Geschäftliche E-Mail *</label>
-                                    <InputText @bind-Value="DemoRequestItem.Email" type="email" class="form-control" placeholder="anna@muster.de" />
-                                    <ValidationMessage For="@(() => DemoRequestItem.Email)" class="val-msg" />
+
+                                    <label>
+                                        Unternehmen *
+                                    </label>
+
+                                    <InputText @bind-Value="DemoRequestItem.Company"
+                                               class="form-control"
+                                               placeholder="Muster GmbH" />
+
+                                    <ValidationMessage For="@(() => DemoRequestItem.Company)"
+                                                       class="val-msg" />
+
                                 </div>
+
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Geschäftliche E-Mail *
+                                    </label>
+
+                                    <InputText @bind-Value="DemoRequestItem.Email"
+                                               type="email"
+                                               class="form-control"
+                                               placeholder="anna@muster.de" />
+
+                                    <ValidationMessage For="@(() => DemoRequestItem.Email)"
+                                                       class="val-msg" />
+
+                                </div>
+
                             </div>
 
+
+
                             <div class="form-group">
-                                <label>Branche</label>
-                                <InputSelect @bind-Value="DemoRequestItem.Industry" class="form-control">
-                                    <option value="">Bitte auswählen...</option>
-                                    <option value="Großhandel">Großhandel</option>
-                                    <option value="Baustoffhandel">Baustoffhandel</option>
-                                    <option value="Ersatzteilhandel">Ersatzteilhandel</option>
-                                    <option value="Produktionsbetrieb">Produktionsbetrieb</option>
-                                    <option value="Online-Handel / E-Commerce">Online-Handel / E-Commerce</option>
-                                    <option value="Andere">Andere</option>
+
+                                <label>
+                                    Branche
+                                </label>
+
+                                <InputSelect @bind-Value="DemoRequestItem.Industry"
+                                             class="form-control">
+
+                                    <option value="">
+                                        Bitte auswählen...
+                                    </option>
+
+                                    <option value="Großhandel">
+                                        Großhandel
+                                    </option>
+
+                                    <option value="Baustoffhandel">
+                                        Baustoffhandel
+                                    </option>
+
+                                    <option value="Ersatzteilhandel">
+                                        Ersatzteilhandel
+                                    </option>
+
+                                    <option value="Produktionsbetrieb">
+                                        Produktionsbetrieb
+                                    </option>
+
+                                    <option value="Online-Handel / E-Commerce">
+                                        Online-Handel / E-Commerce
+                                    </option>
+
+                                    <option value="Technischer Handel">
+                                        Technischer Handel
+                                    </option>
+
+                                    <option value="Andere">
+                                        Andere
+                                    </option>
+
                                 </InputSelect>
+
                             </div>
+
+
 
                             <div class="form-group">
-                                <label>Was möchten Sie verbessern?</label>
-                                <InputTextArea @bind-Value="DemoRequestItem.Message" class="form-control textarea" placeholder="Erzählen Sie uns kurz von Ihrem Lager..." />
+
+                                <label>
+                                    Was möchten Sie verbessern?
+                                </label>
+
+                                <InputTextArea @bind-Value="DemoRequestItem.Message"
+                                               class="form-control textarea"
+                                               placeholder="Erzählen Sie uns kurz von Ihrem Lager, Ihren aktuellen Prozessen und Ihren Herausforderungen..." />
+
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-full">
-                                Demo anfragen <span>→</span>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-full">
+
+                                Demo anfragen
+
+                                <span>
+                                    →
+                                </span>
+
                             </button>
+
+
 
                             @if (Submitted)
                             {
                                 <div class="alert alert-success">
-                                    Vielen Dank! Ihre Anfrage ist eingegangen. Wir melden uns bald.
+
+                                    Vielen Dank!
+                                    Ihre Anfrage ist eingegangen.
+                                    Wir melden uns bald bei Ihnen.
+
                                 </div>
                             }
+
                         </EditForm>
+
+
+
                         @if (!string.IsNullOrWhiteSpace(EmailError))
                         {
-                            <div class="alert alert-danger" style="white-space: pre-wrap;">
+                            <div class="alert alert-danger"
+                                 style="white-space: pre-wrap;">
+
                                 @EmailError
+
                             </div>
                         }
 
                     </div>
+
                 </div>
+
             </div>
+
         </section>
+
     </main>
 
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
     <footer>
+
         <div class="container footer-inner">
-            <span>Warehouse Management</span>
+
+            <span>
+                Warehouse Management
+            </span>
+
+
             <div class="footer-links">
-                <a href="#loesung">Lösung</a>
-                <a href="#branchen">Branchen</a>
-                <a href="#funktionen">Funktionen</a>
-                <a href="#demo">Demo buchen</a>
+
+                <a href="#loesung">
+                    Lösung
+                </a>
+
+                <a href="#funktionen">
+                    Funktionen
+                </a>
+
+                <a href="#prozesse">
+                    Prozesse
+                </a>
+
+                <a href="#branchen">
+                    Branchen
+                </a>
+
+                <a href="#reports">
+                    Reports
+                </a>
+
+                <a href="#demo">
+                    Demo buchen
+                </a>
+
             </div>
-            <small>© 2026 Warehouse Management</small>
+
+
+            <small>
+                © 2026 Warehouse Management
+            </small>
+
         </div>
+
     </footer>
+
 </div>

@@ -1,7 +1,11 @@
 ﻿@page "/reports"
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
-<PageTitle>Berichte</PageTitle>
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Localization
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Reports"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -9,10 +13,10 @@
     <div class="page-header">
 
         <div>
-            <h1>Berichte</h1>
+            <h1>@L["Reports"]</h1>
 
             <p>
-                Übersicht und Auswertungen Ihrer Lagerverwaltung
+                @L["ReportsOverviewDescription"]
             </p>
         </div>
 
@@ -26,11 +30,10 @@
 
             <div class="form-section-title">
 
-                <h2>Verfügbare Berichte</h2>
+                <h2>@L["AvailableReports"]</h2>
 
                 <p>
-                    Wählen Sie einen Bericht aus, um die entsprechenden
-                    Lagerdaten auszuwerten.
+                    @L["AvailableReportsDescription"]
                 </p>
 
             </div>
@@ -50,11 +53,10 @@
 
                     <div class="report-content">
 
-                        <h3>Bestandsbericht</h3>
+                        <h3>@L["StockReport"]</h3>
 
                         <p>
-                            Aktuellen Lagerbestand nach Produkt,
-                            Lager und Lagerplatz anzeigen.
+                            @L["StockReportDescription"]
                         </p>
 
                     </div>
@@ -77,11 +79,10 @@
 
                     <div class="report-content">
 
-                        <h3>Inventurbericht</h3>
+                        <h3>@L["InventoryReport"]</h3>
 
                         <p>
-                            Inventuren, gezählte Mengen und
-                            Bestandsabweichungen auswerten.
+                            @L["InventoryReportDescription"]
                         </p>
 
                     </div>
@@ -104,11 +105,10 @@
 
                     <div class="report-content">
 
-                        <h3>Warenbewegungen</h3>
+                        <h3>@L["StockMovementsReport"]</h3>
 
                         <p>
-                            Wareneingänge, Warenausgänge und
-                            Umlagerungen analysieren.
+                            @L["StockMovementsReportDescription"]
                         </p>
 
                     </div>
@@ -131,11 +131,10 @@
 
                     <div class="report-content">
 
-                        <h3>Lieferantenbericht</h3>
+                        <h3>@L["SupplierReport"]</h3>
 
                         <p>
-                            Lieferanten, Wareneingänge und
-                            Warenbewegungen nach Lieferant auswerten.
+                            @L["SupplierReportDescription"]
                         </p>
 
                     </div>
@@ -158,11 +157,10 @@
 
                     <div class="report-content">
 
-                        <h3>Niedrigbestand</h3>
+                        <h3>@L["LowStockReport"]</h3>
 
                         <p>
-                            Produkte mit niedrigem oder kritischem
-                            Lagerbestand anzeigen.
+                            @L["LowStockReportDescription"]
                         </p>
 
                     </div>
@@ -185,11 +183,10 @@
 
                     <div class="report-content">
 
-                        <h3>Lagerwert</h3>
+                        <h3>@L["StockValueReport"]</h3>
 
                         <p>
-                            Gesamtwert des aktuellen Lagerbestands
-                            auswerten.
+                            @L["StockValueReportDescription"]
                         </p>
 
                     </div>
@@ -212,11 +209,10 @@
 
                     <div class="report-content">
 
-                        <h3>Produktbericht</h3>
+                        <h3>@L["ProductReport"]</h3>
 
                         <p>
-                            Bestände und Bewegungen einzelner
-                            Produkte analysieren.
+                            @L["ProductReportDescription"]
                         </p>
 
                     </div>

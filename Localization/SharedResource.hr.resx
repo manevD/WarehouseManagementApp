@@ -1950,4 +1950,1479 @@
 	<data name="ExcelExportError" xml:space="preserve">
   <value>Pogreška pri Excel eksportu</value>
 </data>
+	<data name="RoleManagement" xml:space="preserve">
+  <value>Upravljanje ulogama</value>
+</data>
+
+	<data name="ManageRolesAndPermissions" xml:space="preserve">
+  <value>Upravljajte ulogama i ovlastima</value>
+</data>
+
+	<data name="NewRole" xml:space="preserve">
+  <value>Nova uloga</value>
+</data>
+
+	<data name="SearchRolePlaceholder" xml:space="preserve">
+  <value>Pretražite ulogu...</value>
+</data>
+
+	<data name="Roles" xml:space="preserve">
+  <value>Uloge</value>
+</data>
+
+	<data name="RolesLoading" xml:space="preserve">
+  <value>Učitavanje uloga...</value>
+</data>
+
+	<data name="NoRolesFound" xml:space="preserve">
+  <value>Nisu pronađene uloge</value>
+</data>
+
+	<data name="NoRolesAvailable" xml:space="preserve">
+  <value>Nisu pronađene uloge.</value>
+</data>
+
+	<data name="Role" xml:space="preserve">
+  <value>Uloga</value>
+</data>
+
+	<data name="Users" xml:space="preserve">
+  <value>Korisnici</value>
+</data>
+
+	<data name="Created" xml:space="preserve">
+  <value>Kreirano</value>
+</data>
+
+	<data name="EditRole" xml:space="preserve">
+  <value>Uredi ulogu</value>
+</data>
+
+	<data name="ChangeRoleName" xml:space="preserve">
+  <value>Promijenite naziv uloge</value>
+</data>
+
+	<data name="CreateNewRole" xml:space="preserve">
+  <value>Izradite novu ulogu</value>
+</data>
+
+	<data name="RoleName" xml:space="preserve">
+  <value>Naziv uloge</value>
+</data>
+
+	<data name="RoleNamePlaceholder" xml:space="preserve">
+  <value>npr. Voditelj skladišta</value>
+</data>
+
+	<data name="DeleteRole" xml:space="preserve">
+  <value>Obriši ulogu</value>
+</data>
+
+	<data name="DeleteRoleCannotBeUndone" xml:space="preserve">
+  <value>Ova se radnja ne može poništiti.</value>
+</data>
+
+	<data name="DeleteRoleQuestion" xml:space="preserve">
+  <value>Želite li zaista obrisati ulogu</value>
+</data>
+
+	<data name="DeleteRoleQuestionEnd" xml:space="preserve">
+  <value>?</value>
+</data>
+
+	<data name="RoleNameRequired" xml:space="preserve">
+  <value>Naziv uloge je obavezan.</value>
+</data>
+
+	<data name="RoleNameMaxLength" xml:space="preserve">
+  <value>Naziv uloge može sadržavati najviše 256 znakova.</value>
+</data>
+
+	<data name="RoleAlreadyExists" xml:space="preserve">
+  <value>Uloga s ovim nazivom već postoji.</value>
+</data>
+
+	<data name="RoleNotFound" xml:space="preserve">
+  <value>Uloga nije pronađena.</value>
+</data>
+
+	<data name="AnotherRoleAlreadyExists" xml:space="preserve">
+  <value>Druga uloga s ovim nazivom već postoji.</value>
+</data>
+
+	<data name="RoleNameNotFound" xml:space="preserve">
+  <value>Naziv uloge nije pronađen.</value>
+</data>
+
+	<data name="AdminRoleCannotBeDeleted" xml:space="preserve">
+  <value>Uloga „Admin“ ne može se obrisati.</value>
+</data>
+
+	<data name="RoleCannotBeDeletedUsers" xml:space="preserve">
+  <value>Uloga se ne može obrisati jer je koristi {0} korisnika.</value>
+</data>
+
+	<data name="RoleEntriesInfo" xml:space="preserve">
+  <value>{0} od {1} zapisa</value>
+</data>
+
+	<data name="RolesFileName" xml:space="preserve">
+  <value>Uloge</value>
+</data>
+	<data name="UserManagement" xml:space="preserve">
+  <value>Upravljanje korisnicima</value>
+</data>
+
+	<data name="ManageUsersAndRoles" xml:space="preserve">
+  <value>Upravljajte korisnicima i ulogama</value>
+</data>
+
+	<data name="NewUser" xml:space="preserve">
+  <value>Novi korisnik</value>
+</data>
+
+	<data name="SearchUserPlaceholder" xml:space="preserve">
+  <value>Pretražite korisnika, e-poštu ili ulogu...</value>
+</data>
+
+	<data name="UsersLoading" xml:space="preserve">
+  <value>Učitavanje korisnika...</value>
+</data>
+
+	<data name="NoUsersFound" xml:space="preserve">
+  <value>Nisu pronađeni korisnici</value>
+</data>
+
+	<data name="NoUsersAvailable" xml:space="preserve">
+  <value>Nisu pronađeni korisnici.</value>
+</data>
+
+	<data name="User" xml:space="preserve">
+  <value>Korisnik</value>
+</data>
+
+	<data name="Roles" xml:space="preserve">
+  <value>Uloge</value>
+</data>
+
+	<data name="NoRole" xml:space="preserve">
+  <value>Nema uloge</value>
+</data>
+
+	<data name="EditUser" xml:space="preserve">
+  <value>Uredi korisnika</value>
+</data>
+
+	<data name="ChangeUserDataAndRole" xml:space="preserve">
+  <value>Promijenite podatke i ulogu korisnika</value>
+</data>
+
+	<data name="CreateNewUser" xml:space="preserve">
+  <value>Izradite novog korisnika</value>
+</data>
+
+	<data name="Username" xml:space="preserve">
+  <value>Korisničko ime</value>
+</data>
+
+	<data name="Password" xml:space="preserve">
+  <value>Lozinka</value>
+</data>
+
+	<data name="Role" xml:space="preserve">
+  <value>Uloga</value>
+</data>
+
+	<data name="UserIsActive" xml:space="preserve">
+  <value>Korisnik je aktivan</value>
+</data>
+
+	<data name="DeleteUser" xml:space="preserve">
+  <value>Obriši korisnika</value>
+</data>
+
+	<data name="DeleteUserCannotBeUndone" xml:space="preserve">
+  <value>Ova se radnja ne može poništiti.</value>
+</data>
+
+	<data name="DeleteUserQuestion" xml:space="preserve">
+  <value>Želite li zaista obrisati korisnika</value>
+</data>
+
+	<data name="DeleteUserQuestionEnd" xml:space="preserve">
+  <value>?</value>
+</data>
+
+	<data name="UsernameRequired" xml:space="preserve">
+  <value>Korisničko ime je obavezno.</value>
+</data>
+
+	<data name="PasswordRequired" xml:space="preserve">
+  <value>Lozinka je obavezna.</value>
+</data>
+
+	<data name="UserNotFound" xml:space="preserve">
+  <value>Korisnik nije pronađen.</value>
+</data>
+
+	<data name="CannotDeleteOwnUser" xml:space="preserve">
+  <value>Ne možete obrisati vlastitog korisnika.</value>
+</data>
+
+	<data name="EmailConfirmed" xml:space="preserve">
+  <value>E-pošta potvrđena</value>
+</data>
+
+	<data name="UserEntriesInfo" xml:space="preserve">
+  <value>{0} od {1} zapisa</value>
+</data>
+
+	<data name="UsersFileName" xml:space="preserve">
+  <value>Korisnici</value>
+</data>
+	<data name="Login" xml:space="preserve">
+  <value>Prijava</value>
+</data>
+
+	<data name="WarehouseManagement" xml:space="preserve">
+  <value>Upravljanje skladištem</value>
+</data>
+
+	<data name="WelcomeBack" xml:space="preserve">
+  <value>Dobro došli natrag</value>
+</data>
+
+	<data name="LoginToContinue" xml:space="preserve">
+  <value>Prijavite se kako biste nastavili.</value>
+</data>
+
+	<data name="EmailAddressPlaceholder" xml:space="preserve">
+  <value>E-pošta</value>
+</data>
+
+	<data name="PasswordPlaceholder" xml:space="preserve">
+  <value>Lozinka</value>
+</data>
+
+	<data name="RememberMe" xml:space="preserve">
+  <value>Ostani prijavljen</value>
+</data>
+
+	<data name="LoginButton" xml:space="preserve">
+  <value>Prijava</value>
+</data>
+
+	<data name="Or" xml:space="preserve">
+  <value>ILI</value>
+</data>
+
+	<data name="ForgotPassword" xml:space="preserve">
+  <value>Zaboravili ste lozinku?</value>
+</data>
+
+	<data name="InvalidLogin" xml:space="preserve">
+  <value>Pogreška: e-pošta ili lozinka nisu ispravne.</value>
+</data>
+
+	<data name="PasskeyError" xml:space="preserve">
+  <value>Pogreška: {0}</value>
+</data>
+
+	<data name="EmailRequired" xml:space="preserve">
+  <value>E-pošta je obavezna.</value>
+</data>
+
+	<data name="InvalidEmailAddress" xml:space="preserve">
+  <value>Unesite valjanu adresu e-pošte.</value>
+</data>
+
+	<data name="PasswordRequired" xml:space="preserve">
+  <value>Lozinka je obavezna.</value>
+</data>
+	<data name="PersonalData" xml:space="preserve">
+  <value>Osobni podaci</value>
+</data>
+
+	<data name="ManagePersonalDataDescription" xml:space="preserve">
+  <value>Upravljajte osobnim podacima svog računa.</value>
+</data>
+
+	<data name="YourPersonalData" xml:space="preserve">
+  <value>Vaši osobni podaci</value>
+</data>
+
+	<data name="PersonalDataActionsDescription" xml:space="preserve">
+  <value>Možete preuzeti svoje spremljene podatke ili obrisati svoj račun.</value>
+</data>
+
+	<data name="PersonalDataInformation" xml:space="preserve">
+  <value>Vaš račun sadrži osobne podatke koje ste nam dostavili. Na ovoj stranici možete preuzeti te podatke ili obrisati svoj račun.</value>
+</data>
+
+	<data name="Warning" xml:space="preserve">
+  <value>Upozorenje:</value>
+</data>
+
+	<data name="DeleteAccountWarning" xml:space="preserve">
+  <value>Brisanjem ovih podataka vaš će račun biti trajno obrisan. Ovaj se postupak ne može poništiti.</value>
+</data>
+
+	<data name="DownloadPersonalData" xml:space="preserve">
+  <value>Preuzmi podatke</value>
+</data>
+
+	<data name="DeleteAccount" xml:space="preserve">
+  <value>Obriši račun</value>
+</data>
+	<data name="ChangeEmail" xml:space="preserve">
+  <value>Promijeni e-poštu</value>
+</data>
+
+	<data name="ManageAndChangeEmailDescription" xml:space="preserve">
+  <value>Upravljajte i promijenite svoju adresu e-pošte.</value>
+</data>
+
+	<data name="EmailAddress" xml:space="preserve">
+  <value>Adresa e-pošte</value>
+</data>
+
+	<data name="CurrentAndNewEmailDescription" xml:space="preserve">
+  <value>Vaša trenutna i nova adresa e-pošte.</value>
+</data>
+
+	<data name="CurrentEmailAddress" xml:space="preserve">
+  <value>Trenutna adresa e-pošte</value>
+</data>
+
+	<data name="EmailAddressPlaceholder" xml:space="preserve">
+  <value>Adresa e-pošte</value>
+</data>
+
+	<data name="Confirmed" xml:space="preserve">
+  <value>Potvrđeno</value>
+</data>
+
+	<data name="SendConfirmationEmail" xml:space="preserve">
+  <value>Pošalji e-poštu za potvrdu</value>
+</data>
+
+	<data name="NewEmailAddress" xml:space="preserve">
+  <value>Nova adresa e-pošte</value>
+</data>
+
+	<data name="NewEmailAddressPlaceholder" xml:space="preserve">
+  <value>Nova adresa e-pošte</value>
+</data>
+
+	<data name="ChangeEmailButton" xml:space="preserve">
+  <value>Promijeni e-poštu</value>
+</data>
+
+	<data name="EmailNotChanged" xml:space="preserve">
+  <value>Vaša adresa e-pošte nije promijenjena.</value>
+</data>
+
+	<data name="NewEmailConfirmationSent" xml:space="preserve">
+  <value>Potvrdna poveznica poslana je na vašu novu adresu e-pošte. Provjerite svoju e-poštu.</value>
+</data>
+
+	<data name="EmailConfirmationSent" xml:space="preserve">
+  <value>Potvrdna e-pošta je poslana. Provjerite svoju e-poštu.</value>
+</data>
+
+	<data name="NewEmailRequired" xml:space="preserve">
+  <value>Nova adresa e-pošte je obavezna.</value>
+</data>
+	<data name="ChangeEmail" xml:space="preserve">
+  <value>Promijeni e-poštu</value>
+</data>
+
+<data name="ManageAndChangeEmailDescription" xml:space="preserve">
+  <value>Upravljajte i promijenite svoju adresu e-pošte.</value>
+</data>
+
+<data name="EmailAddress" xml:space="preserve">
+  <value>Adresa e-pošte</value>
+</data>
+
+<data name="CurrentAndNewEmailDescription" xml:space="preserve">
+  <value>Vaša trenutna i nova adresa e-pošte.</value>
+</data>
+
+<data name="CurrentEmailAddress" xml:space="preserve">
+  <value>Trenutna adresa e-pošte</value>
+</data>
+
+<data name="EmailAddressPlaceholder" xml:space="preserve">
+  <value>Adresa e-pošte</value>
+</data>
+
+<data name="Confirmed" xml:space="preserve">
+  <value>Potvrđeno</value>
+</data>
+
+<data name="SendConfirmationEmail" xml:space="preserve">
+  <value>Pošalji e-poštu za potvrdu</value>
+</data>
+
+<data name="NewEmailAddress" xml:space="preserve">
+  <value>Nova adresa e-pošte</value>
+</data>
+
+<data name="NewEmailAddressPlaceholder" xml:space="preserve">
+  <value>Nova adresa e-pošte</value>
+</data>
+
+<data name="ChangeEmailButton" xml:space="preserve">
+  <value>Promijeni e-poštu</value>
+</data>
+
+<data name="EmailNotChanged" xml:space="preserve">
+  <value>Vaša adresa e-pošte nije promijenjena.</value>
+</data>
+
+<data name="NewEmailConfirmationSent" xml:space="preserve">
+  <value>Potvrdna poveznica poslana je na vašu novu adresu e-pošte. Provjerite svoju e-poštu.</value>
+</data>
+
+<data name="EmailConfirmationSent" xml:space="preserve">
+  <value>Potvrdna e-pošta je poslana. Provjerite svoju e-poštu.</value>
+</data>
+
+<data name="NewEmailRequired" xml:space="preserve">
+  <value>Nova adresa e-pošte je obavezna.</value>
+</data>
+	<data name="ChangePassword" xml:space="preserve">
+  <value>Promijeni lozinku</value>
+</data>
+
+	<data name="ChangeCurrentPasswordDescription" xml:space="preserve">
+  <value>Ovdje možete promijeniti svoju trenutnu lozinku.</value>
+</data>
+
+	<data name="ChangePasswordDescription" xml:space="preserve">
+  <value>Unesite svoju trenutnu, a zatim novu lozinku.</value>
+</data>
+
+	<data name="CurrentPassword" xml:space="preserve">
+  <value>Trenutna lozinka</value>
+</data>
+
+	<data name="CurrentPasswordPlaceholder" xml:space="preserve">
+  <value>Trenutna lozinka</value>
+</data>
+
+	<data name="NewPassword" xml:space="preserve">
+  <value>Nova lozinka</value>
+</data>
+
+	<data name="NewPasswordPlaceholder" xml:space="preserve">
+  <value>Nova lozinka</value>
+</data>
+
+	<data name="ConfirmNewPassword" xml:space="preserve">
+  <value>Potvrdite novu lozinku</value>
+</data>
+
+	<data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
+  <value>Ponovno unesite novu lozinku</value>
+</data>
+
+	<data name="ChangePasswordButton" xml:space="preserve">
+  <value>Promijeni lozinku</value>
+</data>
+
+	<data name="PasswordChangeError" xml:space="preserve">
+  <value>Pogreška: {0}</value>
+</data>
+
+	<data name="PasswordChangedSuccessfully" xml:space="preserve">
+  <value>Vaša je lozinka uspješno promijenjena.</value>
+</data>
+
+	<data name="CurrentPasswordRequired" xml:space="preserve">
+  <value>Trenutna lozinka je obavezna.</value>
+</data>
+
+	<data name="NewPasswordRequired" xml:space="preserve">
+  <value>Nova lozinka je obavezna.</value>
+</data>
+
+	<data name="PasswordLength" xml:space="preserve">
+  <value>Lozinka mora sadržavati najmanje {2} i najviše {1} znakova.</value>
+</data>
+
+	<data name="PasswordsDoNotMatch" xml:space="preserve">
+  <value>Nova lozinka i potvrda se ne podudaraju.</value>
+</data>
+	<data name="Profile" xml:space="preserve">
+  <value>Profil</value>
+</data>
+
+	<data name="ManagePersonalAccountInformation" xml:space="preserve">
+  <value>Upravljajte osobnim podacima svog računa.</value>
+</data>
+
+	<data name="AccountInformation" xml:space="preserve">
+  <value>Podaci o računu</value>
+</data>
+
+	<data name="BasicAccountData" xml:space="preserve">
+  <value>Vaši osnovni podaci računa</value>
+</data>
+
+	<data name="Username" xml:space="preserve">
+  <value>Korisničko ime</value>
+</data>
+
+	<data name="Phone" xml:space="preserve">
+  <value>Broj telefona</value>
+</data>
+
+	<data name="PhoneSaveError" xml:space="preserve">
+  <value>Pogreška: broj telefona nije moguće spremiti.</value>
+</data>
+
+	<data name="ProfileUpdatedSuccessfully" xml:space="preserve">
+  <value>Vaš je profil uspješno ažuriran.</value>
+</data>
+
+	<data name="InvalidPhoneNumber" xml:space="preserve">
+  <value>Unesite valjani broj telefona.</value>
+</data>
+	<data name="OpenMenu" xml:space="preserve">
+  <value>Otvori izbornik</value>
+</data>
+
+	<data name="German" xml:space="preserve">
+  <value>Njemački</value>
+</data>
+
+	<data name="Macedonian" xml:space="preserve">
+  <value>Makedonski</value>
+</data>
+
+	<data name="Croatian" xml:space="preserve">
+  <value>Hrvatski</value>
+</data>
+
+	<data name="English" xml:space="preserve">
+  <value>Engleski</value>
+</data>
+
+	<data name="Logout" xml:space="preserve">
+  <value>Odjava</value>
+</data>
+
+	<data name="UnhandledError" xml:space="preserve">
+  <value>Došlo je do neočekivane pogreške.</value>
+</data>
+
+	<data name="Reload" xml:space="preserve">
+  <value>Ponovno učitaj</value>
+</data>
+	<data name="Reports" xml:space="preserve">
+  <value>Izvještaji</value>
+</data>
+
+	<data name="ReportsOverviewDescription" xml:space="preserve">
+  <value>Pregled i analiza vašeg upravljanja skladištem</value>
+</data>
+
+	<data name="AvailableReports" xml:space="preserve">
+  <value>Dostupni izvještaji</value>
+</data>
+
+	<data name="AvailableReportsDescription" xml:space="preserve">
+  <value>Odaberite izvještaj za analizu odgovarajućih podataka o skladištu.</value>
+</data>
+
+	<data name="StockReport" xml:space="preserve">
+  <value>Izvještaj o zalihama</value>
+</data>
+
+	<data name="StockReportDescription" xml:space="preserve">
+  <value>Prikažite trenutne zalihe prema proizvodu, skladištu i skladišnoj lokaciji.</value>
+</data>
+
+	<data name="InventoryReport" xml:space="preserve">
+  <value>Izvještaj o inventuri</value>
+</data>
+
+	<data name="InventoryReportDescription" xml:space="preserve">
+  <value>Analizirajte inventure, prebrojane količine i odstupanja u zalihama.</value>
+</data>
+
+	<data name="StockMovementsReport" xml:space="preserve">
+  <value>Kretanje robe</value>
+</data>
+
+	<data name="StockMovementsReportDescription" xml:space="preserve">
+  <value>Analizirajte ulaze robe, izlaze robe i premještanja.</value>
+</data>
+
+	<data name="SupplierReport" xml:space="preserve">
+  <value>Izvještaj o dobavljačima</value>
+</data>
+
+	<data name="SupplierReportDescription" xml:space="preserve">
+  <value>Analizirajte dobavljače, ulaze robe i kretanje robe prema dobavljaču.</value>
+</data>
+
+	<data name="LowStockReport" xml:space="preserve">
+  <value>Niska zaliha</value>
+</data>
+
+	<data name="LowStockReportDescription" xml:space="preserve">
+  <value>Prikažite proizvode s niskom ili kritično niskom zalihom.</value>
+</data>
+
+	<data name="StockValueReport" xml:space="preserve">
+  <value>Vrijednost zaliha</value>
+</data>
+
+	<data name="StockValueReportDescription" xml:space="preserve">
+  <value>Analizirajte ukupnu vrijednost trenutnih zaliha.</value>
+</data>
+
+	<data name="ProductReport" xml:space="preserve">
+  <value>Izvještaj o proizvodima</value>
+</data>
+
+	<data name="ProductReportDescription" xml:space="preserve">
+  <value>Analizirajte zalihe i kretanje pojedinačnih proizvoda.</value>
+</data>
+	<data name="Inventories" xml:space="preserve">
+  <value>Inventure</value>
+</data>
+
+	<data name="InventoriesOverviewDescription" xml:space="preserve">
+  <value>Pregled i upravljanje inventurama</value>
+</data>
+
+	<data name="ExportToExcel" xml:space="preserve">
+  <value>Izvezi u Excel</value>
+</data>
+
+	<data name="NewInventory" xml:space="preserve">
+  <value>Nova inventura</value>
+</data>
+
+	<data name="SearchInventoryPlaceholder" xml:space="preserve">
+  <value>Pretražite skladište, status ili bilješku...</value>
+</data>
+
+	<data name="AllStatuses" xml:space="preserve">
+  <value>Svi statusi</value>
+</data>
+
+	<data name="Draft" xml:space="preserve">
+  <value>Nacrt</value>
+</data>
+
+	<data name="InProgress" xml:space="preserve">
+  <value>U tijeku</value>
+</data>
+
+	<data name="Completed" xml:space="preserve">
+  <value>Završeno</value>
+</data>
+
+	<data name="Open" xml:space="preserve">
+  <value>Otvoreno</value>
+</data>
+
+	<data name="Entries" xml:space="preserve">
+  <value>zapisa</value>
+</data>
+
+	<data name="Positions" xml:space="preserve">
+  <value>Stavke</value>
+</data>
+
+	<data name="CreatedAt" xml:space="preserve">
+  <value>Izrađeno</value>
+</data>
+
+	<data name="CompletedAt" xml:space="preserve">
+  <value>Završeno</value>
+</data>
+
+	<data name="LoadingInventories" xml:space="preserve">
+  <value>Inventure se učitavaju...</value>
+</data>
+
+	<data name="NoInventoriesFound" xml:space="preserve">
+  <value>Nisu pronađene inventure</value>
+</data>
+
+	<data name="NoInventoryMatchesSearchCriteria" xml:space="preserve">
+  <value>Nijedna inventura ne odgovara kriterijima pretraživanja.</value>
+</data>
+
+	<data name="NoInventoriesCreated" xml:space="preserve">
+  <value>Još nisu izrađene inventure.</value>
+</data>
+
+	<data name="ResetFilters" xml:space="preserve">
+  <value>Poništi filtre</value>
+</data>
+
+	<data name="Page" xml:space="preserve">
+  <value>Stranica</value>
+</data>
+
+	<data name="Of" xml:space="preserve">
+  <value>od</value>
+</data>
+
+	<data name="Note" xml:space="preserve">
+  <value>Bilješka</value>
+</data>
+	<data name="CreateNewInventoryDescription" xml:space="preserve">
+  <value>Izradite novu inventuru za skladište.</value>
+</data>
+
+	<data name="InventoryInformation" xml:space="preserve">
+  <value>Informacije o inventuri</value>
+</data>
+
+	<data name="InventoryInformationDescription" xml:space="preserve">
+  <value>Odaberite skladište i po potrebi dodajte bilješku.</value>
+</data>
+
+	<data name="SelectWarehouse" xml:space="preserve">
+  <value>Odaberite skladište</value>
+</data>
+
+	<data name="ActiveStorageLocations" xml:space="preserve">
+  <value>aktivnih skladišnih lokacija</value>
+</data>
+
+	<data name="InventoryNotePlaceholder" xml:space="preserve">
+  <value>Neobavezna bilješka o inventuri...</value>
+</data>
+
+	<data name="Maximum500Characters" xml:space="preserve">
+  <value>Maksimalno 500 znakova.</value>
+</data>
+
+	<data name="HowInventoryWorks" xml:space="preserve">
+  <value>Kako inventura funkcionira</value>
+</data>
+
+	<data name="HowInventoryWorksDescription" xml:space="preserve">
+  <value>Postojeće zalihe automatski se preuzimaju kao sustavna zaliha.</value>
+</data>
+
+	<data name="WhatHappensWhenStarted" xml:space="preserve">
+  <value>Što se događa pri pokretanju?</value>
+</data>
+
+	<data name="InventoryStartExplanation" xml:space="preserve">
+  <value>Za odabrano skladište postojeće zalihe automatski se preuzimaju kao sustavna zaliha. Nakon toga možete unijeti stvarno prebrojane količine.</value>
+</data>
+
+	<data name="SelectWarehouseDescription" xml:space="preserve">
+  <value>Odaberite skladište koje treba prebrojiti.</value>
+</data>
+
+	<data name="CountStock" xml:space="preserve">
+  <value>Prebrojite zalihu</value>
+</data>
+
+	<data name="CountStockDescription" xml:space="preserve">
+  <value>Kasnije unesite stvarno prebrojanu količinu.</value>
+</data>
+
+	<data name="CompleteInventory" xml:space="preserve">
+  <value>Završite inventuru</value>
+</data>
+
+	<data name="CompleteInventoryDescription" xml:space="preserve">
+  <value>Razlike će se zatim automatski ispraviti u zalihama.</value>
+</data>
+
+	<data name="Creating" xml:space="preserve">
+  <value>Izrada u tijeku...</value>
+</data>
+
+	<data name="StartInventory" xml:space="preserve">
+  <value>Pokreni inventuru</value>
+</data>
+
+	<data name="WarehouseRequired" xml:space="preserve">
+  <value>Odaberite skladište.</value>
+</data>
+
+	<data name="WarehouseNotFound" xml:space="preserve">
+  <value>Odabrano skladište nije pronađeno.</value>
+</data>
+
+	<data name="NoActiveStorageLocations" xml:space="preserve">
+  <value>Za ovo skladište nema aktivnih skladišnih lokacija.</value>
+</data>
+
+	<data name="NoStockFoundForWarehouse" xml:space="preserve">
+  <value>Za ovo skladište nisu pronađene zalihe proizvoda.</value>
+</data>
+
+	<data name="InventoryCreationError" xml:space="preserve">
+  <value>Inventuru nije moguće izraditi: {0}</value>
+</data>
+	<data name="EditInventory" xml:space="preserve">
+  <value>Uredi inventuru</value>
+</data>
+
+	<data name="LoadingInventory" xml:space="preserve">
+  <value>Inventura se učitava...</value>
+</data>
+
+	<data name="InventoryNotFound" xml:space="preserve">
+  <value>Inventura nije pronađena</value>
+</data>
+
+	<data name="RequestedInventoryNotFound" xml:space="preserve">
+  <value>Tražena inventura nije pronađena.</value>
+</data>
+
+	<data name="BackToInventories" xml:space="preserve">
+  <value>Natrag na inventure</value>
+</data>
+
+	<data name="CurrentInventoryStatus" xml:space="preserve">
+  <value>Trenutni status inventure.</value>
+</data>
+
+	<data name="WarehouseCannotBeChanged" xml:space="preserve">
+  <value>Skladište se nakon pokretanja inventure više ne može promijeniti.</value>
+</data>
+
+	<data name="InventoryData" xml:space="preserve">
+  <value>Podaci o inventuri</value>
+</data>
+
+	<data name="EditInventoryAdditionalInformation" xml:space="preserve">
+  <value>Uredite dodatne informacije ove inventure.</value>
+</data>
+
+	<data name="OptionalNote" xml:space="preserve">
+  <value>Neobavezna bilješka...</value>
+</data>
+
+	<data name="InventoryPositions" xml:space="preserve">
+  <value>Stavke inventure</value>
+</data>
+
+	<data name="InventoryPositionsOverview" xml:space="preserve">
+  <value>Pregled svih stavki ove inventure.</value>
+</data>
+
+	<data name="NoPositionsAvailable" xml:space="preserve">
+  <value>Nema dostupnih stavki</value>
+</data>
+
+	<data name="InventoryContainsNoPositions" xml:space="preserve">
+  <value>Ova inventura ne sadrži stavke.</value>
+</data>
+
+	<data name="StorageLocation" xml:space="preserve">
+  <value>Skladišna lokacija</value>
+</data>
+
+	<data name="SystemStock" xml:space="preserve">
+  <value>Sustavna zaliha</value>
+</data>
+
+	<data name="Counted" xml:space="preserve">
+  <value>Prebrojano</value>
+</data>
+
+	<data name="Difference" xml:space="preserve">
+  <value>Razlika</value>
+</data>
+
+	<data name="NotYetCounted" xml:space="preserve">
+  <value>Još nije prebrojano</value>
+</data>
+
+	<data name="InventoryLoadError" xml:space="preserve">
+  <value>Inventuru nije moguće učitati: {0}</value>
+</data>
+
+	<data name="CompletedInventoryCannotBeEdited" xml:space="preserve">
+  <value>Završena inventura više se ne može uređivati.</value>
+</data>
+
+	<data name="NoteMaximum500Characters" xml:space="preserve">
+  <value>Bilješka smije sadržavati najviše 500 znakova.</value>
+</data>
+
+	<data name="InventoryAlreadyCompleted" xml:space="preserve">
+  <value>Inventura je već završena.</value>
+</data>
+
+	<data name="InventorySavedSuccessfully" xml:space="preserve">
+  <value>Inventura je uspješno spremljena.</value>
+</data>
+
+	<data name="InventorySaveError" xml:space="preserve">
+  <value>Inventuru nije moguće spremiti: {0}</value>
+</data>
+	<data name="ConfirmPurchaseOrderQuestion" xml:space="preserve">
+    <value>Želite li zaista potvrditi narudžbenicu?</value>
+</data>
+	<data name="InventoryReport" xml:space="preserve">
+    <value>Izvještaj o inventuri</value>
+</data>
+
+	<data name="InventoryReportDescription" xml:space="preserve">
+    <value>Pregled provedenih inventura i odstupanja u zalihama.</value>
+</data>
+
+	<data name="SearchWarehouseOrNotePlaceholder" xml:space="preserve">
+    <value>Pretražite skladište ili bilješku...</value>
+</data>
+
+	<data name="AllWarehouses" xml:space="preserve">
+    <value>Sva skladišta</value>
+</data>
+
+	<data name="FilterActive" xml:space="preserve">
+    <value>Filtar je aktivan</value>
+</data>
+
+	<data name="DifferentPositions" xml:space="preserve">
+    <value>Stavke s razlikom</value>
+</data>
+
+	<data name="TotalDifference" xml:space="preserve">
+    <value>Ukupna razlika</value>
+</data>
+
+	<data name="InventoryHistory" xml:space="preserve">
+    <value>Povijest inventura</value>
+</data>
+
+	<data name="NoInventoriesMatchFilters" xml:space="preserve">
+    <value>Za odabrane filtre nisu pronađene inventure.</value>
+</data>
+
+	<data name="PageOf" xml:space="preserve">
+    <value>Stranica {0} od {1}</value>
+</data>
+
+	<data name="PaginationInventories" xml:space="preserve">
+    <value>{0} od {1} inventura</value>
+</data>
+	<data name="LowStockReport" xml:space="preserve">
+    <value>Niske zalihe</value>
+</data>
+
+	<data name="LowStockReportDescription" xml:space="preserve">
+    <value>Proizvodi s niskim ili kritičnim zalihama</value>
+</data>
+
+	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
+    <value>Pretražite proizvod, SKU ili barkod...</value>
+</data>
+
+	<data name="AllWarehouses" xml:space="preserve">
+    <value>Sva skladišta</value>
+</data>
+
+	<data name="AllLocations" xml:space="preserve">
+    <value>Sve lokacije</value>
+</data>
+
+	<data name="LowStock" xml:space="preserve">
+    <value>Niske zalihe</value>
+</data>
+
+	<data name="AffectedPositions" xml:space="preserve">
+    <value>Pogođene stavke</value>
+</data>
+
+	<data name="Critical" xml:space="preserve">
+    <value>Kritično</value>
+</data>
+
+	<data name="NoAvailableStock" xml:space="preserve">
+    <value>Nema dostupnih zaliha</value>
+</data>
+
+	<data name="TotalStock" xml:space="preserve">
+    <value>Ukupne zalihe</value>
+</data>
+
+	<data name="CurrentStock" xml:space="preserve">
+    <value>Trenutne zalihe</value>
+</data>
+
+	<data name="Available" xml:space="preserve">
+    <value>Dostupno</value>
+</data>
+
+	<data name="AfterReservations" xml:space="preserve">
+    <value>Nakon rezervacija</value>
+</data>
+
+	<data name="Shortage" xml:space="preserve">
+    <value>Nedostatak</value>
+</data>
+
+	<data name="UntilMinimumStock" xml:space="preserve">
+    <value>Do minimalne zalihe</value>
+</data>
+
+	<data name="Entries" xml:space="preserve">
+    <value>zapisa</value>
+</data>
+
+	<data name="LoadingLowStock" xml:space="preserve">
+    <value>Učitavanje niskih zaliha...</value>
+</data>
+
+	<data name="NoLowStock" xml:space="preserve">
+    <value>Nema niskih zaliha</value>
+</data>
+
+	<data name="NoLowStockForFilters" xml:space="preserve">
+    <value>Za odabrane filtre nisu pronađeni proizvodi s niskim zalihama.</value>
+</data>
+
+	<data name="Reserved" xml:space="preserve">
+    <value>Rezervirano</value>
+</data>
+
+	<data name="PageOf" xml:space="preserve">
+    <value>Stranica {0} od {1}</value>
+</data>
+
+	<data name="PaginationItems" xml:space="preserve">
+    <value>{0} od {1} stavki</value>
+</data>
+	<data name="StockMovementsReport" xml:space="preserve">
+    <value>Izvještaj o kretanju zaliha</value>
+</data>
+
+	<data name="StockMovementsReportDescription" xml:space="preserve">
+    <value>Pregled i povijest svih kretanja zaliha.</value>
+</data>
+
+	<data name="SearchProductSkuBarcodeSupplierReferencePlaceholder" xml:space="preserve">
+    <value>Pretražite proizvod, SKU, barkod, dobavljača ili referencu...</value>
+</data>
+
+	<data name="AllMovements" xml:space="preserve">
+    <value>Sva kretanja</value>
+</data>
+
+	<data name="Correction" xml:space="preserve">
+    <value>Korekcija</value>
+</data>
+
+	<data name="LoadingMovements" xml:space="preserve">
+    <value>Učitavanje kretanja...</value>
+</data>
+
+	<data name="Transfers" xml:space="preserve">
+    <value>Premještanja</value>
+</data>
+
+	<data name="NoMovementsFound" xml:space="preserve">
+    <value>Nema pronađenih kretanja</value>
+</data>
+
+	<data name="NoMovementsForFilters" xml:space="preserve">
+    <value>Za odabrane filtre nisu pronađena kretanja.</value>
+</data>
+
+	<data name="Type" xml:space="preserve">
+    <value>Vrsta</value>
+</data>
+
+	<data name="Reference" xml:space="preserve">
+    <value>Referenca</value>
+</data>
+
+	<data name="PaginationMovements" xml:space="preserve">
+    <value>{0} od {1} kretanja</value>
+</data>
+	<data name="ProductReport" xml:space="preserve">
+    <value>Izvještaj o proizvodima</value>
+</data>
+
+	<data name="ProductReportDescription" xml:space="preserve">
+    <value>Analizirajte zalihe i kretanja pojedinačnih proizvoda.</value>
+</data>
+
+	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
+    <value>Pretražite proizvod, SKU ili barkod...</value>
+</data>
+
+	<data name="AllCategories" xml:space="preserve">
+    <value>Sve kategorije</value>
+</data>
+
+	<data name="Products" xml:space="preserve">
+    <value>Proizvodi</value>
+</data>
+
+	<data name="FilteredProducts" xml:space="preserve">
+    <value>Filtrirani proizvodi</value>
+</data>
+
+	<data name="TotalStock" xml:space="preserve">
+    <value>Ukupne zalihe</value>
+</data>
+
+	<data name="CurrentQuantity" xml:space="preserve">
+    <value>Trenutna količina</value>
+</data>
+
+	<data name="IncomingEntries" xml:space="preserve">
+    <value>Ulazi</value>
+</data>
+
+	<data name="OutgoingEntries" xml:space="preserve">
+    <value>Izlazi</value>
+</data>
+
+	<data name="TotalMovements" xml:space="preserve">
+    <value>Ukupna kretanja</value>
+</data>
+
+	<data name="Category" xml:space="preserve">
+    <value>Kategorija</value>
+</data>
+
+	<data name="StockValue" xml:space="preserve">
+    <value>Vrijednost zaliha</value>
+</data>
+
+	<data name="LastMovement" xml:space="preserve">
+    <value>Posljednje kretanje</value>
+</data>
+
+	<data name="LoadingProductData" xml:space="preserve">
+    <value>Učitavanje podataka o proizvodima...</value>
+</data>
+
+	<data name="NoProductsFound" xml:space="preserve">
+    <value>Nema pronađenih proizvoda</value>
+</data>
+
+	<data name="NoProductsForFilters" xml:space="preserve">
+    <value>Za odabrane filtre nisu pronađeni proizvodi.</value>
+</data>
+
+	<data name="PaginationProducts" xml:space="preserve">
+    <value>{0} od {1} proizvoda</value>
+</data>
+
+	<data name="PurchasePrice" xml:space="preserve">
+    <value>Nabavna cijena</value>
+</data>
+	<data name="StockReport" xml:space="preserve"><value>Izvještaj o zalihama</value></data>
+	<data name="StockReportDescription" xml:space="preserve"><value>Trenutne zalihe prema proizvodu i skladišnoj lokaciji.</value></data>
+	<data name="LoadingStock" xml:space="preserve"><value>Učitavanje zaliha...</value></data>
+	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve"><value>Pretražite proizvod, SKU ili barkod...</value></data>
+	<data name="AllStock" xml:space="preserve"><value>Sve zalihe</value></data>
+	<data name="StockOk" xml:space="preserve"><value>Zaliha je u redu</value></data>
+	<data name="NoStock" xml:space="preserve"><value>Nema zaliha</value></data>
+	<data name="NoStockFound" xml:space="preserve"><value>Nema pronađenih zaliha</value></data>
+	<data name="NoStockForFilters" xml:space="preserve"><value>Za trenutne filtre nisu pronađeni podaci o zalihama.</value></data>
+	<data name="Low" xml:space="preserve"><value>Nisko</value></data>
+	<data name="PaginationStock" xml:space="preserve"><value>{0} od {1} zapisa</value></data>
+	<data name="Ok" xml:space="preserve"><value>U redu</value></data>
+	<data name="SupplierReport" xml:space="preserve">
+    <value>Izvještaj o dobavljačima</value>
+</data>
+	<data name="SupplierReportDescription" xml:space="preserve">
+    <value>Pregled dobavljača i kretanja robe</value>
+</data>
+	<data name="NewSupplier" xml:space="preserve">
+    <value>Novi dobavljač</value>
+</data>
+	<data name="SearchSupplierPlaceholder" xml:space="preserve">
+    <value>Pretražite dobavljača, broj, kontakt ili e-poštu...</value>
+</data>
+	<data name="AllSuppliers" xml:space="preserve">
+    <value>Svi dobavljači</value>
+</data>
+	<data name="ActiveSuppliers" xml:space="preserve">
+    <value>Aktivni dobavljači</value>
+</data>
+	<data name="InactiveSuppliers" xml:space="preserve">
+    <value>Neaktivni dobavljači</value>
+</data>
+	<data name="FilteredSuppliers" xml:space="preserve">
+    <value>Filtrirani dobavljači</value>
+</data>
+	<data name="ReceivedQuantity" xml:space="preserve">
+    <value>Primljena količina</value>
+</data>
+	<data name="TotalQuantity" xml:space="preserve">
+    <value>Ukupna količina</value>
+</data>
+	<data name="AssignedPurchaseOrders" xml:space="preserve">
+    <value>Povezane narudžbenice</value>
+</data>
+	<data name="SuppliersOverview" xml:space="preserve">
+    <value>Pregled dobavljača</value>
+</data>
+	<data name="PaginationEntries" xml:space="preserve">
+    <value>{0} zapisa</value>
+</data>
+	<data name="LoadingSuppliers" xml:space="preserve">
+    <value>Učitavanje dobavljača...</value>
+</data>
+	<data name="NoSuppliersFound" xml:space="preserve">
+    <value>Nema pronađenih dobavljača</value>
+</data>
+	<data name="NoSuppliersForSearch" xml:space="preserve">
+    <value>Za trenutnu pretragu nisu pronađeni dobavljači.</value>
+</data>
+	<data name="SupplierNumber" xml:space="preserve">
+    <value>Broj dobavljača</value>
+</data>
+	<data name="ContactPerson" xml:space="preserve">
+    <value>Kontakt osoba</value>
+</data>
+	<data name="LastMovement" xml:space="preserve">
+    <value>Posljednje kretanje</value>
+</data>
+	<data name="PaginationSuppliers" xml:space="preserve">
+    <value>{0} od {1} dobavljača</value>
+</data>
+	<data name="StockValueReport" xml:space="preserve"><value>Vrijednost zaliha</value></data>
+	<data name="StockValueReportDescription" xml:space="preserve"><value>Ukupna vrijednost trenutnih zaliha</value></data>
+	<data name="PurchaseValue" xml:space="preserve"><value>Nabavna vrijednost</value></data>
+	<data name="SaleValue" xml:space="preserve"><value>Prodajna vrijednost</value></data>
+	<data name="AtPurchasePrice" xml:space="preserve"><value>Po nabavnoj cijeni</value></data>
+	<data name="AtSalePrice" xml:space="preserve"><value>Po prodajnoj cijeni</value></data>
+	<data name="CurrentQuantity" xml:space="preserve"><value>Trenutna količina</value></data>
+	<data name="StockPositions" xml:space="preserve"><value>Skladišne pozicije</value></data>
+	<data name="StockValueOverview" xml:space="preserve"><value>Vrijednost zaliha</value></data>
+	<data name="LoadingStockValues" xml:space="preserve"><value>Učitavanje vrijednosti zaliha...</value></data>
+	<data name="NoStockBalances" xml:space="preserve"><value>Nema zaliha</value></data>
+	<data name="NoStockBalancesForFilters" xml:space="preserve"><value>Za odabrane filtre nisu pronađene zalihe.</value></data>
+	<data name="SalePrice" xml:space="preserve"><value>Prodajna cijena</value></data>
+	<data name="SaleValue" xml:space="preserve"><value>Prodajna vrijednost</value></data>
+	<data name="WarehousesOverviewDescription" xml:space="preserve">
+    <value>Upravljajte svojim skladištima i lokacijama.</value>
+</data>
+	<data name="NewWarehouse" xml:space="preserve">
+    <value>Novo skladište</value>
+</data>
+	<data name="SearchWarehousePlaceholder" xml:space="preserve">
+    <value>Pretražite skladište...</value>
+</data>
+	<data name="WarehouseList" xml:space="preserve">
+    <value>Popis skladišta</value>
+</data>
+	<data name="PaginationWarehouses" xml:space="preserve">
+    <value>{0} skladišta</value>
+</data>
+	<data name="LoadingWarehouses" xml:space="preserve">
+    <value>Učitavanje skladišta...</value>
+</data>
+	<data name="NoWarehousesFound" xml:space="preserve">
+    <value>Nema pronađenih skladišta</value>
+</data>
+	<data name="NoWarehousesForFilters" xml:space="preserve">
+    <value>Za trenutne filtre nisu pronađena skladišta.</value>
+</data>
+	<data name="StorageLocations" xml:space="preserve">
+    <value>Skladišne lokacije</value>
+</data>
+	<data name="Deactivate" xml:space="preserve">
+    <value>Deaktiviraj</value>
+</data>
+	<data name="DeactivateWarehouseQuestion" xml:space="preserve">
+    <value>Deaktivirati skladište?</value>
+</data>
+	<data name="DeactivateWarehouseText" xml:space="preserve">
+    <value>Želite li</value>
+</data>
+	<data name="DeactivateWarehouseConfirm" xml:space="preserve">
+    <value>zaista deaktivirati?</value>
+</data>
+	<data name="WarehouseWillNotBeDeleted" xml:space="preserve">
+    <value>Skladište neće biti obrisano. Samo će biti označeno kao neaktivno.</value>
+</data>
+	<data name="WarehouseContainsLocations" xml:space="preserve">
+    <value>Ovo skladište sadrži {0} skladišnih lokacija.</value>
+</data>
+	<data name="LocationsWillRemain" xml:space="preserve">
+    <value>Lokacije će ostati sačuvane.</value>
+</data>
+	<data name="EditWarehouse" xml:space="preserve">
+    <value>Uredi skladište</value>
+</data>
+	<data name="LoadingWarehouse" xml:space="preserve">
+    <value>Učitavanje skladišta...</value>
+</data>
+	<data name="WarehouseNotFound" xml:space="preserve">
+    <value>Skladište nije pronađeno</value>
+</data>
+	<data name="BackToWarehouses" xml:space="preserve">
+    <value>Natrag na skladišta</value>
+</data>
+	<data name="WarehouseInformation" xml:space="preserve">
+    <value>Informacije o skladištu</value>
+</data>
+	<data name="EditWarehouseInformationDescription" xml:space="preserve">
+    <value>Uredite podatke o skladištu.</value>
+</data>
+	<data name="WarehouseIsActive" xml:space="preserve">
+    <value>Skladište je aktivno</value>
+</data>
+	<data name="SaveChanges" xml:space="preserve">
+    <value>Spremi promjene</value>
+</data>
+	<data name="WarehouseNameAlreadyExists" xml:space="preserve">
+    <value>Drugo skladište s ovim nazivom već postoji.</value>
+</data>
+	<data name="CreateNewWarehouseDescription" xml:space="preserve">
+    <value>Izradite novo skladište.</value>
+</data>
+	<data name="BasicWarehouseInformation" xml:space="preserve">
+    <value>Osnovne informacije o skladištu.</value>
+</data>
+	<data name="WarehouseNamePlaceholder" xml:space="preserve">
+    <value>npr. Glavno skladište Zagreb</value>
+</data>
+	<data name="WarehouseDescriptionPlaceholder" xml:space="preserve">
+    <value>Opis...</value>
+</data>
+	<data name="SaveWarehouse" xml:space="preserve">
+    <value>Spremi skladište</value>
+</data>
+	<data name="StorageLocationsOverviewDescription" xml:space="preserve">
+    <value>Upravljajte svojim skladišnim lokacijama.</value>
+</data>
+	<data name="NewStorageLocation" xml:space="preserve">
+    <value>Nova skladišna lokacija</value>
+</data>
+	<data name="SearchLocationPlaceholder" xml:space="preserve">
+    <value>Pretražite kod, naziv ili skladište...</value>
+</data>
+	<data name="StorageLocationList" xml:space="preserve">
+    <value>Popis skladišnih lokacija</value>
+</data>
+	<data name="PaginationStorageLocations" xml:space="preserve">
+    <value>{0} skladišnih lokacija</value>
+</data>
+	<data name="LoadingStorageLocations" xml:space="preserve">
+    <value>Učitavanje skladišnih lokacija...</value>
+</data>
+	<data name="NoStorageLocationsFound" xml:space="preserve">
+    <value>Nema pronađenih skladišnih lokacija</value>
+</data>
+	<data name="NoStorageLocationsForFilters" xml:space="preserve">
+    <value>Za trenutne filtre nisu pronađene skladišne lokacije.</value>
+</data>
+	<data name="DeactivateStorageLocationQuestion" xml:space="preserve">
+    <value>Deaktivirati skladišnu lokaciju?</value>
+</data>
+	<data name="DeactivateStorageLocationText" xml:space="preserve">
+    <value>Želite li</value>
+</data>
+	<data name="StorageLocationContainsStock" xml:space="preserve">
+    <value>Ova skladišna lokacija još uvijek sadrži zalihe.</value>
+</data>
+	<data name="MoveStockBeforeDeactivation" xml:space="preserve">
+    <value>Najprije premjestite zalihe.</value>
+</data>
+	<data name="StorageLocationWillNotBeDeleted" xml:space="preserve">
+    <value>Skladišna lokacija neće biti obrisana. Samo će biti označena kao neaktivna.</value>
+</data>
+	<data name="EditStorageLocation" xml:space="preserve">
+    <value>Uredi skladišnu lokaciju</value>
+</data>
+	<data name="LoadingStorageLocation" xml:space="preserve">
+    <value>Učitavanje skladišne lokacije...</value>
+</data>
+	<data name="StorageLocationNotFound" xml:space="preserve">
+    <value>Skladišna lokacija nije pronađena</value>
+</data>
+	<data name="StorageLocationInformation" xml:space="preserve">
+    <value>Informacije o skladišnoj lokaciji</value>
+</data>
+	<data name="SelectWarehouse" xml:space="preserve">
+    <value>Odaberite skladište</value>
+</data>
+	<data name="StorageLocationIsActive" xml:space="preserve">
+    <value>Skladišna lokacija je aktivna</value>
+</data>
+	<data name="SelectedWarehouseNotFound" xml:space="preserve">
+    <value>Odabrano skladište nije pronađeno.</value>
+</data>
+	<data name="StorageLocationCodeAlreadyExists" xml:space="preserve">
+    <value>Ovaj kod skladišne lokacije već postoji u odabranom skladištu.</value>
+</data>
+	<data name="WarehouseRequired" xml:space="preserve">
+    <value>Odaberite skladište.</value>
+</data>
+	<data name="CodeRequired" xml:space="preserve">
+    <value>Kod je obavezan.</value>
+</data>
+	<data name="CreateNewStorageLocationDescription" xml:space="preserve">
+  <value>Izradite novu skladišnu lokaciju u skladištu.</value>
+</data>
+	<data name="StorageLocationInformation" xml:space="preserve">
+  <value>Informacije o skladišnoj lokaciji</value>
+</data>
+	<data name="StorageLocationInformationDescription" xml:space="preserve">
+  <value>Unesite poziciju skladišne lokacije.</value>
+</data>
+	<data name="StorageLocationCodePlaceholder" xml:space="preserve">
+  <value>npr. A-01-01</value>
+</data>
+	<data name="StorageLocationNamePlaceholder" xml:space="preserve">
+  <value>npr. Regal A - Polica 01</value>
+</data>
+	<data name="StorageLocationDescriptionPlaceholder" xml:space="preserve">
+  <value>Opis...</value>
+</data>
+	<data name="SaveStorageLocation" xml:space="preserve">
+  <value>Spremi skladišnu lokaciju</value>
+</data>
+	<data name="CloseMenu" xml:space="preserve">
+  <value>Zatvori izbornik</value>
+</data>
+
+	<data name="Overview" xml:space="preserve">
+  <value>PREGLED</value>
+</data>
+
+	<data name="WarehouseSection" xml:space="preserve">
+  <value>SKLADIŠTE</value>
+</data>
+
+	<data name="StockSection" xml:space="preserve">
+  <value>ZALIHE</value>
+</data>
+
+	<data name="Administration" xml:space="preserve">
+  <value>UPRAVLJANJE</value>
+</data>
+
+	<data name="Analysis" xml:space="preserve">
+  <value>ANALIZA</value>
+</data>
+
+	<data name="SupplierOrders" xml:space="preserve">
+  <value>Narudžbenice dobavljača</value>
+</data>
+
+	<data name="UserManagement" xml:space="preserve">
+  <value>Upravljanje korisnicima</value>
+</data>
+
+	<data name="RoleManagement" xml:space="preserve">
+  <value>Upravljanje ulogama</value>
+</data>
 </root>

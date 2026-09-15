@@ -1,18 +1,22 @@
 ﻿@page "/inventory"
 @attribute [Authorize]
 @rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
 @using WarehouseManagement.Models
 @using WarehouseManagement.Data
 @using WarehouseManagement.Services
+@using Microsoft.Extensions.Localization
+@using WarehouseManagement.Localization
 
 @inject ApplicationDbContext Db
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Inventuren</PageTitle>
+<PageTitle>@L["Inventories"]</PageTitle>
 
 <div class="stock-page">
 
@@ -25,38 +29,40 @@
         <div>
 
             <h1>
-                Inventuren
+                @L["Inventories"]
             </h1>
 
             <p>
-                Übersicht und Verwaltung der Inventuren
+                @L["InventoriesOverviewDescription"]
             </p>
 
         </div>
+
         <div>
+
             <button type="button"
                     class="btn-secondary"
                     @onclick="ExportExcel">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
+
             <a href="/inventory/create"
                class="btn-primary">
 
-                Neue Inventur
+                @L["NewInventory"]
 
             </a>
+
         </div>
+
     </div>
 
 
     <!-- =========================================================
          FILTER
          ========================================================= -->
-    <!-- =========================================================
-     FILTER
-     ========================================================= -->
 
     <div class="filter-card">
 
@@ -70,7 +76,7 @@
 
                 <input type="text"
                        class="search-input"
-                       placeholder="Lager, Status oder Notiz suchen..."
+                       placeholder="@L["SearchInventoryPlaceholder"]"
                        value="@SearchText"
                        @oninput="SearchChanged" />
 
@@ -84,19 +90,19 @@
                     @bind:after="StatusChanged">
 
                 <option value="">
-                    Alle Status
+                    @L["AllStatuses"]
                 </option>
 
                 <option value="Entwurf">
-                    Entwurf
+                    @L["Draft"]
                 </option>
 
                 <option value="InBearbeitung">
-                    In Bearbeitung
+                    @L["InProgress"]
                 </option>
 
                 <option value="Abgeschlossen">
-                    Abgeschlossen
+                    @L["Completed"]
                 </option>
 
             </select>
@@ -104,6 +110,7 @@
         </div>
 
     </div>
+
 
     <!-- =========================================================
          SUMMARY
@@ -116,7 +123,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamt
+                @L["Total"]
             </span>
 
             <strong>
@@ -131,7 +138,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Offen
+                @L["Open"]
             </span>
 
             <strong class="text-warning">
@@ -149,7 +156,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Abgeschlossen
+                @L["Completed"]
             </span>
 
             <strong class="text-success">
@@ -177,11 +184,11 @@
             <div>
 
                 <strong>
-                    Inventuren
+                    @L["Inventories"]
                 </strong>
 
                 <span>
-                    @FilteredInventories.Count() Einträge
+                    @FilteredInventories.Count() @L["Entries"]
                 </span>
 
             </div>
@@ -201,7 +208,7 @@
                 </div>
 
                 <div>
-                    Inventuren werden geladen...
+                    @L["LoadingInventories"]
                 </div>
 
             </div>
@@ -220,7 +227,7 @@
 
 
                     <h3>
-                        Keine Inventuren gefunden
+                        @L["NoInventoriesFound"]
                     </h3>
 
 
@@ -228,7 +235,7 @@
                          !string.IsNullOrWhiteSpace(SelectedStatus))
                     {
                         <p>
-                            Keine Inventur entspricht Ihren Suchkriterien.
+                            @L["NoInventoryMatchesSearchCriteria"]
                         </p>
 
 
@@ -238,14 +245,14 @@
 
                             <i class="bi bi-arrow-counterclockwise me-1"></i>
 
-                            Filter zurücksetzen
+                            @L["ResetFilters"]
 
                         </button>
                     }
                     else
                     {
                         <p>
-                            Es wurden noch keine Inventuren erstellt.
+                            @L["NoInventoriesCreated"]
                         </p>
 
 
@@ -254,7 +261,7 @@
 
                             <i class="bi bi-plus-lg me-1"></i>
 
-                            Neue Inventur
+                            @L["NewInventory"]
 
                         </a>
                     }
@@ -272,27 +279,27 @@
                             <tr>
 
                                 <th>
-                                    Lager
+                                    @L["Warehouse"]
                                 </th>
 
                                 <th>
-                                    Status
+                                    @L["Status"]
                                 </th>
 
                                 <th>
-                                    Positionen
+                                    @L["Positions"]
                                 </th>
 
                                 <th>
-                                    Erstellt am
+                                    @L["CreatedAt"]
                                 </th>
 
                                 <th>
-                                    Abgeschlossen am
+                                    @L["CompletedAt"]
                                 </th>
 
                                 <th class="text-end">
-                                    Aktionen
+                                    @L["Actions"]
                                 </th>
 
                             </tr>
@@ -357,7 +364,7 @@
 
                                                 <i class="bi bi-pencil me-1"></i>
 
-                                                Entwurf
+                                                @L["Draft"]
 
                                             </span>
                                         }
@@ -368,7 +375,7 @@
 
                                                 <i class="bi bi-arrow-repeat me-1"></i>
 
-                                                In Bearbeitung
+                                                @L["InProgress"]
 
                                             </span>
                                         }
@@ -379,7 +386,7 @@
 
                                                 <i class="bi bi-check-circle me-1"></i>
 
-                                                Abgeschlossen
+                                                @L["Completed"]
 
                                             </span>
                                         }
@@ -387,7 +394,7 @@
                                         {
                                             <span class="status-badge">
 
-                                                @inventory.Status
+                                                @GetStatusText(inventory.Status)
 
                                             </span>
                                         }
@@ -406,7 +413,7 @@
                                         </strong>
 
                                         <span class="text-muted ms-1">
-                                            Positionen
+                                            @L["Positions"]
                                         </span>
 
                                     </td>
@@ -467,7 +474,7 @@
 
                                             <a href="/inventory/details/@inventory.Id"
                                                class="action-button"
-                                               title="Details">
+                                               title="@L["Details"]">
 
                                                 👁
 
@@ -480,7 +487,7 @@
                                             {
                                                 <a href="/inventory/edit/@inventory.Id"
                                                    class="action-button"
-                                                   title="Bearbeiten">
+                                                   title="@L["Edit"]">
 
                                                     ✎
 
@@ -551,8 +558,8 @@
 
                 <div class="pagination-info">
 
-                    Seite @CurrentPage von @TotalPages
-                    · @PagedInventories.Count von @FilteredInventories.Count() Inventuren
+                    @L["Page"] @CurrentPage @L["Of"] @TotalPages
+                    · @PagedInventories.Count @L["Of"] @FilteredInventories.Count() @L["Inventories"]
 
                 </div>
 
@@ -779,36 +786,36 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Inventuren",
-                    $"Inventuren – Seite {CurrentPage}",
+                    L["Inventories"].Value,
+                    $"{L["Inventories"].Value} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Lager",
+                        L["Warehouse"].Value,
                         x => x.Warehouse?.Name ?? ""
                     ),
 
                     (
-                        "Status",
+                        L["Status"].Value,
                         x => GetStatusText(x.Status)
                     ),
 
                     (
-                        "Positionen",
+                        L["Positions"].Value,
                         x => x.Items?.Count ?? 0
                     ),
 
                     (
-                        "Erstellt am",
+                        L["CreatedAt"].Value,
                         x => x.CreatedAt
                     ),
 
                     (
-                        "Abgeschlossen am",
+                        L["CompletedAt"].Value,
                         x => x.CompletedAt
                     ),
 
                     (
-                        "Notiz",
+                        L["Note"].Value,
                         x => x.Note ?? ""
                     )
                 );
@@ -820,14 +827,14 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Inventuren_Seite_{CurrentPage}.xlsx",
+                $"{L["Inventories"].Value}_Seite_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 base64);
         }
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Excel-Export: {ex}");
+                $"Excel export error: {ex}");
         }
     }
 
@@ -841,13 +848,13 @@
         return status switch
         {
             InventoryStatus.Entwurf =>
-                "Entwurf",
+                L["Draft"].Value,
 
             InventoryStatus.InBearbeitung =>
-                "In Bearbeitung",
+                L["InProgress"].Value,
 
             InventoryStatus.Abgeschlossen =>
-                "Abgeschlossen",
+                L["Completed"].Value,
 
             _ =>
                 status.ToString()

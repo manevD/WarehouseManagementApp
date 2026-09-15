@@ -4,27 +4,30 @@
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Neuer Lagerplatz</PageTitle>
+<PageTitle>@L["NewStorageLocation"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Neuer Lagerplatz</h1>
-            <p>Neuen Lagerplatz in einem Lager anlegen.</p>
+            <h1>@L["NewStorageLocation"]</h1>
+            <p>@L["CreateNewStorageLocationDescription"]</p>
         </div>
 
         <a href="/locations"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -43,10 +46,10 @@
 
                 <div class="form-section-title">
 
-                    <h2>Lagerplatzinformationen</h2>
+                    <h2>@L["StorageLocationInformation"]</h2>
 
                     <p>
-                        Geben Sie die Position des Lagerplatzes an.
+                        @L["StorageLocationInformationDescription"]
                     </p>
 
                 </div>
@@ -59,14 +62,14 @@
                     <div class="form-group">
 
                         <label>
-                            Lager <span>*</span>
+                            @L["Warehouse"] <span>*</span>
                         </label>
 
                         <InputSelect @bind-Value="Model.WarehouseId"
                                      class="form-control">
 
                             <option value="0">
-                                Lager auswählen
+                                @L["SelectWarehouse"]
                             </option>
 
                             @foreach (var warehouse in Warehouses)
@@ -88,12 +91,12 @@
                     <div class="form-group">
 
                         <label>
-                            Code <span>*</span>
+                            @L["Code"] <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.Code"
                                    class="form-control"
-                                   placeholder="z.B. A-01-01" />
+                                   placeholder="@L["StorageLocationCodePlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.Code)" />
 
@@ -104,11 +107,11 @@
 
                     <div class="form-group">
 
-                        <label>Name</label>
+                        <label>@L["Name"]</label>
 
                         <InputText @bind-Value="Model.Name"
                                    class="form-control"
-                                   placeholder="z.B. Regal A - Fach 01" />
+                                   placeholder="@L["StorageLocationNamePlaceholder"]" />
 
                     </div>
 
@@ -122,7 +125,7 @@
                             <InputCheckbox @bind-Value="Model.IsActive" />
 
                             <span>
-                                Lagerplatz ist aktiv
+                                @L["StorageLocationIsActive"]
                             </span>
 
                         </label>
@@ -140,7 +143,7 @@
 
                 <div class="form-section-title">
 
-                    <h2>Beschreibung</h2>
+                    <h2>@L["Description"]</h2>
 
                 </div>
 
@@ -149,7 +152,7 @@
                     <InputTextArea @bind-Value="Model.Description"
                                    class="form-control textarea"
                                    rows="5"
-                                   placeholder="Beschreibung..." />
+                                   placeholder="@L["StorageLocationDescriptionPlaceholder"]" />
 
                 </div>
 
@@ -169,7 +172,7 @@
                 <a href="/locations"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -178,8 +181,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Speichern..."
-                        : "Lagerplatz speichern")
+                        ? L["Saving"]
+                        : L["SaveStorageLocation"])
 
                 </button>
 
@@ -242,7 +245,7 @@
             if (!warehouseExists)
             {
                 ErrorMessage =
-                    "Das ausgewählte Lager wurde nicht gefunden.";
+                    L["SelectedWarehouseNotFound"].Value;
 
                 return;
             }
@@ -259,7 +262,7 @@
             if (codeExists)
             {
                 ErrorMessage =
-                    "Dieser Lagerplatz-Code existiert in diesem Lager bereits.";
+                    L["StorageLocationCodeAlreadyExists"].Value;
 
                 return;
             }
@@ -296,7 +299,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                $"{L["ErrorSaving"].Value}: {ex.Message}";
         }
         finally
         {
@@ -310,14 +313,14 @@
         [Range(
             1,
             int.MaxValue,
-            ErrorMessage =
-                "Bitte ein Lager auswählen.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "WarehouseRequired")]
         public int WarehouseId { get; set; }
 
 
         [Required(
-            ErrorMessage =
-                "Code ist erforderlich.")]
+            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceName = "CodeRequired")]
         [MaxLength(50)]
         public string Code { get; set; }
             = string.Empty;

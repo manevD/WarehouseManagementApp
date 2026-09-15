@@ -5,25 +5,28 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Localization
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestandsbericht</PageTitle>
+<PageTitle>@L["StockReport"]</PageTitle>
 
 <div class="stock-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Bestandsbericht</h1>
+            <h1>@L["StockReport"]</h1>
 
             <p>
-                Aktueller Lagerbestand nach Produkt und Lagerplatz.
+                @L["StockReportDescription"]
             </p>
         </div>
 
@@ -34,14 +37,14 @@
                     @onclick="ExportExcel"
                     disabled="@(PagedStocks.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
 
             <a href="/reports"
                class="btn-secondary">
 
-                ← Berichte
+                ← @L["Reports"]
 
             </a>
 
@@ -53,7 +56,7 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Bestand wird geladen...
+            @L["LoadingStock"]
         </div>
     }
     else
@@ -72,7 +75,7 @@
                     </span>
 
                     <input type="text"
-                           placeholder="Produkt, SKU oder Barcode suchen..."
+                           placeholder="@L["SearchProductSkuBarcodePlaceholder"]"
                            @bind="SearchTerm"
                            @bind:event="oninput"
                            @bind:after="SearchChanged" />
@@ -85,7 +88,7 @@
                         @bind:after="FilterChanged">
 
                     <option value="0">
-                        Alle Lager
+                        @L["AllWarehouses"]
                     </option>
 
                     @foreach (var warehouse in Warehouses)
@@ -103,7 +106,7 @@
                         @bind:after="FilterChanged">
 
                     <option value="0">
-                        Alle Lagerplätze
+                        @L["AllLocations"]
                     </option>
 
                     @foreach (var location in FilteredLocations)
@@ -128,19 +131,19 @@
                         @bind:after="FilterChanged">
 
                     <option value="all">
-                        Alle Bestände
+                        @L["AllStock"]
                     </option>
 
                     <option value="ok">
-                        Bestand OK
+                        @L["StockOk"]
                     </option>
 
                     <option value="low">
-                        Niedrigbestand
+                        @L["LowStock"]
                     </option>
 
                     <option value="empty">
-                        Kein Bestand
+                        @L["NoStock"]
                     </option>
 
                 </select>
@@ -152,7 +155,7 @@
                             class="btn-secondary filter-reset"
                             @onclick="ResetFilters">
 
-                        Filter zurücksetzen
+                        @L["ResetFilters"]
 
                     </button>
                 }
@@ -169,7 +172,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Positionen
+                    @L["Positions"]
                 </span>
 
                 <strong>
@@ -182,7 +185,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Gesamtbestand
+                    @L["TotalStock"]
                 </span>
 
                 <strong>
@@ -195,7 +198,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Reserviert
+                    @L["Reserved"]
                 </span>
 
                 <strong>
@@ -208,7 +211,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Verfügbar
+                    @L["Available"]
                 </span>
 
                 <strong>
@@ -221,7 +224,7 @@
             <div class="stock-summary-card">
 
                 <span>
-                    Niedrigbestand
+                    @L["LowStock"]
                 </span>
 
                 <strong>
@@ -246,12 +249,11 @@
                     </div>
 
                     <h3>
-                        Keine Bestände gefunden
+                        @L["NoStockFound"]
                     </h3>
 
                     <p>
-                        Für die aktuellen Filter wurden keine
-                        Bestandsdaten gefunden.
+                        @L["NoStockForFilters"]
                     </p>
 
                 </div>
@@ -267,14 +269,14 @@
 
                             <tr>
 
-                                <th>Produkt</th>
-                                <th>SKU</th>
-                                <th>Lager</th>
-                                <th>Lagerplatz</th>
-                                <th>Bestand</th>
-                                <th>Reserviert</th>
-                                <th>Verfügbar</th>
-                                <th>Status</th>
+                                <th>@L["Product"]</th>
+                                <th>@L["SKU"]</th>
+                                <th>@L["Warehouse"]</th>
+                                <th>@L["StorageLocation"]</th>
+                                <th>@L["Stock"]</th>
+                                <th>@L["Reserved"]</th>
+                                <th>@L["Available"]</th>
+                                <th>@L["Status"]</th>
 
                             </tr>
 
@@ -391,20 +393,20 @@
                                         @if (stock.Quantity <= 0)
                                         {
                                             <span class="status-badge status-low">
-                                                Kein Bestand
+                                                @L["NoStock"]
                                             </span>
                                         }
                                         else if (stock.Quantity <
                                                  stock.MinimumStock)
                                         {
                                             <span class="status-badge status-warning">
-                                                Niedrig
+                                                @L["Low"]
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="status-badge status-active">
-                                                OK
+                                                @L["Ok"]
                                             </span>
                                         }
 
@@ -466,8 +468,8 @@
 
                 <div class="pagination-info">
 
-                    Seite @CurrentPage von @TotalPages
-                    · @PagedStocks.Count von @FilteredStocks.Count Einträge
+                    @L["PageOf", CurrentPage, TotalPages]
+                    · @L["PaginationStock", PagedStocks.Count, FilteredStocks.Count]
 
                 </div>
 
@@ -974,31 +976,31 @@
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Bestandsbericht",
-                    $"Bestandsbericht – Seite {CurrentPage}",
+                    L["StockReport"].Value,
+                    $"{L["StockReport"].Value} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Produkt",
+                        L["Product"].Value,
                         x => x.ProductName
                     ),
 
                     (
-                        "SKU",
+                        L["SKU"].Value,
                         x => x.SKU
                     ),
 
                     (
-                        "Barcode",
+                        L["Barcode"].Value,
                         x => x.Barcode ?? ""
                     ),
 
                     (
-                        "Lager",
+                        L["Warehouse"].Value,
                         x => x.WarehouseName
                     ),
 
                     (
-                        "Lagerplatz",
+                        L["StorageLocation"].Value,
                         x =>
                             string.IsNullOrWhiteSpace(
                                 x.LocationName)
@@ -1009,27 +1011,27 @@
                     ),
 
                     (
-                        "Bestand",
+                        L["Stock"].Value,
                         x => x.Quantity
                     ),
 
                     (
-                        "Reserviert",
+                        L["Reserved"].Value,
                         x => x.ReservedQuantity
                     ),
 
                     (
-                        "Verfügbar",
+                        L["Available"].Value,
                         x => x.AvailableQuantity
                     ),
 
                     (
-                        "Mindestbestand",
+                        L["MinimumStock"].Value,
                         x => x.MinimumStock
                     ),
 
                     (
-                        "Status",
+                        L["Status"].Value,
                         x => GetStockStatus(x)
                     )
                 );
@@ -1041,7 +1043,7 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Bestandsbericht_Seite_{CurrentPage}.xlsx",
+                $"{L["StockReport"].Value}_Seite_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 base64);
         }
@@ -1056,12 +1058,12 @@
     private string GetStockStatus(StockRow stock)
     {
         if (stock.Quantity <= 0)
-            return "Kein Bestand";
+            return L["NoStock"].Value;
 
         if (stock.Quantity < stock.MinimumStock)
-            return "Niedrig";
+            return L["Low"].Value;
 
-        return "OK";
+        return L["Ok"].Value;
     }
 
 
