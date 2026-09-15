@@ -4,8 +4,10 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
@@ -13,8 +15,9 @@
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellungen</PageTitle>
+<PageTitle>@L["Orders"]</PageTitle>
 
 <div class="product-list-page">
 
@@ -25,22 +28,25 @@
     <div class="page-header">
 
         <div>
-            <h1>Bestellungen</h1>
-            <p>Verwalten Sie Ihre Bestellungen.</p>
+            <h1>@L["Orders"]</h1>
+            <p>@L["ManageOrdersDescription"]</p>
         </div>
+
         <div>
             <button type="button"
                     class="btn-secondary"
                     @onclick="ExportExcel">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
+
             <a href="/orders/create"
                class="btn-primary">
-                + Neue Bestellung
+                + @L["NewOrder"]
             </a>
         </div>
+
     </div>
 
 
@@ -56,7 +62,7 @@
 
             <input type="text"
                    class="search-input"
-                   placeholder="Bestellnummer, Referenz oder Kunde suchen..."
+                   placeholder="@L["SearchOrderPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
                    @bind:after="SearchChanged" />
@@ -69,35 +75,35 @@
                 @bind:after="FilterChanged">
 
             <option value="0">
-                Alle Status
+                @L["AllOrderStatuses"]
             </option>
 
             <option value="@((int)OrderStatus.Entwurf)">
-                Entwurf
+                @L["OrderStatusDraft"]
             </option>
 
             <option value="@((int)OrderStatus.Bestätigt)">
-                Bestätigt
+                @L["OrderStatusConfirmed"]
             </option>
 
             <option value="@((int)OrderStatus.InBearbeitung)">
-                In Bearbeitung
+                @L["OrderStatusInProgress"]
             </option>
 
             <option value="@((int)OrderStatus.TeilweiseGeliefert)">
-                Teilweise geliefert
+                @L["OrderStatusPartiallyDelivered"]
             </option>
 
             <option value="@((int)OrderStatus.Versendet)">
-                Versendet
+                @L["OrderStatusShipped"]
             </option>
 
             <option value="@((int)OrderStatus.Abgeschlossen)">
-                Abgeschlossen
+                @L["OrderStatusCompleted"]
             </option>
 
             <option value="@((int)OrderStatus.Storniert)">
-                Storniert
+                @L["OrderStatusCancelled"]
             </option>
 
         </select>
@@ -113,7 +119,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Bestellungen</span>
+            <span>@L["Orders"]</span>
 
             <strong>
                 @Orders.Count
@@ -124,7 +130,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Offen</span>
+            <span>@L["Open"]</span>
 
             <strong>
                 @OpenCount
@@ -135,7 +141,7 @@
 
         <div class="stock-summary-card">
 
-            <span>In Bearbeitung</span>
+            <span>@L["Processing"]</span>
 
             <strong>
                 @ProcessingCount
@@ -146,7 +152,7 @@
 
         <div class="stock-summary-card">
 
-            <span>Abgeschlossen</span>
+            <span>@L["Completed"]</span>
 
             <strong>
                 @CompletedCount
@@ -168,11 +174,11 @@
             <div>
 
                 <strong>
-                    Bestellungen
+                    @L["OrderList"]
                 </strong>
 
                 <span>
-                    @Orders.Count Einträge
+                    @Orders.Count @L["EntriesCount"]
                 </span>
 
             </div>
@@ -184,7 +190,7 @@
         {
             <div class="loading-state">
 
-                Bestellungen werden geladen...
+                @L["OrdersLoading"]
 
             </div>
         }
@@ -197,11 +203,11 @@
                 </div>
 
                 <h3>
-                    Keine Bestellungen gefunden
+                    @L["NoOrdersFound"]
                 </h3>
 
                 <p>
-                    Für die aktuelle Suche wurden keine Bestellungen gefunden.
+                    @L["NoOrdersForSearch"]
                 </p>
 
             </div>
@@ -216,19 +222,19 @@
 
                         <tr>
 
-                            <th>Bestellung</th>
+                            <th>@L["Order"]</th>
 
-                            <th>Datum</th>
+                            <th>@L["OrderDate"]</th>
 
-                            <th>Kunde</th>
+                            <th>@L["Customer"]</th>
 
-                            <th>Positionen</th>
+                            <th>@L["Positions"]</th>
 
-                            <th>Status</th>
+                            <th>@L["Status"]</th>
 
-                            <th>Gesamt</th>
+                            <th>@L["Total"]</th>
 
-                            <th>Aktionen</th>
+                            <th>@L["Actions"]</th>
 
                         </tr>
 
@@ -263,7 +269,7 @@
                                                 order.ReferenceNumber))
                                             {
                                                 <small>
-                                                    Ref: @order.ReferenceNumber
+                                                    @L["ReferenceShort"]: @order.ReferenceNumber
                                                 </small>
                                             }
 
@@ -347,8 +353,8 @@
                                         @order.Items.Count
 
                                         @(order.Items.Count == 1
-                                            ? "Position"
-                                            : "Positionen")
+                                            ? L["Position"]
+                                            : L["Positions"])
 
                                     </span>
 
@@ -391,7 +397,7 @@
 
                                         <button type="button"
                                                 class="action-button"
-                                                title="Bestellung duplizieren"
+                                                title="@L["DuplicateOrder"]"
                                                 @onclick="() => DuplicateOrder(order)"
                                                 disabled="@IsDuplicating">
 
@@ -402,7 +408,7 @@
 
                                         <a href="/orders/details/@order.Id"
                                            class="action-button"
-                                           title="Details">
+                                           title="@L["Details"]">
 
                                             👁
 
@@ -411,7 +417,7 @@
 
                                         <a href="/orders/edit/@order.Id"
                                            class="action-button"
-                                           title="Bearbeiten">
+                                           title="@L["Edit"]">
 
                                             ✎
 
@@ -422,7 +428,7 @@
                                         {
                                             <a href="/orders/confirm/@order.Id"
                                                class="action-button"
-                                               title="Bestellung bestätigen">
+                                               title="@L["OrderConfirm"]">
 
                                                 ✓
 
@@ -434,7 +440,7 @@
                                         {
                                             <button type="button"
                                                     class="action-button delete-button"
-                                                    title="Stornieren"
+                                                    title="@L["CancelOrder"]"
                                                     @onclick="() => CancelOrder(order)">
 
                                                 🗑
@@ -506,8 +512,11 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedOrders.Count von @Orders.Count Bestellungen
+                @L["PaginationInfoOrders",
+                    CurrentPage,
+                    TotalPages,
+                    PagedOrders.Count,
+                    Orders.Count]
 
             </div>
 
@@ -769,7 +778,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Duplizieren: {ex}");
+                $"{L["OrderDuplicateError", ex.Message]}");
         }
         finally
         {
@@ -946,49 +955,52 @@
         {
             var data = PagedOrders;
 
+
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Bestellungen",
-                    $"Bestellungen – Seite {CurrentPage}",
+
+                    L["OrdersExportTitle"],
+
+                    L["OrdersExportSheet", CurrentPage],
 
                     (
-                        "Bestellnummer",
+                        L["OrderNumber"],
                         x => x.OrderNumber
                     ),
 
                     (
-                        "Bestelldatum",
+                        L["OrderDate"],
                         x => x.OrderDate
                     ),
 
                     (
-                        "Kunde",
+                        L["Customer"],
                         x => x.Customer?.CompanyName ?? ""
                     ),
 
                     (
-                        "Kundennummer",
+                        L["CustomerNumber"],
                         x => x.Customer?.CustomerNumber ?? ""
                     ),
 
                     (
-                        "Positionen",
+                        L["Positions"],
                         x => x.Items.Count
                     ),
 
                     (
-                        "Status",
+                        L["Status"],
                         x => GetStatusText(x.Status)
                     ),
 
                     (
-                        "Gesamt",
+                        L["Total"],
                         x => x.Total
                     ),
 
                     (
-                        "Referenz",
+                        L["Reference"],
                         x => x.ReferenceNumber ?? ""
                     )
                 );
@@ -1000,14 +1012,17 @@
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
+
                 $"Bestellungen_Seite_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Excel-Export: {ex}");
+                $"Excel export error: {ex}");
         }
     }
 
@@ -1056,25 +1071,25 @@
         return status switch
         {
             OrderStatus.Entwurf =>
-                "Entwurf",
+                L["OrderStatusDraft"],
 
             OrderStatus.Bestätigt =>
-                "Bestätigt",
+                L["OrderStatusConfirmed"],
 
             OrderStatus.InBearbeitung =>
-                "In Bearbeitung",
+                L["OrderStatusInProgress"],
 
             OrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["OrderStatusPartiallyDelivered"],
 
             OrderStatus.Versendet =>
-                "Versendet",
+                L["OrderStatusShipped"],
 
             OrderStatus.Abgeschlossen =>
-                "Abgeschlossen",
+                L["OrderStatusCompleted"],
 
             OrderStatus.Storniert =>
-                "Storniert",
+                L["OrderStatusCancelled"],
 
             _ =>
                 status.ToString()

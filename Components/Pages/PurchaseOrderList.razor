@@ -5,7 +5,9 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 
@@ -13,6 +15,8 @@
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
+@inject IStringLocalizer<SharedResource> L
+
 <style>
     .filter-date-group {
         display: flex;
@@ -54,7 +58,10 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
         }
 </style>
-<PageTitle>Bestellungen</PageTitle>
+
+
+<PageTitle>@L["PurchaseOrders"]</PageTitle>
+
 
 <div class="stock-page">
 
@@ -66,37 +73,44 @@
 
         <div>
 
-            <h1>Bestellungen</h1>
+            <h1>
+                @L["PurchaseOrders"]
+            </h1>
 
             <p>
-                Übersicht über alle Bestellungen bei Lieferanten.
+                @L["ManagePurchaseOrdersDescription"]
             </p>
 
         </div>
-       <div>
+
+
+        <div>
+
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel" disabled="@(PagedOrders.Count == 0)">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedOrders.Count == 0)">
 
-                📊 Excel exportieren
+                📊 @L["ExportExcel"]
 
             </button>
-        <a href="/purchase-orders/create"
-           class="btn-primary">
 
-            + Bestellung erstellen
 
-        </a>
+            <a href="/purchase-orders/create"
+               class="btn-primary">
+
+                + @L["CreatePurchaseOrder"]
+
+            </a>
+
         </div>
+
     </div>
 
 
     <!-- =========================================================
          FILTER
          ========================================================= -->
-    <!-- =========================================================
-     FILTER
-     ========================================================= -->
 
     <div class="filter-card">
 
@@ -106,11 +120,13 @@
 
             <div class="search-box">
 
-                <span class="search-icon">⌕</span>
+                <span class="search-icon">
+                    ⌕
+                </span>
 
                 <input type="text"
                        class="search-input"
-                       placeholder="Bestellnummer, Lieferant oder Referenz suchen..."
+                       placeholder="@L["SearchPurchaseOrderPlaceholder"]"
                        value="@SearchTerm"
                        @oninput="OnSearchInput" />
 
@@ -124,27 +140,27 @@
                     @bind:after="FilterChanged">
 
                 <option value="0">
-                    Alle Status
+                    @L["AllStatuses"]
                 </option>
 
                 <option value="@((int)PurchaseOrderStatus.Entwurf)">
-                    Entwurf
+                    @L["PurchaseOrderStatusDraft"]
                 </option>
 
                 <option value="@((int)PurchaseOrderStatus.Bestellt)">
-                    Bestellt
+                    @L["PurchaseOrderStatusOrdered"]
                 </option>
 
                 <option value="@((int)PurchaseOrderStatus.TeilweiseGeliefert)">
-                    Teilweise geliefert
+                    @L["PurchaseOrderStatusPartiallyDelivered"]
                 </option>
 
                 <option value="@((int)PurchaseOrderStatus.Geliefert)">
-                    Geliefert
+                    @L["PurchaseOrderStatusDelivered"]
                 </option>
 
                 <option value="@((int)PurchaseOrderStatus.Storniert)">
-                    Storniert
+                    @L["PurchaseOrderStatusCancelled"]
                 </option>
 
             </select>
@@ -157,28 +173,34 @@
                     @bind:after="FilterChanged">
 
                 <option value="0">
-                    Alle Lieferanten
+                    @L["AllSuppliers"]
                 </option>
 
                 @foreach (var supplier in Suppliers)
                 {
                     <option value="@supplier.Id">
+
                         @supplier.CompanyName
-                        @if (!string.IsNullOrWhiteSpace(supplier.SupplierNumber))
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            supplier.SupplierNumber))
                         {
                             @($" ({supplier.SupplierNumber})")
                         }
+
                     </option>
                 }
 
             </select>
 
 
-            <!-- FROM DATE -->
+            <!-- FROM -->
 
             <div class="filter-date-group">
 
-                <label>Von</label>
+                <label>
+                    @L["From"]
+                </label>
 
                 <input type="date"
                        class="filter-date"
@@ -187,9 +209,14 @@
 
             </div>
 
+
+            <!-- TO -->
+
             <div class="filter-date-group">
 
-                <label>Bis</label>
+                <label>
+                    @L["To"]
+                </label>
 
                 <input type="date"
                        class="filter-date"
@@ -205,7 +232,7 @@
                     class="btn-secondary"
                     @onclick="ResetFilters">
 
-                Filter zurücksetzen
+                @L["ResetFilters"]
 
             </button>
 
@@ -223,7 +250,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Bestellungen
+                @L["PurchaseOrders"]
             </span>
 
             <strong>
@@ -236,7 +263,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Entwürfe
+                @L["Drafts"]
             </span>
 
             <strong>
@@ -249,7 +276,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Bestellt
+                @L["Ordered"]
             </span>
 
             <strong>
@@ -262,7 +289,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Teilweise geliefert
+                @L["PartiallyDelivered"]
             </span>
 
             <strong>
@@ -275,7 +302,7 @@
         <div class="stock-summary-card">
 
             <span>
-                Gesamtwert
+                @L["TotalValue"]
             </span>
 
             <strong>
@@ -298,11 +325,11 @@
             <div>
 
                 <strong>
-                    Lieferantenbestellungen
+                    @L["SupplierPurchaseOrders"]
                 </strong>
 
                 <span>
-                    @Orders.Count Einträge
+                    @Orders.Count @L["EntriesCount"]
                 </span>
 
             </div>
@@ -314,7 +341,7 @@
         {
             <div class="loading-state">
 
-                Bestellungen werden geladen...
+                @L["PurchaseOrdersLoading"]
 
             </div>
         }
@@ -327,18 +354,17 @@
                 </div>
 
                 <h3>
-                    Keine Bestellungen gefunden
+                    @L["NoPurchaseOrdersFound"]
                 </h3>
 
                 <p>
-                    Für die gewählten Filter wurden keine
-                    Bestellungen gefunden.
+                    @L["NoPurchaseOrdersForFilters"]
                 </p>
 
                 <a href="/purchase-orders/create"
                    class="btn-primary">
 
-                    + Erste Bestellung erstellen
+                    + @L["CreateFirstPurchaseOrder"]
 
                 </a>
 
@@ -355,35 +381,35 @@
                         <tr>
 
                             <th>
-                                Bestellnummer
+                                @L["OrderNumber"]
                             </th>
 
                             <th>
-                                Lieferant
+                                @L["Supplier"]
                             </th>
 
                             <th>
-                                Datum
+                                @L["OrderDate"]
                             </th>
 
                             <th>
-                                Positionen
+                                @L["Positions"]
                             </th>
 
                             <th>
-                                Gesamt
+                                @L["Total"]
                             </th>
 
                             <th>
-                                Status
+                                @L["Status"]
                             </th>
 
                             <th>
-                                Referenz
+                                @L["Reference"]
                             </th>
 
                             <th>
-                                Aktionen
+                                @L["Actions"]
                             </th>
 
                         </tr>
@@ -397,9 +423,7 @@
                         {
                             <tr>
 
-                                <!-- =====================================
-                                     ORDER NUMBER
-                                     ===================================== -->
+                                <!-- ORDER NUMBER -->
 
                                 <td>
 
@@ -413,9 +437,7 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     SUPPLIER
-                                     ===================================== -->
+                                <!-- SUPPLIER -->
 
                                 <td>
 
@@ -458,9 +480,7 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     DATE
-                                     ===================================== -->
+                                <!-- DATE -->
 
                                 <td>
 
@@ -469,9 +489,7 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     ITEMS
-                                     ===================================== -->
+                                <!-- ITEMS -->
 
                                 <td>
 
@@ -480,24 +498,18 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     TOTAL
-                                     ===================================== -->
+                                <!-- TOTAL -->
 
                                 <td>
 
                                     <strong>
-
                                         @order.Total.ToString("N2") €
-
                                     </strong>
 
                                 </td>
 
 
-                                <!-- =====================================
-                                     STATUS
-                                     ===================================== -->
+                                <!-- STATUS -->
 
                                 <td>
 
@@ -506,9 +518,7 @@
                                         case PurchaseOrderStatus.Entwurf:
 
                                             <span class="status-badge status-draft">
-
-                                                Entwurf
-
+                                                @L["PurchaseOrderStatusDraft"]
                                             </span>
 
                                             break;
@@ -517,9 +527,7 @@
                                         case PurchaseOrderStatus.Bestellt:
 
                                             <span class="status-badge status-warning">
-
-                                                Bestellt
-
+                                                @L["PurchaseOrderStatusOrdered"]
                                             </span>
 
                                             break;
@@ -528,9 +536,7 @@
                                         case PurchaseOrderStatus.TeilweiseGeliefert:
 
                                             <span class="status-badge status-warning">
-
-                                                Teilweise geliefert
-
+                                                @L["PurchaseOrderStatusPartiallyDelivered"]
                                             </span>
 
                                             break;
@@ -539,9 +545,7 @@
                                         case PurchaseOrderStatus.Geliefert:
 
                                             <span class="status-badge status-active">
-
-                                                Geliefert
-
+                                                @L["PurchaseOrderStatusDelivered"]
                                             </span>
 
                                             break;
@@ -550,9 +554,7 @@
                                         case PurchaseOrderStatus.Storniert:
 
                                             <span class="status-badge status-low">
-
-                                                Storniert
-
+                                                @L["PurchaseOrderStatusCancelled"]
                                             </span>
 
                                             break;
@@ -561,9 +563,7 @@
                                         default:
 
                                             <span class="status-badge">
-
-                                                @order.Status
-
+                                                @GetStatusText(order.Status)
                                             </span>
 
                                             break;
@@ -572,9 +572,7 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     REFERENCE
-                                     ===================================== -->
+                                <!-- REFERENCE -->
 
                                 <td>
 
@@ -593,9 +591,7 @@
                                 </td>
 
 
-                                <!-- =====================================
-                                     ACTIONS
-                                     ===================================== -->
+                                <!-- ACTIONS -->
 
                                 <td>
 
@@ -603,7 +599,7 @@
 
                                         <a href="/purchase-orders/details/@order.Id"
                                            class="action-button"
-                                           title="Details">
+                                           title="@L["Details"]">
 
                                             👁
 
@@ -615,20 +611,16 @@
                                         {
                                             <a href="/purchase-orders/edit/@order.Id"
                                                class="action-button"
-                                               title="Bearbeiten">
+                                               title="@L["Edit"]">
 
                                                 ✎
 
                                             </a>
-                                        }
 
 
-                                        @if (order.Status ==
-                                             PurchaseOrderStatus.Entwurf)
-                                        {
                                             <a href="/purchase-orders/confirm/@order.Id"
                                                class="action-button"
-                                               title="Bestätigen">
+                                               title="@L["Confirm"]">
 
                                                 ✓
 
@@ -649,9 +641,9 @@
             </div>
 
 
-            <!-- =========================================================
+            <!-- =====================================================
                  PAGINATION
-                 ========================================================= -->
+                 ===================================================== -->
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -668,7 +660,9 @@
 
                     <div class="pagination-pages">
 
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @for (int page = 1;
+                              page <= TotalPages;
+                              page++)
                         {
                             var pageNumber = page;
 
@@ -699,8 +693,15 @@
 
             <div class="pagination-info">
 
-                Seite @CurrentPage von @TotalPages
-                · @PagedOrders.Count von @Orders.Count Bestellungen
+                @L["PageInfo",
+                    CurrentPage,
+                    TotalPages]
+
+                ·
+
+                @L["EntriesInfo",
+                    PagedOrders.Count,
+                    Orders.Count]
 
             </div>
         }
@@ -725,7 +726,8 @@
     // FILTER
     // =========================================================
 
-    private string SearchTerm = string.Empty;
+    private string SearchTerm =
+        string.Empty;
 
     private int SelectedStatus;
 
@@ -751,9 +753,12 @@
                 Orders.Count /
                 (double)PageSize));
 
+
     private List<PurchaseOrder> PagedOrders =>
         Orders
-            .Skip((CurrentPage - 1) * PageSize)
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
             .Take(PageSize)
             .ToList();
 
@@ -864,7 +869,8 @@
             // SEARCH
             // =================================================
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
@@ -873,14 +879,16 @@
                 query =
                     query.Where(x =>
 
-                        x.OrderNumber.Contains(search)
+                        x.OrderNumber.Contains(
+                            search)
 
                         ||
 
                         (
                             x.ReferenceNumber != null
                             &&
-                            x.ReferenceNumber.Contains(search)
+                            x.ReferenceNumber.Contains(
+                                search)
                         )
 
                         ||
@@ -888,7 +896,8 @@
                         (
                             x.Supplier != null
                             &&
-                            x.Supplier.CompanyName.Contains(search)
+                            x.Supplier.CompanyName.Contains(
+                                search)
                         )
 
                         ||
@@ -898,7 +907,8 @@
                             &&
                             x.Supplier.SupplierNumber != null
                             &&
-                            x.Supplier.SupplierNumber.Contains(search)
+                            x.Supplier.SupplierNumber.Contains(
+                                search)
                         )
 
                     );
@@ -912,7 +922,8 @@
             if (SelectedStatus > 0)
             {
                 var status =
-                    (PurchaseOrderStatus)SelectedStatus;
+                    (PurchaseOrderStatus)
+                        SelectedStatus;
 
 
                 query =
@@ -981,6 +992,7 @@
 
                     .ToListAsync();
 
+
             CurrentPage = 1;
         }
         finally
@@ -989,9 +1001,18 @@
         }
     }
 
-    private async Task OnSearchInput(ChangeEventArgs args)
+
+    // =========================================================
+    // SEARCH INPUT
+    // =========================================================
+
+    private async Task OnSearchInput(
+        ChangeEventArgs args)
     {
-        SearchTerm = args.Value?.ToString() ?? string.Empty;
+        SearchTerm =
+            args.Value?.ToString()
+            ?? string.Empty;
+
 
         CurrentPage = 1;
 
@@ -1012,7 +1033,7 @@
 
 
     // =========================================================
-    // RESET
+    // RESET FILTERS
     // =========================================================
 
     private async Task ResetFilters()
@@ -1032,7 +1053,8 @@
         ToDate =
             null;
 
-        CurrentPage = 1;
+        CurrentPage =
+            1;
 
         await LoadOrders();
     }
@@ -1042,12 +1064,18 @@
     // PAGINATION
     // =========================================================
 
-    private void GoToPage(int page)
+    private void GoToPage(
+        int page)
     {
-        if (page < 1 || page > TotalPages)
+        if (page < 1 ||
+            page > TotalPages)
+        {
             return;
+        }
 
-        CurrentPage = page;
+
+        CurrentPage =
+            page;
     }
 
 
@@ -1077,70 +1105,78 @@
     {
         try
         {
-            var data = PagedOrders;
+            var data =
+                PagedOrders;
+
 
             var bytes =
                 ExcelExport.Export(
                     data,
-                    "Bestellungen",
-                    $"Lieferantenbestellungen – Seite {CurrentPage}",
+
+                    L["PurchaseOrders"],
+
+                    $"{L["SupplierPurchaseOrders"]} – {L["Page"]} {CurrentPage}",
 
                     (
-                        "Bestellnummer",
+                        L["OrderNumber"],
                         x => x.OrderNumber
                     ),
 
                     (
-                        "Lieferant",
+                        L["Supplier"],
                         x => x.Supplier?.CompanyName ?? ""
                     ),
 
                     (
-                        "Lieferantennummer",
+                        L["SupplierNumber"],
                         x => x.Supplier?.SupplierNumber ?? ""
                     ),
 
                     (
-                        "Bestelldatum",
+                        L["OrderDate"],
                         x => x.OrderDate
                     ),
 
                     (
-                        "Positionen",
+                        L["Positions"],
                         x => x.Items.Count
                     ),
 
                     (
-                        "Gesamt",
+                        L["Total"],
                         x => x.Total
                     ),
 
                     (
-                        "Status",
+                        L["Status"],
                         x => GetStatusText(x.Status)
                     ),
 
                     (
-                        "Referenz",
+                        L["Reference"],
                         x => x.ReferenceNumber ?? ""
                     )
                 );
 
 
             var base64 =
-                Convert.ToBase64String(bytes);
+                Convert.ToBase64String(
+                    bytes);
 
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
-                $"Lieferantenbestellungen_Seite_{CurrentPage}.xlsx",
+
+                $"{L["PurchaseOrdersFileName"]}_Seite_{CurrentPage}.xlsx",
+
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
                 base64);
         }
         catch (Exception ex)
         {
             Console.WriteLine(
-                $"Fehler beim Excel-Export: {ex}");
+                $"{L["ExcelExportError"]}: {ex}");
         }
     }
 
@@ -1155,19 +1191,19 @@
         return status switch
         {
             PurchaseOrderStatus.Entwurf =>
-                "Entwurf",
+                L["PurchaseOrderStatusDraft"],
 
             PurchaseOrderStatus.Bestellt =>
-                "Bestellt",
+                L["PurchaseOrderStatusOrdered"],
 
             PurchaseOrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["PurchaseOrderStatusPartiallyDelivered"],
 
             PurchaseOrderStatus.Geliefert =>
-                "Geliefert",
+                L["PurchaseOrderStatusDelivered"],
 
             PurchaseOrderStatus.Storniert =>
-                "Storniert",
+                L["PurchaseOrderStatusCancelled"],
 
             _ =>
                 status.ToString()
@@ -1179,7 +1215,8 @@
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";
@@ -1194,13 +1231,11 @@
         if (words.Length == 1)
         {
             return words[0]
-
                 .Substring(
                     0,
                     Math.Min(
                         2,
                         words[0].Length))
-
                 .ToUpper();
         }
 

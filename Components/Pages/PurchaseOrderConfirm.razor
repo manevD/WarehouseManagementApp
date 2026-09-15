@@ -1,20 +1,24 @@
 ﻿@page "/purchase-orders/confirm/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung bestätigen</PageTitle>
+<PageTitle>@L["ConfirmPurchaseOrder"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Bestellung wird geladen...
+        @L["PurchaseOrderLoading"]
     </div>
 }
 else if (Order == null)
@@ -25,12 +29,14 @@ else if (Order == null)
             ⚠
         </div>
 
-        <h3>Bestellung nicht gefunden</h3>
+        <h3>
+            @L["PurchaseOrderNotFound"]
+        </h3>
 
         <a href="/purchase-orders"
            class="btn-primary">
 
-            Zurück zu Bestellungen
+            @L["BackToPurchaseOrders"]
 
         </a>
 
@@ -44,17 +50,21 @@ else if (Order.Status != PurchaseOrderStatus.Entwurf)
             🔒
         </div>
 
-        <h3>Bestellung kann nicht bestätigt werden</h3>
+        <h3>
+            @L["PurchaseOrderCannotBeConfirmed"]
+        </h3>
 
         <p>
-            Diese Bestellung hat bereits den Status
-            <strong>@GetStatusText(Order.Status)</strong>.
+            @L["PurchaseOrderStatusInfo"]
+            <strong>
+                @GetStatusText(Order.Status)
+            </strong>.
         </p>
 
         <a href="/purchase-orders/details/@Order.Id"
            class="btn-primary">
 
-            Zur Bestellung
+            @L["ToPurchaseOrder"]
 
         </a>
 
@@ -72,7 +82,9 @@ else
 
             <div>
 
-                <h1>Bestellung bestätigen</h1>
+                <h1>
+                    @L["ConfirmPurchaseOrder"]
+                </h1>
 
                 <p>
                     @Order.OrderNumber
@@ -85,7 +97,7 @@ else
             <a href="/purchase-orders/details/@Order.Id"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
 
@@ -105,19 +117,16 @@ else
             <div>
 
                 <strong>
-                    Bestellung wirklich bestätigen?
+                    @L["ConfirmPurchaseOrderQuestion"]
                 </strong>
 
                 <p>
 
-                    Nach der Bestätigung kann die Bestellung
-                    nicht mehr bearbeitet werden.
+                    @L["PurchaseOrderConfirmationWarning"]
 
-                    Der Lagerbestand wird bei der Bestätigung
-                    <strong>nicht</strong> verändert.
+                    @L["StockNotChangedOnConfirmation"]
 
-                    Der Bestand wird erst beim Wareneingang
-                    aktualisiert.
+                    @L["StockUpdatedOnReceipt"]
 
                 </p>
 
@@ -137,7 +146,7 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Bestelldaten
+                        @L["PurchaseOrderData"]
                     </h2>
 
                 </div>
@@ -146,14 +155,12 @@ else
                 <div class="form-grid">
 
 
-                    <!-- =============================================
-                         ORDER NUMBER
-                         ============================================= -->
+                    <!-- ORDER NUMBER -->
 
                     <div class="form-group">
 
                         <label>
-                            Bestellnummer
+                            @L["OrderNumber"]
                         </label>
 
                         <input class="form-control"
@@ -163,14 +170,12 @@ else
                     </div>
 
 
-                    <!-- =============================================
-                         SUPPLIER
-                         ============================================= -->
+                    <!-- SUPPLIER -->
 
                     <div class="form-group">
 
                         <label>
-                            Lieferant
+                            @L["Supplier"]
                         </label>
 
                         <input class="form-control"
@@ -183,14 +188,12 @@ else
                     </div>
 
 
-                    <!-- =============================================
-                         DATE
-                         ============================================= -->
+                    <!-- DATE -->
 
                     <div class="form-group">
 
                         <label>
-                            Bestelldatum
+                            @L["OrderDate"]
                         </label>
 
                         <input class="form-control"
@@ -200,14 +203,12 @@ else
                     </div>
 
 
-                    <!-- =============================================
-                         REFERENCE
-                         ============================================= -->
+                    <!-- REFERENCE -->
 
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <input class="form-control"
@@ -230,7 +231,7 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Lieferant
+                        @L["Supplier"]
                     </h2>
 
                 </div>
@@ -260,7 +261,7 @@ else
                             {
                                 <span>
 
-                                    Lieferantennummer:
+                                    @L["SupplierNumberLabel"]:
                                     @Order.Supplier.SupplierNumber
 
                                 </span>
@@ -272,7 +273,7 @@ else
                             {
                                 <span>
 
-                                    Ansprechpartner:
+                                    @L["ContactPerson"]:
                                     @Order.Supplier.ContactPerson
 
                                 </span>
@@ -283,9 +284,7 @@ else
                                 Order.Supplier.Email))
                             {
                                 <span>
-
                                     @Order.Supplier.Email
-
                                 </span>
                             }
 
@@ -294,9 +293,7 @@ else
                                 Order.Supplier.Phone))
                             {
                                 <span>
-
                                     @Order.Supplier.Phone
-
                                 </span>
                             }
 
@@ -317,12 +314,11 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Bestellpositionen
+                        @L["OrderItems"]
                     </h2>
 
                     <p>
-                        Diese Positionen werden mit der Bestellung
-                        an den Lieferanten übermittelt.
+                        @L["PurchaseOrderItemsDescription"]
                     </p>
 
                 </div>
@@ -337,7 +333,7 @@ else
                         </div>
 
                         <h3>
-                            Keine Positionen
+                            @L["NoPurchaseOrderItems"]
                         </h3>
 
                     </div>
@@ -353,23 +349,23 @@ else
                                 <tr>
 
                                     <th>
-                                        Produkt
+                                        @L["Product"]
                                     </th>
 
                                     <th>
-                                        SKU
+                                        @L["SKU"]
                                     </th>
 
                                     <th>
-                                        Menge
+                                        @L["Quantity"]
                                     </th>
 
                                     <th>
-                                        Einzelpreis
+                                        @L["UnitPrice"]
                                     </th>
 
                                     <th>
-                                        Gesamt
+                                        @L["Total"]
                                     </th>
 
                                 </tr>
@@ -497,7 +493,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Positionen
+                            @L["Positions"]
                         </span>
 
                         <strong>
@@ -510,7 +506,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Gesamtmenge
+                            @L["TotalQuantity"]
                         </span>
 
                         <strong>
@@ -523,7 +519,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Bestellwert
+                            @L["OrderValue"]
                         </span>
 
                         <strong>
@@ -548,7 +544,7 @@ else
                     <div class="form-section-title">
 
                         <h2>
-                            Notiz
+                            @L["Note"]
                         </h2>
 
                     </div>
@@ -585,7 +581,7 @@ else
                 <a href="/purchase-orders/details/@Order.Id"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -596,8 +592,8 @@ else
                         @onclick="ConfirmOrder">
 
                     @(IsSaving
-                        ? "Wird bestätigt..."
-                        : "✓ Bestellung bestätigen")
+                        ? L["Confirming"]
+                        : L["ConfirmPurchaseOrderButton"])
 
                 </button>
 
@@ -663,7 +659,6 @@ else
     private async Task LoadOrder()
     {
         IsLoading = true;
-
 
         try
         {
@@ -733,7 +728,7 @@ else
             if (order == null)
             {
                 ErrorMessage =
-                    "Bestellung wurde nicht gefunden.";
+                    L["PurchaseOrderNotFound"];
 
                 return;
             }
@@ -747,7 +742,7 @@ else
                 PurchaseOrderStatus.Entwurf)
             {
                 ErrorMessage =
-                    "Diese Bestellung wurde bereits verarbeitet.";
+                    L["PurchaseOrderAlreadyProcessed"];
 
                 return;
             }
@@ -772,7 +767,7 @@ else
             if (!supplierExists)
             {
                 ErrorMessage =
-                    "Der Lieferant wurde nicht gefunden oder ist deaktiviert.";
+                    L["PurchaseOrderSupplierNotFound"];
 
                 return;
             }
@@ -793,7 +788,7 @@ else
             if (!itemsExist)
             {
                 ErrorMessage =
-                    "Eine Bestellung ohne Positionen kann nicht bestätigt werden.";
+                    L["PurchaseOrderWithoutItemsCannotBeConfirmed"];
 
                 return;
             }
@@ -824,7 +819,7 @@ else
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Bestätigen: {ex.Message}";
+                L["PurchaseOrderConfirmationError", ex.Message];
         }
         finally
         {
@@ -843,19 +838,19 @@ else
         return status switch
         {
             PurchaseOrderStatus.Entwurf =>
-                "Entwurf",
+                L["PurchaseOrderStatusDraft"],
 
             PurchaseOrderStatus.Bestellt =>
-                "Bestellt",
+                L["PurchaseOrderStatusOrdered"],
 
             PurchaseOrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["PurchaseOrderStatusPartiallyDelivered"],
 
             PurchaseOrderStatus.Geliefert =>
-                "Geliefert",
+                L["PurchaseOrderStatusDelivered"],
 
             PurchaseOrderStatus.Storniert =>
-                "Storniert",
+                L["PurchaseOrderStatusCancelled"],
 
             _ =>
                 status.ToString()
@@ -867,7 +862,8 @@ else
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";

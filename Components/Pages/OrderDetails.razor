@@ -1,15 +1,19 @@
 ﻿@page "/orders/details/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung Details</PageTitle>
+<PageTitle>@L["OrderDetails"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -17,7 +21,7 @@
 
         <div>
 
-            <h1>Bestellung Details</h1>
+            <h1>@L["OrderDetails"]</h1>
 
             @if (Order != null)
             {
@@ -34,16 +38,17 @@
             <a href="/orders"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
+
 
             @if (Order != null)
             {
                 <a href="/orders/edit/@Order.Id"
                    class="btn-primary">
 
-                    ✎ Bearbeiten
+                    ✎ @L["Edit"]
 
                 </a>
             }
@@ -56,7 +61,7 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Bestellung wird geladen...
+            @L["OrderLoading"]
         </div>
     }
     else if (Order == null)
@@ -68,13 +73,13 @@
             </div>
 
             <h3>
-                Bestellung nicht gefunden
+                @L["OrderNotFound"]
             </h3>
 
             <a href="/orders"
                class="btn-secondary">
 
-                Zurück zu Bestellungen
+                @L["BackToOrders"]
 
             </a>
 
@@ -98,7 +103,7 @@
                     </h2>
 
                     <p>
-                        Erstellt am
+                        @L["CreatedAt"]
                         @Order.CreatedAt
                     </p>
 
@@ -113,7 +118,7 @@
                     <div class="form-group">
 
                         <label>
-                            Kunde
+                            @L["Customer"]
                         </label>
 
                         <div class="readonly-value">
@@ -140,12 +145,13 @@
                     <div class="form-group">
 
                         <label>
-                            Bestelldatum
+                            @L["OrderDate"]
                         </label>
 
                         <div class="readonly-value">
 
                             @Order.OrderDate
+
                         </div>
 
                     </div>
@@ -156,7 +162,7 @@
                     <div class="form-group">
 
                         <label>
-                            Status
+                            @L["Status"]
                         </label>
 
                         <div>
@@ -175,7 +181,7 @@
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <div class="readonly-value">
@@ -203,7 +209,7 @@
                 <div class="form-section-title">
 
                     <h2>
-                        Lieferadresse
+                        @L["DeliveryAddress"]
                     </h2>
 
                 </div>
@@ -219,26 +225,32 @@
                         </strong>
                     }
 
+
                     @if (!string.IsNullOrWhiteSpace(
                         Order.DeliveryPostalCode) ||
                         !string.IsNullOrWhiteSpace(
                             Order.DeliveryCity))
                     {
                         <span>
+
                             @Order.DeliveryPostalCode
                             @Order.DeliveryCity
+
                         </span>
                     }
+
 
                     @if (!string.IsNullOrWhiteSpace(
                         Order.DeliveryCountry))
                     {
-                      
                         <span>
+
                             &nbsp;,
                             @Order.DeliveryCountry
+
                         </span>
                     }
+
 
                     @if (string.IsNullOrWhiteSpace(
                         Order.DeliveryStreet) &&
@@ -248,7 +260,9 @@
                             Order.DeliveryCountry))
                     {
                         <span class="text-muted">
-                            Keine Lieferadresse hinterlegt.
+
+                            @L["NoDeliveryAddress"]
+
                         </span>
                     }
 
@@ -266,14 +280,14 @@
                 <div class="form-section-title">
 
                     <h2>
-                        Bestellpositionen
+                        @L["OrderItems"]
                     </h2>
 
                     <p>
                         @Order.Items.Count
                         @(Order.Items.Count == 1
-                            ? "Position"
-                            : "Positionen")
+                            ? L["Position"]
+                            : L["Positions"])
                     </p>
 
                 </div>
@@ -287,15 +301,15 @@
 
                             <tr>
 
-                                <th>Produkt</th>
+                                <th>@L["Product"]</th>
 
-                                <th>SKU</th>
+                                <th>@L["SKU"]</th>
 
-                                <th>Menge</th>
+                                <th>@L["Quantity"]</th>
 
-                                <th>Einzelpreis</th>
+                                <th>@L["UnitPrice"]</th>
 
-                                <th>Gesamt</th>
+                                <th>@L["Total"]</th>
 
                             </tr>
 
@@ -382,7 +396,7 @@
                 <div class="order-total-box">
 
                     <span>
-                        Gesamt
+                        @L["Total"]
                     </span>
 
                     <strong>
@@ -404,7 +418,7 @@
                     <div class="form-section-title">
 
                         <h2>
-                            Notiz
+                            @L["Note"]
                         </h2>
 
                     </div>
@@ -428,14 +442,15 @@
                 <a href="/orders"
                    class="btn-secondary">
 
-                    ← Zurück
+                    ← @L["Back"]
 
                 </a>
+
 
                 <a href="/orders/edit/@Order.Id"
                    class="btn-primary">
 
-                    ✎ Bestellung bearbeiten
+                    ✎ @L["EditOrder"]
 
                 </a>
 
@@ -468,7 +483,6 @@
     {
         IsLoading = true;
 
-
         try
         {
             await using var db =
@@ -499,30 +513,35 @@
     }
 
 
-    private string GetStatusText(OrderStatus status)
+    // =========================================================
+    // STATUS TEXT
+    // =========================================================
+
+    private string GetStatusText(
+        OrderStatus status)
     {
         return status switch
         {
             OrderStatus.Entwurf =>
-                "Entwurf",
+                L["OrderStatusDraft"],
 
             OrderStatus.Bestätigt =>
-                "Bestätigt",
+                L["OrderStatusConfirmed"],
 
             OrderStatus.InBearbeitung =>
-                "In Bearbeitung",
+                L["OrderStatusInProgress"],
 
             OrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["OrderStatusPartiallyDelivered"],
 
             OrderStatus.Versendet =>
-                "Versendet",
+                L["OrderStatusShipped"],
 
             OrderStatus.Abgeschlossen =>
-                "Abgeschlossen",
+                L["OrderStatusCompleted"],
 
             OrderStatus.Storniert =>
-                "Storniert",
+                L["OrderStatusCancelled"],
 
             _ =>
                 status.ToString()
@@ -530,7 +549,12 @@
     }
 
 
-    private string GetStatusClass(OrderStatus status)
+    // =========================================================
+    // STATUS CSS
+    // =========================================================
+
+    private string GetStatusClass(
+        OrderStatus status)
     {
         return status switch
         {
@@ -561,7 +585,12 @@
     }
 
 
-    private string GetInitials(string? name)
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";

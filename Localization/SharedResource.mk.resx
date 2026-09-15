@@ -1377,4 +1377,577 @@
   <data name="SaveCustomer" xml:space="preserve">
     <value>Зачувај клиент</value>
   </data>
+  <data name="ManageOrdersDescription" xml:space="preserve">
+    <value>Управувајте со вашите нарачки.</value>
+  </data>
+  <data name="NewOrder" xml:space="preserve">
+    <value>Нова нарачка</value>
+  </data>
+  <data name="SearchOrderPlaceholder" xml:space="preserve">
+    <value>Пребарај број на нарачка, референца или клиент...</value>
+  </data>
+  <data name="AllOrderStatuses" xml:space="preserve">
+    <value>Сите статуси</value>
+  </data>
+  <data name="OrderStatusDraft" xml:space="preserve">
+    <value>Нацрт</value>
+  </data>
+  <data name="OrderStatusConfirmed" xml:space="preserve">
+    <value>Потврдена</value>
+  </data>
+  <data name="OrderStatusInProgress" xml:space="preserve">
+    <value>Во обработка</value>
+  </data>
+  <data name="OrderStatusPartiallyDelivered" xml:space="preserve">
+    <value>Делумно испорачана</value>
+  </data>
+  <data name="OrderStatusShipped" xml:space="preserve">
+    <value>Испратена</value>
+  </data>
+  <data name="OrderStatusCompleted" xml:space="preserve">
+    <value>Завршена</value>
+  </data>
+  <data name="OrderStatusCancelled" xml:space="preserve">
+    <value>Откажана</value>
+  </data>
+  <data name="OrdersCount" xml:space="preserve">
+    <value>Нарачки</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Отворени</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Во обработка</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Завршени</value>
+  </data>
+  <data name="OrderList" xml:space="preserve">
+    <value>Нарачки</value>
+  </data>
+  <data name="OrdersLoading" xml:space="preserve">
+    <value>Нарачките се вчитуваат...</value>
+  </data>
+  <data name="NoOrdersFound" xml:space="preserve">
+    <value>Не се пронајдени нарачки</value>
+  </data>
+  <data name="NoOrdersForSearch" xml:space="preserve">
+    <value>За тековното пребарување не се пронајдени нарачки.</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Нарачка</value>
+  </data>
+  <data name="OrderDate" xml:space="preserve">
+    <value>Датум</value>
+  </data>
+  <data name="ReferenceShort" xml:space="preserve">
+    <value>Реф.</value>
+  </data>
+  <data name="DuplicateOrder" xml:space="preserve">
+    <value>Дуплирај нарачка</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Детали</value>
+  </data>
+  <data name="OrdesrConfirm" xml:space="preserve">
+    <value>Потврди нарачка</value>
+  </data>
+  <data name="CancelOrder" xml:space="preserve">
+    <value>Откажи нарачка</value>
+  </data>
+  <data name="PaginationInfoOrders" xml:space="preserve">
+    <value>Страница {0} од {1} · {2} од {3} нарачки</value>
+  </data>
+  <data name="OrderDuplicating" xml:space="preserve">
+    <value>Нарачката се дуплира...</value>
+  </data>
+  <data name="OrderDuplicateError" xml:space="preserve">
+    <value>Грешка при дуплирање: {0}</value>
+  </data>
+  <data name="OrderCancelledSuccessfully" xml:space="preserve">
+    <value>Нарачката е успешно откажана.</value>
+  </data>
+  <data name="OrderCancelError" xml:space="preserve">
+    <value>Грешка при откажување: {0}</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Број на нарачка</value>
+  </data>
+  <data name="ExportOrders" xml:space="preserve">
+    <value>Извези нарачки</value>
+  </data>
+  <data name="OrdersExportSheet" xml:space="preserve">
+    <value>Нарачки – Страница {0}</value>
+  </data>
+  <data name="OrderItemsCount" xml:space="preserve">
+    <value>Ставки</value>
+  </data>
+  <data name="CreateOrderDescription" xml:space="preserve">
+    <value>Внесете нова нарачка.</value>
+  </data>
+  <data name="OrderInformation" xml:space="preserve">
+    <value>Информации за нарачката</value>
+  </data>
+  <data name="BasicOrderInformation" xml:space="preserve">
+    <value>Основни информации за нарачката.</value>
+  </data>
+  <data name="SelectCustomer" xml:space="preserve">
+    <value>Изберете клиент</value>
+  </data>
+  <data name="CustomerOrderPlaceholder" xml:space="preserve">
+    <value>на пр. нарачка од клиент 12345</value>
+  </data>
+  <data name="DeliveryAddress" xml:space="preserve">
+    <value>Адреса за испорака</value>
+  </data>
+  <data name="SelectedCustomerDeliveryAddress" xml:space="preserve">
+    <value>Адреса за испорака на избраниот клиент.</value>
+  </data>
+  <data name="OrderItems" xml:space="preserve">
+    <value>Ставки на нарачката</value>
+  </data>
+  <data name="AddProductsToOrder" xml:space="preserve">
+    <value>Додајте производи во нарачката.</value>
+  </data>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>Единечна цена</value>
+  </data>
+  <data name="AddProduct" xml:space="preserve">
+    <value>Додај производ</value>
+  </data>
+  <data name="NoProductsYet" xml:space="preserve">
+    <value>Сè уште нема производи</value>
+  </data>
+  <data name="SelectProductAndAdd" xml:space="preserve">
+    <value>Изберете производ и додајте го во нарачката.</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Отстрани ставка</value>
+  </data>
+  <data name="SaveOrder" xml:space="preserve">
+    <value>Зачувај нарачка</value>
+  </data>
+  <data name="UnitPriceCannotBeNegative" xml:space="preserve">
+    <value>Единечната цена не смее да биде негативна.</value>
+  </data>
+  <data name="NoProductsInOrder" xml:space="preserve">
+    <value>Ве молиме додадете најмалку еден производ.</value>
+  </data>
+  <data name="CustomerSelectionRequired" xml:space="preserve">
+    <value>Ве молиме изберете клиент.</value>
+  </data>
+  <data name="SelectedCustomerNotFound" xml:space="preserve">
+    <value>Избраниот клиент не е пронајден.</value>
+  </data>
+  <data name="SelectedProductNotFoundWithName" xml:space="preserve">
+    <value>Производот „{0}“ не е пронајден.</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Ставка</value>
+  </data>
+  <data name="BackToOrders" xml:space="preserve">
+    <value>Назад кон нарачки</value>
+  </data>
+  <data name="SelectLocationForReservation" xml:space="preserve">
+    <value>Изберете локација за секоја ставка од која треба да се резервира стоката.</value>
+  </data>
+  <data name="StockReservation" xml:space="preserve">
+    <value>Резервација на залиха</value>
+  </data>
+  <data name="CheckAvailableStockAndSelectLocation" xml:space="preserve">
+    <value>Проверете ја достапната залиха и изберете локација.</value>
+  </data>
+  <data name="NoOrderItems" xml:space="preserve">
+    <value>Нема ставки во нарачката</value>
+  </data>
+  <data name="Reservable" xml:space="preserve">
+    <value>Може да се резервира</value>
+  </data>
+  <data name="Insufficient" xml:space="preserve">
+    <value>Недоволно</value>
+  </data>
+  <data name="Confirming" xml:space="preserve">
+    <value>Се потврдува...</value>
+  </data>
+  <data name="OrderAlreadyConfirmed" xml:space="preserve">
+    <value>Нарачката веќе е потврдена</value>
+  </data>
+  <data name="OrderCannotBeConfirmed" xml:space="preserve">
+    <value>Оваа нарачка повеќе не може да се потврди.</value>
+  </data>
+  <data name="OrderHasNoItems" xml:space="preserve">
+    <value>Нарачката нема ставки.</value>
+  </data>
+  <data name="SelectLocationForProduct" xml:space="preserve">
+    <value>Изберете локација за „{0}“.</value>
+  </data>
+  <data name="NoStockForProductAtLocation" xml:space="preserve">
+    <value>Не е пронајдена залиха за „{0}“ на избраната локација.</value>
+  </data>
+  <data name="InsufficientStockForProduct" xml:space="preserve">
+    <value>Нема доволно достапна залиха за „{0}“. Достапно: {1}, потребно: {2}.</value>
+  </data>
+  <data name="ErrorConfirmingOrder" xml:space="preserve">
+    <value>Грешка при потврдување: {0}</value>
+  </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Уреди нарачка</value>
+  </data>
+  <data name="OrderLoading" xml:space="preserve">
+    <value>Нарачката се вчитува...</value>
+  </data>
+  <data name="OrderNotFound" xml:space="preserve">
+    <value>Нарачката не е пронајдена.</value>
+  </data>
+  <data name="EditProductsAndQuantities" xml:space="preserve">
+    <value>Уредете ги производите и количините.</value>
+  </data>
+  <data name="ConfirmedOrderInfo" xml:space="preserve">
+    <value>Нарачката е потврдена. Промените на количините и бришењето на ставките автоматски се синхронизираат со резервираната залиха. Нови ставки не можат да се додаваат во потврдена нарачка.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddItems" xml:space="preserve">
+    <value>Во потврдена нарачка не можат да се додаваат нови ставки.</value>
+  </data>
+  <data name="OrderMustHaveItems" xml:space="preserve">
+    <value>Нарачката мора да содржи најмалку една ставка.</value>
+  </data>
+  <data name="ConfirmedOrderStatusChangeNotAllowed" xml:space="preserve">
+    <value>Потврдена нарачка овде не може да се промени во друг статус.</value>
+  </data>
+  <data name="ProductChangeNotAllowedConfirmedOrder" xml:space="preserve">
+    <value>Производот на ставката „{0}“ не може да се промени во потврдена нарачка.</value>
+  </data>
+  <data name="ReservationLocationRequired" xml:space="preserve">
+    <value>За „{0}“ нема внесена локација за резервирање.</value>
+  </data>
+  <data name="ReservedStockNotFound" xml:space="preserve">
+    <value>Резервираната залиха за „{0}“ не е пронајдена.</value>
+  </data>
+  <data name="InsufficientStockForIncrease" xml:space="preserve">
+    <value>Нема доволно достапна залиха за „{0}“. Дополнително потребно: {1}, достапно: {2}.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddNewItems" xml:space="preserve">
+    <value>Во потврдена нарачка не можат да се додаваат нови ставки.</value>
+  </data>
+  <data name="ProductNotFoundWithName" xml:space="preserve">
+    <value>Производот „{0}“ не е пронајден.</value>
+  </data>
+  <data name="OrderDetails" xml:space="preserve">
+    <value>Детали за нарачката</value>
+  </data>
+  <data name="NoDeliveryAddress" xml:space="preserve">
+    <value>Нема внесена адреса за испорака.</value>
+  </data>
+  <data name="ConfirmPurchaseOrder" xml:space="preserve">
+    <value>Потврди нарачка</value>
+  </data>
+  <data name="PurchaseOrderCannotBeConfirmed" xml:space="preserve">
+    <value>Нарачката не може да се потврди</value>
+  </data>
+  <data name="PurchaseOrderAlreadyProcessed" xml:space="preserve">
+    <value>Оваа нарачка веќе е обработена.</value>
+  </data>
+  <data name="PurchaseOrderStatusInfo" xml:space="preserve">
+    <value>Оваа нарачка веќе има статус</value>
+  </data>
+  <data name="ToPurchaseOrder" xml:space="preserve">
+    <value>Кон нарачката</value>
+  </data>
+  <data name="PurchaseOrderConfirmationWarning" xml:space="preserve">
+    <value>По потврдувањето, нарачката повеќе не може да се уредува.</value>
+  </data>
+  <data name="StockNotChangedOnConfirmation" xml:space="preserve">
+    <value>Залихата не се менува при потврдувањето.</value>
+  </data>
+  <data name="StockUpdatedOnReceipt" xml:space="preserve">
+    <value>Залихата се ажурира дури при прием на стоката.</value>
+  </data>
+  <data name="PurchaseOrderData" xml:space="preserve">
+    <value>Податоци за нарачката</value>
+  </data>
+  <data name="SupplierNumberLabel" xml:space="preserve">
+    <value>Број на добавувач</value>
+  </data>
+  <data name="PurchaseOrderItemsDescription" xml:space="preserve">
+    <value>Овие ставки ќе бидат испратени до добавувачот со нарачката.</value>
+  </data>
+  <data name="NoPurchaseOrderItems" xml:space="preserve">
+    <value>Нема ставки</value>
+  </data>
+  <data name="TotalQuantity" xml:space="preserve">
+    <value>Вкупна количина</value>
+  </data>
+  <data name="OrderValue" xml:space="preserve">
+    <value>Вредност на нарачката</value>
+  </data>
+  <data name="PurchaseOrderSupplierNotFound" xml:space="preserve">
+    <value>Добавувачот не е пронајден или е деактивиран.</value>
+  </data>
+  <data name="PurchaseOrderWithoutItemsCannotBeConfirmed" xml:space="preserve">
+    <value>Нарачка без ставки не може да се потврди.</value>
+  </data>
+  <data name="ConfirmPurchaseOrderButton" xml:space="preserve">
+    <value>✓ Потврди нарачка</value>
+  </data>
+  <data name="PurchaseOrderConfirmationError" xml:space="preserve">
+    <value>Грешка при потврдување: {0}</value>
+  </data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Креирај нарачка</value>
+</data>
+	<data name="CreatePurchaseOrderDescription" xml:space="preserve">
+  <value>Креирајте нова нарачка кај добавувач.</value>
+</data>
+	<data name="PurchaseOrder" xml:space="preserve">
+  <value>Нарачка</value>
+</data>
+	<data name="SupplierAndOrderData" xml:space="preserve">
+  <value>Добавувач и податоци за нарачката.</value>
+</data>
+	<data name="SelectSupplier" xml:space="preserve">
+  <value>Изберете добавувач</value>
+</data>
+	<data name="SupplierSelectionRequired" xml:space="preserve">
+  <value>Ве молиме изберете добавувач.</value>
+</data>
+	<data name="PurchaseOrderReferencePlaceholder" xml:space="preserve">
+  <value>на пр. ваша референца</value>
+</data>
+	<data name="AddProductsAndQuantities" xml:space="preserve">
+  <value>Додајте производи и количини.</value>
+</data>
+	<data name="AddProduct" xml:space="preserve">
+  <value>Додај производ</value>
+</data>
+	<data name="NoPurchaseOrderItems" xml:space="preserve">
+  <value>Нема ставки</value>
+</data>
+	<data name="AddAtLeastOneProduct" xml:space="preserve">
+  <value>Додајте најмалку еден производ.</value>
+</data>
+	<data name="SelectProduct" xml:space="preserve">
+  <value>Изберете производ</value>
+</data>
+	<data name="ProductSelectionRequired" xml:space="preserve">
+  <value>Ве молиме изберете производ.</value>
+</data>
+	<data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+  <value>Количината мора да биде поголема од 0.</value>
+</data>
+	<data name="UnitPriceCannotBeNegative" xml:space="preserve">
+  <value>Единечната цена не смее да биде негативна.</value>
+</data>
+	<data name="RemoveItem" xml:space="preserve">
+  <value>Отстрани ставка</value>
+</data>
+	<data name="GrandTotal" xml:space="preserve">
+  <value>Вкупно</value>
+</data>
+	<data name="OptionalPurchaseOrderInformation" xml:space="preserve">
+  <value>Опционални информации за нарачката.</value>
+</data>
+	<data name="NotePlaceholder" xml:space="preserve">
+  <value>Забелешка...</value>
+</data>
+	<data name="ProductAlreadyAdded" xml:space="preserve">
+  <value>Овој производ веќе е додаден како ставка.</value>
+</data>
+	<data name="OrderNumberRequired" xml:space="preserve">
+  <value>Ве молиме внесете број на нарачка.</value>
+</data>
+	<data name="OrderNumberMaxLength" xml:space="preserve">
+  <value>Бројот на нарачката може да има најмногу 50 знаци.</value>
+</data>
+	<data name="AtLeastOneProductRequired" xml:space="preserve">
+  <value>Ве молиме додадете најмалку еден производ.</value>
+</data>
+	<data name="ProductRequiredForEveryItem" xml:space="preserve">
+  <value>Ве молиме изберете производ за секоја ставка.</value>
+</data>
+	<data name="ProductCanOnlyBeAddedOnce" xml:space="preserve">
+  <value>Еден производ може да постои само еднаш како ставка на нарачката.</value>
+</data>
+	<data name="SelectedSupplierNotFoundOrInactive" xml:space="preserve">
+  <value>Избраниот добавувач не е пронајден или е деактивиран.</value>
+</data>
+	<data name="OrderNumberAlreadyExists" xml:space="preserve">
+  <value>Овој број на нарачка веќе постои.</value>
+</data>
+	<data name="SelectedProductsNotFoundOrInactive" xml:space="preserve">
+  <value>Најмалку еден избран производ не е пронајден или е деактивиран.</value>
+</data>
+	<data name="PurchaseOrderSaveError" xml:space="preserve">
+  <value>Нарачката не можеше да се зачува. Проверете го бројот на нарачката и податоците.</value>
+</data>
+	<data name="PurchaseOrderCreateError" xml:space="preserve">
+  <value>Грешка при креирање на нарачката: {0}</value>
+</data>
+	<data name="PurchaseOrderDetails" xml:space="preserve">
+  <value>Детали за нарачката</value>
+</data>
+	<data name="PurchaseOrderLoading" xml:space="preserve">
+  <value>Нарачката се вчитува...</value>
+</data>
+	<data name="PurchaseOrderNotFound" xml:space="preserve">
+  <value>Нарачката не е пронајдена</value>
+</data>
+	<data name="BackToPurchaseOrders" xml:space="preserve">
+  <value>Назад кон нарачки</value>
+</data>
+	<data name="SupplierPurchaseOrder" xml:space="preserve">
+  <value>Нарачка кон добавувач</value>
+</data>
+	<data name="BookIncomingGoods" xml:space="preserve">
+  <value>Евидентирај прием</value>
+</data>
+	<data name="PurchaseOrderItemsOverview" xml:space="preserve">
+  <value>Преглед на нарачаните и испорачаните количини.</value>
+</data>
+	<data name="SupplierOfThisOrder" xml:space="preserve">
+  <value>Добавувач на оваа нарачка.</value>
+</data>
+	<data name="SupplierNotFound" xml:space="preserve">
+  <value>Добавувачот не е пронајден.</value>
+</data>
+	<data name="Ordered" xml:space="preserve">
+  <value>Нарачано</value>
+</data>
+	<data name="Delivered" xml:space="preserve">
+  <value>Испорачано</value>
+</data>
+	<data name="Open" xml:space="preserve">
+  <value>Отворено</value>
+</data>
+	<data name="PartiallyDelivered" xml:space="preserve">
+  <value>Делумно</value>
+</data>
+	<data name="Action" xml:space="preserve">
+  <value>Акција</value>
+</data>
+	<data name="Incoming" xml:space="preserve">
+  <value>Прием</value>
+</data>
+	<data name="DeliveryStatus" xml:space="preserve">
+  <value>Статус на испорака</value>
+</data>
+	<data name="CurrentDeliveryProgress" xml:space="preserve">
+  <value>Преглед на тековниот напредок на испораката.</value>
+</data>
+	<data name="TotalOrdered" xml:space="preserve">
+  <value>Нарачана количина</value>
+</data>
+	<data name="TotalDelivered" xml:space="preserve">
+  <value>Испорачана количина</value>
+</data>
+	<data name="TotalRemaining" xml:space="preserve">
+  <value>Преостаната количина</value>
+</data>
+	<data name="UnitsStillOpen" xml:space="preserve">
+  <value> единици сè уште отворени</value>
+</data>
+	<data name="OpenGoodsCanBeBooked" xml:space="preserve">
+  <value>Преостанатата стока може да се евидентира преку прием на стока во магацинот.</value>
+</data>
+	<data name="PurchaseOrderFullyDelivered" xml:space="preserve">
+  <value>Оваа нарачка е целосно испорачана.</value>
+</data>
+	<data name="Reference" xml:space="preserve">
+  <value>Референца</value>
+</data>
+	<data name="EditPurchaseOrder" xml:space="preserve">
+  <value>Уреди нарачка</value>
+</data>
+	<data name="EditSupplierAndOrderData" xml:space="preserve">
+  <value>Уредете го добавувачот и податоците за нарачката.</value>
+</data>
+	<data name="PurchaseOrderCannotBeEdited" xml:space="preserve">
+  <value>Нарачката не може да се уредува</value>
+</data>
+	<data name="PurchaseOrderAlreadyHasStatus" xml:space="preserve">
+  <value>Оваа нарачка веќе има статус</value>
+</data>
+	<data name="ToPurchaseOrder" xml:space="preserve">
+  <value>Кон нарачката</value>
+</data>
+	<data name="EditProductsQuantitiesAndPrices" xml:space="preserve">
+  <value>Уредете ги производите, количините и цените.</value>
+</data>
+	<data name="AlreadyDelivered" xml:space="preserve">
+  <value>Веќе испорачано</value>
+</data>
+	<data name="PriceCannotBeNegative" xml:space="preserve">
+  <value>Цената не смее да биде негативна.</value>
+</data>
+	<data name="DeliveredItemCannotBeRemoved" xml:space="preserve">
+  <value>Веќе испорачана ставка не може да се отстрани.</value>
+</data>
+	<data name="DeliveredItemProductCannotBeChanged" xml:space="preserve">
+  <value>Производот на веќе испорачана ставка не може да се промени.</value>
+</data>
+	<data name="AllProductsAlreadyAdded" xml:space="preserve">
+  <value>Сите достапни производи веќе се додадени.</value>
+</data>
+	<data name="PurchaseOrderItemNotFound" xml:space="preserve">
+  <value>Ставката на нарачката не е пронајдена.</value>
+</data>
+	<data name="QuantityCannotBeLessThanDelivered" xml:space="preserve">
+  <value>Нарачаната количина не смее да биде помала од веќе испорачаната количина.</value>
+</data>
+	<data name="DeliveredQuantityCannotExceedOrdered" xml:space="preserve">
+  <value>Испорачаната количина не смее да биде поголема од нарачаната количина.</value>
+</data>
+	<data name="PurchaseOrderChangedMeanwhile" xml:space="preserve">
+  <value>Оваа нарачка во меѓувреме е потврдена и повеќе не може да се уредува.</value>
+</data>
+	<data name="PurchaseOrderSaveException" xml:space="preserve">
+  <value>Грешка при зачувување: {0}</value>
+</data>
+	<data name="ManagePurchaseOrdersDescription" xml:space="preserve">
+  <value>Преглед и управување со сите нарачки кон добавувачи.</value>
+</data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Креирај нарачка</value>
+</data>
+	<data name="SearchPurchaseOrderPlaceholder" xml:space="preserve">
+  <value>Пребарај број на нарачка, добавувач или референца...</value>
+</data>
+	<data name="AllStatuses" xml:space="preserve">
+  <value>Сите статуси</value>
+</data>
+	<data name="AllSuppliers" xml:space="preserve">
+  <value>Сите добавувачи</value>
+</data>
+	<data name="Drafts" xml:space="preserve">
+  <value>Нацрти</value>
+</data>
+	<data name="TotalValue" xml:space="preserve">
+  <value>Вкупна вредност</value>
+</data>
+	<data name="SupplierPurchaseOrders" xml:space="preserve">
+  <value>Нарачки кон добавувачи</value>
+</data>
+	<data name="PurchaseOrdersLoading" xml:space="preserve">
+  <value>Нарачките се вчитуваат...</value>
+</data>
+	<data name="NoPurchaseOrdersFound" xml:space="preserve">
+  <value>Не се пронајдени нарачки</value>
+</data>
+	<data name="NoPurchaseOrdersForFilters" xml:space="preserve">
+  <value>Не се пронајдени нарачки за избраните филтри.</value>
+</data>
+	<data name="CreateFirstPurchaseOrder" xml:space="preserve">
+  <value>Креирај прва нарачка</value>
+</data>
+	<data name="Confirm" xml:space="preserve">
+  <value>Потврди</value>
+</data>
+	<data name="EntriesInfo" xml:space="preserve">
+  <value>{0} од {1} нарачки</value>
+</data>
+	<data name="PurchaseOrdersFileName" xml:space="preserve">
+  <value>Нарачки_кон_добавувачи</value>
+</data>
+	<data name="ExcelExportError" xml:space="preserve">
+  <value>Грешка при Excel експортот</value>
+</data>
 </root>

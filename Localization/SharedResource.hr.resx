@@ -703,7 +703,7 @@
     <value>Neobavezni opis proizvoda.</value>
   </data>
   <data name="SkuAlreadyExists" xml:space="preserve">
-    <value>This SKU already exists.</value>
+    <value>Ovaj SKU već postoji.</value>
   </data>
   <data name="BarcodeAlreadyExists" xml:space="preserve">
     <value>Ovaj barkod već postoji.</value>
@@ -1377,4 +1377,577 @@
   <data name="SaveCustomer" xml:space="preserve">
     <value>Spremi kupca</value>
   </data>
+  <data name="ManageOrdersDescription" xml:space="preserve">
+    <value>Upravljajte svojim narudžbama.</value>
+  </data>
+  <data name="NewOrder" xml:space="preserve">
+    <value>Nova narudžba</value>
+  </data>
+  <data name="SearchOrderPlaceholder" xml:space="preserve">
+    <value>Pretražite broj narudžbe, referencu ili kupca...</value>
+  </data>
+  <data name="AllOrderStatuses" xml:space="preserve">
+    <value>Svi statusi</value>
+  </data>
+  <data name="OrderStatusDraft" xml:space="preserve">
+    <value>Nacrt</value>
+  </data>
+  <data name="OrderStatusConfirmed" xml:space="preserve">
+    <value>Potvrđena</value>
+  </data>
+  <data name="OrderStatusInProgress" xml:space="preserve">
+    <value>U obradi</value>
+  </data>
+  <data name="OrderStatusPartiallyDelivered" xml:space="preserve">
+    <value>Djelomično isporučena</value>
+  </data>
+  <data name="OrderStatusShipped" xml:space="preserve">
+    <value>Poslana</value>
+  </data>
+  <data name="OrderStatusCompleted" xml:space="preserve">
+    <value>Završena</value>
+  </data>
+  <data name="OrderStatusCancelled" xml:space="preserve">
+    <value>Otkazana</value>
+  </data>
+  <data name="OrdersCount" xml:space="preserve">
+    <value>Narudžbe</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Otvorene</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>U obradi</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Završene</value>
+  </data>
+  <data name="OrderList" xml:space="preserve">
+    <value>Narudžbe</value>
+  </data>
+  <data name="OrdersLoading" xml:space="preserve">
+    <value>Učitavanje narudžbi...</value>
+  </data>
+  <data name="NoOrdersFound" xml:space="preserve">
+    <value>Nisu pronađene narudžbe</value>
+  </data>
+  <data name="NoOrdersForSearch" xml:space="preserve">
+    <value>Za trenutnu pretragu nisu pronađene narudžbe.</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Narudžba</value>
+  </data>
+  <data name="OrderDate" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ReferenceShort" xml:space="preserve">
+    <value>Ref.</value>
+  </data>
+  <data name="DuplicateOrder" xml:space="preserve">
+    <value>Dupliciraj narudžbu</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalji</value>
+  </data>
+  <data name="OrdesrConfirm" xml:space="preserve">
+    <value>Potvrdi narudžbu</value>
+  </data>
+  <data name="CancelOrder" xml:space="preserve">
+    <value>Otkaži narudžbu</value>
+  </data>
+  <data name="PaginationInfoOrders" xml:space="preserve">
+    <value>Stranica {0} od {1} · {2} od {3} narudžbi</value>
+  </data>
+  <data name="OrderDuplicating" xml:space="preserve">
+    <value>Dupliciranje narudžbe...</value>
+  </data>
+  <data name="OrderDuplicateError" xml:space="preserve">
+    <value>Pogreška pri dupliciranju: {0}</value>
+  </data>
+  <data name="OrderCancelledSuccessfully" xml:space="preserve">
+    <value>Narudžba je uspješno otkazana.</value>
+  </data>
+  <data name="OrderCancelError" xml:space="preserve">
+    <value>Pogreška pri otkazivanju: {0}</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Broj narudžbe</value>
+  </data>
+  <data name="ExportOrders" xml:space="preserve">
+    <value>Izvezi narudžbe</value>
+  </data>
+  <data name="OrdersExportSheet" xml:space="preserve">
+    <value>Narudžbe – Stranica {0}</value>
+  </data>
+  <data name="OrderItemsCount" xml:space="preserve">
+    <value>Stavke</value>
+  </data>
+  <data name="CreateOrderDescription" xml:space="preserve">
+    <value>Unesite novu narudžbu.</value>
+  </data>
+  <data name="OrderInformation" xml:space="preserve">
+    <value>Podaci o narudžbi</value>
+  </data>
+  <data name="BasicOrderInformation" xml:space="preserve">
+    <value>Osnovni podaci o narudžbi.</value>
+  </data>
+  <data name="SelectCustomer" xml:space="preserve">
+    <value>Odaberite kupca</value>
+  </data>
+  <data name="CustomerOrderPlaceholder" xml:space="preserve">
+    <value>npr. narudžba kupca 12345</value>
+  </data>
+  <data name="DeliveryAddress" xml:space="preserve">
+    <value>Adresa za dostavu</value>
+  </data>
+  <data name="SelectedCustomerDeliveryAddress" xml:space="preserve">
+    <value>Delivery address of the selected customer.</value>
+  </data>
+  <data name="OrderItems" xml:space="preserve">
+    <value>Stavke narudžbe</value>
+  </data>
+  <data name="AddProductsToOrder" xml:space="preserve">
+    <value>Dodajte proizvode u narudžbu.</value>
+  </data>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>Jedinična cijena</value>
+  </data>
+  <data name="AddProduct" xml:space="preserve">
+    <value>Dodaj proizvod</value>
+  </data>
+  <data name="NoProductsYet" xml:space="preserve">
+    <value>Još nema proizvoda</value>
+  </data>
+  <data name="SelectProductAndAdd" xml:space="preserve">
+    <value>Odaberite proizvod i dodajte ga u narudžbu.</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Ukloni stavku</value>
+  </data>
+  <data name="SaveOrder" xml:space="preserve">
+    <value>Spremi narudžbu</value>
+  </data>
+  <data name="UnitPriceCannotBeNegative" xml:space="preserve">
+    <value>Jedinična cijena ne smije biti negativna.</value>
+  </data>
+  <data name="NoProductsInOrder" xml:space="preserve">
+    <value>Dodajte barem jedan proizvod.</value>
+  </data>
+  <data name="CustomerSelectionRequired" xml:space="preserve">
+    <value>Odaberite kupca.</value>
+  </data>
+  <data name="SelectedCustomerNotFound" xml:space="preserve">
+    <value>Odabrani kupac nije pronađen.</value>
+  </data>
+  <data name="SelectedProductNotFoundWithName" xml:space="preserve">
+    <value>Proizvod „{0}“ nije pronađen.</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Stavka</value>
+  </data>
+  <data name="BackToOrders" xml:space="preserve">
+    <value>Natrag na narudžbe</value>
+  </data>
+  <data name="SelectLocationForReservation" xml:space="preserve">
+    <value>Odaberite skladišnu lokaciju za svaku stavku s koje će se roba rezervirati.</value>
+  </data>
+  <data name="StockReservation" xml:space="preserve">
+    <value>Rezervacija zalihe</value>
+  </data>
+  <data name="CheckAvailableStockAndSelectLocation" xml:space="preserve">
+    <value>Provjerite raspoloživu zalihu i odaberite skladišnu lokaciju.</value>
+  </data>
+  <data name="NoOrderItems" xml:space="preserve">
+    <value>Nema stavki u narudžbi</value>
+  </data>
+  <data name="Reservable" xml:space="preserve">
+    <value>Može se rezervirati</value>
+  </data>
+  <data name="Insufficient" xml:space="preserve">
+    <value>Nedovoljno</value>
+  </data>
+  <data name="Confirming" xml:space="preserve">
+    <value>Potvrđivanje...</value>
+  </data>
+  <data name="OrderAlreadyConfirmed" xml:space="preserve">
+    <value>Narudžba je već potvrđena</value>
+  </data>
+  <data name="OrderCannotBeConfirmed" xml:space="preserve">
+    <value>Ova narudžba se više ne može potvrditi.</value>
+  </data>
+  <data name="OrderHasNoItems" xml:space="preserve">
+    <value>Narudžba ne sadrži stavke.</value>
+  </data>
+  <data name="SelectLocationForProduct" xml:space="preserve">
+    <value>Odaberite skladišnu lokaciju za „{0}“.</value>
+  </data>
+  <data name="NoStockForProductAtLocation" xml:space="preserve">
+    <value>Nije pronađena zaliha za „{0}“ na odabranoj skladišnoj lokaciji.</value>
+  </data>
+  <data name="InsufficientStockForProduct" xml:space="preserve">
+    <value>Nema dovoljno raspoložive zalihe za „{0}“. Raspoloživo: {1}, potrebno: {2}.</value>
+  </data>
+  <data name="ErrorConfirmingOrder" xml:space="preserve">
+    <value>Pogreška pri potvrđivanju: {0}</value>
+  </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Uredi narudžbu</value>
+  </data>
+  <data name="OrderLoading" xml:space="preserve">
+    <value>Učitavanje narudžbe...</value>
+  </data>
+  <data name="OrderNotFound" xml:space="preserve">
+    <value>Narudžba nije pronađena.</value>
+  </data>
+  <data name="EditProductsAndQuantities" xml:space="preserve">
+    <value>Uredite proizvode i količine.</value>
+  </data>
+  <data name="ConfirmedOrderInfo" xml:space="preserve">
+    <value>Narudžba je potvrđena. Promjene količina i brisanje stavki automatski se sinkroniziraju s rezerviranom zalihom. Nove stavke ne mogu se dodavati u potvrđenu narudžbu.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddItems" xml:space="preserve">
+    <value>U potvrđenu narudžbu nije moguće dodavati nove stavke.</value>
+  </data>
+  <data name="OrderMustHaveItems" xml:space="preserve">
+    <value>Narudžba mora sadržavati barem jednu stavku.</value>
+  </data>
+  <data name="ConfirmedOrderStatusChangeNotAllowed" xml:space="preserve">
+    <value>Potvrđena narudžba ovdje se ne može promijeniti u drugi status.</value>
+  </data>
+  <data name="ProductChangeNotAllowedConfirmedOrder" xml:space="preserve">
+    <value>Proizvod stavke „{0}“ ne može se promijeniti u potvrđenoj narudžbi.</value>
+  </data>
+  <data name="ReservationLocationRequired" xml:space="preserve">
+    <value>Za „{0}“ nije određena skladišna lokacija za rezervaciju.</value>
+  </data>
+  <data name="ReservedStockNotFound" xml:space="preserve">
+    <value>Rezervirana zaliha za „{0}“ nije pronađena.</value>
+  </data>
+  <data name="InsufficientStockForIncrease" xml:space="preserve">
+    <value>Nema dovoljno raspoložive zalihe za „{0}“. Dodatno potrebno: {1}, raspoloživo: {2}.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddNewItems" xml:space="preserve">
+    <value>U potvrđenu narudžbu nije moguće dodavati nove stavke.</value>
+  </data>
+  <data name="ProductNotFoundWithName" xml:space="preserve">
+    <value>Proizvod „{0}“ nije pronađen.</value>
+  </data>
+  <data name="OrderDetails" xml:space="preserve">
+    <value>Detalji narudžbe</value>
+  </data>
+  <data name="NoDeliveryAddress" xml:space="preserve">
+    <value>Nije unesena adresa za dostavu.</value>
+  </data>
+  <data name="ConfirmPurchaseOrder" xml:space="preserve">
+    <value>Potvrdi narudžbu</value>
+  </data>
+  <data name="PurchaseOrderCannotBeConfirmed" xml:space="preserve">
+    <value>Narudžba se ne može potvrditi</value>
+  </data>
+  <data name="PurchaseOrderAlreadyProcessed" xml:space="preserve">
+    <value>Ova narudžba je već obrađena.</value>
+  </data>
+  <data name="PurchaseOrderStatusInfo" xml:space="preserve">
+    <value>Ova narudžba već ima status</value>
+  </data>
+  <data name="ToPurchaseOrder" xml:space="preserve">
+    <value>Želite li zaista potvrditi narudžbu?</value>
+  </data>
+  <data name="PurchaseOrderConfirmationWarning" xml:space="preserve">
+    <value>Nakon potvrde narudžba se više ne može uređivati.</value>
+  </data>
+  <data name="StockNotChangedOnConfirmation" xml:space="preserve">
+    <value>Zaliha se ne mijenja prilikom potvrde.</value>
+  </data>
+  <data name="StockUpdatedOnReceipt" xml:space="preserve">
+    <value>Zaliha se ažurira tek prilikom zaprimanja robe.</value>
+  </data>
+  <data name="PurchaseOrderData" xml:space="preserve">
+    <value>Podaci o narudžbi</value>
+  </data>
+  <data name="SupplierNumberLabel" xml:space="preserve">
+    <value>Broj dobavljača</value>
+  </data>
+  <data name="PurchaseOrderItemsDescription" xml:space="preserve">
+    <value>Ove stavke bit će poslane dobavljaču zajedno s narudžbom.</value>
+  </data>
+  <data name="NoPurchaseOrderItems" xml:space="preserve">
+    <value>Nema stavki</value>
+  </data>
+  <data name="TotalQuantity" xml:space="preserve">
+    <value>Ukupna količina</value>
+  </data>
+  <data name="OrderValue" xml:space="preserve">
+    <value>Vrijednost narudžbe</value>
+  </data>
+  <data name="PurchaseOrderSupplierNotFound" xml:space="preserve">
+    <value>Dobavljač nije pronađen ili je deaktiviran.</value>
+  </data>
+  <data name="PurchaseOrderWithoutItemsCannotBeConfirmed" xml:space="preserve">
+    <value>Narudžba bez stavki ne može se potvrditi.</value>
+  </data>
+  <data name="ConfirmPurchaseOrderButton" xml:space="preserve">
+    <value>✓ Potvrdi narudžbu</value>
+  </data>
+  <data name="PurchaseOrderConfirmationError" xml:space="preserve">
+    <value>Pogreška pri potvrđivanju: {0}</value>
+  </data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Kreiraj narudžbu</value>
+</data>
+	<data name="CreatePurchaseOrderDescription" xml:space="preserve">
+  <value>Kreirajte novu narudžbu kod dobavljača.</value>
+</data>
+	<data name="PurchaseOrder" xml:space="preserve">
+  <value>Narudžba</value>
+</data>
+	<data name="SupplierAndOrderData" xml:space="preserve">
+  <value>Dobavljač i podaci o narudžbi.</value>
+</data>
+	<data name="SelectSupplier" xml:space="preserve">
+  <value>Odaberite dobavljača</value>
+</data>
+	<data name="SupplierSelectionRequired" xml:space="preserve">
+  <value>Odaberite dobavljača.</value>
+</data>
+	<data name="PurchaseOrderReferencePlaceholder" xml:space="preserve">
+  <value>npr. vaša referenca</value>
+</data>
+	<data name="AddProductsAndQuantities" xml:space="preserve">
+  <value>Dodajte proizvode i količine.</value>
+</data>
+	<data name="AddProduct" xml:space="preserve">
+  <value>Dodaj proizvod</value>
+</data>
+	<data name="NoPurchaseOrderItems" xml:space="preserve">
+  <value>Nema stavki</value>
+</data>
+	<data name="AddAtLeastOneProduct" xml:space="preserve">
+  <value>Dodajte barem jedan proizvod.</value>
+</data>
+	<data name="SelectProduct" xml:space="preserve">
+  <value>Odaberite proizvod</value>
+</data>
+	<data name="ProductSelectionRequired" xml:space="preserve">
+  <value>Odaberite proizvod.</value>
+</data>
+	<data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+  <value>Količina mora biti veća od 0.</value>
+</data>
+	<data name="UnitPriceCannotBeNegative" xml:space="preserve">
+  <value>Jedinična cijena ne smije biti negativna.</value>
+</data>
+	<data name="RemoveItem" xml:space="preserve">
+  <value>Ukloni stavku</value>
+</data>
+	<data name="GrandTotal" xml:space="preserve">
+  <value>Ukupno</value>
+</data>
+	<data name="OptionalPurchaseOrderInformation" xml:space="preserve">
+  <value>Dodatne informacije o narudžbi.</value>
+</data>
+	<data name="NotePlaceholder" xml:space="preserve">
+  <value>Napomena...</value>
+</data>
+	<data name="ProductAlreadyAdded" xml:space="preserve">
+  <value>Ovaj proizvod je već dodan kao stavka.</value>
+</data>
+	<data name="OrderNumberRequired" xml:space="preserve">
+  <value>Unesite broj narudžbe.</value>
+</data>
+	<data name="OrderNumberMaxLength" xml:space="preserve">
+  <value>Broj narudžbe može imati najviše 50 znakova.</value>
+</data>
+	<data name="AtLeastOneProductRequired" xml:space="preserve">
+  <value>Dodajte barem jedan proizvod.</value>
+</data>
+	<data name="ProductRequiredForEveryItem" xml:space="preserve">
+  <value>Odaberite proizvod za svaku stavku.</value>
+</data>
+	<data name="ProductCanOnlyBeAddedOnce" xml:space="preserve">
+  <value>Proizvod može postojati samo jednom kao stavka narudžbe.</value>
+</data>
+	<data name="SelectedSupplierNotFoundOrInactive" xml:space="preserve">
+  <value>Odabrani dobavljač nije pronađen ili je deaktiviran.</value>
+</data>
+	<data name="OrderNumberAlreadyExists" xml:space="preserve">
+  <value>Ovaj broj narudžbe već postoji.</value>
+</data>
+	<data name="SelectedProductsNotFoundOrInactive" xml:space="preserve">
+  <value>Barem jedan odabrani proizvod nije pronađen ili je deaktiviran.</value>
+</data>
+	<data name="PurchaseOrderSaveError" xml:space="preserve">
+  <value>Narudžba nije mogla biti spremljena. Provjerite broj narudžbe i podatke.</value>
+</data>
+	<data name="PurchaseOrderCreateError" xml:space="preserve">
+  <value>Pogreška pri izradi narudžbe: {0}</value>
+</data>
+	<data name="PurchaseOrderDetails" xml:space="preserve">
+  <value>Detalji narudžbe</value>
+</data>
+	<data name="PurchaseOrderLoading" xml:space="preserve">
+  <value>Učitavanje narudžbe...</value>
+</data>
+	<data name="PurchaseOrderNotFound" xml:space="preserve">
+  <value>Narudžba nije pronađena</value>
+</data>
+	<data name="BackToPurchaseOrders" xml:space="preserve">
+  <value>Natrag na narudžbe</value>
+</data>
+	<data name="SupplierPurchaseOrder" xml:space="preserve">
+  <value>Narudžba dobavljača</value>
+</data>
+	<data name="BookIncomingGoods" xml:space="preserve">
+  <value>Knjiži ulaz robe</value>
+</data>
+	<data name="PurchaseOrderItemsOverview" xml:space="preserve">
+  <value>Pregled naručenih i isporučenih količina.</value>
+</data>
+	<data name="SupplierOfThisOrder" xml:space="preserve">
+  <value>Dobavljač ove narudžbe.</value>
+</data>
+	<data name="SupplierNotFound" xml:space="preserve">
+  <value>Dobavljač nije pronađen.</value>
+</data>
+	<data name="Ordered" xml:space="preserve">
+  <value>Naručeno</value>
+</data>
+	<data name="Delivered" xml:space="preserve">
+  <value>Isporučeno</value>
+</data>
+	<data name="Open" xml:space="preserve">
+  <value>Otvoreno</value>
+</data>
+	<data name="PartiallyDelivered" xml:space="preserve">
+  <value>Djelomično</value>
+</data>
+	<data name="Action" xml:space="preserve">
+  <value>Radnja</value>
+</data>
+	<data name="Incoming" xml:space="preserve">
+  <value>Ulaz</value>
+</data>
+	<data name="DeliveryStatus" xml:space="preserve">
+  <value>Status isporuke</value>
+</data>
+	<data name="CurrentDeliveryProgress" xml:space="preserve">
+  <value>Pregled trenutnog napretka isporuke.</value>
+</data>
+	<data name="TotalOrdered" xml:space="preserve">
+  <value>Ukupno naručeno</value>
+</data>
+	<data name="TotalDelivered" xml:space="preserve">
+  <value>Ukupno isporučeno</value>
+</data>
+	<data name="TotalRemaining" xml:space="preserve">
+  <value>Preostala količina</value>
+</data>
+	<data name="UnitsStillOpen" xml:space="preserve">
+  <value> jedinica još otvoreno</value>
+</data>
+	<data name="OpenGoodsCanBeBooked" xml:space="preserve">
+  <value>Preostala roba može se evidentirati putem ulaza robe u skladište.</value>
+</data>
+	<data name="PurchaseOrderFullyDelivered" xml:space="preserve">
+  <value>Ova je narudžba u potpunosti isporučena.</value>
+</data>
+	<data name="Reference" xml:space="preserve">
+  <value>Referenca</value>
+</data>
+	<data name="EditPurchaseOrder" xml:space="preserve">
+  <value>Uredi narudžbu</value>
+</data>
+	<data name="EditSupplierAndOrderData" xml:space="preserve">
+  <value>Uredite dobavljača i podatke o narudžbi.</value>
+</data>
+	<data name="PurchaseOrderCannotBeEdited" xml:space="preserve">
+  <value>Narudžba se ne može uređivati</value>
+</data>
+	<data name="PurchaseOrderAlreadyHasStatus" xml:space="preserve">
+  <value>Ova narudžba već ima status</value>
+</data>
+	<data name="ToPurchaseOrder" xml:space="preserve">
+  <value>Na narudžbu</value>
+</data>
+	<data name="EditProductsQuantitiesAndPrices" xml:space="preserve">
+  <value>Uredite proizvode, količine i cijene.</value>
+</data>
+	<data name="AlreadyDelivered" xml:space="preserve">
+  <value>Već isporučeno</value>
+</data>
+	<data name="PriceCannotBeNegative" xml:space="preserve">
+  <value>Cijena ne smije biti negativna.</value>
+</data>
+	<data name="DeliveredItemCannotBeRemoved" xml:space="preserve">
+  <value>Već isporučena stavka ne može se ukloniti.</value>
+</data>
+	<data name="DeliveredItemProductCannotBeChanged" xml:space="preserve">
+  <value>Proizvod već isporučene stavke ne može se promijeniti.</value>
+</data>
+	<data name="AllProductsAlreadyAdded" xml:space="preserve">
+  <value>Svi dostupni proizvodi već su dodani.</value>
+</data>
+	<data name="PurchaseOrderItemNotFound" xml:space="preserve">
+  <value>Stavka narudžbe nije pronađena.</value>
+</data>
+	<data name="QuantityCannotBeLessThanDelivered" xml:space="preserve">
+  <value>Naručena količina ne smije biti manja od već isporučene količine.</value>
+</data>
+	<data name="DeliveredQuantityCannotExceedOrdered" xml:space="preserve">
+  <value>Isporučena količina ne smije biti veća od naručene količine.</value>
+</data>
+	<data name="PurchaseOrderChangedMeanwhile" xml:space="preserve">
+  <value>Ova je narudžba u međuvremenu potvrđena i više se ne može uređivati.</value>
+</data>
+	<data name="PurchaseOrderSaveException" xml:space="preserve">
+  <value>Pogreška pri spremanju: {0}</value>
+</data>
+	<data name="ManagePurchaseOrdersDescription" xml:space="preserve">
+  <value>Pregled i upravljanje svim narudžbama dobavljačima.</value>
+</data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Kreiraj narudžbu</value>
+</data>
+	<data name="SearchPurchaseOrderPlaceholder" xml:space="preserve">
+  <value>Pretražite broj narudžbe, dobavljača ili referencu...</value>
+</data>
+	<data name="AllStatuses" xml:space="preserve">
+  <value>Svi statusi</value>
+</data>
+	<data name="AllSuppliers" xml:space="preserve">
+  <value>Svi dobavljači</value>
+</data>
+	<data name="Drafts" xml:space="preserve">
+  <value>Nacrti</value>
+</data>
+	<data name="TotalValue" xml:space="preserve">
+  <value>Ukupna vrijednost</value>
+</data>
+	<data name="SupplierPurchaseOrders" xml:space="preserve">
+  <value>Narudžbe dobavljačima</value>
+</data>
+	<data name="PurchaseOrdersLoading" xml:space="preserve">
+  <value>Učitavanje narudžbi...</value>
+</data>
+	<data name="NoPurchaseOrdersFound" xml:space="preserve">
+  <value>Nisu pronađene narudžbe</value>
+</data>
+	<data name="NoPurchaseOrdersForFilters" xml:space="preserve">
+  <value>Za odabrane filtre nisu pronađene narudžbe.</value>
+</data>
+	<data name="CreateFirstPurchaseOrder" xml:space="preserve">
+  <value>Kreiraj prvu narudžbu</value>
+</data>
+	<data name="Confirm" xml:space="preserve">
+  <value>Potvrdi</value>
+</data>
+	<data name="EntriesInfo" xml:space="preserve">
+  <value>{0} od {1} narudžbi</value>
+</data>
+	<data name="PurchaseOrdersFileName" xml:space="preserve">
+  <value>Narudžbe_dobavljačima</value>
+</data>
+	<data name="ExcelExportError" xml:space="preserve">
+  <value>Pogreška pri Excel eksportu</value>
+</data>
 </root>

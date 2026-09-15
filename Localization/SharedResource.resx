@@ -1377,4 +1377,577 @@
   <data name="SaveCustomer" xml:space="preserve">
     <value>Kunde speichern</value>
   </data>
+  <data name="ManageOrdersDescription" xml:space="preserve">
+    <value>Verwalten Sie Ihre Bestellungen.</value>
+  </data>
+  <data name="NewOrder" xml:space="preserve">
+    <value>Neue Bestellung</value>
+  </data>
+  <data name="SearchOrderPlaceholder" xml:space="preserve">
+    <value>Bestellnummer, Referenz oder Kunde suchen...</value>
+  </data>
+  <data name="AllOrderStatuses" xml:space="preserve">
+    <value>Alle Status</value>
+  </data>
+  <data name="OrderStatusDraft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="OrderStatusConfirmed" xml:space="preserve">
+    <value>Bestätigt</value>
+  </data>
+  <data name="OrderStatusInProgress" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="OrderStatusPartiallyDelivered" xml:space="preserve">
+    <value>Teilweise geliefert</value>
+  </data>
+  <data name="OrderStatusShipped" xml:space="preserve">
+    <value>Versendet</value>
+  </data>
+  <data name="OrderStatusCompleted" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="OrderStatusCancelled" xml:space="preserve">
+    <value>Storniert</value>
+  </data>
+  <data name="OrdersCount" xml:space="preserve">
+    <value>Bestellungen</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="OrderList" xml:space="preserve">
+    <value>Bestellungen</value>
+  </data>
+  <data name="OrdersLoading" xml:space="preserve">
+    <value>Bestellungen werden geladen...</value>
+  </data>
+  <data name="NoOrdersFound" xml:space="preserve">
+    <value>Keine Bestellungen gefunden</value>
+  </data>
+  <data name="NoOrdersForSearch" xml:space="preserve">
+    <value>Für die aktuelle Suche wurden keine Bestellungen gefunden.</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Bestellung</value>
+  </data>
+  <data name="OrderDate" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ReferenceShort" xml:space="preserve">
+    <value>Ref.</value>
+  </data>
+  <data name="DuplicateOrder" xml:space="preserve">
+    <value>Bestellung duplizieren</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="OrdesrConfirm" xml:space="preserve">
+    <value>Bestellung bestätigen</value>
+  </data>
+  <data name="CancelOrder" xml:space="preserve">
+    <value>Stornieren</value>
+  </data>
+  <data name="PaginationInfoOrders" xml:space="preserve">
+    <value>Seite {0} von {1} · {2} von {3} Bestellungen</value>
+  </data>
+  <data name="OrderDuplicating" xml:space="preserve">
+    <value>Bestellung wird dupliziert...</value>
+  </data>
+  <data name="OrderDuplicateError" xml:space="preserve">
+    <value>Fehler beim Duplizieren: {0}</value>
+  </data>
+  <data name="OrderCancelledSuccessfully" xml:space="preserve">
+    <value>Bestellung erfolgreich storniert.</value>
+  </data>
+  <data name="OrderCancelError" xml:space="preserve">
+    <value>Fehler beim Stornieren: {0}</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Bestellnummer</value>
+  </data>
+  <data name="ExportOrders" xml:space="preserve">
+    <value>Bestellungen exportieren</value>
+  </data>
+  <data name="OrdersExportSheet" xml:space="preserve">
+    <value>Bestellungen – Seite {0}</value>
+  </data>
+  <data name="OrderItemsCount" xml:space="preserve">
+    <value>Positionen</value>
+  </data>
+  <data name="CreateOrderDescription" xml:space="preserve">
+    <value>Neue Bestellung erfassen.</value>
+  </data>
+  <data name="OrderInformation" xml:space="preserve">
+    <value>Bestellinformationen</value>
+  </data>
+  <data name="BasicOrderInformation" xml:space="preserve">
+    <value>Grundlegende Informationen zur Bestellung.</value>
+  </data>
+  <data name="SelectCustomer" xml:space="preserve">
+    <value>Kunde auswählen</value>
+  </data>
+  <data name="CustomerOrderPlaceholder" xml:space="preserve">
+    <value>z.B. Kundenbestellung 12345</value>
+  </data>
+  <data name="DeliveryAddress" xml:space="preserve">
+    <value>Lieferadresse</value>
+  </data>
+  <data name="SelectedCustomerDeliveryAddress" xml:space="preserve">
+    <value>Lieferadresse des ausgewählten Kunden.</value>
+  </data>
+  <data name="OrderItems" xml:space="preserve">
+    <value>Bestellpositionen</value>
+  </data>
+  <data name="AddProductsToOrder" xml:space="preserve">
+    <value>Produkte zur Bestellung hinzufügen.</value>
+  </data>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>Einzelpreis</value>
+  </data>
+  <data name="AddProduct" xml:space="preserve">
+    <value>Produkt hinzufügen</value>
+  </data>
+  <data name="NoProductsYet" xml:space="preserve">
+    <value>Noch keine Produkte</value>
+  </data>
+  <data name="SelectProductAndAdd" xml:space="preserve">
+    <value>Wählen Sie ein Produkt und fügen Sie es zur Bestellung hinzu.</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Position entfernen</value>
+  </data>
+  <data name="SaveOrder" xml:space="preserve">
+    <value>Bestellung speichern</value>
+  </data>
+  <data name="UnitPriceCannotBeNegative" xml:space="preserve">
+    <value>Der Einzelpreis darf nicht negativ sein.</value>
+  </data>
+  <data name="NoProductsInOrder" xml:space="preserve">
+    <value>Bitte mindestens ein Produkt hinzufügen.</value>
+  </data>
+  <data name="CustomerSelectionRequired" xml:space="preserve">
+    <value>Bitte einen Kunden auswählen.</value>
+  </data>
+  <data name="SelectedCustomerNotFound" xml:space="preserve">
+    <value>Der ausgewählte Kunde wurde nicht gefunden.</value>
+  </data>
+  <data name="SelectedProductNotFoundWithName" xml:space="preserve">
+    <value>Produkt „{0}“ wurde nicht gefunden.</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="BackToOrders" xml:space="preserve">
+    <value>Zurück zu Bestellungen</value>
+  </data>
+  <data name="SelectLocationForReservation" xml:space="preserve">
+    <value>Bitte wählen Sie für jede Position den Lagerplatz aus, von dem die Ware reserviert werden soll.</value>
+  </data>
+  <data name="StockReservation" xml:space="preserve">
+    <value>Lagerreservierung</value>
+  </data>
+  <data name="CheckAvailableStockAndSelectLocation" xml:space="preserve">
+    <value>Verfügbaren Bestand prüfen und Lagerplatz auswählen.</value>
+  </data>
+  <data name="NoOrderItems" xml:space="preserve">
+    <value>Keine Positionen vorhanden</value>
+  </data>
+  <data name="Reservable" xml:space="preserve">
+    <value>Reservierbar</value>
+  </data>
+  <data name="Insufficient" xml:space="preserve">
+    <value>Nicht genug</value>
+  </data>
+  <data name="Confirming" xml:space="preserve">
+    <value>Wird bestätigt...</value>
+  </data>
+  <data name="OrderAlreadyConfirmed" xml:space="preserve">
+    <value>Bestellung bereits bestätigt</value>
+  </data>
+  <data name="OrderCannotBeConfirmed" xml:space="preserve">
+    <value>Diese Bestellung kann nicht mehr bestätigt werden.</value>
+  </data>
+  <data name="OrderHasNoItems" xml:space="preserve">
+    <value>Die Bestellung enthält keine Positionen.</value>
+  </data>
+  <data name="SelectLocationForProduct" xml:space="preserve">
+    <value>Bitte einen Lagerplatz für „{0}“ auswählen.</value>
+  </data>
+  <data name="NoStockForProductAtLocation" xml:space="preserve">
+    <value>Kein Bestand für „{0}“ auf dem ausgewählten Lagerplatz gefunden.</value>
+  </data>
+  <data name="InsufficientStockForProduct" xml:space="preserve">
+    <value>Nicht genügend verfügbarer Bestand für „{0}“. Verfügbar: {1}, benötigt: {2}.</value>
+  </data>
+  <data name="ErrorConfirmingOrder" xml:space="preserve">
+    <value>Fehler beim Bestätigen: {0}</value>
+  </data>
+  <data name="EditOrder" xml:space="preserve">
+    <value>Bestellung bearbeiten</value>
+  </data>
+  <data name="OrderLoading" xml:space="preserve">
+    <value>Bestellung wird geladen...</value>
+  </data>
+  <data name="OrderNotFound" xml:space="preserve">
+    <value>Bestellung wurde nicht gefunden.</value>
+  </data>
+  <data name="EditProductsAndQuantities" xml:space="preserve">
+    <value>Produkte und Mengen bearbeiten.</value>
+  </data>
+  <data name="ConfirmedOrderInfo" xml:space="preserve">
+    <value>Die Bestellung ist bestätigt. Änderungen an Mengen und das Löschen von Positionen werden automatisch mit dem reservierten Bestand synchronisiert. Neue Positionen können bei einer bestätigten Bestellung nicht hinzugefügt werden.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddItems" xml:space="preserve">
+    <value>Bei einer bestätigten Bestellung können keine neuen Positionen hinzugefügt werden.</value>
+  </data>
+  <data name="OrderMustHaveItems" xml:space="preserve">
+    <value>Die Bestellung muss mindestens eine Position enthalten.</value>
+  </data>
+  <data name="ConfirmedOrderStatusChangeNotAllowed" xml:space="preserve">
+    <value>Eine bestätigte Bestellung kann hier nicht auf einen anderen Status geändert werden.</value>
+  </data>
+  <data name="ProductChangeNotAllowedConfirmedOrder" xml:space="preserve">
+    <value>Das Produkt der Position „{0}“ kann bei einer bestätigten Bestellung nicht geändert werden.</value>
+  </data>
+  <data name="ReservationLocationRequired" xml:space="preserve">
+    <value>Für „{0}“ ist kein Lagerplatz für die Reservierung hinterlegt.</value>
+  </data>
+  <data name="ReservedStockNotFound" xml:space="preserve">
+    <value>Der reservierte Bestand für „{0}“ wurde nicht gefunden.</value>
+  </data>
+  <data name="InsufficientStockForIncrease" xml:space="preserve">
+    <value>Nicht genügend verfügbarer Bestand für „{0}“. Zusätzlich benötigt: {1}, verfügbar: {2}.</value>
+  </data>
+  <data name="ConfirmedOrderCannotAddNewItems" xml:space="preserve">
+    <value>Bei einer bestätigten Bestellung können keine neuen Positionen hinzugefügt werden.</value>
+  </data>
+  <data name="ProductNotFoundWithName" xml:space="preserve">
+    <value>Produkt „{0}“ wurde nicht gefunden.</value>
+  </data>
+  <data name="OrderDetails" xml:space="preserve">
+    <value>Bestelldetails</value>
+  </data>
+  <data name="NoDeliveryAddress" xml:space="preserve">
+    <value>Keine Lieferadresse hinterlegt.</value>
+  </data>
+  <data name="ConfirmPurchaseOrder" xml:space="preserve">
+    <value>Bestellung bestätigen</value>
+  </data>
+  <data name="PurchaseOrderCannotBeConfirmed" xml:space="preserve">
+    <value>Bestellung kann nicht bestätigt werden</value>
+  </data>
+  <data name="PurchaseOrderAlreadyProcessed" xml:space="preserve">
+    <value>Diese Bestellung wurde bereits verarbeitet.</value>
+  </data>
+  <data name="PurchaseOrderStatusInfo" xml:space="preserve">
+    <value>Diese Bestellung hat bereits den Status</value>
+  </data>
+  <data name="ToPurchaseOrder" xml:space="preserve">
+    <value>Zur Bestellung</value>
+  </data>
+  <data name="PurchaseOrderConfirmationWarning" xml:space="preserve">
+    <value>Nach der Bestätigung kann die Bestellung nicht mehr bearbeitet werden.</value>
+  </data>
+  <data name="StockNotChangedOnConfirmation" xml:space="preserve">
+    <value>Der Lagerbestand wird bei der Bestätigung nicht verändert.</value>
+  </data>
+  <data name="StockUpdatedOnReceipt" xml:space="preserve">
+    <value>Der Bestand wird erst beim Wareneingang aktualisiert.</value>
+  </data>
+  <data name="PurchaseOrderData" xml:space="preserve">
+    <value>Bestelldaten</value>
+  </data>
+  <data name="SupplierNumberLabel" xml:space="preserve">
+    <value>Lieferantennummer</value>
+  </data>
+  <data name="PurchaseOrderItemsDescription" xml:space="preserve">
+    <value>Diese Positionen werden mit der Bestellung an den Lieferanten übermittelt.</value>
+  </data>
+  <data name="NoPurchaseOrderItems" xml:space="preserve">
+    <value>Keine Positionen</value>
+  </data>
+  <data name="TotalQuantity" xml:space="preserve">
+    <value>Gesamtmenge</value>
+  </data>
+  <data name="OrderValue" xml:space="preserve">
+    <value>Bestellwert</value>
+  </data>
+  <data name="PurchaseOrderSupplierNotFound" xml:space="preserve">
+    <value>Der Lieferant wurde nicht gefunden oder ist deaktiviert.</value>
+  </data>
+  <data name="PurchaseOrderWithoutItemsCannotBeConfirmed" xml:space="preserve">
+    <value>Eine Bestellung ohne Positionen kann nicht bestätigt werden.</value>
+  </data>
+  <data name="ConfirmPurchaseOrderButton" xml:space="preserve">
+    <value>✓ Bestellung bestätigen</value>
+  </data>
+  <data name="PurchaseOrderConfirmationError" xml:space="preserve">
+    <value>Fehler beim Bestätigen: {0}</value>
+  </data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Bestellung erstellen</value>
+</data>
+	<data name="CreatePurchaseOrderDescription" xml:space="preserve">
+  <value>Neue Bestellung bei einem Lieferanten erstellen.</value>
+</data>
+	<data name="PurchaseOrder" xml:space="preserve">
+  <value>Bestellung</value>
+</data>
+	<data name="SupplierAndOrderData" xml:space="preserve">
+  <value>Lieferant und Bestelldaten.</value>
+</data>
+	<data name="SelectSupplier" xml:space="preserve">
+  <value>Lieferant auswählen</value>
+</data>
+	<data name="SupplierSelectionRequired" xml:space="preserve">
+  <value>Bitte einen Lieferanten auswählen.</value>
+</data>
+	<data name="PurchaseOrderReferencePlaceholder" xml:space="preserve">
+  <value>z.B. Ihre Referenz</value>
+</data>
+	<data name="AddProductsAndQuantities" xml:space="preserve">
+  <value>Produkte und Mengen hinzufügen.</value>
+</data>
+	<data name="AddProduct" xml:space="preserve">
+  <value>Produkt hinzufügen</value>
+</data>
+	<data name="NoPurchaseOrderItems" xml:space="preserve">
+  <value>Keine Positionen</value>
+</data>
+	<data name="AddAtLeastOneProduct" xml:space="preserve">
+  <value>Fügen Sie mindestens ein Produkt hinzu.</value>
+</data>
+	<data name="SelectProduct" xml:space="preserve">
+  <value>Produkt auswählen</value>
+</data>
+	<data name="ProductSelectionRequired" xml:space="preserve">
+  <value>Bitte ein Produkt auswählen.</value>
+</data>
+	<data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
+  <value>Die Menge muss größer als 0 sein.</value>
+</data>
+	<data name="UnitPriceCannotBeNegative" xml:space="preserve">
+  <value>Der Einzelpreis darf nicht negativ sein.</value>
+</data>
+	<data name="RemoveItem" xml:space="preserve">
+  <value>Position entfernen</value>
+</data>
+	<data name="GrandTotal" xml:space="preserve">
+  <value>Gesamt</value>
+</data>
+	<data name="OptionalPurchaseOrderInformation" xml:space="preserve">
+  <value>Optionale Informationen zur Bestellung.</value>
+</data>
+	<data name="NotePlaceholder" xml:space="preserve">
+  <value>Notiz...</value>
+</data>
+	<data name="ProductAlreadyAdded" xml:space="preserve">
+  <value>Dieses Produkt wurde bereits als Position hinzugefügt.</value>
+</data>
+	<data name="OrderNumberRequired" xml:space="preserve">
+  <value>Bitte eine Bestellnummer eingeben.</value>
+</data>
+	<data name="OrderNumberMaxLength" xml:space="preserve">
+  <value>Die Bestellnummer darf maximal 50 Zeichen lang sein.</value>
+</data>
+	<data name="AtLeastOneProductRequired" xml:space="preserve">
+  <value>Bitte mindestens ein Produkt hinzufügen.</value>
+</data>
+	<data name="ProductRequiredForEveryItem" xml:space="preserve">
+  <value>Bitte für jede Position ein Produkt auswählen.</value>
+</data>
+	<data name="ProductCanOnlyBeAddedOnce" xml:space="preserve">
+  <value>Ein Produkt darf nur einmal als Bestellposition vorhanden sein.</value>
+</data>
+	<data name="SelectedSupplierNotFoundOrInactive" xml:space="preserve">
+  <value>Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.</value>
+</data>
+	<data name="OrderNumberAlreadyExists" xml:space="preserve">
+  <value>Diese Bestellnummer existiert bereits.</value>
+</data>
+	<data name="SelectedProductsNotFoundOrInactive" xml:space="preserve">
+  <value>Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.</value>
+</data>
+	<data name="PurchaseOrderSaveError" xml:space="preserve">
+  <value>Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Bestellnummer und die Daten.</value>
+</data>
+	<data name="PurchaseOrderCreateError" xml:space="preserve">
+  <value>Fehler beim Erstellen der Bestellung: {0}</value>
+</data>
+	<data name="PurchaseOrderDetails" xml:space="preserve">
+  <value>Bestelldetails</value>
+</data>
+	<data name="PurchaseOrderLoading" xml:space="preserve">
+  <value>Bestellung wird geladen...</value>
+</data>
+	<data name="PurchaseOrderNotFound" xml:space="preserve">
+  <value>Bestellung nicht gefunden</value>
+</data>
+	<data name="BackToPurchaseOrders" xml:space="preserve">
+  <value>Zurück zu Bestellungen</value>
+</data>
+	<data name="SupplierPurchaseOrder" xml:space="preserve">
+  <value>Lieferantenbestellung</value>
+</data>
+	<data name="BookIncomingGoods" xml:space="preserve">
+  <value>Wareneingang buchen</value>
+</data>
+	<data name="PurchaseOrderItemsOverview" xml:space="preserve">
+  <value>Übersicht über bestellte und gelieferte Mengen.</value>
+</data>
+	<data name="SupplierOfThisOrder" xml:space="preserve">
+  <value>Lieferant dieser Bestellung.</value>
+</data>
+	<data name="SupplierNotFound" xml:space="preserve">
+  <value>Lieferant nicht gefunden.</value>
+</data>
+	<data name="Ordered" xml:space="preserve">
+  <value>Bestellt</value>
+</data>
+	<data name="Delivered" xml:space="preserve">
+  <value>Geliefert</value>
+</data>
+	<data name="Open" xml:space="preserve">
+  <value>Offen</value>
+</data>
+	<data name="PartiallyDelivered" xml:space="preserve">
+  <value>Teilweise</value>
+</data>
+	<data name="Action" xml:space="preserve">
+  <value>Aktion</value>
+</data>
+	<data name="Incoming" xml:space="preserve">
+  <value>Eingang</value>
+</data>
+	<data name="DeliveryStatus" xml:space="preserve">
+  <value>Lieferstatus</value>
+</data>
+	<data name="CurrentDeliveryProgress" xml:space="preserve">
+  <value>Übersicht über den aktuellen Lieferfortschritt.</value>
+</data>
+	<data name="TotalOrdered" xml:space="preserve">
+  <value>Bestellte Menge</value>
+</data>
+	<data name="TotalDelivered" xml:space="preserve">
+  <value>Gelieferte Menge</value>
+</data>
+	<data name="TotalRemaining" xml:space="preserve">
+  <value>Offene Menge</value>
+</data>
+	<data name="UnitsStillOpen" xml:space="preserve">
+  <value> Einheiten noch offen</value>
+</data>
+	<data name="OpenGoodsCanBeBooked" xml:space="preserve">
+  <value>Die noch offene Ware kann über den Wareneingang ins Lager gebucht werden.</value>
+</data>
+	<data name="PurchaseOrderFullyDelivered" xml:space="preserve">
+  <value>Diese Bestellung wurde vollständig geliefert.</value>
+</data>
+	<data name="Reference" xml:space="preserve">
+  <value>Referenz</value>
+</data>
+	<data name="EditPurchaseOrder" xml:space="preserve">
+  <value>Bestellung bearbeiten</value>
+</data>
+	<data name="EditSupplierAndOrderData" xml:space="preserve">
+  <value>Lieferant und Bestelldaten bearbeiten.</value>
+</data>
+	<data name="PurchaseOrderCannotBeEdited" xml:space="preserve">
+  <value>Bestellung kann nicht bearbeitet werden</value>
+</data>
+	<data name="PurchaseOrderAlreadyHasStatus" xml:space="preserve">
+  <value>Diese Bestellung hat bereits den Status</value>
+</data>
+	<data name="ToPurchaseOrder" xml:space="preserve">
+  <value>Zur Bestellung</value>
+</data>
+	<data name="EditProductsQuantitiesAndPrices" xml:space="preserve">
+  <value>Produkte, Mengen und Preise bearbeiten.</value>
+</data>
+	<data name="AlreadyDelivered" xml:space="preserve">
+  <value>Bereits geliefert</value>
+</data>
+	<data name="PriceCannotBeNegative" xml:space="preserve">
+  <value>Der Preis darf nicht negativ sein.</value>
+</data>
+	<data name="DeliveredItemCannotBeRemoved" xml:space="preserve">
+  <value>Eine bereits gelieferte Position kann nicht entfernt werden.</value>
+</data>
+	<data name="DeliveredItemProductCannotBeChanged" xml:space="preserve">
+  <value>Das Produkt einer bereits gelieferten Position kann nicht geändert werden.</value>
+</data>
+	<data name="AllProductsAlreadyAdded" xml:space="preserve">
+  <value>Alle verfügbaren Produkte wurden bereits hinzugefügt.</value>
+</data>
+	<data name="PurchaseOrderItemNotFound" xml:space="preserve">
+  <value>Eine Bestellposition wurde nicht gefunden.</value>
+</data>
+	<data name="QuantityCannotBeLessThanDelivered" xml:space="preserve">
+  <value>Die Bestellmenge darf nicht kleiner als die bereits gelieferte Menge sein.</value>
+</data>
+	<data name="DeliveredQuantityCannotExceedOrdered" xml:space="preserve">
+  <value>Die gelieferte Menge darf nicht größer als die Bestellmenge sein.</value>
+</data>
+	<data name="PurchaseOrderChangedMeanwhile" xml:space="preserve">
+  <value>Diese Bestellung wurde inzwischen bestätigt und kann nicht mehr bearbeitet werden.</value>
+</data>
+	<data name="PurchaseOrderSaveException" xml:space="preserve">
+  <value>Fehler beim Speichern: {0}</value>
+</data>
+	<data name="ManagePurchaseOrdersDescription" xml:space="preserve">
+  <value>Übersicht und Verwaltung aller Lieferantenbestellungen.</value>
+</data>
+	<data name="CreatePurchaseOrder" xml:space="preserve">
+  <value>Bestellung erstellen</value>
+</data>
+	<data name="SearchPurchaseOrderPlaceholder" xml:space="preserve">
+  <value>Bestellnummer, Lieferant oder Referenz suchen...</value>
+</data>
+	<data name="AllStatuses" xml:space="preserve">
+  <value>Alle Status</value>
+</data>
+	<data name="AllSuppliers" xml:space="preserve">
+  <value>Alle Lieferanten</value>
+</data>
+	<data name="Drafts" xml:space="preserve">
+  <value>Entwürfe</value>
+</data>
+	<data name="TotalValue" xml:space="preserve">
+  <value>Gesamtwert</value>
+</data>
+	<data name="SupplierPurchaseOrders" xml:space="preserve">
+  <value>Lieferantenbestellungen</value>
+</data>
+	<data name="PurchaseOrdersLoading" xml:space="preserve">
+  <value>Bestellungen werden geladen...</value>
+</data>
+	<data name="NoPurchaseOrdersFound" xml:space="preserve">
+  <value>Keine Bestellungen gefunden</value>
+</data>
+	<data name="NoPurchaseOrdersForFilters" xml:space="preserve">
+  <value>Für die gewählten Filter wurden keine Bestellungen gefunden.</value>
+</data>
+	<data name="CreateFirstPurchaseOrder" xml:space="preserve">
+  <value>Erste Bestellung erstellen</value>
+</data>
+	<data name="Confirm" xml:space="preserve">
+  <value>Bestätigen</value>
+</data>
+	<data name="EntriesInfo" xml:space="preserve">
+  <value>{0} von {1} Bestellungen</value>
+</data>
+	<data name="PurchaseOrdersFileName" xml:space="preserve">
+  <value>Lieferantenbestellungen</value>
+</data>
+	<data name="ExcelExportError" xml:space="preserve">
+  <value>Fehler beim Excel-Export</value>
+</data>
 </root>

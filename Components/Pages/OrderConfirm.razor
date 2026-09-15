@@ -1,22 +1,27 @@
 ﻿@page "/orders/confirm/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung bestätigen</PageTitle>
+<PageTitle>@L["OrdersConfirm"]</PageTitle>
 
 <div class="product-form-page">
 
     <div class="page-header">
 
         <div>
-            <h1>Bestellung bestätigen</h1>
+
+            <h1>@L["OrdersConfirm"]</h1>
 
             @if (Order != null)
             {
@@ -24,11 +29,14 @@
                     @Order.OrderNumber
                 </p>
             }
+
         </div>
 
         <a href="/orders/details/@Id"
            class="btn-secondary">
-            ← Zurück
+
+            ← @L["Back"]
+
         </a>
 
     </div>
@@ -37,7 +45,7 @@
     @if (IsLoading)
     {
         <div class="loading-state">
-            Bestellung wird geladen...
+            @L["OrdersLoading"]
         </div>
     }
     else if (Order == null)
@@ -49,12 +57,14 @@
             </div>
 
             <h3>
-                Bestellung nicht gefunden
+                @L["OrderNotFound"]
             </h3>
 
             <a href="/orders"
                class="btn-secondary">
-                Zurück zu Bestellungen
+
+                @L["BackToOrders"]
+
             </a>
 
         </div>
@@ -72,26 +82,24 @@
                 <div class="form-section-title">
 
                     <h2>
-                        Bestellung @Order.OrderNumber
+                        @L["OrderNumber"] @Order.OrderNumber
                     </h2>
 
                     <p>
-                        Bitte wählen Sie für jede Position den
-                        Lagerplatz aus, aus dem die Ware reserviert
-                        werden soll.
+                        @L["SelectLocationForReservation"]
                     </p>
 
                 </div>
 
 
-                <!-- CUSTOMER -->
-
                 <div class="form-grid">
+
+                    <!-- CUSTOMER -->
 
                     <div class="form-group">
 
                         <label>
-                            Kunde
+                            @L["Customer"]
                         </label>
 
                         <div class="readonly-value">
@@ -105,24 +113,29 @@
                     </div>
 
 
+                    <!-- DATE -->
+
                     <div class="form-group">
 
                         <label>
-                            Bestelldatum
+                            @L["OrderDate"]
                         </label>
 
                         <div class="readonly-value">
 
                             @Order.OrderDate.Date
+
                         </div>
 
                     </div>
 
 
+                    <!-- STATUS -->
+
                     <div class="form-group">
 
                         <label>
-                            Status
+                            @L["Status"]
                         </label>
 
                         <div>
@@ -136,10 +149,12 @@
                     </div>
 
 
+                    <!-- TOTAL -->
+
                     <div class="form-group">
 
                         <label>
-                            Gesamt
+                            @L["Total"]
                         </label>
 
                         <div class="readonly-value">
@@ -158,7 +173,7 @@
 
 
             <!-- =====================================================
-                 ORDER ITEMS
+                 STOCK RESERVATION
                  ===================================================== -->
 
             <div class="form-section">
@@ -166,12 +181,11 @@
                 <div class="form-section-title">
 
                     <h2>
-                        Lagerreservierung
+                        @L["StockReservation"]
                     </h2>
 
                     <p>
-                        Verfügbaren Bestand prüfen und Lagerplatz
-                        auswählen.
+                        @L["CheckAvailableStockAndSelectLocation"]
                     </p>
 
                 </div>
@@ -182,7 +196,7 @@
                     <div class="empty-products">
 
                         <h3>
-                            Keine Positionen vorhanden
+                            @L["NoOrderItems"]
                         </h3>
 
                     </div>
@@ -197,19 +211,19 @@
 
                                 <tr>
 
-                                    <th>Produkt</th>
+                                    <th>@L["Product"]</th>
 
-                                    <th>SKU</th>
+                                    <th>@L["SKU"]</th>
 
-                                    <th>Bestellt</th>
+                                    <th>@L["Ordered"]</th>
 
-                                    <th>Verfügbar</th>
+                                    <th>@L["Available"]</th>
 
-                                    <th>Lager</th>
+                                    <th>@L["Warehouse"]</th>
 
-                                    <th>Lagerplatz *</th>
+                                    <th>@L["Location"] *</th>
 
-                                    <th>Reservierbar</th>
+                                    <th>@L["Reservable"]</th>
 
                                 </tr>
 
@@ -288,7 +302,7 @@
                                                     @onchange="(e) => WarehouseChanged(item, e)">
 
                                                 <option value="0">
-                                                    Lager auswählen
+                                                    @L["SelectWarehouse"]
                                                 </option>
 
                                                 @foreach (var warehouse in item.Warehouses)
@@ -315,7 +329,7 @@
                                                     disabled="@(item.WarehouseId <= 0)">
 
                                                 <option value="0">
-                                                    Lagerplatz auswählen
+                                                    @L["SelectLocation"]
                                                 </option>
 
                                                 @foreach (var location in item.Locations)
@@ -346,13 +360,13 @@
                                                 @if (item.LocationAvailableQuantity >= item.Quantity)
                                                 {
                                                     <span class="status-badge status-active">
-                                                        Ja
+                                                        @L["Yes"]
                                                     </span>
                                                 }
                                                 else
                                                 {
                                                     <span class="status-badge status-low">
-                                                        Nicht genug
+                                                        @L["Insufficient"]
                                                     </span>
                                                 }
                                             }
@@ -398,7 +412,7 @@
                 <a href="/orders/details/@Id"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -411,15 +425,15 @@
                             @onclick="ConfirmOrder">
 
                         @(IsSaving
-                            ? "Wird bestätigt..."
-                            : "Bestellung bestätigen")
+                            ? L["Confirming"]
+                            : L["OrdersConfirm"])
 
                     </button>
                 }
                 else
                 {
                     <span class="status-badge status-active">
-                        Bestellung bereits bestätigt
+                        @L["OrderAlreadyConfirmed"]
                     </span>
                 }
 
@@ -773,7 +787,7 @@
             if (order == null)
             {
                 ErrorMessage =
-                    "Bestellung wurde nicht gefunden.";
+                    L["OrderNotFound"];
 
                 return;
             }
@@ -787,7 +801,7 @@
                 OrderStatus.Entwurf)
             {
                 ErrorMessage =
-                    "Diese Bestellung kann nicht mehr bestätigt werden.";
+                    L["OrderCannotBeConfirmed"];
 
                 return;
             }
@@ -800,7 +814,7 @@
             if (Items.Count == 0)
             {
                 ErrorMessage =
-                    "Die Bestellung enthält keine Positionen.";
+                    L["OrderHasNoItems"];
 
                 return;
             }
@@ -815,7 +829,10 @@
                 if (item.WarehouseLocationId <= 0)
                 {
                     ErrorMessage =
-                        $"Bitte einen Lagerplatz für '{item.ProductName}' auswählen.";
+                        L[
+                            "SelectLocationForProduct",
+                            item.ProductName
+                        ];
 
                     return;
                 }
@@ -843,7 +860,10 @@
                 if (stock == null)
                 {
                     ErrorMessage =
-                        $"Kein Stock für '{item.ProductName}' auf dem ausgewählten Lagerplatz gefunden.";
+                        L[
+                            "NoStockForProductAtLocation",
+                            item.ProductName
+                        ];
 
                     return;
                 }
@@ -857,8 +877,12 @@
                 if (available < item.Quantity)
                 {
                     ErrorMessage =
-                        $"Nicht genügend verfügbarer Bestand für '{item.ProductName}'. " +
-                        $"Verfügbar: {available:N2}, benötigt: {item.Quantity:N2}.";
+                        L[
+                            "InsufficientStockForProduct",
+                            item.ProductName,
+                            available.ToString("N2"),
+                            item.Quantity.ToString("N2")
+                        ];
 
                     return;
                 }
@@ -948,7 +972,7 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Bestätigen: {ex.Message}";
+                L["ErrorConfirmingOrder", ex.Message];
         }
         finally
         {
@@ -967,25 +991,25 @@
         return status switch
         {
             OrderStatus.Entwurf =>
-                "Entwurf",
+                L["OrderStatusDraft"],
 
             OrderStatus.Bestätigt =>
-                "Bestätigt",
+                L["OrderStatusConfirmed"],
 
             OrderStatus.InBearbeitung =>
-                "In Bearbeitung",
+                L["OrderStatusInProgress"],
 
             OrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["OrderStatusPartiallyDelivered"],
 
             OrderStatus.Versendet =>
-                "Versendet",
+                L["OrderStatusShipped"],
 
             OrderStatus.Abgeschlossen =>
-                "Abgeschlossen",
+                L["OrderStatusCompleted"],
 
             OrderStatus.Storniert =>
-                "Storniert",
+                L["OrderStatusCancelled"],
 
             _ =>
                 status.ToString()

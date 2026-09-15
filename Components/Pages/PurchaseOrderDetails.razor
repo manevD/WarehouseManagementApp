@@ -1,20 +1,24 @@
 ﻿@page "/purchase-orders/details/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung Details</PageTitle>
+<PageTitle>@L["PurchaseOrderDetails"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Bestellung wird geladen...
+        @L["PurchaseOrderLoading"]
     </div>
 }
 else if (Order == null)
@@ -25,12 +29,14 @@ else if (Order == null)
             ⚠
         </div>
 
-        <h3>Bestellung nicht gefunden</h3>
+        <h3>
+            @L["PurchaseOrderNotFound"]
+        </h3>
 
         <a href="/purchase-orders"
            class="btn-primary">
 
-            Zurück zu Bestellungen
+            @L["BackToPurchaseOrders"]
 
         </a>
 
@@ -53,7 +59,8 @@ else
                 </h1>
 
                 <p>
-                    Lieferantenbestellung
+                    @L["SupplierPurchaseOrder"]
+
                     @if (Order.Supplier != null)
                     {
                         <span>
@@ -70,7 +77,7 @@ else
                 <a href="/purchase-orders"
                    class="btn-secondary">
 
-                    ← Zurück
+                    ← @L["Back"]
 
                 </a>
 
@@ -80,7 +87,7 @@ else
                     <a href="/purchase-orders/edit/@Order.Id"
                        class="btn-secondary">
 
-                        ✎ Bearbeiten
+                        ✎ @L["Edit"]
 
                     </a>
 
@@ -88,7 +95,7 @@ else
                     <a href="/purchase-orders/confirm/@Order.Id"
                        class="btn-primary">
 
-                        ✓ Bestellung bestätigen
+                        ✓ @L["ConfirmPurchaseOrderButton"]
 
                     </a>
                 }
@@ -102,7 +109,7 @@ else
                         <a href="/stock/incoming?purchaseOrderId=@Order.Id"
                            class="btn-primary">
 
-                            + Wareneingang buchen
+                            + @L["BookIncomingGoods"]
 
                         </a>
                     }
@@ -122,7 +129,7 @@ else
             <div>
 
                 <span class="detail-label">
-                    Status
+                    @L["Status"]
                 </span>
 
                 <div class="detail-value">
@@ -132,7 +139,7 @@ else
                         case PurchaseOrderStatus.Entwurf:
 
                             <span class="status-badge status-draft">
-                                Entwurf
+                                @L["PurchaseOrderStatusDraft"]
                             </span>
 
                             break;
@@ -141,7 +148,7 @@ else
                         case PurchaseOrderStatus.Bestellt:
 
                             <span class="status-badge status-warning">
-                                Bestellt
+                                @L["PurchaseOrderStatusOrdered"]
                             </span>
 
                             break;
@@ -150,7 +157,7 @@ else
                         case PurchaseOrderStatus.TeilweiseGeliefert:
 
                             <span class="status-badge status-warning">
-                                Teilweise geliefert
+                                @L["PurchaseOrderStatusPartiallyDelivered"]
                             </span>
 
                             break;
@@ -159,7 +166,7 @@ else
                         case PurchaseOrderStatus.Geliefert:
 
                             <span class="status-badge status-active">
-                                Geliefert
+                                @L["PurchaseOrderStatusDelivered"]
                             </span>
 
                             break;
@@ -168,7 +175,7 @@ else
                         case PurchaseOrderStatus.Storniert:
 
                             <span class="status-badge status-low">
-                                Storniert
+                                @L["PurchaseOrderStatusCancelled"]
                             </span>
 
                             break;
@@ -191,7 +198,7 @@ else
             <div>
 
                 <span class="detail-label">
-                    Bestelldatum
+                    @L["OrderDate"]
                 </span>
 
                 <strong class="detail-value">
@@ -209,7 +216,7 @@ else
                 <div>
 
                     <span class="detail-label">
-                        Referenz
+                        @L["Reference"]
                     </span>
 
                     <strong class="detail-value">
@@ -235,11 +242,11 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Lieferant
+                        @L["Supplier"]
                     </h2>
 
                     <p>
-                        Lieferant dieser Bestellung.
+                        @L["SupplierOfThisOrder"]
                     </p>
 
                 </div>
@@ -269,7 +276,7 @@ else
                             {
                                 <span>
 
-                                    Lieferantennummer:
+                                    @L["SupplierNumberLabel"]:
                                     @Order.Supplier.SupplierNumber
 
                                 </span>
@@ -281,7 +288,7 @@ else
                             {
                                 <span>
 
-                                    Ansprechpartner:
+                                    @L["ContactPersonLabel"]:
                                     @Order.Supplier.ContactPerson
 
                                 </span>
@@ -292,9 +299,7 @@ else
                                 Order.Supplier.Email))
                             {
                                 <span>
-
                                     @Order.Supplier.Email
-
                                 </span>
                             }
 
@@ -303,9 +308,7 @@ else
                                 Order.Supplier.Phone))
                             {
                                 <span>
-
                                     @Order.Supplier.Phone
-
                                 </span>
                             }
 
@@ -347,7 +350,7 @@ else
                 {
                     <div class="form-error">
 
-                        Lieferant nicht gefunden.
+                        @L["SupplierNotFound"]
 
                     </div>
                 }
@@ -364,11 +367,11 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Bestellpositionen
+                        @L["OrderItems"]
                     </h2>
 
                     <p>
-                        Übersicht über bestellte und gelieferte Mengen.
+                        @L["PurchaseOrderItemsOverview"]
                     </p>
 
                 </div>
@@ -383,7 +386,7 @@ else
                         </div>
 
                         <h3>
-                            Keine Positionen
+                            @L["NoPurchaseOrderItems"]
                         </h3>
 
                     </div>
@@ -399,39 +402,39 @@ else
                                 <tr>
 
                                     <th>
-                                        Produkt
+                                        @L["Product"]
                                     </th>
 
                                     <th>
-                                        SKU
+                                        @L["SKU"]
                                     </th>
 
                                     <th>
-                                        Bestellt
+                                        @L["Ordered"]
                                     </th>
 
                                     <th>
-                                        Geliefert
+                                        @L["Delivered"]
                                     </th>
 
                                     <th>
-                                        Offen
+                                        @L["Open"]
                                     </th>
 
                                     <th>
-                                        Einzelpreis
+                                        @L["UnitPrice"]
                                     </th>
 
                                     <th>
-                                        Gesamt
+                                        @L["Total"]
                                     </th>
 
                                     <th>
-                                        Status
+                                        @L["Status"]
                                     </th>
 
                                     <th>
-                                        Aktion
+                                        @L["Action"]
                                     </th>
 
                                 </tr>
@@ -507,7 +510,7 @@ else
 
                                             <strong>
 
-                                                @item.Quantity
+                                                @item.Quantity.ToString("N2")
 
                                             </strong>
 
@@ -518,7 +521,7 @@ else
 
                                         <td>
 
-                                            @item.DeliveredQuantity
+                                            @item.DeliveredQuantity.ToString("N2")
 
                                         </td>
 
@@ -529,7 +532,7 @@ else
 
                                             <strong>
 
-                                                @remaining
+                                                @remaining.ToString("N2")
 
                                             </strong>
 
@@ -574,7 +577,7 @@ else
                                             {
                                                 <span class="status-badge status-draft">
 
-                                                    Offen
+                                                    @L["Open"]
 
                                                 </span>
                                             }
@@ -582,7 +585,7 @@ else
                                             {
                                                 <span class="status-badge status-warning">
 
-                                                    Teilweise
+                                                    @L["PartiallyDelivered"]
 
                                                 </span>
                                             }
@@ -590,7 +593,7 @@ else
                                             {
                                                 <span class="status-badge status-active">
 
-                                                    Geliefert
+                                                    @L["Delivered"]
 
                                                 </span>
                                             }
@@ -618,7 +621,7 @@ else
                                                 <a href="/stock/incoming?purchaseOrderId=@Order.Id&productId=@item.ProductId"
                                                    class="btn-secondary">
 
-                                                    + Eingang
+                                                    + @L["Incoming"]
 
                                                 </a>
                                             }
@@ -653,11 +656,11 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        Lieferstatus
+                        @L["DeliveryStatus"]
                     </h2>
 
                     <p>
-                        Übersicht über den aktuellen Lieferfortschritt.
+                        @L["CurrentDeliveryProgress"]
                     </p>
 
                 </div>
@@ -668,7 +671,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Bestellte Menge
+                            @L["TotalOrdered"]
                         </span>
 
                         <strong>
@@ -681,7 +684,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Gelieferte Menge
+                            @L["TotalDelivered"]
                         </span>
 
                         <strong>
@@ -694,7 +697,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Offene Menge
+                            @L["TotalRemaining"]
                         </span>
 
                         <strong>
@@ -707,7 +710,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Positionen
+                            @L["Positions"]
                         </span>
 
                         <strong>
@@ -720,7 +723,7 @@ else
                     <div class="stock-summary-card">
 
                         <span>
-                            Bestellwert
+                            @L["OrderValue"]
                         </span>
 
                         <strong>
@@ -763,14 +766,15 @@ else
                         <div>
 
                             <strong>
+
                                 @TotalRemaining.ToString("N2")
-                                Einheiten noch offen
+                                @L["UnitsStillOpen"]
+
                             </strong>
 
                             <p>
 
-                                Die noch offene Ware kann über
-                                den Wareneingang ins Lager gebucht werden.
+                                @L["OpenGoodsCanBeBooked"]
 
                             </p>
 
@@ -780,7 +784,7 @@ else
                         <a href="/stock/incoming?purchaseOrderId=@Order.Id"
                            class="btn-primary">
 
-                            Wareneingang buchen
+                            @L["BookIncomingGoods"]
 
                         </a>
 
@@ -797,7 +801,7 @@ else
 
                     <div class="form-success">
 
-                        ✓ Diese Bestellung wurde vollständig geliefert.
+                        ✓ @L["PurchaseOrderFullyDelivered"]
 
                     </div>
 
@@ -816,7 +820,7 @@ else
                     <div class="form-section-title">
 
                         <h2>
-                            Notiz
+                            @L["Note"]
                         </h2>
 
                     </div>
@@ -841,7 +845,7 @@ else
                 <a href="/purchase-orders"
                    class="btn-secondary">
 
-                    ← Zurück zu Bestellungen
+                    ← @L["BackToPurchaseOrders"]
 
                 </a>
 
@@ -852,7 +856,7 @@ else
                     <a href="/purchase-orders/edit/@Order.Id"
                        class="btn-secondary">
 
-                        ✎ Bearbeiten
+                        ✎ @L["Edit"]
 
                     </a>
 
@@ -860,7 +864,7 @@ else
                     <a href="/purchase-orders/confirm/@Order.Id"
                        class="btn-primary">
 
-                        ✓ Bestellung bestätigen
+                        ✓ @L["ConfirmPurchaseOrderButton"]
 
                     </a>
                 }
@@ -878,7 +882,7 @@ else
                         <a href="/stock/incoming?purchaseOrderId=@Order.Id"
                            class="btn-primary">
 
-                            + Wareneingang buchen
+                            + @L["BookIncomingGoods"]
 
                         </a>
                     }
@@ -956,7 +960,6 @@ else
     {
         IsLoading = true;
 
-
         try
         {
             await using var db =
@@ -991,7 +994,8 @@ else
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";

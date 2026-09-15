@@ -1,20 +1,24 @@
 ﻿@page "/purchase-orders/edit/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung bearbeiten</PageTitle>
+<PageTitle>@L["EditPurchaseOrder"]</PageTitle>
 
 @if (IsLoading)
 {
     <div class="loading-state">
-        Bestellung wird geladen...
+        @L["PurchaseOrderLoading"]
     </div>
 }
 else if (Order == null)
@@ -25,12 +29,14 @@ else if (Order == null)
             ⚠
         </div>
 
-        <h3>Bestellung nicht gefunden</h3>
+        <h3>
+            @L["PurchaseOrderNotFound"]
+        </h3>
 
         <a href="/purchase-orders"
            class="btn-primary">
 
-            Zurück zu Bestellungen
+            @L["BackToPurchaseOrders"]
 
         </a>
 
@@ -44,17 +50,21 @@ else if (Order.Status != PurchaseOrderStatus.Entwurf)
             🔒
         </div>
 
-        <h3>Bestellung kann nicht bearbeitet werden</h3>
+        <h3>
+            @L["PurchaseOrderCannotBeEdited"]
+        </h3>
 
         <p>
-            Diese Bestellung hat bereits den Status
-            <strong>@GetStatusText(Order.Status)</strong>.
+            @L["PurchaseOrderAlreadyHasStatus"]
+            <strong>
+                @GetStatusText(Order.Status)
+            </strong>.
         </p>
 
         <a href="/purchase-orders/details/@Order.Id"
            class="btn-primary">
 
-            Zur Bestellung
+            @L["ToPurchaseOrder"]
 
         </a>
 
@@ -72,7 +82,9 @@ else
 
             <div>
 
-                <h1>Bestellung bearbeiten</h1>
+                <h1>
+                    @L["EditPurchaseOrder"]
+                </h1>
 
                 <p>
                     @Order.OrderNumber
@@ -85,7 +97,7 @@ else
             <a href="/purchase-orders/details/@Order.Id"
                class="btn-secondary">
 
-                ← Zurück
+                ← @L["Back"]
 
             </a>
 
@@ -102,17 +114,19 @@ else
 
 
                 <!-- =================================================
-                     BESTELLUNG
+                     PURCHASE ORDER
                      ================================================= -->
 
                 <div class="form-section">
 
                     <div class="form-section-title">
 
-                        <h2>Bestellung</h2>
+                        <h2>
+                            @L["PurchaseOrder"]
+                        </h2>
 
                         <p>
-                            Lieferant und Bestelldaten bearbeiten.
+                            @L["EditSupplierAndOrderData"]
                         </p>
 
                     </div>
@@ -125,7 +139,8 @@ else
                         <div class="form-group">
 
                             <label>
-                                Lieferant <span>*</span>
+                                @L["Supplier"]
+                                <span>*</span>
                             </label>
 
                             <select class="form-control"
@@ -133,7 +148,7 @@ else
                                     @onchange="SupplierChanged">
 
                                 <option value="0">
-                                    Lieferant auswählen
+                                    @L["SelectSupplier"]
                                 </option>
 
                                 @foreach (var supplier in Suppliers)
@@ -156,7 +171,7 @@ else
                             @if (Model.SupplierId <= 0)
                             {
                                 <div class="form-error">
-                                    Bitte einen Lieferanten auswählen.
+                                    @L["SupplierSelectionRequired"]
                                 </div>
                             }
 
@@ -168,7 +183,8 @@ else
                         <div class="form-group">
 
                             <label>
-                                Bestellnummer <span>*</span>
+                                @L["OrderNumber"]
+                                <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.OrderNumber"
@@ -182,7 +198,8 @@ else
                         <div class="form-group">
 
                             <label>
-                                Bestelldatum <span>*</span>
+                                @L["OrderDate"]
+                                <span>*</span>
                             </label>
 
                             <InputDate @bind-Value="Model.OrderDate"
@@ -196,12 +213,12 @@ else
                         <div class="form-group">
 
                             <label>
-                                Referenznummer
+                                @L["ReferenceNumber"]
                             </label>
 
                             <InputText @bind-Value="Model.ReferenceNumber"
                                        class="form-control"
-                                       placeholder="Referenznummer" />
+                                       placeholder="@L["PurchaseOrderReferencePlaceholder"]" />
 
                         </div>
 
@@ -223,11 +240,11 @@ else
                             <div>
 
                                 <h2>
-                                    Bestellpositionen
+                                    @L["OrderItems"]
                                 </h2>
 
                                 <p>
-                                    Produkte, Mengen und Preise bearbeiten.
+                                    @L["EditProductsQuantitiesAndPrices"]
                                 </p>
 
                             </div>
@@ -237,7 +254,7 @@ else
                                     class="btn-primary"
                                     @onclick="AddItem">
 
-                                + Produkt hinzufügen
+                                + @L["AddProduct"]
 
                             </button>
 
@@ -255,18 +272,18 @@ else
                             </div>
 
                             <h3>
-                                Keine Positionen
+                                @L["NoPurchaseOrderItems"]
                             </h3>
 
                             <p>
-                                Fügen Sie mindestens ein Produkt hinzu.
+                                @L["AddAtLeastOneProduct"]
                             </p>
 
                             <button type="button"
                                     class="btn-primary"
                                     @onclick="AddItem">
 
-                                + Produkt hinzufügen
+                                + @L["AddProduct"]
 
                             </button>
 
@@ -283,19 +300,19 @@ else
                                     <tr>
 
                                         <th>
-                                            Produkt
+                                            @L["Product"]
                                         </th>
 
                                         <th>
-                                            Menge
+                                            @L["Quantity"]
                                         </th>
 
                                         <th>
-                                            Einzelpreis
+                                            @L["UnitPrice"]
                                         </th>
 
                                         <th>
-                                            Gesamt
+                                            @L["Total"]
                                         </th>
 
                                         <th>
@@ -312,9 +329,7 @@ else
                                     {
                                         <tr>
 
-                                            <!-- =================================
-                                                 PRODUCT
-                                                 ================================= -->
+                                            <!-- PRODUCT -->
 
                                             <td>
 
@@ -323,10 +338,11 @@ else
                                                         @onchange="(e) => ProductChanged(item, e)">
 
                                                     <option value="0">
-                                                        Produkt auswählen
+                                                        @L["SelectProduct"]
                                                     </option>
 
-                                                    @foreach (var product in GetAvailableProducts(item))
+                                                    @foreach (var product in
+                                                        GetAvailableProducts(item))
                                                     {
                                                         <option value="@product.Id">
 
@@ -342,16 +358,14 @@ else
                                                 @if (item.ProductId <= 0)
                                                 {
                                                     <div class="form-error">
-                                                        Produkt auswählen.
+                                                        @L["ProductSelectionRequired"]
                                                     </div>
                                                 }
 
                                             </td>
 
 
-                                            <!-- =================================
-                                                 QUANTITY
-                                                 ================================= -->
+                                            <!-- QUANTITY -->
 
                                             <td>
 
@@ -360,11 +374,12 @@ else
                                                              step="0.01"
                                                              min="0.01" />
 
+
                                                 @if (item.ProductId > 0 &&
                                                      item.Quantity <= 0)
                                                 {
                                                     <div class="form-error">
-                                                        Menge muss größer als 0 sein.
+                                                        @L["QuantityMustBeGreaterThanZero"]
                                                     </div>
                                                 }
 
@@ -373,7 +388,8 @@ else
                                                 {
                                                     <small class="form-help">
 
-                                                        Bereits geliefert:
+                                                        @L["AlreadyDelivered"]:
+
                                                         <strong>
                                                             @item.DeliveredQuantity.ToString("N2")
                                                         </strong>
@@ -384,9 +400,7 @@ else
                                             </td>
 
 
-                                            <!-- =================================
-                                                 UNIT PRICE
-                                                 ================================= -->
+                                            <!-- UNIT PRICE -->
 
                                             <td>
 
@@ -395,20 +409,19 @@ else
                                                              step="0.01"
                                                              min="0" />
 
+
                                                 @if (item.ProductId > 0 &&
                                                      item.UnitPrice < 0)
                                                 {
                                                     <div class="form-error">
-                                                        Preis darf nicht negativ sein.
+                                                        @L["PriceCannotBeNegative"]
                                                     </div>
                                                 }
 
                                             </td>
 
 
-                                            <!-- =================================
-                                                 TOTAL
-                                                 ================================= -->
+                                            <!-- TOTAL -->
 
                                             <td>
 
@@ -428,9 +441,7 @@ else
                                             </td>
 
 
-                                            <!-- =================================
-                                                 DELETE
-                                                 ================================= -->
+                                            <!-- DELETE -->
 
                                             <td>
 
@@ -438,7 +449,7 @@ else
                                                 {
                                                     <button type="button"
                                                             class="action-button delete-button"
-                                                            title="Position entfernen"
+                                                            title="@L["RemoveItem"]"
                                                             @onclick="() => RemoveItem(item)">
 
                                                         🗑
@@ -447,7 +458,7 @@ else
                                                 }
                                                 else
                                                 {
-                                                    <span title="Bereits gelieferte Position kann nicht gelöscht werden">
+                                                    <span title="@L["DeliveredItemCannotBeRemoved"]">
 
                                                         🔒
 
@@ -478,7 +489,7 @@ else
                     <div class="order-total-box">
 
                         <span>
-                            Gesamt
+                            @L["GrandTotal"]
                         </span>
 
                         <strong>
@@ -499,11 +510,11 @@ else
                     <div class="form-section-title">
 
                         <h2>
-                            Notiz
+                            @L["Note"]
                         </h2>
 
                         <p>
-                            Optionale Informationen zur Bestellung.
+                            @L["OptionalPurchaseOrderInformation"]
                         </p>
 
                     </div>
@@ -514,7 +525,7 @@ else
                         <InputTextArea @bind-Value="Model.Note"
                                        class="form-control textarea"
                                        rows="5"
-                                       placeholder="Notiz..." />
+                                       placeholder="@L["NotePlaceholder"]" />
 
                     </div>
 
@@ -527,9 +538,7 @@ else
                 @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                 {
                     <div class="form-error">
-
                         @ErrorMessage
-
                     </div>
                 }
 
@@ -543,7 +552,7 @@ else
                     <a href="/purchase-orders/details/@Order.Id"
                        class="btn-secondary">
 
-                        Abbrechen
+                        @L["Cancel"]
 
                     </a>
 
@@ -553,8 +562,8 @@ else
                             disabled="@IsSaving">
 
                         @(IsSaving
-                            ? "Speichern..."
-                            : "Änderungen speichern")
+                            ? L["Saving"]
+                            : L["SaveChanges"])
 
                     </button>
 
@@ -570,17 +579,9 @@ else
 
 @code {
 
-    // =========================================================
-    // PARAMETER
-    // =========================================================
-
     [Parameter]
     public int Id { get; set; }
 
-
-    // =========================================================
-    // DATA
-    // =========================================================
 
     private PurchaseOrder? Order;
 
@@ -588,17 +589,7 @@ else
 
     private List<Product> Products = new();
 
-
-    // =========================================================
-    // MODEL
-    // =========================================================
-
     private PurchaseOrderEditModel Model = new();
-
-
-    // =========================================================
-    // STATE
-    // =========================================================
 
     private bool IsLoading = true;
 
@@ -607,71 +598,53 @@ else
     private string? ErrorMessage;
 
 
-    // =========================================================
-    // INITIALIZATION
-    // =========================================================
-
     protected override async Task OnInitializedAsync()
     {
-        await using var db =
-            await DbFactory.CreateDbContextAsync();
+        await LoadData();
+    }
 
 
-        // =====================================================
-        // SUPPLIERS
-        // =====================================================
+    private async Task LoadData()
+    {
+        IsLoading = true;
 
-        Suppliers =
-            await db.Suppliers
-
-                .AsNoTracking()
-
-                .Where(x =>
-                    x.IsActive)
-
-                .OrderBy(x =>
-                    x.CompanyName)
-
-                .ToListAsync();
-
-
-        // =====================================================
-        // PRODUCTS
-        // =====================================================
-
-        Products =
-            await db.Products
-
-                .AsNoTracking()
-
-                .Where(x =>
-                    x.IsActive)
-
-                .OrderBy(x =>
-                    x.Name)
-
-                .ToListAsync();
-
-
-        // =====================================================
-        // ORDER
-        // =====================================================
-
-        Order =
-            await db.PurchaseOrders
-
-                .Include(x =>
-                    x.Supplier)
-
-                .Include(x =>
-                    x.Items)
-
-                .FirstOrDefaultAsync(x =>
-                    x.Id == Id);
-
-
-        if (Order != null)
+        try
         {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+
+            Suppliers =
+                await db.Suppliers
+                    .AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.CompanyName)
+                    .ToListAsync();
+
+
+            Products =
+                await db.Products
+                    .AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+
+
+            Order =
+                await db.PurchaseOrders
+
+                    .Include(x => x.Supplier)
+
+                    .Include(x => x.Items)
+
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == Id);
+
+
+            if (Order == null)
+                return;
+
+
             Model.SupplierId =
                 Order.SupplierId;
 
@@ -710,21 +683,17 @@ else
                     });
             }
         }
-
-
-        IsLoading = false;
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
-
-    // =========================================================
-    // SUPPLIER CHANGED
-    // =========================================================
 
     private Task SupplierChanged(
         ChangeEventArgs e)
     {
         ErrorMessage = null;
-
 
         if (int.TryParse(
                 e.Value?.ToString(),
@@ -739,23 +708,14 @@ else
                 0;
         }
 
-
         return Task.CompletedTask;
     }
 
-
-    // =========================================================
-    // ADD ITEM
-    // =========================================================
 
     private void AddItem()
     {
         ErrorMessage = null;
 
-
-        // =====================================================
-        // CHECK IF ALL PRODUCTS ARE ALREADY USED
-        // =====================================================
 
         var availableProductExists =
             Products.Any(product =>
@@ -767,7 +727,7 @@ else
         if (!availableProductExists)
         {
             ErrorMessage =
-                "Alle verfügbaren Produkte wurden bereits hinzugefügt.";
+                L["AllProductsAlreadyAdded"];
 
             return;
         }
@@ -778,10 +738,6 @@ else
     }
 
 
-    // =========================================================
-    // AVAILABLE PRODUCTS
-    // =========================================================
-
     private IEnumerable<Product> GetAvailableProducts(
         PurchaseOrderItemModel currentItem)
     {
@@ -790,9 +746,7 @@ else
 
                 .Where(item =>
                     item != currentItem
-
                     &&
-
                     item.ProductId > 0)
 
                 .Select(item =>
@@ -803,23 +757,15 @@ else
 
         return Products.Where(product =>
 
-            // Current selected product must remain visible
             product.Id ==
                 currentItem.ProductId
 
             ||
 
-            // Other selected products are hidden
             !selectedProductIds.Contains(
-                product.Id)
-
-        );
+                product.Id));
     }
 
-
-    // =========================================================
-    // PRODUCT CHANGED
-    // =========================================================
 
     private Task ProductChanged(
         PurchaseOrderItemModel item,
@@ -832,87 +778,54 @@ else
                 e.Value?.ToString(),
                 out var productId))
         {
-            item.ProductId =
-                0;
-
-            item.Quantity =
-                0;
-
-            item.UnitPrice =
-                0;
+            item.ProductId = 0;
+            item.Quantity = 0;
+            item.UnitPrice = 0;
 
             return Task.CompletedTask;
         }
 
-
-        // =====================================================
-        // CLEAR PRODUCT
-        // =====================================================
 
         if (productId <= 0)
         {
-            item.ProductId =
-                0;
-
-            item.Quantity =
-                0;
-
-            item.UnitPrice =
-                0;
+            item.ProductId = 0;
+            item.Quantity = 0;
+            item.UnitPrice = 0;
 
             return Task.CompletedTask;
         }
 
-
-        // =====================================================
-        // DUPLICATE CHECK
-        // =====================================================
 
         var duplicate =
             Model.Items.Any(x =>
                 x != item
-
                 &&
-
-                x.ProductId ==
-                    productId);
+                x.ProductId == productId);
 
 
         if (duplicate)
         {
             ErrorMessage =
-                "Dieses Produkt wurde bereits als Bestellposition hinzugefügt.";
+                L["ProductAlreadyAdded"];
 
             return Task.CompletedTask;
         }
 
-
-        // =====================================================
-        // DELIVERED ITEM PROTECTION
-        // =====================================================
 
         if (item.DeliveredQuantity > 0 &&
             item.ProductId != 0 &&
             item.ProductId != productId)
         {
             ErrorMessage =
-                "Das Produkt einer bereits gelieferten Position kann nicht geändert werden.";
+                L["DeliveredItemProductCannotBeChanged"];
 
             return Task.CompletedTask;
         }
 
 
-        // =====================================================
-        // SET PRODUCT
-        // =====================================================
-
         item.ProductId =
             productId;
 
-
-        // =====================================================
-        // DEFAULT PURCHASE PRICE
-        // =====================================================
 
         var product =
             Products.FirstOrDefault(x =>
@@ -931,24 +844,16 @@ else
     }
 
 
-    // =========================================================
-    // REMOVE ITEM
-    // =========================================================
-
     private void RemoveItem(
         PurchaseOrderItemModel item)
     {
         ErrorMessage = null;
 
 
-        // =====================================================
-        // DELIVERED PROTECTION
-        // =====================================================
-
         if (item.DeliveredQuantity > 0)
         {
             ErrorMessage =
-                "Eine bereits gelieferte Position kann nicht entfernt werden.";
+                L["DeliveredItemCannotBeRemoved"];
 
             return;
         }
@@ -958,10 +863,6 @@ else
     }
 
 
-    // =========================================================
-    // CALCULATE TOTAL
-    // =========================================================
-
     private decimal CalculateTotal()
     {
         return Model.Items.Sum(item =>
@@ -969,10 +870,6 @@ else
             item.UnitPrice);
     }
 
-
-    // =========================================================
-    // UPDATE
-    // =========================================================
 
     private async Task UpdatePurchaseOrder()
     {
@@ -998,7 +895,7 @@ else
                 PurchaseOrderStatus.Entwurf)
             {
                 ErrorMessage =
-                    "Diese Bestellung kann nicht mehr bearbeitet werden.";
+                    L["PurchaseOrderCannotBeEdited"];
 
                 return;
             }
@@ -1011,7 +908,7 @@ else
             if (Model.SupplierId <= 0)
             {
                 ErrorMessage =
-                    "Bitte einen Lieferanten auswählen.";
+                    L["SupplierSelectionRequired"];
 
                 return;
             }
@@ -1029,7 +926,7 @@ else
                 orderNumber))
             {
                 ErrorMessage =
-                    "Bestellnummer ist erforderlich.";
+                    L["OrderNumberRequired"];
 
                 return;
             }
@@ -1038,7 +935,7 @@ else
             if (orderNumber.Length > 50)
             {
                 ErrorMessage =
-                    "Die Bestellnummer darf maximal 50 Zeichen lang sein.";
+                    L["OrderNumberMaxLength"];
 
                 return;
             }
@@ -1051,14 +948,14 @@ else
             if (Model.Items.Count == 0)
             {
                 ErrorMessage =
-                    "Bitte mindestens ein Produkt hinzufügen.";
+                    L["AtLeastOneProductRequired"];
 
                 return;
             }
 
 
             // =================================================
-            // DUPLICATE PRODUCTS
+            // VALIDATION
             // =================================================
 
             var selectedProductIds =
@@ -1067,68 +964,48 @@ else
 
             foreach (var item in Model.Items)
             {
-                // =============================================
-                // PRODUCT
-                // =============================================
-
                 if (item.ProductId <= 0)
                 {
                     ErrorMessage =
-                        "Bitte für jede Position ein Produkt auswählen.";
+                        L["ProductRequiredForEveryItem"];
 
                     return;
                 }
 
-
-                // =============================================
-                // DUPLICATE
-                // =============================================
 
                 if (!selectedProductIds.Add(
                     item.ProductId))
                 {
                     ErrorMessage =
-                        "Ein Produkt darf nur einmal als Bestellposition vorhanden sein.";
+                        L["ProductCanOnlyBeAddedOnce"];
 
                     return;
                 }
 
-
-                // =============================================
-                // QUANTITY
-                // =============================================
 
                 if (item.Quantity <= 0)
                 {
                     ErrorMessage =
-                        "Menge muss größer als 0 sein.";
+                        L["QuantityMustBeGreaterThanZero"];
 
                     return;
                 }
 
-
-                // =============================================
-                // UNIT PRICE
-                // =============================================
 
                 if (item.UnitPrice < 0)
                 {
                     ErrorMessage =
-                        "Preis darf nicht negativ sein.";
+                        L["PriceCannotBeNegative"];
 
                     return;
                 }
 
-
-                // =============================================
-                // DELIVERED QUANTITY
-                // =============================================
 
                 if (item.DeliveredQuantity >
                     item.Quantity)
                 {
                     ErrorMessage =
-                        "Die gelieferte Menge darf nicht größer als die Bestellmenge sein.";
+                        L["DeliveredQuantityCannotExceedOrdered"];
 
                     return;
                 }
@@ -1160,21 +1037,21 @@ else
             if (order == null)
             {
                 ErrorMessage =
-                    "Bestellung nicht gefunden.";
+                    L["PurchaseOrderNotFound"];
 
                 return;
             }
 
 
             // =================================================
-            // DATABASE STATUS CHECK
+            // STATUS CHECK
             // =================================================
 
             if (order.Status !=
                 PurchaseOrderStatus.Entwurf)
             {
                 ErrorMessage =
-                    "Diese Bestellung wurde inzwischen bestätigt und kann nicht mehr bearbeitet werden.";
+                    L["PurchaseOrderChangedMeanwhile"];
 
                 return;
             }
@@ -1190,16 +1067,14 @@ else
                     .AnyAsync(x =>
                         x.Id ==
                             Model.SupplierId
-
                         &&
-
                         x.IsActive);
 
 
             if (!supplierExists)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.";
+                    L["SelectedSupplierNotFoundOrInactive"];
 
                 return;
             }
@@ -1213,21 +1088,16 @@ else
                 await db.PurchaseOrders
 
                     .AnyAsync(x =>
-
                         x.Id != Id
-
                         &&
-
                         x.OrderNumber ==
-                            orderNumber
-
-                    );
+                            orderNumber);
 
 
             if (duplicateNumber)
             {
                 ErrorMessage =
-                    "Diese Bestellnummer existiert bereits.";
+                    L["OrderNumberAlreadyExists"];
 
                 return;
             }
@@ -1241,12 +1111,9 @@ else
                 await db.Products
 
                     .Where(x =>
-
                         selectedProductIds.Contains(
                             x.Id)
-
                         &&
-
                         x.IsActive)
 
                     .Select(x =>
@@ -1259,7 +1126,7 @@ else
                 selectedProductIds.Count)
             {
                 ErrorMessage =
-                    "Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.";
+                    L["SelectedProductsNotFoundOrInactive"];
 
                 return;
             }
@@ -1272,10 +1139,6 @@ else
             var existingItems =
                 order.Items.ToList();
 
-
-            // =================================================
-            // ITEMS FROM FORM
-            // =================================================
 
             var incomingExistingIds =
                 Model.Items
@@ -1302,14 +1165,10 @@ else
                 }
 
 
-                // =============================================
-                // NEVER DELETE DELIVERED ITEM
-                // =============================================
-
                 if (existingItem.DeliveredQuantity > 0)
                 {
                     ErrorMessage =
-                        "Eine bereits gelieferte Position kann nicht entfernt werden.";
+                        L["DeliveredItemCannotBeRemoved"];
 
                     return;
                 }
@@ -1321,13 +1180,13 @@ else
 
 
             // =================================================
-            // UPDATE / ADD
+            // UPDATE / ADD ITEMS
             // =================================================
 
             foreach (var itemModel in Model.Items)
             {
                 // =================================================
-                // EXISTING ITEM
+                // EXISTING
                 // =================================================
 
                 if (itemModel.Id > 0)
@@ -1341,7 +1200,7 @@ else
                     if (existingItem == null)
                     {
                         ErrorMessage =
-                            "Eine Bestellposition wurde nicht gefunden.";
+                            L["PurchaseOrderItemNotFound"];
 
                         return;
                     }
@@ -1356,7 +1215,7 @@ else
                             itemModel.ProductId)
                     {
                         ErrorMessage =
-                            "Das Produkt einer bereits gelieferten Position kann nicht geändert werden.";
+                            L["DeliveredItemProductCannotBeChanged"];
 
                         return;
                     }
@@ -1370,7 +1229,7 @@ else
                         existingItem.DeliveredQuantity)
                     {
                         ErrorMessage =
-                            "Die Bestellmenge darf nicht kleiner als die bereits gelieferte Menge sein.";
+                            L["QuantityCannotBeLessThanDelivered"];
 
                         return;
                     }
@@ -1379,20 +1238,18 @@ else
                     existingItem.ProductId =
                         itemModel.ProductId;
 
-
                     existingItem.Quantity =
                         itemModel.Quantity;
-
 
                     existingItem.UnitPrice =
                         itemModel.UnitPrice;
                 }
-
-                // =================================================
-                // NEW ITEM
-                // =================================================
                 else
                 {
+                    // =================================================
+                    // NEW
+                    // =================================================
+
                     var newItem =
                         new PurchaseOrderItem
                         {
@@ -1426,36 +1283,26 @@ else
             order.SupplierId =
                 Model.SupplierId;
 
-
             order.OrderNumber =
                 orderNumber;
-
 
             order.OrderDate =
                 Model.OrderDate;
 
-
             order.ReferenceNumber =
                 string.IsNullOrWhiteSpace(
                     Model.ReferenceNumber)
-
                     ? null
-
                     : Model.ReferenceNumber.Trim();
-
 
             order.Note =
                 string.IsNullOrWhiteSpace(
                     Model.Note)
-
                     ? null
-
                     : Model.Note.Trim();
-
 
             order.Total =
                 CalculateTotal();
-
 
             order.UpdatedAt =
                 DateTime.UtcNow;
@@ -1468,22 +1315,18 @@ else
             await db.SaveChangesAsync();
 
 
-            // =================================================
-            // DETAILS
-            // =================================================
-
             Navigation.NavigateTo(
                 $"/purchase-orders/details/{order.Id}");
         }
         catch (DbUpdateException)
         {
             ErrorMessage =
-                "Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Daten.";
+                L["PurchaseOrderSaveError"];
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Speichern: {ex.Message}";
+                L["PurchaseOrderSaveException", ex.Message];
         }
         finally
         {
@@ -1502,19 +1345,19 @@ else
         return status switch
         {
             PurchaseOrderStatus.Entwurf =>
-                "Entwurf",
+                L["PurchaseOrderStatusDraft"],
 
             PurchaseOrderStatus.Bestellt =>
-                "Bestellt",
+                L["PurchaseOrderStatusOrdered"],
 
             PurchaseOrderStatus.TeilweiseGeliefert =>
-                "Teilweise geliefert",
+                L["PurchaseOrderStatusPartiallyDelivered"],
 
             PurchaseOrderStatus.Geliefert =>
-                "Geliefert",
+                L["PurchaseOrderStatusDelivered"],
 
             PurchaseOrderStatus.Storniert =>
-                "Storniert",
+                L["PurchaseOrderStatusCancelled"],
 
             _ =>
                 status.ToString()

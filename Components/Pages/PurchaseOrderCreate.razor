@@ -1,16 +1,19 @@
 ﻿@page "/purchase-orders/create"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
-@using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
+@using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
-<PageTitle>Bestellung erstellen</PageTitle>
+<PageTitle>@L["CreatePurchaseOrder"]</PageTitle>
 
 <div class="product-form-page">
 
@@ -22,10 +25,12 @@
 
         <div>
 
-            <h1>Bestellung erstellen</h1>
+            <h1>
+                @L["CreatePurchaseOrder"]
+            </h1>
 
             <p>
-                Neue Bestellung bei einem Lieferanten erstellen.
+                @L["CreatePurchaseOrderDescription"]
             </p>
 
         </div>
@@ -33,7 +38,7 @@
         <a href="/purchase-orders"
            class="btn-secondary">
 
-            ← Zurück
+            ← @L["Back"]
 
         </a>
 
@@ -57,10 +62,12 @@
 
                 <div class="form-section-title">
 
-                    <h2>Bestellung</h2>
+                    <h2>
+                        @L["PurchaseOrder"]
+                    </h2>
 
                     <p>
-                        Lieferant und Bestelldaten.
+                        @L["SupplierAndOrderData"]
                     </p>
 
                 </div>
@@ -76,7 +83,8 @@
                     <div class="form-group">
 
                         <label>
-                            Lieferant <span>*</span>
+                            @L["Supplier"]
+                            <span>*</span>
                         </label>
 
                         <select class="form-control"
@@ -84,7 +92,7 @@
                                 @onchange="OnSupplierChanged">
 
                             <option value="0">
-                                Lieferant auswählen
+                                @L["SelectSupplier"]
                             </option>
 
                             @foreach (var supplier in Suppliers)
@@ -104,11 +112,14 @@
 
                         </select>
 
+
                         @if (Model.SupplierId <= 0 &&
                              SupplierTouched)
                         {
                             <div class="form-error">
-                                Bitte einen Lieferanten auswählen.
+
+                                @L["SupplierSelectionRequired"]
+
                             </div>
                         }
 
@@ -122,7 +133,8 @@
                     <div class="form-group">
 
                         <label>
-                            Bestellnummer <span>*</span>
+                            @L["OrderNumber"]
+                            <span>*</span>
                         </label>
 
                         <InputText @bind-Value="Model.OrderNumber"
@@ -141,7 +153,8 @@
                     <div class="form-group">
 
                         <label>
-                            Bestelldatum <span>*</span>
+                            @L["OrderDate"]
+                            <span>*</span>
                         </label>
 
                         <InputDate @bind-Value="Model.OrderDate"
@@ -159,12 +172,12 @@
                     <div class="form-group">
 
                         <label>
-                            Referenznummer
+                            @L["ReferenceNumber"]
                         </label>
 
                         <InputText @bind-Value="Model.ReferenceNumber"
                                    class="form-control"
-                                   placeholder="z.B. Ihre Referenz" />
+                                   placeholder="@L["PurchaseOrderReferencePlaceholder"]" />
 
                         <ValidationMessage For="@(() => Model.ReferenceNumber)" />
 
@@ -188,11 +201,11 @@
                         <div>
 
                             <h2>
-                                Bestellpositionen
+                                @L["OrderItems"]
                             </h2>
 
                             <p>
-                                Produkte und Mengen hinzufügen.
+                                @L["AddProductsAndQuantities"]
                             </p>
 
                         </div>
@@ -202,7 +215,7 @@
                                 class="btn-primary"
                                 @onclick="AddItem">
 
-                            + Produkt hinzufügen
+                            + @L["AddProduct"]
 
                         </button>
 
@@ -220,18 +233,18 @@
                         </div>
 
                         <h3>
-                            Keine Positionen
+                            @L["NoPurchaseOrderItems"]
                         </h3>
 
                         <p>
-                            Fügen Sie mindestens ein Produkt hinzu.
+                            @L["AddAtLeastOneProduct"]
                         </p>
 
                         <button type="button"
                                 class="btn-primary"
                                 @onclick="AddItem">
 
-                            + Produkt hinzufügen
+                            + @L["AddProduct"]
 
                         </button>
 
@@ -248,19 +261,19 @@
                                 <tr>
 
                                     <th>
-                                        Produkt
+                                        @L["Product"]
                                     </th>
 
                                     <th>
-                                        Menge
+                                        @L["Quantity"]
                                     </th>
 
                                     <th>
-                                        Einzelpreis
+                                        @L["UnitPrice"]
                                     </th>
 
                                     <th>
-                                        Gesamt
+                                        @L["Total"]
                                     </th>
 
                                     <th>
@@ -280,7 +293,6 @@
                                     var item =
                                         Model.Items[i];
 
-
                                     <tr>
 
                                         <!-- =================================
@@ -294,10 +306,11 @@
                                                     @onchange="(e) => ProductChanged(item, e)">
 
                                                 <option value="0">
-                                                    Produkt auswählen
+                                                    @L["SelectProduct"]
                                                 </option>
 
-                                                @foreach (var product in GetAvailableProducts(item))
+                                                @foreach (var product in
+                                                    GetAvailableProducts(item))
                                                 {
                                                     <option value="@product.Id">
 
@@ -315,7 +328,7 @@
                                             {
                                                 <div class="form-error">
 
-                                                    Produkt auswählen.
+                                                    @L["ProductSelectionRequired"]
 
                                                 </div>
                                             }
@@ -340,7 +353,7 @@
                                             {
                                                 <div class="form-error">
 
-                                                    Menge muss größer als 0 sein.
+                                                    @L["QuantityMustBeGreaterThanZero"]
 
                                                 </div>
                                             }
@@ -365,8 +378,7 @@
                                             {
                                                 <div class="form-error">
 
-                                                    Einzelpreis darf nicht
-                                                    negativ sein.
+                                                    @L["UnitPriceCannotBeNegative"]
 
                                                 </div>
                                             }
@@ -405,7 +417,7 @@
 
                                             <button type="button"
                                                     class="action-button delete-button"
-                                                    title="Position entfernen"
+                                                    title="@L["RemoveItem"]"
                                                     @onclick="() => RemoveItem(item)">
 
                                                 🗑
@@ -436,7 +448,7 @@
                 <div class="order-total-box">
 
                     <span>
-                        Gesamt
+                        @L["GrandTotal"]
                     </span>
 
                     <strong>
@@ -459,11 +471,11 @@
                 <div class="form-section-title">
 
                     <h2>
-                        Notiz
+                        @L["Note"]
                     </h2>
 
                     <p>
-                        Optionale Informationen zur Bestellung.
+                        @L["OptionalPurchaseOrderInformation"]
                     </p>
 
                 </div>
@@ -474,7 +486,7 @@
                     <InputTextArea @bind-Value="Model.Note"
                                    class="form-control textarea"
                                    rows="5"
-                                   placeholder="Notiz..." />
+                                   placeholder="@L["NotePlaceholder"]" />
 
                     <ValidationMessage For="@(() => Model.Note)" />
 
@@ -505,7 +517,7 @@
                 <a href="/purchase-orders"
                    class="btn-secondary">
 
-                    Abbrechen
+                    @L["Cancel"]
 
                 </a>
 
@@ -515,8 +527,8 @@
                         disabled="@IsSaving">
 
                     @(IsSaving
-                        ? "Wird gespeichert..."
-                        : "Bestellung erstellen")
+                        ? L["Saving"]
+                        : L["CreatePurchaseOrder"])
 
                 </button>
 
@@ -663,8 +675,8 @@
 
 
             if (int.TryParse(
-                    part,
-                    out var value))
+                part,
+                out var value))
             {
                 if (value > maxNumber)
                 {
@@ -787,7 +799,7 @@
                 alreadySelected)
             {
                 ErrorMessage =
-                    "Dieses Produkt wurde bereits als Position hinzugefügt.";
+                    L["ProductAlreadyAdded"];
 
                 return Task.CompletedTask;
             }
@@ -890,7 +902,7 @@
                     true;
 
                 ErrorMessage =
-                    "Bitte einen Lieferanten auswählen.";
+                    L["SupplierSelectionRequired"];
 
                 return;
             }
@@ -908,7 +920,7 @@
                 orderNumber))
             {
                 ErrorMessage =
-                    "Bitte eine Bestellnummer eingeben.";
+                    L["OrderNumberRequired"];
 
                 return;
             }
@@ -917,7 +929,7 @@
             if (orderNumber.Length > 50)
             {
                 ErrorMessage =
-                    "Die Bestellnummer darf maximal 50 Zeichen lang sein.";
+                    L["OrderNumberMaxLength"];
 
                 return;
             }
@@ -930,7 +942,7 @@
             if (Model.Items.Count == 0)
             {
                 ErrorMessage =
-                    "Bitte mindestens ein Produkt hinzufügen.";
+                    L["AtLeastOneProductRequired"];
 
                 return;
             }
@@ -956,7 +968,7 @@
                         true;
 
                     ErrorMessage =
-                        "Bitte für jede Position ein Produkt auswählen.";
+                        L["ProductRequiredForEveryItem"];
 
                     return;
                 }
@@ -970,7 +982,7 @@
                     item.ProductId))
                 {
                     ErrorMessage =
-                        "Ein Produkt darf nur einmal als Bestellposition vorhanden sein.";
+                        L["ProductCanOnlyBeAddedOnce"];
 
                     return;
                 }
@@ -983,7 +995,7 @@
                 if (item.Quantity <= 0)
                 {
                     ErrorMessage =
-                        "Die Menge muss größer als 0 sein.";
+                        L["QuantityMustBeGreaterThanZero"];
 
                     return;
                 }
@@ -996,7 +1008,7 @@
                 if (item.UnitPrice < 0)
                 {
                     ErrorMessage =
-                        "Der Einzelpreis darf nicht negativ sein.";
+                        L["UnitPriceCannotBeNegative"];
 
                     return;
                 }
@@ -1026,14 +1038,13 @@
                         &&
 
                         x.IsActive
-
                     );
 
 
             if (!supplierExists)
             {
                 ErrorMessage =
-                    "Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.";
+                    L["SelectedSupplierNotFoundOrInactive"];
 
                 return;
             }
@@ -1054,7 +1065,7 @@
             if (orderNumberExists)
             {
                 ErrorMessage =
-                    "Diese Bestellnummer existiert bereits.";
+                    L["OrderNumberAlreadyExists"];
 
                 return;
             }
@@ -1083,7 +1094,7 @@
                 selectedProductIds.Count)
             {
                 ErrorMessage =
-                    "Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.";
+                    L["SelectedProductsNotFoundOrInactive"];
 
                 return;
             }
@@ -1184,12 +1195,12 @@
         catch (DbUpdateException)
         {
             ErrorMessage =
-                "Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Bestellnummer und die Daten.";
+                L["PurchaseOrderSaveError"];
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                $"Fehler beim Erstellen der Bestellung: {ex.Message}";
+                L["PurchaseOrderCreateError", ex.Message];
         }
         finally
         {
@@ -1205,34 +1216,17 @@
 
     private class PurchaseOrderCreateModel
     {
-        [Range(
-            1,
-            int.MaxValue,
-            ErrorMessage =
-                "Bitte einen Lieferanten auswählen.")]
         public int SupplierId { get; set; }
 
+        public string OrderNumber { get; set; }
+            = string.Empty;
 
-        [Required(
-            ErrorMessage =
-                "Bestellnummer ist erforderlich.")]
-        [MaxLength(50)]
-        public string OrderNumber { get; set; } =
-            string.Empty;
+        public DateTime OrderDate { get; set; }
+            = DateTime.Today;
 
-
-        [Required]
-        public DateTime OrderDate { get; set; } =
-            DateTime.Today;
-
-
-        [MaxLength(100)]
         public string? ReferenceNumber { get; set; }
 
-
-        [MaxLength(500)]
         public string? Note { get; set; }
-
 
         public List<PurchaseOrderItemModel> Items { get; set; }
             = new();
