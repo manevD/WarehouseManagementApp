@@ -1,4 +1,4 @@
-﻿@page "/stock/incoming"
+@page "/stock/incoming"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -78,26 +78,15 @@
                             @L["PurchaseOrder"]
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.PurchaseOrderId"
-                                @onchange="OnPurchaseOrderChanged">
-
-                            <option value="0">
-                                @L["NoPurchaseOrderManual"]
-                            </option>
-
-                            @foreach (var order in PurchaseOrders)
-                            {
-                                <option value="@order.Id">
-
-                                    @order.OrderNumber
-                                    -
-                                    @(order.Supplier?.CompanyName ?? "-")
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="PurchaseOrder"
+                                          TValue="int"
+                                          Items="PurchaseOrders"
+                                          Value="@Model.PurchaseOrderId"
+                                          ValueChanged="OnPurchaseOrderChanged"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => $"{x.OrderNumber} - {x.Supplier?.CompanyName ?? "-"}")"
+                                          Placeholder="@L["NoPurchaseOrderManual"]"
+                                          NoResultsText="@L["NoResultsFound"]" />
 
                     </div>
 
@@ -157,26 +146,16 @@
                             @L["Product"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.ProductId"
-                                @onchange="OnProductChanged"
-                                disabled="@(Model.PurchaseOrderId > 0)">
-
-                            <option value="0">
-                                @L["SelectProduct"]
-                            </option>
-
-                            @foreach (var product in Products)
-                            {
-                                <option value="@product.Id">
-
-                                    @product.SKU -
-                                    @product.Name
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Product"
+                                          TValue="int"
+                                          Items="Products"
+                                          Value="@Model.ProductId"
+                                          ValueChanged="OnProductChanged"
+                                          ValueSelector="@(p => p.Id)"
+                                          TextSelector="@(p => $"{p.SKU} - {p.Name}")"
+                                          Placeholder="@L["SelectProduct"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(Model.PurchaseOrderId > 0)" />
 
                         <ValidationMessage For="@(() => Model.ProductId)" />
 
@@ -194,30 +173,15 @@
                                 @L["Supplier"] <span>*</span>
                             </label>
 
-                            <select class="form-control"
-                                    value="@Model.SupplierId"
-                                    @onchange="OnSupplierChanged">
-
-                                <option value="0">
-                                    @L["SelectSupplier"]
-                                </option>
-
-                                @foreach (var supplier in Suppliers)
-                                {
-                                    <option value="@supplier.Id">
-
-                                        @supplier.CompanyName
-
-                                        @if (!string.IsNullOrWhiteSpace(
-                                            supplier.SupplierNumber))
-                                        {
-                                            @($" ({supplier.SupplierNumber})")
-                                        }
-
-                                    </option>
-                                }
-
-                            </select>
+                            <SearchableSelect TItem="Supplier"
+                                              TValue="int"
+                                              Items="Suppliers"
+                                              Value="@Model.SupplierId"
+                                              ValueChanged="OnSupplierChanged"
+                                              ValueSelector="@(x => x.Id)"
+                                              TextSelector="@(x => $"{x.CompanyName}{(string.IsNullOrWhiteSpace(x.SupplierNumber) ? "" : $" ({x.SupplierNumber})")}")"
+                                              Placeholder="@L["SelectSupplier"]"
+                                              NoResultsText="@L["NoResultsFound"]" />
 
                             <ValidationMessage For="@(() => Model.SupplierId)" />
 
@@ -280,24 +244,15 @@
                             @L["Warehouse"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.WarehouseId"
-                                @onchange="OnWarehouseChanged">
-
-                            <option value="0">
-                                @L["SelectWarehouse"]
-                            </option>
-
-                            @foreach (var warehouse in Warehouses)
-                            {
-                                <option value="@warehouse.Id">
-
-                                    @warehouse.Name
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Warehouse"
+                                          TValue="int"
+                                          Items="Warehouses"
+                                          Value="@Model.WarehouseId"
+                                          ValueChanged="OnWarehouseChanged"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => x.Name)"
+                                          Placeholder="@L["SelectWarehouse"]"
+                                          NoResultsText="@L["NoResultsFound"]" />
 
                         <ValidationMessage For="@(() => Model.WarehouseId)" />
 
@@ -314,31 +269,16 @@
                             @L["Location"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.WarehouseLocationId"
-                                @onchange="OnLocationChanged"
-                                disabled="@(Model.WarehouseId <= 0)">
-
-                            <option value="0">
-                                @L["SelectLocation"]
-                            </option>
-
-                            @foreach (var location in Locations)
-                            {
-                                <option value="@location.Id">
-
-                                    @location.Code
-
-                                    @if (!string.IsNullOrWhiteSpace(
-                                        location.Name))
-                                    {
-                                        @($" - {location.Name}")
-                                    }
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="WarehouseLocation"
+                                          TValue="int"
+                                          Items="Locations"
+                                          Value="@Model.WarehouseLocationId"
+                                          ValueChanged="OnLocationChanged"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => $"{x.Code}{(string.IsNullOrWhiteSpace(x.Name) ? "" : $" - {x.Name}")}")"
+                                          Placeholder="@L["SelectLocation"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(Model.WarehouseId <= 0)" />
 
                         <ValidationMessage For="@(() => Model.WarehouseLocationId)" />
 
@@ -781,30 +721,15 @@
     // PURCHASE ORDER CHANGED
     // =========================================================
 
-    private async Task OnPurchaseOrderChanged(
-        ChangeEventArgs e)
+    private async Task OnPurchaseOrderChanged(int purchaseOrderId)
     {
         ErrorMessage = null;
-
         SuccessMessage = null;
 
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var purchaseOrderId))
-        {
-            purchaseOrderId = 0;
-        }
-
-
-        Model.PurchaseOrderId =
-            purchaseOrderId;
-
+        Model.PurchaseOrderId = purchaseOrderId;
 
         SelectedPurchaseOrder = null;
-
         SelectedOrderItem = null;
-
 
         // =====================================================
         // MANUAL
@@ -813,24 +738,20 @@
         if (purchaseOrderId <= 0)
         {
             Model.ProductId = 0;
-
             Model.SupplierId = 0;
-
             Model.WarehouseId = 0;
-
             Model.WarehouseLocationId = 0;
-
             Model.Quantity = 0;
+
+            Locations.Clear();
 
             StateHasChanged();
 
             return;
         }
 
-
         await using var db =
             await DbFactory.CreateDbContextAsync();
-
 
         // =====================================================
         // LOAD ORDER
@@ -839,16 +760,11 @@
         SelectedPurchaseOrder =
             await db.PurchaseOrders
                 .AsNoTracking()
-                .Include(x =>
-                    x.Supplier)
-                .Include(x =>
-                    x.Items)
-                    .ThenInclude(x =>
-                        x.Product)
+                .Include(x => x.Supplier)
+                .Include(x => x.Items)
+                    .ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync(x =>
-                    x.Id ==
-                    purchaseOrderId);
-
+                    x.Id == purchaseOrderId);
 
         if (SelectedPurchaseOrder == null)
         {
@@ -858,7 +774,6 @@
             return;
         }
 
-
         // =====================================================
         // AUTOMATIC SUPPLIER
         // =====================================================
@@ -866,48 +781,28 @@
         Model.SupplierId =
             SelectedPurchaseOrder.SupplierId;
 
-
         // =====================================================
         // CLEAR PRODUCT
         // =====================================================
 
         Model.ProductId = 0;
-
         Model.Quantity = 0;
-
 
         StateHasChanged();
     }
-
 
     // =========================================================
     // PRODUCT CHANGED
     // =========================================================
 
-    private Task OnProductChanged(
-        ChangeEventArgs e)
+    private Task OnProductChanged(int productId)
     {
         ErrorMessage = null;
-
         SuccessMessage = null;
 
-
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            Model.ProductId =
-                productId;
-        }
-        else
-        {
-            Model.ProductId =
-                0;
-        }
-
+        Model.ProductId = productId;
 
         SelectedOrderItem = null;
-
 
         // =====================================================
         // IF PURCHASE ORDER SELECTED
@@ -919,12 +814,8 @@
             SelectedOrderItem =
                 SelectedPurchaseOrder.Items
                     .FirstOrDefault(x =>
-                        x.ProductId ==
-                            Model.ProductId
-                        &&
-                        x.Quantity >
-                            x.DeliveredQuantity);
-
+                        x.ProductId == Model.ProductId &&
+                        x.Quantity > x.DeliveredQuantity);
 
             if (SelectedOrderItem != null)
             {
@@ -934,10 +825,8 @@
                         SelectedOrderItem.Quantity -
                         SelectedOrderItem.DeliveredQuantity);
 
-
                 // Automatically suggest remaining quantity
-                Model.Quantity =
-                    remaining;
+                Model.Quantity = remaining;
             }
             else
             {
@@ -947,125 +836,73 @@
                     L["NoOpenQuantityForProduct"];
             }
         }
-
+        else if (Model.ProductId <= 0)
+        {
+            Model.Quantity = 0;
+        }
 
         return Task.CompletedTask;
     }
-
 
     // =========================================================
     // SUPPLIER CHANGED
     // =========================================================
 
-    private Task OnSupplierChanged(
-        ChangeEventArgs e)
+    private Task OnSupplierChanged(int supplierId)
     {
         ErrorMessage = null;
-
         SuccessMessage = null;
 
-
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var supplierId))
-        {
-            Model.SupplierId =
-                supplierId;
-        }
-        else
-        {
-            Model.SupplierId =
-                0;
-        }
-
+        Model.SupplierId = supplierId;
 
         return Task.CompletedTask;
     }
-
 
     // =========================================================
     // WAREHOUSE CHANGED
     // =========================================================
 
-    private async Task OnWarehouseChanged(
-        ChangeEventArgs e)
+    private async Task OnWarehouseChanged(int warehouseId)
     {
         ErrorMessage = null;
-
         SuccessMessage = null;
 
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var warehouseId))
-        {
-            warehouseId = 0;
-        }
-
-
-        Model.WarehouseId =
-            warehouseId;
-
-
-        Model.WarehouseLocationId =
-            0;
-
+        Model.WarehouseId = warehouseId;
+        Model.WarehouseLocationId = 0;
 
         Locations.Clear();
-
 
         if (warehouseId <= 0)
         {
             StateHasChanged();
-
             return;
         }
-
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Locations =
             await db.WarehouseLocations
+                .AsNoTracking()
                 .Where(x =>
-                    x.IsActive
-                    &&
-                    x.WarehouseId ==
-                        warehouseId)
-                .OrderBy(x =>
-                    x.Code)
+                    x.IsActive &&
+                    x.WarehouseId == warehouseId)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
-
 
         StateHasChanged();
     }
-
 
     // =========================================================
     // LOCATION CHANGED
     // =========================================================
 
-    private Task OnLocationChanged(
-        ChangeEventArgs e)
+    private Task OnLocationChanged(int locationId)
     {
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var locationId))
-        {
-            Model.WarehouseLocationId =
-                locationId;
-        }
-        else
-        {
-            Model.WarehouseLocationId =
-                0;
-        }
-
+        Model.WarehouseLocationId = locationId;
 
         return Task.CompletedTask;
     }
-
 
     // =========================================================
     // BOOK INCOMING

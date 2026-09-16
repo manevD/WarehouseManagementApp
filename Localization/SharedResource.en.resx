@@ -3366,4 +3366,18 @@
 	<data name="RoleManagement" xml:space="preserve">
   <value>Role Management</value>
 </data>
+	<data name="ForgotPassword">
+		<value>Forgot your password?</value>
+	</data>
+	<data name="ForgotPasswordDescription">
+		<value>Enter your email address to reset your password.</value>
+	</data>
+	<data name="ResetPassword">
+		<value>Reset password</value>
+	</data>
+	<data name="BackToLogin">
+		<value>Back to login</value>
+	</data>
+	
+	
 </root>

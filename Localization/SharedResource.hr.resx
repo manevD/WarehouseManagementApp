@@ -3425,4 +3425,17 @@
 	<data name="RoleManagement" xml:space="preserve">
   <value>Upravljanje ulogama</value>
 </data>
+	<data name="ForgotPassword">
+		<value>Jeste li zaboravili lozinku?</value>
+	</data>
+	<data name="ForgotPasswordDescription">
+		<value>Unesite svoju adresu e-pošte kako biste resetirali lozinku.</value>
+	</data>
+	<data name="ResetPassword">
+		<value>Resetiraj lozinku</value>
+	</data>
+	<data name="BackToLogin">
+		<value>Natrag na prijavu</value>
+	</data>
+	
 </root>

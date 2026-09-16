@@ -3477,4 +3477,16 @@
 	<data name="RoleManagement" xml:space="preserve">
   <value>Rollenverwaltung</value>
 </data>
+	<data name="ForgotPassword">
+		<value>Passwort vergessen?</value>
+	</data>
+	<data name="ForgotPasswordDescription">
+		<value>Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.</value>
+	</data>
+	<data name="ResetPassword">
+		<value>Passwort zurücksetzen</value>
+	</data>
+	<data name="BackToLogin">
+		<value>Zurück zur Anmeldung</value>
+	</data>
 </root>

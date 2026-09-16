@@ -1,0 +1,320 @@
+﻿@typeparam TItem
+@typeparam TValue
+@implements IAsyncDisposable
+
+@using Microsoft.JSInterop
+
+@inject IJSRuntime JS
+
+<div @ref="SelectElement"
+     class="searchable-select @(Disabled ? "disabled" : "")">
+
+    <div class="searchable-select-input">
+
+        <input type="text"
+               class="form-control"
+               @bind="SearchText"
+               @bind:event="oninput"
+               @onclick="OpenDropdown"
+               disabled="@Disabled"
+               placeholder="@Placeholder"
+               autocomplete="off" />
+
+        <span class="searchable-select-arrow"
+              @onclick="ToggleDropdown">
+            @(IsOpen ? "▲" : "▼")
+        </span>
+
+    </div>
+
+    @if (IsOpen && !Disabled)
+    {
+        <div class="searchable-select-dropdown">
+
+            @if (FilteredItems.Any())
+            {
+                @foreach (var item in FilteredItems)
+                {
+                    <button type="button"
+                            class="searchable-select-option"
+                            @onclick="() => SelectItem(item)">
+
+                        @TextSelector(item)
+
+                    </button>
+                }
+            }
+            else
+            {
+                <div class="searchable-select-no-results">
+                    @NoResultsText
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+@code {
+
+    // =========================================================
+    // PARAMETERS
+    // =========================================================
+
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
+        = Enumerable.Empty<TItem>();
+
+    [Parameter]
+    public TValue Value { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<TValue> ValueChanged { get; set; }
+
+    [Parameter]
+    public Func<TItem, TValue> ValueSelector { get; set; }
+        = default!;
+
+    [Parameter]
+    public Func<TItem, string> TextSelector { get; set; }
+        = default!;
+
+    [Parameter]
+    public string Placeholder { get; set; }
+        = "Search...";
+
+    [Parameter]
+    public string NoResultsText { get; set; }
+        = "No results found";
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    private bool IsOpen;
+
+    private string SearchText = "";
+
+    private TValue? LastValue;
+
+    private bool IsInitialized;
+
+    private ElementReference SelectElement;
+
+    private DotNetObjectReference<SearchableSelect<TItem, TValue>>?
+        DotNetReference;
+
+
+    // =========================================================
+    // FILTERED ITEMS
+    // =========================================================
+
+    private IEnumerable<TItem> FilteredItems
+    {
+        get
+        {
+            if (Items == null)
+                return Enumerable.Empty<TItem>();
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return Items;
+
+            return Items.Where(item =>
+            {
+                var text = TextSelector(item);
+
+                return !string.IsNullOrWhiteSpace(text)
+                    && text.Contains(
+                        SearchText,
+                        StringComparison.OrdinalIgnoreCase);
+            });
+        }
+    }
+
+
+    // =========================================================
+    // PARAMETERS
+    // =========================================================
+
+    protected override void OnParametersSet()
+    {
+        /*
+         * IMPORTANT:
+         *
+         * Do NOT overwrite SearchText on every render.
+         *
+         * Only update SearchText when the selected VALUE
+         * actually changes.
+         */
+
+        var valueChanged =
+            !EqualityComparer<TValue>.Default.Equals(
+                Value,
+                LastValue);
+
+        if (!IsInitialized || valueChanged)
+        {
+            LastValue = Value;
+
+            var selectedItem =
+                Items.FirstOrDefault(item =>
+                    EqualityComparer<TValue>.Default.Equals(
+                        ValueSelector(item),
+                        Value));
+
+            if (selectedItem is not null)
+            {
+                SearchText =
+                    TextSelector(selectedItem);
+            }
+            else
+            {
+                SearchText = "";
+            }
+
+            IsInitialized = true;
+        }
+
+        if (Disabled)
+        {
+            IsOpen = false;
+        }
+    }
+
+
+    // =========================================================
+    // OPEN
+    // =========================================================
+
+    private async Task OpenDropdown()
+    {
+        if (Disabled)
+            return;
+
+        IsOpen = true;
+
+        await RegisterOutsideClick();
+    }
+
+
+    // =========================================================
+    // TOGGLE
+    // =========================================================
+
+    private async Task ToggleDropdown()
+    {
+        if (Disabled)
+            return;
+
+        IsOpen = !IsOpen;
+
+        if (IsOpen)
+        {
+            await RegisterOutsideClick();
+        }
+        else
+        {
+            await UnregisterOutsideClick();
+        }
+    }
+
+
+    // =========================================================
+    // SELECT ITEM
+    // =========================================================
+
+    private async Task SelectItem(TItem item)
+    {
+        var selectedValue =
+            ValueSelector(item);
+
+        Value = selectedValue;
+
+        LastValue = selectedValue;
+
+        SearchText =
+            TextSelector(item);
+
+        IsOpen = false;
+
+        await ValueChanged.InvokeAsync(
+            selectedValue);
+
+        await UnregisterOutsideClick();
+    }
+
+
+    // =========================================================
+    // OUTSIDE CLICK
+    // =========================================================
+
+    private async Task RegisterOutsideClick()
+    {
+        DotNetReference ??=
+            DotNetObjectReference.Create(this);
+
+        await JS.InvokeVoidAsync(
+            "searchableSelect.register",
+            DotNetReference,
+            SelectElement);
+    }
+
+
+    private async Task UnregisterOutsideClick()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync(
+                "searchableSelect.unregister",
+                DotNetReference);
+        }
+        catch
+        {
+            // Component already disposed.
+        }
+    }
+
+
+    // =========================================================
+    // CLOSE FROM JAVASCRIPT
+    // =========================================================
+
+    [JSInvokable]
+    public Task CloseDropdown()
+    {
+        if (IsOpen)
+        {
+            IsOpen = false;
+
+            StateHasChanged();
+        }
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // DISPOSE
+    // =========================================================
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync(
+                "searchableSelect.unregister",
+                DotNetReference);
+        }
+        catch
+        {
+            // Component already disposed.
+        }
+
+        DotNetReference?.Dispose();
+    }
+}

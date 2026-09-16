@@ -3064,3 +3064,74 @@ textarea.form-control {
             flex: none;
         }
 }
+.searchable-select {
+    position: relative;
+    width: 100%;
+}
+
+.searchable-select-input {
+    position: relative;
+    width: 100%;
+}
+
+    .searchable-select-input input {
+        padding-right: 42px;
+        cursor: text;
+    }
+
+.searchable-select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7c83;
+    font-size: 11px;
+    pointer-events: none;
+}
+
+.searchable-select-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 280px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #dce4e7;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(13, 41, 51, 0.15);
+    padding: 5px;
+}
+
+.searchable-select-option {
+    display: block;
+    width: 100%;
+    padding: 11px 13px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #173944;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    .searchable-select-option:hover {
+        background: #f1f5f7;
+    }
+
+.searchable-select-no-results {
+    padding: 14px;
+    color: #7a898f;
+    text-align: center;
+    font-size: 14px;
+}
+
+.searchable-select.disabled {
+    opacity: .65;
+}
+
+    .searchable-select.disabled input {
+        cursor: not-allowed;
+    }

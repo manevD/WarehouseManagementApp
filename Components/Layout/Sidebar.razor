@@ -3,7 +3,7 @@
 @using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<SharedResource> L
@@ -22,16 +22,9 @@
 
 
     <div class="sidebar-brand">
-
-        <div class="brand-icon">
-            W
-        </div>
-
-        <div class="brand-text">
-            <strong>Warehouse</strong>
-            <small>Management</small>
-        </div>
-
+   <div class="brand-logo">
+                    <img class="brand-logo-image" src="/images/wm-logo-premium.webp" />
+                </div>
     </div>
 
 
@@ -221,24 +214,6 @@
                 </NavLink>
 
 
-                <NavLink href="/Account/Manage/ChangePassword"
-                         class="nav-item">
-
-                    <span class="nav-icon">•</span>
-                    <span>@L["ChangePassword"]</span>
-
-                </NavLink>
-
-
-                <NavLink href="/Account/Manage/Email"
-                         class="nav-item">
-
-                    <span class="nav-icon">•</span>
-                    <span>@L["ChangeEmail"]</span>
-
-                </NavLink>
-
-
                 <NavLink href="/Account/Manage/PersonalData"
                          class="nav-item">
 
@@ -246,11 +221,9 @@
                     <span>@L["PersonalData"]</span>
 
                 </NavLink>
-
-
-                <NavLink href="/users"
-                         class="nav-item">
-
+                    @if (isAdmin)
+                {
+                     <NavLink href="/users" class="nav-item">
                     <span class="nav-icon">•</span>
                     <span>@L["UserManagement"]</span>
 
@@ -265,6 +238,7 @@
 
                 </NavLink>
 
+                }
             </div>
         }
 
@@ -274,7 +248,13 @@
 
 
 @code {
+     private bool isAdmin;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isAdmin = authState.User.IsInRole("Admin");
+    }
     private bool SettingsOpen = false;
 
 

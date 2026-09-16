@@ -2181,65 +2181,6 @@
   <value>Корисници</value>
 </data>
 	<data name="Login" xml:space="preserve">
-  <value>Anmelden</value>
-</data>
-
-<data name="WarehouseManagement" xml:space="preserve">
-  <value>Lagerverwaltung</value>
-</data>
-
-<data name="WelcomeBack" xml:space="preserve">
-  <value>Willkommen zurück</value>
-</data>
-
-<data name="LoginToContinue" xml:space="preserve">
-  <value>Melden Sie sich an, um fortzufahren.</value>
-</data>
-
-<data name="EmailAddressPlaceholder" xml:space="preserve">
-  <value>E-Mail-Adresse</value>
-</data>
-
-<data name="PasswordPlaceholder" xml:space="preserve">
-  <value>Passwort</value>
-</data>
-
-<data name="RememberMe" xml:space="preserve">
-  <value>Angemeldet bleiben</value>
-</data>
-
-<data name="LoginButton" xml:space="preserve">
-  <value>Anmelden</value>
-</data>
-
-<data name="Or" xml:space="preserve">
-  <value>ODER</value>
-</data>
-
-<data name="ForgotPassword" xml:space="preserve">
-  <value>Passwort vergessen?</value>
-</data>
-
-<data name="InvalidLogin" xml:space="preserve">
-  <value>Fehler: E-Mail oder Passwort ist falsch.</value>
-</data>
-
-<data name="PasskeyError" xml:space="preserve">
-  <value>Fehler: {0}</value>
-</data>
-
-<data name="EmailRequired" xml:space="preserve">
-  <value>E-Mail ist erforderlich.</value>
-</data>
-
-<data name="InvalidEmailAddress" xml:space="preserve">
-  <value>Bitte geben Sie eine gültige E-Mail-Adresse ein.</value>
-</data>
-
-<data name="PasswordRequired" xml:space="preserve">
-  <value>Passwort ist erforderlich.</value>
-</data>
-	<data name="Login" xml:space="preserve">
   <value>Најави се</value>
 </data>
 
@@ -3425,4 +3366,85 @@
 	<data name="RoleManagement" xml:space="preserve">
   <value>Управување со улоги</value>
 </data>
+	<data name="Login" xml:space="preserve">
+    <value>Најава</value>
+  </data>
+
+	<data name="WarehouseManagement" xml:space="preserve">
+    <value>Управување со магацин</value>
+  </data>
+
+	<data name="WelcomeBack" xml:space="preserve">
+    <value>Добредојдовте назад</value>
+  </data>
+
+	<data name="LoginToContinue" xml:space="preserve">
+    <value>Најавете се за да продолжите.</value>
+  </data>
+
+	<data name="Email" xml:space="preserve">
+    <value>Е-пошта</value>
+  </data>
+
+	<data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Внесете ја вашата е-пошта</value>
+  </data>
+
+	<data name="Password" xml:space="preserve">
+    <value>Лозинка</value>
+  </data>
+
+	<data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Внесете ја вашата лозинка</value>
+  </data>
+
+	<data name="RememberMe" xml:space="preserve">
+    <value>Запомни ме</value>
+  </data>
+
+	<data name="LoginButton" xml:space="preserve">
+    <value>Најави се</value>
+  </data>
+
+	<data name="Or" xml:space="preserve">
+    <value>или</value>
+  </data>
+
+	<data name="ForgotPassword" xml:space="preserve">
+    <value>Ја заборавивте лозинката?</value>
+  </data>
+
+	<data name="InvalidLogin" xml:space="preserve">
+    <value>Неуспешна најава. Проверете ја е-поштата и лозинката.</value>
+  </data>
+
+	<data name="PasskeyError" xml:space="preserve">
+    <value>Настана грешка при најавувањето со Passkey: {0}</value>
+  </data>
+
+	<!-- VALIDATION -->
+
+	<data name="EmailRequired" xml:space="preserve">
+    <value>Е-поштата е задолжителна.</value>
+  </data>
+
+	<data name="InvalidEmailAddress" xml:space="preserve">
+    <value>Внесете валидна адреса на е-пошта.</value>
+  </data>
+
+	<data name="PasswordRequired" xml:space="preserve">
+    <value>Лозинката е задолжителна.</value>
+  </data>
+	<data name="ForgotPassword">
+		<value>Ја заборавивте лозинката?</value>
+	</data>
+	<data name="ForgotPasswordDescription">
+		<value>Внесете ја вашата е-пошта за да ја ресетирате лозинката.</value>
+	</data>
+	<data name="ResetPassword">
+		<value>Ресетирај лозинка</value>
+	</data>
+	<data name="BackToLogin">
+		<value>Назад кон најавата</value>
+	</data>
 </root>
