@@ -20,7 +20,9 @@
 
 <div class="categories-page">
 
-    <!-- HEADER -->
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
 
     <div class="page-header">
 
@@ -63,9 +65,13 @@
     </div>
 
 
-    <!-- FILTER -->
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
 
     <div class="filter-card">
+
+        <!-- SEARCH -->
 
         <div class="search-box">
 
@@ -83,47 +89,43 @@
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedWarehouseId"
-                @bind:after="FilterChanged">
+        <!-- WAREHOUSE -->
 
-            <option value="0">
-                @L["AllWarehouses"]
-            </option>
-
-
-            @foreach (var warehouse in Warehouses)
-            {
-                <option value="@warehouse.Id">
-                    @warehouse.Name
-                </option>
-            }
-
-        </select>
+        <SearchableSelect TItem="Warehouse"
+                          TValue="int"
+                          Items="Warehouses"
+                          @bind-Value="SelectedWarehouseId"
+                          ValueSelector="@(x => x.Id)"
+                          TextSelector="@(x => x.Name ?? "")"
+                          Placeholder="@L["AllWarehouses"]"
+                          NoResultsText="@L["NoResultsFound"]"
+                          ShowAllOption="true"
+                          AllOptionText="@L["AllWarehouses"]"
+                          AllValue="0"
+                          AfterValueChanged="FilterChanged" />
 
 
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
+        <!-- STATUS -->
 
-            <option value="all">
-                @L["AllStatuses"]
-            </option>
-
-            <option value="active">
-                @L["Active"]
-            </option>
-
-            <option value="inactive">
-                @L["Inactive"]
-            </option>
-
-        </select>
+        <SearchableSelect TItem="StatusOption"
+                          TValue="string"
+                          Items="StatusOptions"
+                          @bind-Value="SelectedStatus"
+                          ValueSelector="@(x => x.Value)"
+                          TextSelector="@(x => x.Text)"
+                          Placeholder="@L["AllStatuses"]"
+                          NoResultsText="@L["NoResultsFound"]"
+                          ShowAllOption="true"
+                          AllOptionText="@L["AllStatuses"]"
+                          AllValue="@("all")"
+                          AfterValueChanged="FilterChanged" />
 
     </div>
 
 
-    <!-- TABLE -->
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
 
     <div class="products-card">
 
@@ -375,7 +377,10 @@
             </div>
 
 
-            <!-- PAGINATION -->
+            <!-- =====================================================
+                 PAGINATION
+                 ===================================================== -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -437,12 +442,16 @@
                 @Locations.Count
 
             </div>
+
         }
 
     </div>
 
 
-    <!-- DELETE MODAL -->
+    <!-- =========================================================
+         DELETE MODAL
+         ========================================================= -->
+
     @if (ShowDeleteModal && LocationToDelete != null)
     {
         <div class="delete-modal-backdrop">
@@ -527,6 +536,21 @@
 @code {
 
     // =========================================================
+    // STATUS OPTION
+    // =========================================================
+
+    private class StatusOption
+    {
+        public string Value { get; set; } = "";
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<StatusOption> StatusOptions = new();
+
+
+    // =========================================================
     // PAGINATION
     // =========================================================
 
@@ -591,16 +615,25 @@
     private List<Warehouse> Warehouses = new();
 
 
+    // =========================================================
+    // FILTER
+    // =========================================================
+
     private string SearchTerm =
         string.Empty;
 
 
-    private int SelectedWarehouseId;
+    private int SelectedWarehouseId =
+        0;
 
 
     private string SelectedStatus =
         "all";
 
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private bool IsLoading = true;
 
@@ -620,6 +653,22 @@
 
     protected override async Task OnInitializedAsync()
     {
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "active",
+                Text = L["Active"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "inactive",
+                Text = L["Inactive"].Value
+            }
+        };
+
+
         await LoadWarehouses();
 
         await LoadLocations();
@@ -665,7 +714,9 @@
                     .AsQueryable();
 
 
+            // =====================================================
             // SEARCH
+            // =====================================================
 
             if (!string.IsNullOrWhiteSpace(
                 SearchTerm))
@@ -689,7 +740,9 @@
             }
 
 
+            // =====================================================
             // WAREHOUSE
+            // =====================================================
 
             if (SelectedWarehouseId > 0)
             {
@@ -700,7 +753,9 @@
             }
 
 
+            // =====================================================
             // STATUS
+            // =====================================================
 
             if (SelectedStatus == "active")
             {
@@ -715,8 +770,12 @@
                         !x.IsActive);
             }
 
+            // "all" = no status filter
 
+
+            // =====================================================
             // LOAD
+            // =====================================================
 
             Locations =
                 await query
@@ -728,7 +787,9 @@
                     .ToListAsync();
 
 
+            // =====================================================
             // RESET PAGINATION
+            // =====================================================
 
             CurrentPage = 1;
         }
@@ -887,6 +948,9 @@
             return;
         }
 
+
+        // Do not deactivate location
+        // while stock is still available.
 
         if (location.Stocks?.Any(
             x => x.Quantity > 0) == true)

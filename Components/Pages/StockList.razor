@@ -10,13 +10,59 @@
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 @using Microsoft.JSInterop
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
 @inject IStringLocalizer<SharedResource> L
+<style>
+.filter-main-row {
+    display: grid;
+    grid-template-columns: minmax(400px, 1fr) 220px 220px 220px;
+    gap: 14px;
+    align-items: center;
+}
 
+.filter-main-row .search-box {
+    width: 100%;
+    min-width: 0;
+}
+
+.filter-main-row .searchable-select {
+    width: 100%;
+    min-width: 0;
+}
+
+.filter-main-row .searchable-select-input {
+    width: 100%;
+}
+
+.filter-main-row .searchable-select-input input {
+    width: 100%;
+    min-width: 0;
+}
+@@media (max-width: 1100px) {
+    .filter-main-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-main-row .search-box {
+        grid-column: 1 / -1;
+    }
+}
+
+@@media (max-width: 650px) {
+    .filter-main-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-main-row .search-box {
+        grid-column: auto;
+    }
+}
+</style>
 <PageTitle>@L["Stock"]</PageTitle>
 
 <div class="stock-page">
@@ -103,78 +149,50 @@
 
             <!-- WAREHOUSE -->
 
-            <select class="filter-select"
-                    @bind="SelectedWarehouseId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllWarehouses"]
-                </option>
-
-                @foreach (var warehouse in Warehouses)
-                {
-                    <option value="@warehouse.Id">
-                        @warehouse.Name
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="Warehouse"
+                              TValue="int"
+                              Items="Warehouses"
+                              @bind-Value="SelectedWarehouseId"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => x.Name ?? "")"
+                              Placeholder="@L["AllWarehouses"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllWarehouses"]"
+                              AllValue="0"
+                              AfterValueChanged="FilterChanged" />
 
 
             <!-- LOCATION -->
 
-            <select class="filter-select"
-                    @bind="SelectedLocationId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllLocations"]
-                </option>
-
-                @foreach (var location in FilterLocations)
-                {
-                    <option value="@location.Id">
-
-                        @location.Code
-
-                        @if (!string.IsNullOrWhiteSpace(location.Name))
-                        {
-                            @($" - {location.Name}")
-                        }
-
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="WarehouseLocation"
+                              TValue="int"
+                              Items="FilterLocations"
+                              @bind-Value="SelectedLocationId"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => GetLocationText(x))"
+                              Placeholder="@L["AllLocations"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllLocations"]"
+                              AllValue="0"
+                              AfterValueChanged="FilterChanged" />
 
 
             <!-- STATUS -->
 
-            <select class="filter-select"
-                    @bind="SelectedStatus"
-                    @bind:after="FilterChanged">
-
-                <option value="all">
-                    @L["AllStockStatuses"]
-                </option>
-
-                <option value="ok">
-                    @L["StockOk"]
-                </option>
-
-                <option value="low">
-                    @L["LowStock"]
-                </option>
-
-                <option value="available">
-                    @L["AvailableStock"]
-                </option>
-
-                <option value="empty">
-                    @L["NoStock"]
-                </option>
-
-            </select>
+            <SearchableSelect TItem="StatusOption"
+                              TValue="string"
+                              Items="StatusOptions"
+                              @bind-Value="SelectedStatus"
+                              ValueSelector="@(x => x.Value)"
+                              TextSelector="@(x => x.Text)"
+                              Placeholder="@L["AllStockStatuses"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllStockStatuses"]"
+                              AllValue="@("all")"
+                              AfterValueChanged="FilterChanged" />
 
         </div>
 
@@ -570,6 +588,7 @@
 
 
             <!-- PAGINATION -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -627,8 +646,9 @@
 
 
     <!-- DELETE MODAL -->
+
     @if (ShowDeleteModal &&
-             StockToDelete != null)
+         StockToDelete != null)
     {
         <div class="delete-modal-backdrop">
 
@@ -644,7 +664,10 @@
                 </h3>
 
                 <p>
-                    @L["SetStockToZeroTextStart", StockToDelete.Product?.Name ?? "-"]
+                    @L[
+                        "SetStockToZeroTextStart",
+                        StockToDelete.Product?.Name ?? "-"
+                    ]
                 </p>
 
 
@@ -693,6 +716,21 @@
     private List<Warehouse> Warehouses = new();
 
     private List<WarehouseLocation> FilterLocations = new();
+
+
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class StatusOption
+    {
+        public string Value { get; set; } = "";
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<StatusOption> StatusOptions = new();
 
 
     // =========================================================
@@ -784,11 +822,55 @@
 
     protected override async Task OnInitializedAsync()
     {
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "ok",
+                Text = L["StockOk"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "low",
+                Text = L["LowStock"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "available",
+                Text = L["AvailableStock"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "empty",
+                Text = L["NoStock"].Value
+            }
+        };
+
+
         await LoadWarehouses();
 
         await LoadLocations();
 
         await LoadStock();
+    }
+
+
+    // =========================================================
+    // LOCATION TEXT
+    // =========================================================
+
+    private string GetLocationText(
+        WarehouseLocation location)
+    {
+        if (string.IsNullOrWhiteSpace(location.Name))
+        {
+            return location.Code ?? "";
+        }
+
+        return $"{location.Code} - {location.Name}";
     }
 
 
@@ -875,7 +957,9 @@
                     .AsQueryable();
 
 
+            // =====================================================
             // SEARCH
+            // =====================================================
 
             if (!string.IsNullOrWhiteSpace(
                 SearchTerm))
@@ -890,12 +974,18 @@
                         &&
                         (
                             x.Product.Name.Contains(search)
+
                             ||
+
                             x.Product.SKU.Contains(search)
+
                             ||
+
                             (
                                 x.Product.Barcode != null
+
                                 &&
+
                                 x.Product.Barcode.Contains(search)
                             )
                         )
@@ -903,20 +993,26 @@
             }
 
 
+            // =====================================================
             // WAREHOUSE
+            // =====================================================
 
             if (SelectedWarehouseId > 0)
             {
                 query =
                     query.Where(x =>
                         x.WarehouseLocation != null
+
                         &&
+
                         x.WarehouseLocation.WarehouseId ==
                         SelectedWarehouseId);
             }
 
 
+            // =====================================================
             // LOCATION
+            // =====================================================
 
             if (SelectedLocationId > 0)
             {
@@ -939,7 +1035,9 @@
                     .ToListAsync();
 
 
+            // =====================================================
             // STATUS
+            // =====================================================
 
             if (SelectedStatus == "low")
             {
@@ -980,7 +1078,9 @@
             StockRows = rows;
 
 
+            // =====================================================
             // RESET PAGINATION
+            // =====================================================
 
             CurrentPage = 1;
         }
@@ -1292,7 +1392,9 @@
         }
 
 
+        // =====================================================
         // CREATE CORRECTION MOVEMENT
+        // =====================================================
 
         if (stock.Quantity > 0)
         {
@@ -1333,7 +1435,9 @@
         }
 
 
+        // =====================================================
         // SET STOCK TO ZERO
+        // =====================================================
 
         stock.Quantity =
             0;

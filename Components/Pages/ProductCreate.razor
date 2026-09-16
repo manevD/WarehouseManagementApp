@@ -100,23 +100,18 @@
 
                     <div class="form-group">
 
-                        <label>@L["Category"]</label>
+                        <label>
+                            @L["Category"]
+                        </label>
 
-                        <InputSelect @bind-Value="Model.CategoryId"
-                                     class="form-control">
-
-                            <option value="">
-                                @L["SelectCategory"]
-                            </option>
-
-                            @foreach (var category in Categories)
-                            {
-                                <option value="@category.Id">
-                                    @category.Name
-                                </option>
-                            }
-
-                        </InputSelect>
+                        <SearchableSelect TItem="Category"
+                                          TValue="int?"
+                                          Items="Categories"
+                                          @bind-Value="Model.CategoryId"
+                                          ValueSelector="@(x => (int?)x.Id)"
+                                          TextSelector="@(x => x.Name)"
+                                          Placeholder="@L["SelectCategory"]"
+                                          NoResultsText="@L["NoResultsFound"]" />
 
                     </div>
 
@@ -125,7 +120,9 @@
 
                     <div class="form-group">
 
-                        <label>@L["Barcode"]</label>
+                        <label>
+                            @L["Barcode"]
+                        </label>
 
                         <InputText @bind-Value="Model.Barcode"
                                    class="form-control"
@@ -138,7 +135,9 @@
 
                     <div class="form-group">
 
-                        <label>@L["PurchasePrice"]</label>
+                        <label>
+                            @L["PurchasePrice"]
+                        </label>
 
                         <div class="input-with-suffix">
 
@@ -157,7 +156,9 @@
 
                     <div class="form-group">
 
-                        <label>@L["SalePrice"]</label>
+                        <label>
+                            @L["SalePrice"]
+                        </label>
 
                         <div class="input-with-suffix">
 
@@ -176,7 +177,9 @@
 
                     <div class="form-group">
 
-                        <label>@L["MinimumStock"]</label>
+                        <label>
+                            @L["MinimumStock"]
+                        </label>
 
                         <InputNumber @bind-Value="Model.MinimumStock"
                                      class="form-control"
@@ -216,7 +219,9 @@
 
                 <div class="form-section-title">
 
-                    <h2>@L["Description"]</h2>
+                    <h2>
+                        @L["Description"]
+                    </h2>
 
                     <p>
                         @L["OptionalProductDescription"]
@@ -260,6 +265,7 @@
                     @L["Cancel"]
 
                 </a>
+
 
                 <button type="submit"
                         class="btn-primary"
@@ -306,11 +312,13 @@
             return;
 
         IsSaving = true;
+
         ErrorMessage = null;
 
         try
         {
             var sku = Model.SKU.Trim();
+
             var name = Model.Name.Trim();
 
 
@@ -346,6 +354,7 @@
             var product = new Product
             {
                 SKU = sku,
+
                 Name = name,
 
                 Description =
@@ -386,7 +395,10 @@
         catch (Exception ex)
         {
             ErrorMessage =
-                L["ErrorSaving", ex.InnerException?.Message ?? ex.Message];
+                L[
+                    "ErrorSaving",
+                    ex.InnerException?.Message ?? ex.Message
+                ];
         }
         finally
         {

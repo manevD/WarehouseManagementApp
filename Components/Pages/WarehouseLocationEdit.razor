@@ -16,10 +16,13 @@
 
 <PageTitle>@L["EditStorageLocation"]</PageTitle>
 
+
 @if (IsLoading)
 {
     <div class="loading-state">
+
         @L["LoadingStorageLocation"]
+
     </div>
 }
 else if (Location == null)
@@ -47,6 +50,10 @@ else
 {
     <div class="product-form-page">
 
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
         <div class="page-header">
 
             <div>
@@ -73,6 +80,10 @@ else
         </div>
 
 
+        <!-- =====================================================
+             FORM
+             ===================================================== -->
+
         <div class="form-card">
 
             <EditForm Model="@Model"
@@ -81,6 +92,10 @@ else
 
                 <DataAnnotationsValidator />
 
+
+                <!-- =================================================
+                     STORAGE LOCATION INFORMATION
+                     ================================================= -->
 
                 <div class="form-section">
 
@@ -95,52 +110,59 @@ else
 
                     <div class="form-grid">
 
-                        <!-- WAREHOUSE -->
+
+                        <!-- =========================================
+                             WAREHOUSE
+                             ========================================= -->
 
                         <div class="form-group">
 
                             <label>
-                                @L["Warehouse"] <span>*</span>
+                                @L["Warehouse"]
+                                <span>*</span>
                             </label>
 
-                            <InputSelect @bind-Value="Model.WarehouseId"
-                                         class="form-control">
 
-                                <option value="0">
-                                    @L["SelectWarehouse"]
-                                </option>
+                            <SearchableSelect TItem="Warehouse"
+                                              TValue="int"
+                                              Items="Warehouses"
+                                              @bind-Value="Model.WarehouseId"
+                                              ValueSelector="@(x => x.Id)"
+                                              TextSelector="@(x => x.Name ?? "")"
+                                              Placeholder="@L["SelectWarehouse"]"
+                                              NoResultsText="@L["NoResultsFound"]"
+                                              Disabled="@IsSaving" />
 
-                                @foreach (var warehouse in Warehouses)
-                                {
-                                    <option value="@warehouse.Id">
-                                        @warehouse.Name
-                                    </option>
-                                }
 
-                            </InputSelect>
-
-                            <ValidationMessage For="@(() => Model.WarehouseId)" />
+                            <ValidationMessage
+                                For="@(() => Model.WarehouseId)" />
 
                         </div>
 
 
-                        <!-- CODE -->
+                        <!-- =========================================
+                             CODE
+                             ========================================= -->
 
                         <div class="form-group">
 
                             <label>
-                                @L["Code"] <span>*</span>
+                                @L["Code"]
+                                <span>*</span>
                             </label>
 
                             <InputText @bind-Value="Model.Code"
                                        class="form-control" />
 
-                            <ValidationMessage For="@(() => Model.Code)" />
+                            <ValidationMessage
+                                For="@(() => Model.Code)" />
 
                         </div>
 
 
-                        <!-- NAME -->
+                        <!-- =========================================
+                             NAME
+                             ========================================= -->
 
                         <div class="form-group">
 
@@ -154,13 +176,16 @@ else
                         </div>
 
 
-                        <!-- ACTIVE -->
+                        <!-- =========================================
+                             ACTIVE
+                             ========================================= -->
 
                         <div class="form-group checkbox-group">
 
                             <label class="checkbox-label">
 
-                                <InputCheckbox @bind-Value="Model.IsActive" />
+                                <InputCheckbox
+                                    @bind-Value="Model.IsActive" />
 
                                 <span>
                                     @L["StorageLocationIsActive"]
@@ -175,7 +200,9 @@ else
                 </div>
 
 
-                <!-- DESCRIPTION -->
+                <!-- =================================================
+                     DESCRIPTION
+                     ================================================= -->
 
                 <div class="form-section">
 
@@ -190,22 +217,33 @@ else
 
                     <div class="form-group">
 
-                        <InputTextArea @bind-Value="Model.Description"
-                                       class="form-control textarea"
-                                       rows="5" />
+                        <InputTextArea
+                            @bind-Value="Model.Description"
+                            class="form-control textarea"
+                            rows="5" />
 
                     </div>
 
                 </div>
 
 
+                <!-- =================================================
+                     ERROR
+                     ================================================= -->
+
                 @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                 {
                     <div class="form-error">
+
                         @ErrorMessage
+
                     </div>
                 }
 
+
+                <!-- =================================================
+                     ACTIONS
+                     ================================================= -->
 
                 <div class="form-actions">
 
@@ -239,15 +277,28 @@ else
 
 @code {
 
+    // =========================================================
+    // PARAMETER
+    // =========================================================
+
     [Parameter]
     public int Id { get; set; }
 
+
+    // =========================================================
+    // DATA
+    // =========================================================
 
     private WarehouseLocation? Location;
 
     private List<Warehouse> Warehouses = new();
 
     private LocationModel Model = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private bool IsLoading = true;
 
@@ -266,6 +317,10 @@ else
             await DbFactory.CreateDbContextAsync();
 
 
+        // =====================================================
+        // LOAD LOCATION
+        // =====================================================
+
         Location =
             await db.WarehouseLocations
                 .Include(x => x.Warehouse)
@@ -273,12 +328,20 @@ else
                     x => x.Id == Id);
 
 
+        // =====================================================
+        // LOAD ACTIVE WAREHOUSES
+        // =====================================================
+
         Warehouses =
             await db.Warehouses
                 .Where(x => x.IsActive)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
 
+
+        // =====================================================
+        // CREATE EDIT MODEL
+        // =====================================================
 
         if (Location != null)
         {
@@ -312,8 +375,11 @@ else
 
     private async Task UpdateLocation()
     {
-        if (Location == null || IsSaving)
+        if (Location == null ||
+            IsSaving)
+        {
             return;
+        }
 
 
         IsSaving = true;
@@ -327,15 +393,19 @@ else
                 await DbFactory.CreateDbContextAsync();
 
 
+            // =================================================
+            // NORMALIZE CODE
+            // =================================================
+
             var code =
                 Model.Code
                     .Trim()
                     .ToUpper();
 
 
-            // =====================================================
+            // =================================================
             // WAREHOUSE EXISTS
-            // =====================================================
+            // =================================================
 
             var warehouseExists =
                 await db.Warehouses
@@ -355,9 +425,9 @@ else
             }
 
 
-            // =====================================================
+            // =================================================
             // DUPLICATE CODE
-            // =====================================================
+            // =================================================
 
             var codeExists =
                 await db.WarehouseLocations
@@ -379,9 +449,9 @@ else
             }
 
 
-            // =====================================================
+            // =================================================
             // LOAD LOCATION
-            // =====================================================
+            // =================================================
 
             var location =
                 await db.WarehouseLocations
@@ -398,17 +468,25 @@ else
             }
 
 
-            // =====================================================
-            // UPDATE
-            // =====================================================
+            // =================================================
+            // UPDATE WAREHOUSE
+            // =================================================
 
             location.WarehouseId =
                 Model.WarehouseId;
 
 
+            // =================================================
+            // UPDATE CODE
+            // =================================================
+
             location.Code =
                 code;
 
+
+            // =================================================
+            // UPDATE NAME
+            // =================================================
 
             location.Name =
                 string.IsNullOrWhiteSpace(
@@ -419,6 +497,10 @@ else
                     : Model.Name.Trim();
 
 
+            // =================================================
+            // UPDATE DESCRIPTION
+            // =================================================
+
             location.Description =
                 string.IsNullOrWhiteSpace(
                     Model.Description)
@@ -428,12 +510,24 @@ else
                     : Model.Description.Trim();
 
 
+            // =================================================
+            // UPDATE STATUS
+            // =================================================
+
             location.IsActive =
                 Model.IsActive;
 
 
+            // =================================================
+            // SAVE
+            // =================================================
+
             await db.SaveChangesAsync();
 
+
+            // =================================================
+            // REDIRECT
+            // =================================================
 
             Navigation.NavigateTo(
                 "/locations");
@@ -456,6 +550,10 @@ else
 
     private class LocationModel
     {
+        // =====================================================
+        // WAREHOUSE
+        // =====================================================
+
         [Range(
             1,
             int.MaxValue,
@@ -468,6 +566,10 @@ else
 
         public int WarehouseId { get; set; }
 
+
+        // =====================================================
+        // CODE
+        // =====================================================
 
         [Required(
             ErrorMessageResourceType =
@@ -482,15 +584,27 @@ else
             = string.Empty;
 
 
+        // =====================================================
+        // NAME
+        // =====================================================
+
         [MaxLength(200)]
 
         public string? Name { get; set; }
 
 
+        // =====================================================
+        // DESCRIPTION
+        // =====================================================
+
         [MaxLength(500)]
 
         public string? Description { get; set; }
 
+
+        // =====================================================
+        // ACTIVE
+        // =====================================================
 
         public bool IsActive { get; set; } = true;
     }

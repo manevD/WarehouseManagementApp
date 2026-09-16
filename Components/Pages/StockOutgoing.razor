@@ -81,22 +81,15 @@
                             @L["Product"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.ProductId"
-                                @onchange="OnProductChanged">
-
-                            <option value="0">
-                                @L["SelectProduct"]
-                            </option>
-
-                            @foreach (var product in Products)
-                            {
-                                <option value="@product.Id">
-                                    @product.SKU - @product.Name
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Product"
+                  TValue="int"
+                  Items="Products"
+                  Value="@Model.ProductId"
+                  ValueChanged="OnProductChanged"
+                  ValueSelector="@(p => p.Id)"
+                  TextSelector="@(p => $"{p.SKU} - {p.Name}")"
+                  Placeholder="@L["SelectProduct"]"
+                  NoResultsText="@L["NoResultsFound"]" />
 
                         @if (Model.ProductId <= 0 &&
                              ShowProductValidation)
@@ -121,23 +114,16 @@
                             @L["Warehouse"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.WarehouseId"
-                                @onchange="OnWarehouseChanged"
-                                disabled="@(Model.ProductId <= 0)">
-
-                            <option value="0">
-                                @L["SelectWarehouse"]
-                            </option>
-
-                            @foreach (var warehouse in Warehouses)
-                            {
-                                <option value="@warehouse.Id">
-                                    @warehouse.Name
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Warehouse"
+                  TValue="int"
+                  Items="Warehouses"
+                  Value="@Model.WarehouseId"
+                  ValueChanged="OnWarehouseChanged"
+                  ValueSelector="@(x => x.Id)"
+                  TextSelector="@(x => x.Name)"
+                  Placeholder="@L["SelectWarehouse"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  Disabled="@(Model.ProductId <= 0)" />
 
                         @if (Model.WarehouseId <= 0 &&
                              ShowWarehouseValidation)
@@ -162,31 +148,16 @@
                             @L["Location"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.WarehouseLocationId"
-                                @onchange="OnLocationChanged"
-                                disabled="@(Model.WarehouseId <= 0)">
-
-                            <option value="0">
-                                @L["SelectLocation"]
-                            </option>
-
-                            @foreach (var location in Locations)
-                            {
-                                <option value="@location.Id">
-
-                                    @location.Code
-
-                                    @if (!string.IsNullOrWhiteSpace(location.Name))
-                                    {
-                                        @($" - {location.Name}")
-                                    }
-
-                                </option>
-                            }
-
-                        </select>
-
+                       <SearchableSelect TItem="WarehouseLocation"
+                  TValue="int"
+                  Items="Locations"
+                  Value="@Model.WarehouseLocationId"
+                  ValueChanged="OnLocationChanged"
+                  ValueSelector="@(x => x.Id)"
+                  TextSelector="@(x => $"{x.Code}{(string.IsNullOrWhiteSpace(x.Name) ? "" : $" - {x.Name}")}")"
+                  Placeholder="@L["SelectLocation"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  Disabled="@(Model.WarehouseId <= 0)" />
 
                         @if (Locations.Count == 0 &&
                              Model.WarehouseId > 0)
@@ -503,272 +474,150 @@
     // PRODUCT CHANGED
     // =========================================================
 
-    private async Task OnProductChanged(
-        ChangeEventArgs e)
+   private async Task OnProductChanged(int productId)
+{
+    ErrorMessage = null;
+    SuccessMessage = null;
+
+    ShowProductValidation = false;
+    ShowWarehouseValidation = false;
+    ShowLocationValidation = false;
+    ShowQuantityValidation = false;
+
+    Model.ProductId = productId;
+
+    Model.WarehouseId = 0;
+    Model.WarehouseLocationId = 0;
+    Model.Quantity = 0;
+
+    AvailableQuantity = 0;
+
+    Locations.Clear();
+    Warehouses.Clear();
+
+    if (Model.ProductId <= 0)
     {
-        ErrorMessage = null;
-
-        SuccessMessage = null;
-
-        ShowProductValidation = false;
-
-        ShowWarehouseValidation = false;
-
-        ShowLocationValidation = false;
-
-        ShowQuantityValidation = false;
-
-
-        // =====================================================
-        // PRODUCT ID
-        // =====================================================
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            productId = 0;
-        }
-
-
-        Model.ProductId =
-            productId;
-
-
-        // =====================================================
-        // RESET EVERYTHING BELOW PRODUCT
-        // =====================================================
-
-        Model.WarehouseId = 0;
-
-        Model.WarehouseLocationId = 0;
-
-        Model.Quantity = 0;
-
-        AvailableQuantity = 0;
-
-        Locations.Clear();
-
-        Warehouses.Clear();
-
-
-        // =====================================================
-        // NO PRODUCT
-        // =====================================================
-
-        if (Model.ProductId <= 0)
-        {
-            StateHasChanged();
-
-            return;
-        }
-
-
-        await using var db =
-            await DbFactory.CreateDbContextAsync();
-
-
-        // =====================================================
-        // WAREHOUSES
-        //
-        // ONLY warehouses where this product has at least
-        // one active location with available stock.
-        // =====================================================
-
-        Warehouses =
-            await db.Warehouses
-                .Where(warehouse =>
-                    warehouse.IsActive
-                    &&
-                    db.WarehouseLocations.Any(location =>
-                        location.WarehouseId ==
-                            warehouse.Id
-                        &&
-                        location.IsActive
-                        &&
-                        db.Stocks.Any(stock =>
-                            stock.ProductId ==
-                                Model.ProductId
-                            &&
-                            stock.WarehouseLocationId ==
-                                location.Id
-                            &&
-                            stock.Quantity >
-                                stock.ReservedQuantity)))
-                .OrderBy(warehouse =>
-                    warehouse.Name)
-                .ToListAsync();
-
-
         StateHasChanged();
+        return;
     }
 
+    await using var db =
+        await DbFactory.CreateDbContextAsync();
+
+    Warehouses =
+        await db.Warehouses
+            .Where(warehouse =>
+                warehouse.IsActive
+                &&
+                db.WarehouseLocations.Any(location =>
+                    location.WarehouseId == warehouse.Id
+                    &&
+                    location.IsActive
+                    &&
+                    db.Stocks.Any(stock =>
+                        stock.ProductId == Model.ProductId
+                        &&
+                        stock.WarehouseLocationId == location.Id
+                        &&
+                        stock.Quantity > stock.ReservedQuantity)))
+            .OrderBy(warehouse => warehouse.Name)
+            .ToListAsync();
+
+    StateHasChanged();
+}
 
     // =========================================================
     // WAREHOUSE CHANGED
     // =========================================================
 
-    private async Task OnWarehouseChanged(
-        ChangeEventArgs e)
+    private async Task OnWarehouseChanged(int warehouseId)
+{
+    ErrorMessage = null;
+    SuccessMessage = null;
+
+    ShowWarehouseValidation = false;
+    ShowLocationValidation = false;
+
+    Model.WarehouseId = warehouseId;
+
+    if (warehouseId > 0 &&
+        Model.ProductId > 0 &&
+        !Warehouses.Any(x => x.Id == warehouseId))
     {
-        ErrorMessage = null;
-
-        SuccessMessage = null;
-
-        ShowWarehouseValidation = false;
-
-        ShowLocationValidation = false;
-
-
-        // =====================================================
-        // WAREHOUSE ID
-        // =====================================================
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var warehouseId))
-        {
-            warehouseId = 0;
-        }
-
-
-        Model.WarehouseId =
-            warehouseId;
-
-
-        // Do not keep a warehouse that is not available
-        // for the selected product.
-        if (warehouseId > 0 &&
-            Model.ProductId > 0 &&
-            !Warehouses.Any(x => x.Id == warehouseId))
-        {
-            Model.WarehouseId = 0;
-
-            warehouseId = 0;
-        }
-
-
-        // =====================================================
-        // RESET LOCATION
-        // =====================================================
-
-        Model.WarehouseLocationId = 0;
-
-        Model.Quantity = 0;
-
-        AvailableQuantity = 0;
-
-        Locations.Clear();
-
-
-        if (warehouseId <= 0 ||
-            Model.ProductId <= 0)
-        {
-            StateHasChanged();
-
-            return;
-        }
-
-
-        await using var db =
-            await DbFactory.CreateDbContextAsync();
-
-
-        // =====================================================
-        // LOCATIONS
-        //
-        // ONLY locations in selected warehouse where the
-        // selected product has available stock.
-        // =====================================================
-
-        Locations =
-            await db.WarehouseLocations
-                .Where(location =>
-                    location.IsActive
-                    &&
-                    location.WarehouseId ==
-                        warehouseId
-                    &&
-                    db.Stocks.Any(stock =>
-                        stock.ProductId ==
-                            Model.ProductId
-                        &&
-                        stock.WarehouseLocationId ==
-                            location.Id
-                        &&
-                        stock.Quantity >
-                            stock.ReservedQuantity))
-                .OrderBy(location =>
-                    location.Code)
-                .ToListAsync();
-
-
-        StateHasChanged();
+        Model.WarehouseId = 0;
+        warehouseId = 0;
     }
 
+    Model.WarehouseLocationId = 0;
+    Model.Quantity = 0;
+
+    AvailableQuantity = 0;
+
+    Locations.Clear();
+
+    if (warehouseId <= 0 ||
+        Model.ProductId <= 0)
+    {
+        StateHasChanged();
+        return;
+    }
+
+    await using var db =
+        await DbFactory.CreateDbContextAsync();
+
+    Locations =
+        await db.WarehouseLocations
+            .Where(location =>
+                location.IsActive
+                &&
+                location.WarehouseId == warehouseId
+                &&
+                db.Stocks.Any(stock =>
+                    stock.ProductId == Model.ProductId
+                    &&
+                    stock.WarehouseLocationId == location.Id
+                    &&
+                    stock.Quantity > stock.ReservedQuantity))
+            .OrderBy(location => location.Code)
+            .ToListAsync();
+
+    StateHasChanged();
+}
 
     // =========================================================
     // LOCATION CHANGED
     // =========================================================
 
-    private async Task OnLocationChanged(
-        ChangeEventArgs e)
+    private async Task OnLocationChanged(int locationId)
+{
+    ErrorMessage = null;
+    SuccessMessage = null;
+
+    ShowLocationValidation = false;
+
+    if (locationId > 0 &&
+        !Locations.Any(x => x.Id == locationId))
     {
-        ErrorMessage = null;
-
-        SuccessMessage = null;
-
-        ShowLocationValidation = false;
-
-
-        // =====================================================
-        // LOCATION ID
-        // =====================================================
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var locationId))
-        {
-            locationId = 0;
-        }
-
-
-        // Only allow a location currently offered for the
-        // selected warehouse and product.
-        if (locationId > 0 &&
-            !Locations.Any(x => x.Id == locationId))
-        {
-            locationId = 0;
-        }
-
-
-        Model.WarehouseLocationId =
-            locationId;
-
-
-        Model.Quantity =
-            0;
-
-
-        AvailableQuantity =
-            0;
-
-
-        if (locationId <= 0 ||
-            Model.ProductId <= 0)
-        {
-            StateHasChanged();
-
-            return;
-        }
-
-
-        await LoadAvailableStock();
-
-
-        StateHasChanged();
+        locationId = 0;
     }
 
+    Model.WarehouseLocationId = locationId;
+
+    Model.Quantity = 0;
+
+    AvailableQuantity = 0;
+
+    if (locationId <= 0 ||
+        Model.ProductId <= 0)
+    {
+        StateHasChanged();
+        return;
+    }
+
+    await LoadAvailableStock();
+
+    StateHasChanged();
+}
 
     // =========================================================
     // LOAD AVAILABLE STOCK

@@ -8,6 +8,7 @@
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -24,13 +25,11 @@
     <div class="page-header">
 
         <div>
-
             <h1>@L["StockTransfer"]</h1>
 
             <p>
                 @L["StockTransferDescription"]
             </p>
-
         </div>
 
         <a href="/stock"
@@ -82,22 +81,16 @@
                             @L["Product"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.ProductId"
-                                @onchange="OnProductChanged">
-
-                            <option value="0">
-                                @L["SelectProduct"]
-                            </option>
-
-                            @foreach (var product in Products)
-                            {
-                                <option value="@product.Id">
-                                    @product.SKU - @product.Name
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Product"
+                                          TValue="int"
+                                          Items="Products"
+                                          @bind-Value="Model.ProductId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => $"{x.SKU} - {x.Name}")"
+                                          Placeholder="@L["SelectProduct"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@IsSaving"
+                                          AfterValueChanged="OnProductChanged" />
 
                         <ValidationMessage For="@(() => Model.ProductId)" />
 
@@ -114,23 +107,16 @@
                             @L["FromWarehouse"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.FromWarehouseId"
-                                @onchange="OnFromWarehouseChanged"
-                                disabled="@(Model.ProductId <= 0)">
-
-                            <option value="0">
-                                @L["SelectWarehouse"]
-                            </option>
-
-                            @foreach (var warehouse in FromWarehouses)
-                            {
-                                <option value="@warehouse.Id">
-                                    @warehouse.Name
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Warehouse"
+                                          TValue="int"
+                                          Items="FromWarehouses"
+                                          @bind-Value="Model.FromWarehouseId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => x.Name ?? "")"
+                                          Placeholder="@L["SelectWarehouse"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(IsSaving || Model.ProductId <= 0)"
+                                          AfterValueChanged="OnFromWarehouseChanged" />
 
                         <ValidationMessage For="@(() => Model.FromWarehouseId)" />
 
@@ -147,30 +133,16 @@
                             @L["FromLocation"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.FromWarehouseLocationId"
-                                @onchange="OnFromLocationChanged"
-                                disabled="@(Model.FromWarehouseId <= 0)">
-
-                            <option value="0">
-                                @L["SelectLocation"]
-                            </option>
-
-                            @foreach (var location in FromLocations)
-                            {
-                                <option value="@location.Id">
-
-                                    @location.Code
-
-                                    @if (!string.IsNullOrWhiteSpace(location.Name))
-                                    {
-                                        @($" - {location.Name}")
-                                    }
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="WarehouseLocation"
+                                          TValue="int"
+                                          Items="FromLocations"
+                                          @bind-Value="Model.FromWarehouseLocationId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => GetLocationText(x))"
+                                          Placeholder="@L["SelectLocation"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(IsSaving || Model.FromWarehouseId <= 0)"
+                                          AfterValueChanged="OnFromLocationChanged" />
 
                         @if (Model.FromWarehouseId > 0 &&
                              FromLocations.Count == 0)
@@ -216,7 +188,7 @@
                                      class="form-control"
                                      step="0.01"
                                      min="0.01"
-                                     disabled="@(Model.FromWarehouseLocationId <= 0)" />
+                                     disabled="@(IsSaving || Model.FromWarehouseLocationId <= 0)" />
 
                         <ValidationMessage For="@(() => Model.Quantity)" />
 
@@ -224,9 +196,7 @@
                              Model.FromWarehouseLocationId > 0)
                         {
                             <div class="form-error">
-
                                 @L["QuantityExceedsAvailableStock"]
-
                             </div>
                         }
 
@@ -243,23 +213,16 @@
                             @L["ToWarehouse"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.ToWarehouseId"
-                                @onchange="OnToWarehouseChanged"
-                                disabled="@(Model.ProductId <= 0)">
-
-                            <option value="0">
-                                @L["SelectWarehouse"]
-                            </option>
-
-                            @foreach (var warehouse in Warehouses)
-                            {
-                                <option value="@warehouse.Id">
-                                    @warehouse.Name
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="Warehouse"
+                                          TValue="int"
+                                          Items="Warehouses"
+                                          @bind-Value="Model.ToWarehouseId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => x.Name ?? "")"
+                                          Placeholder="@L["SelectWarehouse"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(IsSaving || Model.ProductId <= 0)"
+                                          AfterValueChanged="OnToWarehouseChanged" />
 
                         <ValidationMessage For="@(() => Model.ToWarehouseId)" />
 
@@ -276,30 +239,16 @@
                             @L["ToLocation"] <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.ToWarehouseLocationId"
-                                @onchange="OnToLocationChanged"
-                                disabled="@(Model.ToWarehouseId <= 0)">
-
-                            <option value="0">
-                                @L["SelectLocation"]
-                            </option>
-
-                            @foreach (var location in ToLocations)
-                            {
-                                <option value="@location.Id">
-
-                                    @location.Code
-
-                                    @if (!string.IsNullOrWhiteSpace(location.Name))
-                                    {
-                                        @($" - {location.Name}")
-                                    }
-
-                                </option>
-                            }
-
-                        </select>
+                        <SearchableSelect TItem="WarehouseLocation"
+                                          TValue="int"
+                                          Items="ToLocations"
+                                          @bind-Value="Model.ToWarehouseLocationId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => GetLocationText(x))"
+                                          Placeholder="@L["SelectLocation"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@(IsSaving || Model.ToWarehouseId <= 0)"
+                                          AfterValueChanged="OnToLocationChanged" />
 
                         <ValidationMessage For="@(() => Model.ToWarehouseLocationId)" />
 
@@ -358,6 +307,7 @@
             <!-- =====================================================
                  ERROR
                  ===================================================== -->
+
             @if (!string.IsNullOrWhiteSpace(ErrorMessage))
             {
                 <div class="form-error">
@@ -369,6 +319,7 @@
             <!-- =====================================================
                  SUCCESS
                  ===================================================== -->
+
             @if (!string.IsNullOrWhiteSpace(SuccessMessage))
             {
                 <div class="form-success">
@@ -450,7 +401,6 @@
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-
         Products =
             await db.Products
                 .Where(x =>
@@ -458,7 +408,6 @@
                 .OrderBy(x =>
                     x.Name)
                 .ToListAsync();
-
 
         // Destination warehouses and locations
         // are loaded after product selection.
@@ -474,11 +423,26 @@
 
 
     // =========================================================
+    // LOCATION TEXT
+    // =========================================================
+
+    private string GetLocationText(
+        WarehouseLocation location)
+    {
+        if (string.IsNullOrWhiteSpace(location.Name))
+        {
+            return location.Code ?? "";
+        }
+
+        return $"{location.Code} - {location.Name}";
+    }
+
+
+    // =========================================================
     // PRODUCT CHANGED
     // =========================================================
 
-    private async Task OnProductChanged(
-        ChangeEventArgs e)
+    private async Task OnProductChanged()
     {
         ErrorMessage = null;
 
@@ -488,45 +452,24 @@
 
 
         // =====================================================
-        // PRODUCT ID
-        // =====================================================
-
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            productId = 0;
-        }
-
-
-        Model.ProductId =
-            productId;
-
-
-        // =====================================================
         // RESET SOURCE
         // =====================================================
 
-        Model.FromWarehouseId =
-            0;
+        Model.FromWarehouseId = 0;
 
-        Model.FromWarehouseLocationId =
-            0;
+        Model.FromWarehouseLocationId = 0;
 
 
         // =====================================================
         // RESET TARGET
         // =====================================================
 
-        Model.ToWarehouseId =
-            0;
+        Model.ToWarehouseId = 0;
 
-        Model.ToWarehouseLocationId =
-            0;
+        Model.ToWarehouseLocationId = 0;
 
 
-        Model.Quantity =
-            0;
+        Model.Quantity = 0;
 
 
         FromWarehouses.Clear();
@@ -629,37 +572,22 @@
     // SOURCE WAREHOUSE CHANGED
     // =========================================================
 
-    private async Task OnFromWarehouseChanged(
-        ChangeEventArgs e)
+    private async Task OnFromWarehouseChanged()
     {
         ErrorMessage = null;
 
         SuccessMessage = null;
 
 
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var warehouseId))
-        {
-            warehouseId = 0;
-        }
+        var warehouseId =
+            Model.FromWarehouseId;
 
 
-        Model.FromWarehouseId =
-            warehouseId;
+        Model.FromWarehouseLocationId = 0;
 
+        AvailableStock = 0;
 
-        Model.FromWarehouseLocationId =
-            0;
-
-
-        AvailableStock =
-            0;
-
-
-        Model.Quantity =
-            0;
-
+        Model.Quantity = 0;
 
         FromLocations.Clear();
 
@@ -673,8 +601,10 @@
         }
 
 
+        // =====================================================
         // Make sure the selected warehouse
         // is actually available for the product.
+        // =====================================================
 
         if (!FromWarehouses.Any(x =>
                 x.Id == warehouseId))
@@ -742,43 +672,35 @@
     // SOURCE LOCATION CHANGED
     // =========================================================
 
-    private async Task OnFromLocationChanged(
-        ChangeEventArgs e)
+    private async Task OnFromLocationChanged()
     {
         ErrorMessage = null;
 
         SuccessMessage = null;
 
 
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var locationId))
-        {
-            locationId = 0;
-        }
+        var locationId =
+            Model.FromWarehouseLocationId;
 
 
-        // Make sure the selected location
-        // belongs to the selected source warehouse.
+        // =====================================================
+        // Make sure the selected location belongs
+        // to the currently selected source warehouse.
+        // =====================================================
 
         if (locationId > 0 &&
             !FromLocations.Any(x =>
                 x.Id == locationId))
         {
+            Model.FromWarehouseLocationId = 0;
+
             locationId = 0;
         }
 
 
-        Model.FromWarehouseLocationId =
-            locationId;
+        AvailableStock = 0;
 
-
-        AvailableStock =
-            0;
-
-
-        Model.Quantity =
-            0;
+        Model.Quantity = 0;
 
 
         if (locationId <= 0 ||
@@ -801,29 +723,18 @@
     // TARGET WAREHOUSE CHANGED
     // =========================================================
 
-    private async Task OnToWarehouseChanged(
-        ChangeEventArgs e)
+    private async Task OnToWarehouseChanged()
     {
         ErrorMessage = null;
 
         SuccessMessage = null;
 
 
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var warehouseId))
-        {
-            warehouseId = 0;
-        }
+        var warehouseId =
+            Model.ToWarehouseId;
 
 
-        Model.ToWarehouseId =
-            warehouseId;
-
-
-        Model.ToWarehouseLocationId =
-            0;
-
+        Model.ToWarehouseLocationId = 0;
 
         ToLocations.Clear();
 
@@ -836,7 +747,9 @@
         }
 
 
+        // =====================================================
         // Make sure the selected warehouse is active.
+        // =====================================================
 
         if (!Warehouses.Any(x =>
                 x.Id == warehouseId))
@@ -882,30 +795,22 @@
     // TARGET LOCATION CHANGED
     // =========================================================
 
-    private Task OnToLocationChanged(
-        ChangeEventArgs e)
+    private Task OnToLocationChanged()
     {
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var locationId))
-        {
-            // Make sure the location is one
-            // of the currently loaded target locations.
+        var locationId =
+            Model.ToWarehouseLocationId;
 
-            if (locationId > 0 &&
-                !ToLocations.Any(x =>
-                    x.Id == locationId))
-            {
-                locationId = 0;
-            }
 
-            Model.ToWarehouseLocationId =
-                locationId;
-        }
-        else
+        // =====================================================
+        // Make sure the location is one
+        // of the currently loaded target locations.
+        // =====================================================
+
+        if (locationId > 0 &&
+            !ToLocations.Any(x =>
+                x.Id == locationId))
         {
-            Model.ToWarehouseLocationId =
-                0;
+            Model.ToWarehouseLocationId = 0;
         }
 
 
@@ -927,8 +832,7 @@
 
     private async Task LoadAvailableStock()
     {
-        AvailableStock =
-            0;
+        AvailableStock = 0;
 
 
         if (Model.ProductId <= 0 ||
@@ -1434,8 +1338,7 @@
 
             Warehouses.Clear();
 
-            AvailableStock =
-                0;
+            AvailableStock = 0;
 
 
             StateHasChanged();

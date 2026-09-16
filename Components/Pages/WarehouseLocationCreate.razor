@@ -1,6 +1,7 @@
 ﻿@page "/locations/create"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
@@ -17,12 +18,24 @@
 
 <div class="product-form-page">
 
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
     <div class="page-header">
 
         <div>
-            <h1>@L["NewStorageLocation"]</h1>
-            <p>@L["CreateNewStorageLocationDescription"]</p>
+
+            <h1>
+                @L["NewStorageLocation"]
+            </h1>
+
+            <p>
+                @L["CreateNewStorageLocationDescription"]
+            </p>
+
         </div>
+
 
         <a href="/locations"
            class="btn-secondary">
@@ -34,6 +47,10 @@
     </div>
 
 
+    <!-- =========================================================
+         FORM
+         ========================================================= -->
+
     <div class="form-card">
 
         <EditForm Model="@Model"
@@ -42,11 +59,18 @@
 
             <DataAnnotationsValidator />
 
+
+            <!-- =================================================
+                 STORAGE LOCATION INFORMATION
+                 ================================================= -->
+
             <div class="form-section">
 
                 <div class="form-section-title">
 
-                    <h2>@L["StorageLocationInformation"]</h2>
+                    <h2>
+                        @L["StorageLocationInformation"]
+                    </h2>
 
                     <p>
                         @L["StorageLocationInformationDescription"]
@@ -57,57 +81,69 @@
 
                 <div class="form-grid">
 
-                    <!-- WAREHOUSE -->
+
+                    <!-- =========================================
+                         WAREHOUSE
+                         ========================================= -->
 
                     <div class="form-group">
 
                         <label>
-                            @L["Warehouse"] <span>*</span>
+                            @L["Warehouse"]
+                            <span>*</span>
                         </label>
 
-                        <InputSelect @bind-Value="Model.WarehouseId"
-                                     class="form-control">
 
-                            <option value="0">
-                                @L["SelectWarehouse"]
-                            </option>
+                        <SearchableSelect TItem="Warehouse"
+                                          TValue="int"
+                                          Items="Warehouses"
+                                          @bind-Value="Model.WarehouseId"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => x.Name ?? "")"
+                                          Placeholder="@L["SelectWarehouse"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          Disabled="@IsSaving" />
 
-                            @foreach (var warehouse in Warehouses)
-                            {
-                                <option value="@warehouse.Id">
-                                    @warehouse.Name
-                                </option>
-                            }
 
-                        </InputSelect>
-
-                        <ValidationMessage For="@(() => Model.WarehouseId)" />
+                        <ValidationMessage
+                            For="@(() => Model.WarehouseId)" />
 
                     </div>
 
 
-                    <!-- CODE -->
+                    <!-- =========================================
+                         CODE
+                         ========================================= -->
 
                     <div class="form-group">
 
                         <label>
-                            @L["Code"] <span>*</span>
+                            @L["Code"]
+                            <span>*</span>
                         </label>
+
 
                         <InputText @bind-Value="Model.Code"
                                    class="form-control"
                                    placeholder="@L["StorageLocationCodePlaceholder"]" />
 
-                        <ValidationMessage For="@(() => Model.Code)" />
+
+                        <ValidationMessage
+                            For="@(() => Model.Code)" />
 
                     </div>
 
 
-                    <!-- NAME -->
+                    <!-- =========================================
+                         NAME
+                         ========================================= -->
 
                     <div class="form-group">
 
-                        <label>@L["Name"]</label>
+                        <label>
+                            @L["Name"]
+                        </label>
+
 
                         <InputText @bind-Value="Model.Name"
                                    class="form-control"
@@ -116,13 +152,16 @@
                     </div>
 
 
-                    <!-- ACTIVE -->
+                    <!-- =========================================
+                         ACTIVE
+                         ========================================= -->
 
                     <div class="form-group checkbox-group">
 
                         <label class="checkbox-label">
 
-                            <InputCheckbox @bind-Value="Model.IsActive" />
+                            <InputCheckbox
+                                @bind-Value="Model.IsActive" />
 
                             <span>
                                 @L["StorageLocationIsActive"]
@@ -137,35 +176,51 @@
             </div>
 
 
-            <!-- DESCRIPTION -->
+            <!-- =================================================
+                 DESCRIPTION
+                 ================================================= -->
 
             <div class="form-section">
 
                 <div class="form-section-title">
 
-                    <h2>@L["Description"]</h2>
+                    <h2>
+                        @L["Description"]
+                    </h2>
 
                 </div>
 
+
                 <div class="form-group">
 
-                    <InputTextArea @bind-Value="Model.Description"
-                                   class="form-control textarea"
-                                   rows="5"
-                                   placeholder="@L["StorageLocationDescriptionPlaceholder"]" />
+                    <InputTextArea
+                        @bind-Value="Model.Description"
+                        class="form-control textarea"
+                        rows="5"
+                        placeholder="@L["StorageLocationDescriptionPlaceholder"]" />
 
                 </div>
 
             </div>
 
 
+            <!-- =================================================
+                 ERROR
+                 ================================================= -->
+
             @if (!string.IsNullOrWhiteSpace(ErrorMessage))
             {
                 <div class="form-error">
+
                     @ErrorMessage
+
                 </div>
             }
 
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
 
             <div class="form-actions">
 
@@ -175,6 +230,7 @@
                     @L["Cancel"]
 
                 </a>
+
 
                 <button type="submit"
                         class="btn-primary"
@@ -197,50 +253,92 @@
 
 @code {
 
+    // =========================================================
+    // MODEL
+    // =========================================================
+
     private LocationModel Model = new();
 
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
     private List<Warehouse> Warehouses = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private bool IsSaving;
 
     private string? ErrorMessage;
 
 
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
-        Warehouses = await db.Warehouses
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.Name)
-            .ToListAsync();
+
+        Warehouses =
+            await db.Warehouses
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
     }
 
+
+    // =========================================================
+    // SAVE LOCATION
+    // =========================================================
 
     private async Task SaveLocation()
     {
         if (IsSaving)
+        {
             return;
+        }
+
 
         IsSaving = true;
+
         ErrorMessage = null;
+
 
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
+
+            // =================================================
+            // NORMALIZE CODE
+            // =================================================
+
             var code =
-                Model.Code.Trim().ToUpper();
+                Model.Code
+                    .Trim()
+                    .ToUpper();
 
 
-            // Prüfen ob Lager existiert
+            // =================================================
+            // CHECK WAREHOUSE
+            // =================================================
 
             var warehouseExists =
-                await db.Warehouses.AnyAsync(x =>
-                    x.Id == Model.WarehouseId &&
-                    x.IsActive);
+                await db.Warehouses
+                    .AnyAsync(x =>
+                        x.Id ==
+                            Model.WarehouseId
+                        &&
+                        x.IsActive);
+
 
             if (!warehouseExists)
             {
@@ -251,13 +349,18 @@
             }
 
 
-            // Code muss innerhalb eines Lagers eindeutig sein
+            // =================================================
+            // CHECK DUPLICATE CODE
+            // =================================================
 
             var codeExists =
-                await db.WarehouseLocations.AnyAsync(x =>
-                    x.WarehouseId ==
-                        Model.WarehouseId &&
-                    x.Code == code);
+                await db.WarehouseLocations
+                    .AnyAsync(x =>
+                        x.WarehouseId ==
+                            Model.WarehouseId
+                        &&
+                        x.Code == code);
+
 
             if (codeExists)
             {
@@ -268,33 +371,57 @@
             }
 
 
-            var location = new WarehouseLocation
-            {
-                WarehouseId =
-                    Model.WarehouseId,
+            // =================================================
+            // CREATE LOCATION
+            // =================================================
 
-                Code = code,
+            var location =
+                new WarehouseLocation
+                {
+                    WarehouseId =
+                        Model.WarehouseId,
 
-                Name =
-                    string.IsNullOrWhiteSpace(Model.Name)
-                        ? null
-                        : Model.Name.Trim(),
+                    Code =
+                        code,
 
-                Description =
-                    string.IsNullOrWhiteSpace(Model.Description)
-                        ? null
-                        : Model.Description.Trim(),
+                    Name =
+                        string.IsNullOrWhiteSpace(
+                            Model.Name)
 
-                IsActive =
-                    Model.IsActive
-            };
+                            ? null
+
+                            : Model.Name.Trim(),
+
+                    Description =
+                        string.IsNullOrWhiteSpace(
+                            Model.Description)
+
+                            ? null
+
+                            : Model.Description.Trim(),
+
+                    IsActive =
+                        Model.IsActive
+                };
 
 
-            db.WarehouseLocations.Add(location);
+            // =================================================
+            // SAVE
+            // =================================================
+
+            db.WarehouseLocations.Add(
+                location);
+
 
             await db.SaveChangesAsync();
 
-            Navigation.NavigateTo("/locations");
+
+            // =================================================
+            // REDIRECT
+            // =================================================
+
+            Navigation.NavigateTo(
+                "/locations");
         }
         catch (Exception ex)
         {
@@ -308,31 +435,59 @@
     }
 
 
+    // =========================================================
+    // FORM MODEL
+    // =========================================================
+
     private class LocationModel
     {
+        // =====================================================
+        // WAREHOUSE
+        // =====================================================
+
         [Range(
             1,
             int.MaxValue,
-            ErrorMessageResourceType = typeof(SharedResource),
-            ErrorMessageResourceName = "WarehouseRequired")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "WarehouseRequired")]
         public int WarehouseId { get; set; }
 
 
+        // =====================================================
+        // CODE
+        // =====================================================
+
         [Required(
-            ErrorMessageResourceType = typeof(SharedResource),
-            ErrorMessageResourceName = "CodeRequired")]
+            ErrorMessageResourceType =
+                typeof(SharedResource),
+            ErrorMessageResourceName =
+                "CodeRequired")]
         [MaxLength(50)]
         public string Code { get; set; }
             = string.Empty;
 
 
+        // =====================================================
+        // NAME
+        // =====================================================
+
         [MaxLength(200)]
         public string? Name { get; set; }
 
 
+        // =====================================================
+        // DESCRIPTION
+        // =====================================================
+
         [MaxLength(500)]
         public string? Description { get; set; }
 
+
+        // =====================================================
+        // ACTIVE
+        // =====================================================
 
         public bool IsActive { get; set; } = true;
     }

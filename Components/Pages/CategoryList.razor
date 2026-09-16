@@ -84,23 +84,18 @@
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="SearchChanged">
-
-            <option value="all">
-                @L["AllStatuses"]
-            </option>
-
-            <option value="active">
-                @L["Active"]
-            </option>
-
-            <option value="inactive">
-                @L["Inactive"]
-            </option>
-
-        </select>
+    <SearchableSelect TItem="StatusOption"
+                  TValue="string"
+                  Items="StatusOptions"
+                  @bind-Value="SelectedStatus"
+                  ValueSelector="@(x => x.Value)"
+                  TextSelector="@(x => x.Text)"
+                  Placeholder="@L["AllStatuses"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  ShowAllOption="true"
+                  AllOptionText="@L["AllStatuses"]"
+                  AllValue="@string.Empty"
+                  AfterValueChanged="SearchChanged" />
 
     </div>
 
@@ -458,7 +453,13 @@
     private const int PageSize = 10;
 
     private int CurrentPage = 1;
+    private class StatusOption
+{
+    public string Value { get; set; } = "";
+    public string Text { get; set; } = "";
+}
 
+private List<StatusOption> StatusOptions = new();
 
     private int TotalPages =>
         Math.Max(
@@ -515,10 +516,9 @@
 
     private string SearchTerm = string.Empty;
 
-    private string SelectedStatus = "all";
 
     private bool IsLoading = true;
-
+    private string SelectedStatus = string.Empty;
 
     // =========================================================
     // DELETE
@@ -535,6 +535,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "active",
+                Text = L["Active"].Value
+            },
+            new StatusOption
+            {
+                Value = "inactive",
+                Text = L["Inactive"].Value
+            }
+        };
         await LoadCategories();
     }
 
@@ -785,5 +798,4 @@
 
             base64);
     }
-
 }

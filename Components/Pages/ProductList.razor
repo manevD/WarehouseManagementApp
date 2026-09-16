@@ -70,6 +70,8 @@
 
     <div class="filter-card">
 
+        <!-- SEARCH -->
+
         <div class="search-box">
 
             <span class="search-icon">
@@ -85,41 +87,35 @@
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedCategoryId"
-                @bind:after="FilterChanged">
+        <!-- CATEGORY -->
 
-            <option value="0">
-                @L["AllCategories"]
-            </option>
+      <SearchableSelect TItem="Category"
+                  TValue="int"
+                  Items="Categories"
+                  Value="@SelectedCategoryId"
+                  ValueChanged="OnCategoryChanged"
+                  ValueSelector="@(x => x.Id)"
+                  TextSelector="@(x => x.Name)"
+                  Placeholder="@L["AllCategories"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  ShowAllOption="true"
+                  AllOptionText="@L["AllCategories"]"
+                  AfterValueChanged="FilterChanged" />
 
-            @foreach (var category in Categories)
-            {
-                <option value="@category.Id">
-                    @category.Name
-                </option>
-            }
+        <!-- STATUS -->
 
-        </select>
-
-
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="all">
-                @L["AllStatuses"]
-            </option>
-
-            <option value="active">
-                @L["Active"]
-            </option>
-
-            <option value="inactive">
-                @L["Inactive"]
-            </option>
-
-        </select>
+      <SearchableSelect TItem="StatusOption"
+                  TValue="string"
+                  Items="StatusOptions"
+                  Value="@SelectedStatus"
+                  ValueChanged="OnStatusChanged"
+                  ValueSelector="@(x => x.Value)"
+                  TextSelector="@(x => x.Text)"
+                  Placeholder="@L["AllStatuses"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  ShowAllOption="true"
+                  AllOptionText="@L["AllStatuses"]"
+                  AfterValueChanged="FilterChanged" />
 
     </div>
 
@@ -178,7 +174,6 @@
                     + @L["NewProduct"]
 
                 </a>
-
 
             </div>
         }
@@ -277,7 +272,6 @@
                                             }
 
                                         </div>
-
 
                                     </div>
 
@@ -381,7 +375,6 @@
 
                                     <div class="product-actions">
 
-
                                         <a href="/products/edit/@product.Id"
                                            class="action-button"
                                            title="@L["Edit"]">
@@ -399,20 +392,16 @@
 
                                         </button>
 
-
                                     </div>
 
                                 </td>
 
-
                             </tr>
                         }
-
 
                     </tbody>
 
                 </table>
-
 
             </div>
 
@@ -422,7 +411,6 @@
             @if (TotalPages > 1)
             {
                 <div class="pagination">
-
 
                     <button type="button"
                             class="pagination-button"
@@ -436,13 +424,11 @@
 
                     <div class="pagination-pages">
 
-
                         @for (int page = 1;
                               page <= TotalPages;
                               page++)
                         {
                             var pageNumber = page;
-
 
                             <button type="button"
                                     class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
@@ -452,7 +438,6 @@
 
                             </button>
                         }
-
 
                     </div>
 
@@ -465,7 +450,6 @@
                         ›
 
                     </button>
-
 
                 </div>
             }
@@ -494,9 +478,7 @@
     {
         <div class="delete-modal-backdrop">
 
-
             <div class="delete-modal">
-
 
                 <div class="delete-modal-icon">
                     🗑
@@ -507,8 +489,9 @@
                     @L["DeactivateProductQuestion"]
                 </h3>
 
+
                 <p>
-                    @L["DeactivateProductText", @ProductToDelete.Name]
+                    @L["DeactivateProductText", ProductToDelete.Name]
                 </p>
 
 
@@ -520,7 +503,6 @@
 
 
                 <div class="delete-modal-actions">
-
 
                     <button class="btn-secondary"
                             @onclick="CancelDelete">
@@ -537,9 +519,7 @@
 
                     </button>
 
-
                 </div>
-
 
             </div>
 
@@ -615,15 +595,37 @@
 
     private List<Category> Categories = new();
 
+    private List<StatusOption> StatusOptions = new();
+
+
     private string SearchTerm =
         string.Empty;
 
+
+    // 0 = ALL CATEGORIES
     private int SelectedCategoryId = 0;
 
+
+    // Empty = ALL STATUSES
     private string SelectedStatus =
-        "all";
+        string.Empty;
+
 
     private bool IsLoading = true;
+
+
+    // =========================================================
+    // STATUS OPTION
+    // =========================================================
+
+    private class StatusOption
+    {
+        public string Value { get; set; } =
+            string.Empty;
+
+        public string Text { get; set; } =
+            string.Empty;
+    }
 
 
     // =========================================================
@@ -648,6 +650,22 @@
                 .ToListAsync();
 
 
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "active",
+                Text = L["Active"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "inactive",
+                Text = L["Inactive"].Value
+            }
+        };
+
+
         await LoadProducts();
     }
 
@@ -667,7 +685,9 @@
                 .AsQueryable();
 
 
+        // =====================================================
         // SEARCH
+        // =====================================================
 
         if (!string.IsNullOrWhiteSpace(
             SearchTerm))
@@ -687,7 +707,10 @@
         }
 
 
+        // =====================================================
         // CATEGORY
+        // 0 = ALL CATEGORIES
+        // =====================================================
 
         if (SelectedCategoryId > 0)
         {
@@ -698,7 +721,10 @@
         }
 
 
+        // =====================================================
         // STATUS
+        // Empty = ALL STATUSES
+        // =====================================================
 
         if (SelectedStatus == "active")
         {
@@ -714,7 +740,9 @@
         }
 
 
+        // =====================================================
         // LOAD
+        // =====================================================
 
         Products =
             await query
@@ -722,7 +750,9 @@
                 .ToListAsync();
 
 
+        // =====================================================
         // RESET PAGINATION
+        // =====================================================
 
         CurrentPage = 1;
 
@@ -783,45 +813,54 @@
                     CurrentPage
                 ].Value,
 
+
                 (
                     L["SKU"].Value,
                     x => x.SKU ?? ""
                 ),
+
 
                 (
                     L["Product"].Value,
                     x => x.Name ?? ""
                 ),
 
+
                 (
                     L["Description"].Value,
                     x => x.Description ?? ""
                 ),
+
 
                 (
                     L["Category"].Value,
                     x => x.Category?.Name ?? ""
                 ),
 
+
                 (
                     L["Barcode"].Value,
                     x => x.Barcode ?? ""
                 ),
+
 
                 (
                     L["PurchasePrice"].Value,
                     x => x.PurchasePrice
                 ),
 
+
                 (
                     L["SalePrice"].Value,
                     x => x.SalePrice
                 ),
 
+
                 (
                     L["MinimumStock"].Value,
                     x => x.MinimumStock
                 ),
+
 
                 (
                     L["Status"].Value,
@@ -956,5 +995,17 @@
 
         await LoadProducts();
     }
+    private async Task OnCategoryChanged(int categoryId)
+{
+    SelectedCategoryId = categoryId;
 
+    await FilterChanged();
+}
+
+private async Task OnStatusChanged(string status)
+{
+    SelectedStatus = status;
+
+    await FilterChanged();
+}
 }

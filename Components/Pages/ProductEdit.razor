@@ -127,21 +127,14 @@ else
 
                             <label>@L["Category"]</label>
 
-                            <InputSelect @bind-Value="Model.CategoryId"
-                                         class="form-control">
-
-                                <option value="">
-                                    @L["NoCategory"]
-                                </option>
-
-                                @foreach (var category in Categories)
-                                {
-                                    <option value="@category.Id">
-                                        @category.Name
-                                    </option>
-                                }
-
-                            </InputSelect>
+                           <SearchableSelect TItem="Category"
+                  TValue="int?"
+                  Items="Categories"
+                  @bind-Value="Model.CategoryId"
+                  ValueSelector="@(x => (int?)x.Id)"
+                  TextSelector="@(x => x.Name)"
+                  Placeholder="@L["NoCategory"]"
+                  NoResultsText="@L["NoResultsFound"]" />
 
                         </div>
 

@@ -1,95 +1,54 @@
-﻿window.searchableSelect = {
+﻿export function register(dotNetReference, element) {
 
-    current: null,
-    outsideClickHandler: null,
+    if (!element) {
+        return;
+    }
 
-    register: function (dotNetReference, element) {
+    // Remove previous handler if it exists
+    if (element._searchableSelectOutsideClick) {
 
-        if (
-            this.current &&
-            this.current.reference !== dotNetReference
-        ) {
-            try {
-                this.current.reference.invokeMethodAsync(
-                    "CloseDropdown"
-                );
-            }
-            catch (e) {
-                console.warn(e);
-            }
+        document.removeEventListener(
+            "click",
+            element._searchableSelectOutsideClick
+        );
+    }
+
+    // Create new outside-click handler
+    element._searchableSelectOutsideClick = function (event) {
+
+        if (!element.contains(event.target)) {
+
+            dotNetReference.invokeMethodAsync(
+                "CloseDropdown"
+            );
         }
+    };
 
-        this.removeOutsideClickHandler();
-
-        this.current = {
-            reference: dotNetReference,
-            element: element
-        };
-
-        this.outsideClickHandler = (event) => {
-
-            if (!this.current)
-                return;
-
-            const currentElement =
-                this.current.element;
-
-            if (
-                currentElement &&
-                currentElement.contains(event.target)
-            ) {
-                return;
-            }
-
-            const reference =
-                this.current.reference;
-
-            this.current = null;
-
-            this.removeOutsideClickHandler();
-
-            try {
-                reference.invokeMethodAsync(
-                    "CloseDropdown"
-                );
-            }
-            catch (e) {
-                console.warn(e);
-            }
-        };
+    // Register after current click event finishes
+    setTimeout(function () {
 
         document.addEventListener(
             "click",
-            this.outsideClickHandler,
-            false
+            element._searchableSelectOutsideClick
         );
-    },
+
+    }, 0);
+}
 
 
-    removeOutsideClickHandler: function () {
+export function unregister(dotNetReference, element) {
 
-        if (this.outsideClickHandler) {
-
-            document.removeEventListener(
-                "click",
-                this.outsideClickHandler,
-                false
-            );
-
-            this.outsideClickHandler = null;
-        }
-    },
-
-
-    unregister: function (dotNetReference) {
-
-        if (
-            !this.current ||
-            this.current.reference === dotNetReference
-        ) {
-            this.current = null;
-
-            this.removeOutsideClickHandler();
-        }
+    if (!element) {
+        return;
     }
-};
+
+    if (element._searchableSelectOutsideClick) {
+
+        document.removeEventListener(
+            "click",
+            element._searchableSelectOutsideClick
+        );
+
+        element._searchableSelectOutsideClick = null;
+    }
+}

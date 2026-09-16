@@ -3,7 +3,6 @@
 @implements IAsyncDisposable
 
 @using Microsoft.JSInterop
-
 @inject IJSRuntime JS
 
 <div @ref="SelectElement"
@@ -13,8 +12,8 @@
 
         <input type="text"
                class="form-control"
-               @bind="SearchText"
-               @bind:event="oninput"
+               value="@SearchText"
+               @oninput="OnSearchInput"
                @onclick="OpenDropdown"
                disabled="@Disabled"
                placeholder="@Placeholder"
@@ -27,10 +26,25 @@
 
     </div>
 
+
     @if (IsOpen && !Disabled)
     {
         <div class="searchable-select-dropdown">
 
+            @* ALL OPTION *@
+            @if (ShowAllOption)
+            {
+                <button type="button"
+                        class="searchable-select-option searchable-select-all"
+                        @onclick="SelectAll">
+
+                    @AllOptionText
+
+                </button>
+            }
+
+
+            @* SEARCH RESULTS *@
             @if (FilteredItems.Any())
             {
                 @foreach (var item in FilteredItems)
@@ -56,6 +70,7 @@
 
 </div>
 
+
 @code {
 
     // =========================================================
@@ -66,30 +81,64 @@
     public IEnumerable<TItem> Items { get; set; }
         = Enumerable.Empty<TItem>();
 
+
     [Parameter]
-    public TValue Value { get; set; } = default!;
+    public TValue Value { get; set; }
+        = default!;
+
 
     [Parameter]
     public EventCallback<TValue> ValueChanged { get; set; }
+
 
     [Parameter]
     public Func<TItem, TValue> ValueSelector { get; set; }
         = default!;
 
+
     [Parameter]
     public Func<TItem, string> TextSelector { get; set; }
         = default!;
+
 
     [Parameter]
     public string Placeholder { get; set; }
         = "Search...";
 
+
     [Parameter]
     public string NoResultsText { get; set; }
         = "No results found";
 
+
     [Parameter]
     public bool Disabled { get; set; }
+
+
+    // =========================================================
+    // ALL OPTION
+    // =========================================================
+
+    [Parameter]
+    public bool ShowAllOption { get; set; }
+
+
+    [Parameter]
+    public string AllOptionText { get; set; }
+        = "All";
+
+
+    [Parameter]
+    public TValue AllValue { get; set; }
+        = default!;
+
+
+    // =========================================================
+    // AFTER VALUE CHANGED
+    // =========================================================
+
+    [Parameter]
+    public EventCallback AfterValueChanged { get; set; }
 
 
     // =========================================================
@@ -100,11 +149,13 @@
 
     private string SearchText = "";
 
-    private TValue? LastValue;
+    private TValue LastValue = default!;
 
     private bool IsInitialized;
 
     private ElementReference SelectElement;
+
+    private IJSObjectReference? JsModule;
 
     private DotNetObjectReference<SearchableSelect<TItem, TValue>>?
         DotNetReference;
@@ -126,59 +177,69 @@
 
             return Items.Where(item =>
             {
+                if (TextSelector == null)
+                    return false;
+
                 var text = TextSelector(item);
 
                 return !string.IsNullOrWhiteSpace(text)
-                    && text.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase);
+                       &&
+                       text.Contains(
+                           SearchText,
+                           StringComparison.OrdinalIgnoreCase);
             });
         }
     }
 
 
     // =========================================================
-    // PARAMETERS
+    // PARAMETERS CHANGED
     // =========================================================
 
     protected override void OnParametersSet()
     {
-        /*
-         * IMPORTANT:
-         *
-         * Do NOT overwrite SearchText on every render.
-         *
-         * Only update SearchText when the selected VALUE
-         * actually changes.
-         */
-
         var valueChanged =
             !EqualityComparer<TValue>.Default.Equals(
                 Value,
                 LastValue);
 
+
         if (!IsInitialized || valueChanged)
         {
             LastValue = Value;
 
-            var selectedItem =
-                Items.FirstOrDefault(item =>
-                    EqualityComparer<TValue>.Default.Equals(
-                        ValueSelector(item),
-                        Value));
 
-            if (selectedItem is not null)
-            {
-                SearchText =
-                    TextSelector(selectedItem);
-            }
-            else
+            // ALL VALUE
+            if (EqualityComparer<TValue>.Default.Equals(
+                    Value,
+                    AllValue))
             {
                 SearchText = "";
             }
+            else
+            {
+                var selectedItem =
+                    Items.FirstOrDefault(item =>
+                        EqualityComparer<TValue>.Default.Equals(
+                            ValueSelector(item),
+                            Value));
+
+
+                if (selectedItem is not null)
+                {
+                    SearchText =
+                        TextSelector(selectedItem);
+                }
+                else
+                {
+                    SearchText = "";
+                }
+            }
+
 
             IsInitialized = true;
         }
+
 
         if (Disabled)
         {
@@ -196,6 +257,7 @@
         if (Disabled)
             return;
 
+
         IsOpen = true;
 
         await RegisterOutsideClick();
@@ -211,7 +273,9 @@
         if (Disabled)
             return;
 
+
         IsOpen = !IsOpen;
+
 
         if (IsOpen)
         {
@@ -225,63 +289,165 @@
 
 
     // =========================================================
+    // SEARCH
+    // =========================================================
+
+    private async Task OnSearchInput(
+        ChangeEventArgs e)
+    {
+        if (Disabled)
+            return;
+
+
+        SearchText =
+            e.Value?.ToString() ?? "";
+
+
+        IsOpen = true;
+
+
+        await RegisterOutsideClick();
+    }
+
+
+    // =========================================================
     // SELECT ITEM
     // =========================================================
 
-    private async Task SelectItem(TItem item)
+    private async Task SelectItem(
+        TItem item)
     {
+        if (ValueSelector == null ||
+            TextSelector == null)
+        {
+            return;
+        }
+
+
         var selectedValue =
             ValueSelector(item);
 
-        Value = selectedValue;
 
-        LastValue = selectedValue;
+        Value =
+            selectedValue;
+
+
+        LastValue =
+            selectedValue;
+
 
         SearchText =
             TextSelector(item);
 
+
         IsOpen = false;
+
 
         await ValueChanged.InvokeAsync(
             selectedValue);
+
+
+        await AfterValueChanged.InvokeAsync();
+
 
         await UnregisterOutsideClick();
     }
 
 
     // =========================================================
-    // OUTSIDE CLICK
+    // SELECT ALL
+    // =========================================================
+
+    private async Task SelectAll()
+    {
+        Value =
+            AllValue;
+
+
+        LastValue =
+            AllValue;
+
+
+        SearchText =
+            "";
+
+
+        IsOpen = false;
+
+
+        await ValueChanged.InvokeAsync(
+            AllValue);
+
+
+        await AfterValueChanged.InvokeAsync();
+
+
+        await UnregisterOutsideClick();
+    }
+
+
+    // =========================================================
+    // JS MODULE
+    // =========================================================
+
+    private async Task EnsureJsModule()
+    {
+        if (JsModule is not null)
+            return;
+
+
+        JsModule =
+            await JS.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./Components/SearchableSelect.razor.js");
+    }
+
+
+    // =========================================================
+    // REGISTER OUTSIDE CLICK
     // =========================================================
 
     private async Task RegisterOutsideClick()
     {
+        await EnsureJsModule();
+
+
         DotNetReference ??=
             DotNetObjectReference.Create(this);
 
-        await JS.InvokeVoidAsync(
-            "searchableSelect.register",
+
+        await JsModule!.InvokeVoidAsync(
+            "register",
             DotNetReference,
             SelectElement);
     }
 
 
+    // =========================================================
+    // UNREGISTER OUTSIDE CLICK
+    // =========================================================
+
     private async Task UnregisterOutsideClick()
     {
         try
         {
-            await JS.InvokeVoidAsync(
-                "searchableSelect.unregister",
-                DotNetReference);
+            if (JsModule is not null)
+            {
+                await JsModule.InvokeVoidAsync(
+                    "unregister",
+                    DotNetReference,
+                    SelectElement);
+            }
         }
         catch
         {
-            // Component already disposed.
+            // Ignore JS errors during disposal
         }
     }
 
 
     // =========================================================
-    // CLOSE FROM JAVASCRIPT
+    // CLOSE FROM JS
     // =========================================================
 
     [JSInvokable]
@@ -293,6 +459,7 @@
 
             StateHasChanged();
         }
+
 
         return Task.CompletedTask;
     }
@@ -306,14 +473,22 @@
     {
         try
         {
-            await JS.InvokeVoidAsync(
-                "searchableSelect.unregister",
-                DotNetReference);
+            if (JsModule is not null)
+            {
+                await JsModule.InvokeVoidAsync(
+                    "unregister",
+                    DotNetReference,
+                    SelectElement);
+
+
+                await JsModule.DisposeAsync();
+            }
         }
         catch
         {
-            // Component already disposed.
+            // Ignore JS errors during disposal
         }
+
 
         DotNetReference?.Dispose();
     }
