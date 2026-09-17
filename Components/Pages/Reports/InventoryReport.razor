@@ -1,4 +1,4 @@
-﻿@page "/reports/inventory"
+@page "/reports/inventory"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -10,6 +10,7 @@
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 @using WarehouseManagement.Localization
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
@@ -166,42 +167,34 @@
 
                 <!-- WAREHOUSE -->
 
-                <select class="filter-select"
-                        @bind="SelectedWarehouseId"
-                        @bind:after="FilterChanged">
-
-                    <option value="0">
-                        @L["AllWarehouses"]
-                    </option>
-
-                    @foreach (var warehouse in Warehouses)
-                    {
-                        <option value="@warehouse.Id">
-                            @warehouse.Name
-                        </option>
-                    }
-
-                </select>
+                <SearchableSelect TItem="Warehouse"
+                                  TValue="int"
+                                  Items="Warehouses"
+                                  Value="SelectedWarehouseId"
+                                  ValueChanged="OnWarehouseChanged"
+                                  ValueSelector="@(x => x.Id)"
+                                  TextSelector="@(x => x.Name)"
+                                  Placeholder="@L["AllWarehouses"]"
+                                  NoResultsText="@L["NoResultsFound"]"
+                                  ShowAllOption="true"
+                                  AllOptionText="@L["AllWarehouses"]"
+                                  AllValue="0" />
 
 
                 <!-- STATUS -->
 
-                <select class="filter-select"
-                        @bind="SelectedStatus"
-                        @bind:after="FilterChanged">
-
-                    <option value="all">
-                        @L["AllStatuses"]
-                    </option>
-
-                    @foreach (var status in StatusOptions)
-                    {
-                        <option value="@status">
-                            @GetStatusText(status)
-                        </option>
-                    }
-
-                </select>
+                <SearchableSelect TItem="InventoryStatusOption"
+                                  TValue="string"
+                                  Items="StatusOptions"
+                                  Value="SelectedStatus"
+                                  ValueChanged="OnStatusChanged"
+                                  ValueSelector="@(x => x.Value)"
+                                  TextSelector="@(x => x.Text)"
+                                  Placeholder="@L["AllStatuses"]"
+                                  NoResultsText="@L["NoResultsFound"]"
+                                  ShowAllOption="true"
+                                  AllOptionText="@L["AllStatuses"]"
+                                  AllValue="@("all")" />
 
 
                 <!-- RESET -->
@@ -737,12 +730,13 @@
     // STATUS OPTIONS
     // =========================================================
 
-    private readonly string[] StatusOptions =
+    private class InventoryStatusOption
     {
-        "Entwurf",
-        "InBearbeitung",
-        "Abgeschlossen"
-    };
+        public string Value { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+    }
+
+    private List<InventoryStatusOption> StatusOptions = new();
 
 
     private string GetStatusText(string status)
@@ -1009,6 +1003,28 @@
 
     protected override async Task OnInitializedAsync()
     {
+        SelectedWarehouseId = 0;
+        SelectedStatus = "all";
+
+        StatusOptions = new List<InventoryStatusOption>
+        {
+            new()
+            {
+                Value = "Entwurf",
+                Text = L["Draft"].Value
+            },
+            new()
+            {
+                Value = "InBearbeitung",
+                Text = L["InProgress"].Value
+            },
+            new()
+            {
+                Value = "Abgeschlossen",
+                Text = L["Completed"].Value
+            }
+        };
+
         await LoadData();
     }
 
@@ -1088,11 +1104,23 @@
     // FILTER CHANGED
     // =========================================================
 
-    private Task FilterChanged()
+    private async Task OnWarehouseChanged(int value)
     {
+        SelectedWarehouseId = value;
         CurrentPage = 1;
 
-        return Task.CompletedTask;
+        await LoadData();
+    }
+
+    private async Task OnStatusChanged(string value)
+    {
+        SelectedStatus = string.IsNullOrWhiteSpace(value)
+            ? "all"
+            : value;
+
+        CurrentPage = 1;
+
+        await LoadData();
     }
 
 

@@ -1,4 +1,4 @@
-﻿@page "/users"
+@page "/users"
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "Admin")]
 
@@ -90,6 +90,12 @@
                        @bind:event="oninput" />
 
             </div>
+
+            <button type="button"
+                    class="btn-secondary filter-reset-button"
+                    @onclick="ResetFilters">
+                 @L["ResetFilters"]
+            </button>
 
         </div>
 
@@ -643,6 +649,43 @@
 }
 
 
+<style>
+    .stock-page .filter-main-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .stock-page .filter-main-row .search-box {
+        flex: 1 1 450px;
+        width: 450px;
+        max-width: 450px;
+        min-width: 280px;
+    }
+
+    .stock-page .filter-reset-button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 950px) {
+        .stock-page .filter-main-row {
+            flex-wrap: wrap;
+        }
+
+        .stock-page .filter-main-row .search-box,
+        .stock-page .filter-main-row .filter-reset-button {
+            flex: 1 1 100%;
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+        }
+    }
+</style>
+
+
 @code {
 
     // =========================================================
@@ -696,6 +739,19 @@
 
             CurrentPage = 1;
         }
+    }
+
+
+    // =========================================================
+    // RESET FILTERS
+    // =========================================================
+
+    private Task ResetFilters()
+    {
+        _searchTerm = string.Empty;
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
     }
 
 

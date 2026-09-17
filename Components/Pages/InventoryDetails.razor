@@ -1,4 +1,4 @@
-﻿@page "/inventory/details/{Id:int}"
+@page "/inventory/details/{Id:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -8,6 +8,7 @@
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
+@using WarehouseManagement.Components
 
 @inject IStringLocalizer<SharedResource> L
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
@@ -352,28 +353,20 @@ else
                     </div>
 
 
-                    <select class="filter-select"
-                            @bind="SelectedLocationId">
-
-                        <option value="0">
-                            @L["AllLocations"]
-                        </option>
-
-                        @foreach (var location in Locations)
-                        {
-                            <option value="@location.Id">
-                                @location.Code
-
-                                @if (!string.IsNullOrWhiteSpace(
-                                    location.Name))
-                                {
-                                    @($" - {location.Name}")
-                                }
-
-                            </option>
-                        }
-
-                    </select>
+                    <SearchableSelect TItem="WarehouseLocation"
+                                      TValue="int"
+                                      Items="Locations"
+                                      Value="SelectedLocationId"
+                                      ValueChanged="OnLocationChanged"
+                                      ValueSelector="@(x => x.Id)"
+                                      TextSelector="@(x => string.IsNullOrWhiteSpace(x.Name)
+                                          ? x.Code
+                                          : $"{x.Code} - {x.Name}")"
+                                      Placeholder="@L["AllLocations"]"
+                                      NoResultsText="@L["NoResultsFound"]"
+                                      ShowAllOption="true"
+                                      AllOptionText="@L["AllLocations"]"
+                                      AllValue="0" />
 
 
                     @if (!string.IsNullOrWhiteSpace(SearchText)
@@ -1388,6 +1381,16 @@ else
         {
             IsSaving = false;
         }
+    }
+
+
+    // =========================================================
+    // LOCATION CHANGED
+    // =========================================================
+
+    private void OnLocationChanged(int locationId)
+    {
+        SelectedLocationId = locationId;
     }
 
 

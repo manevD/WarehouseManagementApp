@@ -1,4 +1,4 @@
-﻿@page "/inventory"
+@page "/inventory"
 @attribute [Authorize]
 @rendermode InteractiveServer
 
@@ -10,11 +10,15 @@
 @using WarehouseManagement.Services
 @using Microsoft.Extensions.Localization
 @using WarehouseManagement.Localization
+@using WarehouseManagement.Components
+@using Microsoft.AspNetCore.Components.Authorization
 
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ApplicationDbContext Db
 @inject ExcelExportService ExcelExport
 @inject IJSRuntime JS
 @inject IStringLocalizer<SharedResource> L
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>@L["Inventories"]</PageTitle>
 
@@ -25,38 +29,20 @@
          ========================================================= -->
 
     <div class="page-header">
-
         <div>
-
-            <h1>
-                @L["Inventories"]
-            </h1>
-
-            <p>
-                @L["InventoriesOverviewDescription"]
-            </p>
-
+            <h1>@L["Inventories"]</h1>
+            <p>@L["InventoriesOverviewDescription"]</p>
         </div>
 
         <div>
-
-            <button type="button"
-                    class="btn-secondary"
-                    @onclick="ExportExcel">
-
+            <button type="button" class="btn-secondary" @onclick="ExportExcel">
                 📊 @L["ExportExcel"]
-
             </button>
 
-            <a href="/inventory/create"
-               class="btn-primary">
-
+            <a href="/inventory/create" class="btn-primary">
                 @L["NewInventory"]
-
             </a>
-
         </div>
-
     </div>
 
 
@@ -65,50 +51,33 @@
          ========================================================= -->
 
     <div class="filter-card">
-
         <div class="filter-main-row">
 
             <!-- SEARCH -->
-
             <div class="search-box">
-
                 <span class="search-icon">⌕</span>
-
                 <input type="text"
                        class="search-input"
                        placeholder="@L["SearchInventoryPlaceholder"]"
                        value="@SearchText"
                        @oninput="SearchChanged" />
-
             </div>
 
-
             <!-- STATUS -->
-
-            <select class="filter-select"
-                    @bind="SelectedStatus"
-                    @bind:after="StatusChanged">
-
-                <option value="">
-                    @L["AllStatuses"]
-                </option>
-
-                <option value="Entwurf">
-                    @L["Draft"]
-                </option>
-
-                <option value="InBearbeitung">
-                    @L["InProgress"]
-                </option>
-
-                <option value="Abgeschlossen">
-                    @L["Completed"]
-                </option>
-
-            </select>
+            <SearchableSelect TItem="InventoryStatusOption"
+                              TValue="string"
+                              Items="InventoryStatusOptions"
+                              Value="SelectedStatus"
+                              ValueChanged="OnStatusChanged"
+                              ValueSelector="@(x => x.Value)"
+                              TextSelector="@(x => x.Text)"
+                              Placeholder="@L["AllStatuses"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllStatuses"]"
+                              AllValue="@string.Empty" />
 
         </div>
-
     </div>
 
 
@@ -119,53 +88,25 @@
     <div class="stock-summary-grid">
 
         <!-- GESAMT -->
-
         <div class="stock-summary-card">
-
-            <span>
-                @L["Total"]
-            </span>
-
-            <strong>
-                @FilteredInventories.Count()
-            </strong>
-
+            <span>@L["Total"]</span>
+            <strong>@FilteredInventories.Count()</strong>
         </div>
-
 
         <!-- OFFEN -->
-
         <div class="stock-summary-card">
-
-            <span>
-                @L["Open"]
-            </span>
-
+            <span>@L["Open"]</span>
             <strong class="text-warning">
-
-                @FilteredInventories.Count(x =>
-                    x.Status != InventoryStatus.Abgeschlossen)
-
+                @FilteredInventories.Count(x => x.Status != InventoryStatus.Abgeschlossen)
             </strong>
-
         </div>
 
-
         <!-- ABGESCHLOSSEN -->
-
         <div class="stock-summary-card">
-
-            <span>
-                @L["Completed"]
-            </span>
-
+            <span>@L["Completed"]</span>
             <strong class="text-success">
-
-                @FilteredInventories.Count(x =>
-                    x.Status == InventoryStatus.Abgeschlossen)
-
+                @FilteredInventories.Count(x => x.Status == InventoryStatus.Abgeschlossen)
             </strong>
-
         </div>
 
     </div>
@@ -178,39 +119,19 @@
     <div class="products-card">
 
         <!-- HEADER -->
-
         <div class="products-card-header">
-
             <div>
-
-                <strong>
-                    @L["Inventories"]
-                </strong>
-
-                <span>
-                    @FilteredInventories.Count() @L["Entries"]
-                </span>
-
+                <strong>@L["Inventories"]</strong>
+                <span>@FilteredInventories.Count() @L["Entries"]</span>
             </div>
-
         </div>
 
-
-        <!-- =====================================================
-             CONTENT
-             ===================================================== -->
+        <!-- CONTENT -->
         @if (IsLoading)
         {
             <div class="loading-state">
-
-                <div class="spinner-border text-primary"
-                     role="status">
-                </div>
-
-                <div>
-                    @L["LoadingInventories"]
-                </div>
-
+                <div class="spinner-border text-primary" role="status"></div>
+                <div>@L["LoadingInventories"]</div>
             </div>
         }
         else
@@ -218,406 +139,251 @@
             @if (!FilteredInventories.Any())
             {
                 <div class="empty-products">
-
                     <div class="empty-products-icon">
-
                         <i class="bi bi-clipboard-x"></i>
-
                     </div>
 
+                    <h3>@L["NoInventoriesFound"]</h3>
 
-                    <h3>
-                        @L["NoInventoriesFound"]
-                    </h3>
-
-
-                    @if (!string.IsNullOrWhiteSpace(SearchText) ||
-                         !string.IsNullOrWhiteSpace(SelectedStatus))
+                    @if (!string.IsNullOrWhiteSpace(SearchText) || !string.IsNullOrWhiteSpace(SelectedStatus))
                     {
-                        <p>
-                            @L["NoInventoryMatchesSearchCriteria"]
-                        </p>
-
-
-                        <button type="button"
-                                class="btn-secondary"
-                                @onclick="ClearFilters">
-
+                        <p>@L["NoInventoryMatchesSearchCriteria"]</p>
+                        <button type="button" class="btn-secondary" @onclick="ClearFilters">
                             <i class="bi bi-arrow-counterclockwise me-1"></i>
-
                             @L["ResetFilters"]
-
                         </button>
                     }
                     else
                     {
-                        <p>
-                            @L["NoInventoriesCreated"]
-                        </p>
-
-
-                        <a href="/inventory/create"
-                           class="btn-primary">
-
+                        <p>@L["NoInventoriesCreated"]</p>
+                        <a href="/inventory/create" class="btn-primary">
                             <i class="bi bi-plus-lg me-1"></i>
-
                             @L["NewInventory"]
-
                         </a>
                     }
-
                 </div>
             }
             else
             {
                 <div class="products-table-wrapper">
-
                     <table class="products-table">
-
                         <thead>
-
                             <tr>
-
-                                <th>
-                                    @L["Warehouse"]
-                                </th>
-
-                                <th>
-                                    @L["Status"]
-                                </th>
-
-                                <th>
-                                    @L["Positions"]
-                                </th>
-
-                                <th>
-                                    @L["CreatedAt"]
-                                </th>
-
-                                <th>
-                                    @L["CompletedAt"]
-                                </th>
-
-                                <th class="text-end">
-                                    @L["Actions"]
-                                </th>
-
+                                <th>@L["Warehouse"]</th>
+                                <th>@L["Status"]</th>
+                                <th>@L["Positions"]</th>
+                                <th>@L["CreatedAt"]</th>
+                                <th>@L["CompletedAt"]</th>
+                                <th class="text-end">@L["Actions"]</th>
                             </tr>
-
                         </thead>
 
-
                         <tbody>
-
                             @foreach (var inventory in PagedInventories)
                             {
                                 <tr>
-
-                                    <!-- =================================
-                                         LAGER
-                                         ================================= -->
-
+                                    <!-- LAGER -->
                                     <td>
-
                                         <div class="product-name">
-
                                             <div class="product-avatar">
-
-                                                @GetInitials(
-                                                    inventory.Warehouse?.Name)
-
+                                                @GetInitials(inventory.Warehouse?.Name)
                                             </div>
-
-
                                             <div>
-
-                                                <strong>
-                                                    @(inventory.Warehouse?.Name ?? "-")
-                                                </strong>
-
-
-                                                @if (!string.IsNullOrWhiteSpace(
-                                                    inventory.Note))
+                                                <strong>@(inventory.Warehouse?.Name ?? "-")</strong>
+                                                @if (!string.IsNullOrWhiteSpace(inventory.Note))
                                                 {
-                                                    <small>
-                                                        @inventory.Note
-                                                    </small>
+                                                    <small>@inventory.Note</small>
                                                 }
-
                                             </div>
-
                                         </div>
-
                                     </td>
 
-
-                                    <!-- =================================
-                                         STATUS
-                                         ================================= -->
-
+                                    <!-- STATUS -->
                                     <td>
-
-                                        @if (inventory.Status ==
-                                             InventoryStatus.Entwurf)
+                                        @if (inventory.Status == InventoryStatus.Entwurf)
                                         {
                                             <span class="status-badge status-draft">
-
                                                 <i class="bi bi-pencil me-1"></i>
-
                                                 @L["Draft"]
-
                                             </span>
                                         }
-                                        else if (inventory.Status ==
-                                                 InventoryStatus.InBearbeitung)
+                                        else if (inventory.Status == InventoryStatus.InBearbeitung)
                                         {
                                             <span class="status-badge status-warning">
-
                                                 <i class="bi bi-arrow-repeat me-1"></i>
-
                                                 @L["InProgress"]
-
                                             </span>
                                         }
-                                        else if (inventory.Status ==
-                                                 InventoryStatus.Abgeschlossen)
+                                        else if (inventory.Status == InventoryStatus.Abgeschlossen)
                                         {
                                             <span class="status-badge status-active">
-
                                                 <i class="bi bi-check-circle me-1"></i>
-
                                                 @L["Completed"]
-
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="status-badge">
-
                                                 @GetStatusText(inventory.Status)
-
                                             </span>
                                         }
-
                                     </td>
 
-
-                                    <!-- =================================
-                                         POSITIONEN
-                                         ================================= -->
-
+                                    <!-- POSITIONEN -->
                                     <td>
-
-                                        <strong>
-                                            @(inventory.Items?.Count ?? 0)
-                                        </strong>
-
-                                        <span class="text-muted ms-1">
-                                            @L["Positions"]
-                                        </span>
-
+                                        <strong>@(inventory.Items?.Count ?? 0)</strong>
+                                        <span class="text-muted ms-1">@L["Positions"]</span>
                                     </td>
 
-
-                                    <!-- =================================
-                                         ERSTELLT
-                                         ================================= -->
-
+                                    <!-- ERSTELLT -->
                                     <td>
-
                                         <div class="movement-date">
-
-                                            <strong>
-                                                @inventory.CreatedAt
-                                            </strong>
-
+                                            <strong>@inventory.CreatedAt</strong>
                                         </div>
-
                                     </td>
 
-
-                                    <!-- =================================
-                                         ABGESCHLOSSEN
-                                         ================================= -->
-
+                                    <!-- ABGESCHLOSSEN -->
                                     <td>
-
                                         @if (inventory.CompletedAt.HasValue)
                                         {
                                             <div class="movement-date">
-
-                                                <strong>
-                                                    @inventory.CompletedAt.Value
-                                                </strong>
-
+                                                <strong>@inventory.CompletedAt.Value</strong>
                                             </div>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">
-                                                —
-                                            </span>
+                                            <span class="text-muted">—</span>
                                         }
-
                                     </td>
 
-
-                                    <!-- =================================
-                                         AKTIONEN
-                                         ================================= -->
-
+                                    <!-- AKTIONEN -->
                                     <td>
-
                                         <div class="product-actions justify-content-end">
-
                                             <!-- DETAILS -->
-
                                             <a href="/inventory/details/@inventory.Id"
                                                class="action-button"
                                                title="@L["Details"]">
-
                                                 👁
-
                                             </a>
 
-
-                                            <!-- EDIT -->
-                                            @if (inventory.Status !=
-                                                                                             InventoryStatus.Abgeschlossen)
+                                            <!-- EDIT & DELETE -->
+                                            @if (inventory.Status != InventoryStatus.Abgeschlossen)
                                             {
                                                 <a href="/inventory/edit/@inventory.Id"
                                                    class="action-button"
                                                    title="@L["Edit"]">
-
                                                     ✎
-
                                                 </a>
+
+                                                @if (IsAdmin)
+                                                {
+                                                    <button type="button"
+                                                            class="action-button delete-button"
+                                                            title="@L["Delete"]"
+                                                            @onclick="() => DeleteInventory(inventory.Id)">
+                                                        🗑
+                                                    </button>
+                                                }
                                             }
-
                                         </div>
-
                                     </td>
-
                                 </tr>
                             }
-
                         </tbody>
-
                     </table>
-
                 </div>
 
-
-                <!-- =====================================================
-                     PAGINATION
-                     ===================================================== -->
+                <!-- PAGINATION -->
                 @if (TotalPages > 1)
                 {
                     <div class="pagination">
-
                         <button type="button"
                                 class="pagination-button"
                                 disabled="@(CurrentPage <= 1)"
                                 @onclick="PreviousPage">
-
                             ‹
-
                         </button>
 
-
                         <div class="pagination-pages">
-
                             @for (int page = 1; page <= TotalPages; page++)
                             {
                                 var pageNumber = page;
-
                                 <button type="button"
                                         class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
                                         @onclick="() => GoToPage(pageNumber)">
-
                                     @pageNumber
-
                                 </button>
                             }
-
                         </div>
-
 
                         <button type="button"
                                 class="pagination-button"
                                 disabled="@(CurrentPage >= TotalPages)"
                                 @onclick="NextPage">
-
                             ›
-
                         </button>
-
                     </div>
                 }
 
-
                 <div class="pagination-info">
-
                     @L["Page"] @CurrentPage @L["Of"] @TotalPages
                     · @PagedInventories.Count @L["Of"] @FilteredInventories.Count() @L["Inventories"]
-
                 </div>
-
             }
-
         }
-
     </div>
-
 </div>
 
-
 @code {
-
     // =========================================================
     // DATA
     // =========================================================
 
     private List<Inventory> Inventories = new();
 
-
     // =========================================================
     // STATE
     // =========================================================
 
     private bool IsLoading = true;
-
+    private bool IsAdmin;
+    private string? ErrorMessage;
 
     // =========================================================
     // FILTER
     // =========================================================
 
     private string SearchText = string.Empty;
-
     private string SelectedStatus = string.Empty;
 
+    private class InventoryStatusOption
+    {
+        public string Value { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+    }
+
+    private List<InventoryStatusOption> InventoryStatusOptions = new();
 
     // =========================================================
     // PAGINATION
     // =========================================================
 
     private const int PageSize = 10;
-
     private int CurrentPage = 1;
 
     private int TotalPages =>
         Math.Max(
             1,
             (int)Math.Ceiling(
-                FilteredInventories.Count() /
-                (double)PageSize));
+                FilteredInventories.Count() / (double)PageSize
+            )
+        );
 
     private List<Inventory> PagedInventories =>
         FilteredInventories
             .Skip((CurrentPage - 1) * PageSize)
             .Take(PageSize)
             .ToList();
-
 
     private void GoToPage(int page)
     {
@@ -627,13 +393,11 @@
         CurrentPage = page;
     }
 
-
     private void PreviousPage()
     {
         if (CurrentPage > 1)
             CurrentPage--;
     }
-
 
     private void NextPage()
     {
@@ -641,60 +405,23 @@
             CurrentPage++;
     }
 
-
     // =========================================================
     // FILTERED INVENTORIES
     // =========================================================
 
     private IEnumerable<Inventory> FilteredInventories =>
         Inventories
-
-            // SEARCH
-
             .Where(x =>
                 string.IsNullOrWhiteSpace(SearchText)
-
-                ||
-
-                (
-                    x.Warehouse?.Name?.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase)
-                    ?? false
-                )
-
-                ||
-
-                (
-                    x.Note?.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase)
-                    ?? false
-                )
-
-                ||
-
-                x.Status.ToString().Contains(
-                    SearchText,
-                    StringComparison.OrdinalIgnoreCase)
+                || (x.Warehouse?.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (x.Note?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || x.Status.ToString().Contains(SearchText, StringComparison.OrdinalIgnoreCase)
             )
-
-            // STATUS
-
             .Where(x =>
                 string.IsNullOrWhiteSpace(SelectedStatus)
-
-                ||
-
-                x.Status.ToString() ==
-                SelectedStatus
+                || x.Status.ToString() == SelectedStatus
             )
-
-            // NEWEST FIRST
-
-            .OrderByDescending(x =>
-                x.CreatedAt);
-
+            .OrderByDescending(x => x.CreatedAt);
 
     // =========================================================
     // INITIALIZATION
@@ -702,9 +429,32 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        IsAdmin = authState.User.IsInRole("Admin");
+
+        SelectedStatus = string.Empty;
+
+        InventoryStatusOptions = new List<InventoryStatusOption>
+        {
+            new()
+            {
+                Value = nameof(InventoryStatus.Entwurf),
+                Text = L["Draft"].Value
+            },
+            new()
+            {
+                Value = nameof(InventoryStatus.InBearbeitung),
+                Text = L["InProgress"].Value
+            },
+            new()
+            {
+                Value = nameof(InventoryStatus.Abgeschlossen),
+                Text = L["Completed"].Value
+            }
+        };
+
         await LoadInventories();
     }
-
 
     // =========================================================
     // LOAD INVENTORIES
@@ -716,21 +466,12 @@
 
         try
         {
-            Inventories =
-                await Db.Inventories
-
-                    .Include(x =>
-                        x.Warehouse)
-
-                    .Include(x =>
-                        x.Items)
-
-                    .AsNoTracking()
-
-                    .OrderByDescending(x =>
-                        x.CreatedAt)
-
-                    .ToListAsync();
+            Inventories = await Db.Inventories
+                .Include(x => x.Warehouse)
+                .Include(x => x.Items)
+                .AsNoTracking()
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
 
             CurrentPage = 1;
         }
@@ -740,7 +481,6 @@
         }
     }
 
-
     // =========================================================
     // FILTER EVENTS
     // =========================================================
@@ -748,30 +488,21 @@
     private void SearchChanged(ChangeEventArgs args)
     {
         SearchText = args.Value?.ToString() ?? string.Empty;
-
         CurrentPage = 1;
     }
 
-
-    private void StatusChanged()
+    private void OnStatusChanged(string value)
     {
+        SelectedStatus = value ?? string.Empty;
         CurrentPage = 1;
     }
-
-
-    // =========================================================
-    // CLEAR FILTERS
-    // =========================================================
 
     private void ClearFilters()
     {
         SearchText = string.Empty;
-
         SelectedStatus = string.Empty;
-
         CurrentPage = 1;
     }
-
 
     // =========================================================
     // EXCEL EXPORT
@@ -783,116 +514,109 @@
         {
             var data = PagedInventories;
 
-            var bytes =
-                ExcelExport.Export(
-                    data,
-                    L["Inventories"].Value,
-                    $"{L["Inventories"].Value} – {L["Page"]} {CurrentPage}",
+            var bytes = ExcelExport.Export(
+                data,
+                L["Inventories"].Value,
+                $"{L["Inventories"].Value} – {L["Page"]} {CurrentPage}",
+                (L["Warehouse"].Value, x => x.Warehouse?.Name ?? ""),
+                (L["Status"].Value, x => GetStatusText(x.Status)),
+                (L["Positions"].Value, x => x.Items?.Count ?? 0),
+                (L["CreatedAt"].Value, x => x.CreatedAt),
+                (L["CompletedAt"].Value, x => x.CompletedAt),
+                (L["Note"].Value, x => x.Note ?? "")
+            );
 
-                    (
-                        L["Warehouse"].Value,
-                        x => x.Warehouse?.Name ?? ""
-                    ),
-
-                    (
-                        L["Status"].Value,
-                        x => GetStatusText(x.Status)
-                    ),
-
-                    (
-                        L["Positions"].Value,
-                        x => x.Items?.Count ?? 0
-                    ),
-
-                    (
-                        L["CreatedAt"].Value,
-                        x => x.CreatedAt
-                    ),
-
-                    (
-                        L["CompletedAt"].Value,
-                        x => x.CompletedAt
-                    ),
-
-                    (
-                        L["Note"].Value,
-                        x => x.Note ?? ""
-                    )
-                );
-
-
-            var base64 =
-                Convert.ToBase64String(bytes);
-
+            var base64 = Convert.ToBase64String(bytes);
 
             await JS.InvokeVoidAsync(
                 "downloadFile",
                 $"{L["Inventories"].Value}_Seite_{CurrentPage}.xlsx",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                base64);
+                base64
+            );
         }
         catch (Exception ex)
         {
-            Console.WriteLine(
-                $"Excel export error: {ex}");
+            Console.WriteLine($"Excel export error: {ex}");
         }
     }
 
-
     // =========================================================
-    // STATUS TEXT
+    // HELPER METHODS
     // =========================================================
 
     private string GetStatusText(InventoryStatus status)
     {
         return status switch
         {
-            InventoryStatus.Entwurf =>
-                L["Draft"].Value,
-
-            InventoryStatus.InBearbeitung =>
-                L["InProgress"].Value,
-
-            InventoryStatus.Abgeschlossen =>
-                L["Completed"].Value,
-
-            _ =>
-                status.ToString()
+            InventoryStatus.Entwurf => L["Draft"].Value,
+            InventoryStatus.InBearbeitung => L["InProgress"].Value,
+            InventoryStatus.Abgeschlossen => L["Completed"].Value,
+            _ => status.ToString()
         };
     }
-
-
-    // =========================================================
-    // INITIALS
-    // =========================================================
 
     private string GetInitials(string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";
 
-
-        var words =
-            name.Split(
-                ' ',
-                StringSplitOptions.RemoveEmptyEntries);
-
+        var words = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         if (words.Length == 1)
         {
-            return words[0]
-                .Substring(
-                    0,
-                    Math.Min(
-                        2,
-                        words[0].Length))
-                .ToUpper();
+            return words[0].Substring(0, Math.Min(2, words[0].Length)).ToUpper();
         }
 
-
-        return
-            $"{words[0][0]}{words[1][0]}"
-                .ToUpper();
+        return $"{words[0][0]}{words[1][0]}".ToUpper();
     }
 
+    private async Task DeleteInventory(int inventoryId)
+    {
+        try
+        {
+            ErrorMessage = null;
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (!user.Identity?.IsAuthenticated ?? true)
+                return;
+
+            if (!user.IsInRole("Admin"))
+                return;
+
+            var confirmed = await JS.InvokeAsync<bool>(
+                "confirm",
+                L["DeleteInventoryConfirmation"].Value
+            );
+
+            if (!confirmed)
+                return;
+
+            await using var db = await DbFactory.CreateDbContextAsync();
+
+            var inventory = await db.Inventories
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == inventoryId);
+
+            if (inventory == null)
+                return;
+
+            if (inventory.Status == InventoryStatus.Abgeschlossen)
+                return;
+
+            db.Inventories.Remove(inventory);
+            await db.SaveChangesAsync();
+
+            Inventories.RemoveAll(x => x.Id == inventoryId);
+            CurrentPage = Math.Min(CurrentPage, TotalPages);
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = L["ErrorDeletingInventory", ex.GetBaseException().Message];
+        }
+    }
 }

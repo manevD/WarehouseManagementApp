@@ -2800,4 +2800,12 @@
 	<data name="PurchaseOrderStatusCancelled" xml:space="preserve">
   <value>Otkazano</value>
 </data>
+	<data name="DifferentPositionsWithCount" xml:space="preserve">
+  <value>Stavke s odstupanjem zalihe
+</value>
+		</data>
+	<data name="TotalDifferenceWithValue" xml:space="preserve">
+  <value>Ukupna razlika : 
+</value>
+					</data>
 </root>

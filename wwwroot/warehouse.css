@@ -3136,3 +3136,49 @@ textarea.form-control {
         cursor: not-allowed;
     }
 
+
+
+
+
+
+/* =========================================================
+   INVENTORY FILTER - SEARCH + SEARCHABLE STATUS
+   ========================================================= */
+
+.stock-page .filter-main-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+    /* Normal search field */
+    .stock-page .filter-main-row .search-box {
+        flex: 0 1 450px;
+        width: 450px;
+        max-width: 450px;
+        min-width: 280px;
+    }
+
+    /* SearchableSelect for status */
+    .stock-page .filter-main-row > .searchable-select {
+        flex: 0 0 250px;
+        width: 250px;
+        max-width: 250px;
+        min-width: 250px;
+    }
+
+/* Responsive */
+@media (max-width: 950px) {
+    .stock-page .filter-main-row {
+        flex-wrap: wrap;
+    }
+
+        .stock-page .filter-main-row .search-box,
+        .stock-page .filter-main-row > .searchable-select {
+            flex: 1 1 100%;
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+        }
+}

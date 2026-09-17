@@ -2803,4 +2803,12 @@
 	<data name="PurchaseOrderStatusCancelled" xml:space="preserve">
   <value>Откажано</value>
 </data>
+	<data name="DifferentPositionsWithCount" xml:space="preserve">
+  <value>Ставки со отстапување на залихата
+</value>
+		</data>
+	<data name="TotalDifferenceWithValue" xml:space="preserve">
+  <value>Вкупна разлика : 
+</value>
+					</data>
 </root>

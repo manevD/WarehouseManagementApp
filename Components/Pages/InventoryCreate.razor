@@ -1,4 +1,4 @@
-﻿@page "/inventory/create"
+@page "/inventory/create"
 @rendermode InteractiveServer
 
 @using Microsoft.EntityFrameworkCore
@@ -6,6 +6,7 @@
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
+@using WarehouseManagement.Components
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 
@@ -83,29 +84,19 @@
                         @L["Warehouse"] <span>*</span>
                     </label>
 
-                    <select class="form-control"
-                            @bind="SelectedWarehouseId">
-
-                        <option value="0">
-                            @L["SelectWarehouse"]
-                        </option>
-
-                        @foreach (var warehouse in Warehouses)
-                        {
-                            <option value="@warehouse.Id">
-
-                                @warehouse.Name
-
-                                @if (!string.IsNullOrWhiteSpace(
-                                    warehouse.City))
-                                {
-                                    @($" - {warehouse.City}")
-                                }
-
-                            </option>
-                        }
-
-                    </select>
+                    <SearchableSelect TItem="Warehouse"
+                                      TValue="int"
+                                      Items="Warehouses"
+                                      Value="SelectedWarehouseId"
+                                      ValueChanged="OnWarehouseChanged"
+                                      ValueSelector="@(x => x.Id)"
+                                      TextSelector="@(x => string.IsNullOrWhiteSpace(x.City)
+                                          ? x.Name
+                                          : $"{x.Name} - {x.City}")"
+                                      Placeholder="@L["SelectWarehouse"]"
+                                      NoResultsText="@L["NoResultsFound"]"
+                                      ShowAllOption="false"
+                                      AllValue="0" />
 
 
                     @if (SelectedWarehouseId > 0)
@@ -401,6 +392,20 @@
                     x.Name)
 
                 .ToListAsync();
+    }
+
+
+    // =========================================================
+    // WAREHOUSE CHANGED
+    // =========================================================
+
+    private Task OnWarehouseChanged(int warehouseId)
+    {
+        SelectedWarehouseId = warehouseId;
+
+        ErrorMessage = null;
+
+        return Task.CompletedTask;
     }
 
 

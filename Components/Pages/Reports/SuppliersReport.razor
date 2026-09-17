@@ -1,4 +1,4 @@
-﻿@page "/reports/suppliers"
+@page "/reports/suppliers"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -10,6 +10,7 @@
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
 @using WarehouseManagement.Localization
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
@@ -48,6 +49,7 @@
                 📊 @L["ExportExcel"]
 
             </button>
+            &nbsp
 
             <a href="/suppliers/create"
                class="btn-primary">
@@ -55,7 +57,13 @@
                 @L["NewSupplier"]
 
             </a>
+            &nbsp
+             <a href="/reports"
+               class="btn-secondary">
 
+                ← @L["Reports"]
+
+            </a>
         </div>
 
     </div>
@@ -85,22 +93,24 @@
             </div>
 
 
-            <select class="filter-select"
-                    @bind="StatusFilter">
+            <SearchableSelect TItem="SupplierStatusOption"
+                              TValue="string"
+                              Items="SupplierStatusOptions"
+                              Value="StatusFilter"
+                              ValueChanged="OnStatusChanged"
+                              ValueSelector="@(x => x.Value)"
+                              TextSelector="@(x => x.Text)"
+                              Placeholder="@L["AllSuppliers"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllSuppliers"]"
+                              AllValue="@("Alle")" />
 
-                <option value="Alle">
-                    @L["AllSuppliers"]
-                </option>
-
-                <option value="Aktiv">
-                    @L["ActiveSuppliers"]
-                </option>
-
-                <option value="Inaktiv">
-                    @L["InactiveSuppliers"]
-                </option>
-
-            </select>
+            <button type="button"
+                    class="btn-secondary filter-reset-button"
+                    @onclick="ResetFilters">
+                   @L["ResetFilters"]
+            </button>
 
         </div>
 
@@ -519,9 +529,7 @@
                                 <td>
 
                                     <strong>
-                                        @incomingMovements
-                                        .Sum(x => x.Quantity)
-                                        .ToString("N2")
+                                        @incomingMovements.Sum(x => x.Quantity).ToString("N2")
                                     </strong>
 
                                 </td>
@@ -672,6 +680,51 @@
 </div>
 
 
+<style>
+    .product-form-page .filter-main-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .product-form-page .filter-main-row .search-box {
+        flex: 1 1 450px;
+        width: 450px;
+        max-width: 450px;
+        min-width: 280px;
+    }
+
+    .product-form-page .filter-main-row > .searchable-select {
+        flex: 0 0 250px;
+        width: 250px;
+        max-width: 250px;
+        min-width: 250px;
+    }
+
+    .product-form-page .filter-reset-button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 950px) {
+        .product-form-page .filter-main-row {
+            flex-wrap: wrap;
+        }
+
+        .product-form-page .filter-main-row .search-box,
+        .product-form-page .filter-main-row > .searchable-select,
+        .product-form-page .filter-main-row .filter-reset-button {
+            flex: 1 1 100%;
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+        }
+    }
+</style>
+
+
 @code {
 
     // =========================================================
@@ -721,6 +774,16 @@
             CurrentPage = 1;
         }
     }
+
+
+    private class SupplierStatusOption
+    {
+        public string Value { get; set; } = string.Empty;
+
+        public string Text { get; set; } = string.Empty;
+    }
+
+    private List<SupplierStatusOption> SupplierStatusOptions = new();
 
 
     // =========================================================
@@ -951,11 +1014,55 @@
 
 
     // =========================================================
+    // RESET FILTERS
+    // =========================================================
+
+    private Task ResetFilters()
+    {
+        _searchTerm = string.Empty;
+        _statusFilter = "Alle";
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
+    // FILTER CALLBACK
+    // =========================================================
+
+    private Task OnStatusChanged(string value)
+    {
+        StatusFilter = string.IsNullOrWhiteSpace(value)
+            ? "Alle"
+            : value;
+
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
     // LOAD
     // =========================================================
 
     protected override async Task OnInitializedAsync()
     {
+        SupplierStatusOptions = new List<SupplierStatusOption>
+        {
+            new()
+            {
+                Value = "Aktiv",
+                Text = L["ActiveSuppliers"].Value
+            },
+            new()
+            {
+                Value = "Inaktiv",
+                Text = L["InactiveSuppliers"].Value
+            }
+        };
+
         await LoadData();
     }
 

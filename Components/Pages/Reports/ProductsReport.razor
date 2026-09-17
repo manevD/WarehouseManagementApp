@@ -1,4 +1,4 @@
-﻿@page "/reports/products"
+@page "/reports/products"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -10,6 +10,7 @@
 @using WarehouseManagement.Services
 @using Microsoft.Extensions.Localization
 @using WarehouseManagement.Localization
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
@@ -83,38 +84,38 @@
             </div>
 
 
-            <select class="filter-select"
-                    @bind="SelectedWarehouseId">
-
-                <option value="0">
-                    @L["AllWarehouses"]
-                </option>
-
-                @foreach (var warehouse in Warehouses)
-                {
-                    <option value="@warehouse.Id">
-                        @warehouse.Name
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="Warehouse"
+                              TValue="int"
+                              Items="Warehouses"
+                              Value="SelectedWarehouseId"
+                              ValueChanged="OnWarehouseChanged"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => x.Name)"
+                              Placeholder="@L["AllWarehouses"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllWarehouses"]"
+                              AllValue="0" />
 
 
-            <select class="filter-select"
-                    @bind="SelectedCategoryId">
+            <SearchableSelect TItem="Category"
+                              TValue="int"
+                              Items="Categories"
+                              Value="SelectedCategoryId"
+                              ValueChanged="OnCategoryChanged"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => x.Name)"
+                              Placeholder="@L["AllCategories"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllCategories"]"
+                              AllValue="0" />
 
-                <option value="0">
-                    @L["AllCategories"]
-                </option>
-
-                @foreach (var category in Categories)
-                {
-                    <option value="@category.Id">
-                        @category.Name
-                    </option>
-                }
-
-            </select>
+            <button type="button"
+                    class="btn-secondary filter-reset-button"
+                    @onclick="ResetFilters">
+                    @L["ResetFilters"]
+            </button>
 
         </div>
 
@@ -555,6 +556,51 @@
 </div>
 
 
+<style>
+    .stock-page .filter-main-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .stock-page .filter-main-row .search-box {
+        flex: 1 1 450px;
+        width: 450px;
+        max-width: 450px;
+        min-width: 280px;
+    }
+
+    .stock-page .filter-main-row > .searchable-select {
+        flex: 0 0 250px;
+        width: 250px;
+        max-width: 250px;
+        min-width: 250px;
+    }
+
+    .stock-page .filter-reset-button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 950px) {
+        .stock-page .filter-main-row {
+            flex-wrap: wrap;
+        }
+
+        .stock-page .filter-main-row .search-box,
+        .stock-page .filter-main-row > .searchable-select,
+        .stock-page .filter-main-row .filter-reset-button {
+            flex: 1 1 100%;
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+        }
+    }
+</style>
+
+
 @code {
 
     // =========================================================
@@ -627,6 +673,42 @@
 
             CurrentPage = 1;
         }
+    }
+
+
+    // =========================================================
+    // RESET FILTERS
+    // =========================================================
+
+    private Task ResetFilters()
+    {
+        _searchTerm = string.Empty;
+        _selectedWarehouseId = 0;
+        _selectedCategoryId = 0;
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+
+    // =========================================================
+    // FILTER CALLBACKS
+    // =========================================================
+
+    private Task OnWarehouseChanged(int value)
+    {
+        SelectedWarehouseId = value;
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnCategoryChanged(int value)
+    {
+        SelectedCategoryId = value;
+        CurrentPage = 1;
+
+        return InvokeAsync(StateHasChanged);
     }
 
 
