@@ -6,6 +6,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
+@using WarehouseManagement.Components
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
@@ -26,7 +27,9 @@
 
         <div>
 
-            <h1>@L["NewOrder"]</h1>
+            <h1>
+                @L["NewOrder"]
+            </h1>
 
             <p>
                 @L["CreateOrderDescription"]
@@ -44,6 +47,10 @@
     </div>
 
 
+    <!-- =========================================================
+         FORM
+         ========================================================= -->
+
     <div class="form-card">
 
         <EditForm Model="@Model"
@@ -54,18 +61,24 @@
 
 
             <!-- =====================================================
-                 ORDER
+                 ORDER INFORMATION
                  ===================================================== -->
 
             <div class="form-section">
 
                 <div class="form-section-title">
 
-                    <h2>@L["OrderInformation"]</h2>
+                    <div>
 
-                    <p>
-                        @L["BasicOrderInformation"]
-                    </p>
+                        <h2>
+                            @L["OrderInformation"]
+                        </h2>
+
+                        <p>
+                            @L["BasicOrderInformation"]
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -73,7 +86,9 @@
                 <div class="form-grid">
 
 
-                    <!-- ORDER NUMBER -->
+                    <!-- =================================================
+                         ORDER NUMBER
+                         ================================================= -->
 
                     <div class="form-group">
 
@@ -89,7 +104,9 @@
                     </div>
 
 
-                    <!-- CUSTOMER -->
+                    <!-- =================================================
+                         CUSTOMER
+                         ================================================= -->
 
                     <div class="form-group">
 
@@ -97,33 +114,26 @@
                             @L["Customer"] <span>*</span>
                         </label>
 
-                        <InputSelect @bind-Value="Model.CustomerId"
-                                     class="form-control"
-                                     @bind:after="CustomerChanged">
-
-                            <option value="0">
-                                @L["SelectCustomer"]
-                            </option>
-
-                            @foreach (var customer in Customers)
-                            {
-                                <option value="@customer.Id">
-
-                                    @customer.CustomerNumber
-                                    -
-                                    @customer.CompanyName
-
-                                </option>
-                            }
-
-                        </InputSelect>
+                        <SearchableSelect TItem="Customer"
+                                          TValue="int"
+                                          Items="Customers"
+                                          Value="Model.CustomerId"
+                                          ValueChanged="OnCustomerChanged"
+                                          ValueSelector="@(x => x.Id)"
+                                          TextSelector="@(x => $"{x.CustomerNumber} - {x.CompanyName}")"
+                                          Placeholder="@L["SelectCustomer"]"
+                                          NoResultsText="@L["NoResultsFound"]"
+                                          ShowAllOption="false"
+                                          AllValue="0" />
 
                         <ValidationMessage For="@(() => Model.CustomerId)" />
 
                     </div>
 
 
-                    <!-- DATE -->
+                    <!-- =================================================
+                         DATE
+                         ================================================= -->
 
                     <div class="form-group">
 
@@ -139,7 +149,9 @@
                     </div>
 
 
-                    <!-- REFERENCE -->
+                    <!-- =================================================
+                         REFERENCE
+                         ================================================= -->
 
                     <div class="form-group">
 
@@ -167,17 +179,25 @@
 
                     <div class="form-section-title">
 
-                        <h2>@L["DeliveryAddress"]</h2>
+                        <div>
 
-                        <p>
-                            @L["SelectedCustomerDeliveryAddress"]
-                        </p>
+                            <h2>
+                                @L["DeliveryAddress"]
+                            </h2>
+
+                            <p>
+                                @L["SelectedCustomerDeliveryAddress"]
+                            </p>
+
+                        </div>
 
                     </div>
 
 
                     <div class="form-grid">
 
+
+                        <!-- STREET -->
 
                         <div class="form-group">
 
@@ -191,6 +211,8 @@
                         </div>
 
 
+                        <!-- POSTAL CODE -->
+
                         <div class="form-group">
 
                             <label>
@@ -203,6 +225,8 @@
                         </div>
 
 
+                        <!-- CITY -->
+
                         <div class="form-group">
 
                             <label>
@@ -214,6 +238,8 @@
 
                         </div>
 
+
+                        <!-- COUNTRY -->
 
                         <div class="form-group">
 
@@ -242,7 +268,9 @@
 
                     <div>
 
-                        <h2>@L["OrderItems"]</h2>
+                        <h2>
+                            @L["OrderItems"]
+                        </h2>
 
                         <p>
                             @L["AddProductsToOrder"]
@@ -262,7 +290,9 @@
                     <div class="form-grid">
 
 
-                        <!-- PRODUCT -->
+                        <!-- =================================================
+                             PRODUCT
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -270,31 +300,24 @@
                                 @L["Product"]
                             </label>
 
-                            <select class="form-control"
-                                    value="@NewItem.ProductId"
-                                    @onchange="OnProductChanged">
-
-                                <option value="0">
-                                    @L["SelectProduct"]
-                                </option>
-
-                                @foreach (var product in Products)
-                                {
-                                    <option value="@product.Id">
-
-                                        @product.SKU
-                                        -
-                                        @product.Name
-
-                                    </option>
-                                }
-
-                            </select>
+                            <SearchableSelect TItem="Product"
+                                              TValue="int"
+                                              Items="Products"
+                                              Value="NewItem.ProductId"
+                                              ValueChanged="OnProductSelected"
+                                              ValueSelector="@(x => x.Id)"
+                                              TextSelector="@(x => $"{x.SKU} - {x.Name}")"
+                                              Placeholder="@L["SelectProduct"]"
+                                              NoResultsText="@L["NoResultsFound"]"
+                                              ShowAllOption="false"
+                                              AllValue="0" />
 
                         </div>
 
 
-                        <!-- QUANTITY -->
+                        <!-- =================================================
+                             QUANTITY
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -311,7 +334,9 @@
                         </div>
 
 
-                        <!-- UNIT PRICE -->
+                        <!-- =================================================
+                             UNIT PRICE
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -328,7 +353,9 @@
                         </div>
 
 
-                        <!-- ADD -->
+                        <!-- =================================================
+                             ADD
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -390,15 +417,25 @@
 
                                 <tr>
 
-                                    <th>@L["Product"]</th>
+                                    <th>
+                                        @L["Product"]
+                                    </th>
 
-                                    <th>@L["SKU"]</th>
+                                    <th>
+                                        @L["SKU"]
+                                    </th>
 
-                                    <th>@L["Quantity"]</th>
+                                    <th>
+                                        @L["Quantity"]
+                                    </th>
 
-                                    <th>@L["UnitPrice"]</th>
+                                    <th>
+                                        @L["UnitPrice"]
+                                    </th>
 
-                                    <th>@L["Total"]</th>
+                                    <th>
+                                        @L["Total"]
+                                    </th>
 
                                     <th></th>
 
@@ -481,22 +518,33 @@
 
                                     </tr>
                                 }
+
                             </tbody>
+
                         </table>
+
                     </div>
                 }
+
+
                 <!-- =================================================
-                     TOTAL
+                     GRAND TOTAL
                      ================================================= -->
+
                 <div class="order-total-box">
+
                     <span>
                         @L["Total"]
                     </span>
+
                     <strong>
                         @GrandTotal.ToString("N2") €
                     </strong>
+
                 </div>
+
             </div>
+
 
             <!-- =====================================================
                  NOTE
@@ -506,7 +554,13 @@
 
                 <div class="form-section-title">
 
-                    <h2>@L["Note"]</h2>
+                    <div>
+
+                        <h2>
+                            @L["Note"]
+                        </h2>
+
+                    </div>
 
                 </div>
 
@@ -546,6 +600,7 @@
                     @L["Cancel"]
 
                 </a>
+
 
                 <button type="submit"
                         class="btn-primary"
@@ -624,6 +679,10 @@
             await DbFactory.CreateDbContextAsync();
 
 
+        // =====================================================
+        // ACTIVE CUSTOMERS
+        // =====================================================
+
         Customers =
             await db.Customers
 
@@ -635,6 +694,10 @@
 
                 .ToListAsync();
 
+
+        // =====================================================
+        // ACTIVE PRODUCTS
+        // =====================================================
 
         Products =
             await db.Products
@@ -648,9 +711,17 @@
                 .ToListAsync();
 
 
+        // =====================================================
+        // ORDER NUMBER
+        // =====================================================
+
         Model.OrderNumber =
             await GenerateOrderNumber();
 
+
+        // =====================================================
+        // DATE
+        // =====================================================
 
         Model.OrderDate =
             DateTime.Now;
@@ -689,7 +760,8 @@
         foreach (var number in numbers)
         {
             var part =
-                number.Substring(prefix.Length);
+                number.Substring(
+                    prefix.Length);
 
 
             if (int.TryParse(
@@ -711,16 +783,43 @@
     // CUSTOMER CHANGED
     // =========================================================
 
-    private async Task CustomerChanged()
+    private async Task OnCustomerChanged(
+        int customerId)
     {
+        // Set the new value FIRST.
+
+        Model.CustomerId =
+            customerId;
+
+
+        // Find selected customer.
+
         SelectedCustomer =
             Customers.FirstOrDefault(
-                x => x.Id == Model.CustomerId);
+                x =>
+                    x.Id ==
+                    customerId);
 
+
+        // No customer selected.
 
         if (SelectedCustomer == null)
-            return;
+        {
+            Model.DeliveryStreet = null;
 
+            Model.DeliveryPostalCode = null;
+
+            Model.DeliveryCity = null;
+
+            Model.DeliveryCountry = null;
+
+            return;
+        }
+
+
+        // =====================================================
+        // COPY CUSTOMER ADDRESS
+        // =====================================================
 
         Model.DeliveryStreet =
             SelectedCustomer.Street;
@@ -743,22 +842,19 @@
 
 
     // =========================================================
-    // PRODUCT CHANGED
+    // PRODUCT SELECTED
     // =========================================================
 
-    private void OnProductChanged(ChangeEventArgs e)
+    private void OnProductSelected(
+        int productId)
     {
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            productId = 0;
-        }
-
+        // Set the new value FIRST.
 
         NewItem.ProductId =
             productId;
 
+
+        // Reset price.
 
         NewItem.UnitPrice =
             0;
@@ -768,14 +864,20 @@
             return;
 
 
+        // Find product.
+
         var product =
             Products.FirstOrDefault(
-                x => x.Id == productId);
+                x =>
+                    x.Id ==
+                    productId);
 
 
         if (product == null)
             return;
 
+
+        // Automatically use sale price.
 
         NewItem.UnitPrice =
             product.SalePrice;
@@ -791,6 +893,10 @@
         ItemError = null;
 
 
+        // =====================================================
+        // PRODUCT VALIDATION
+        // =====================================================
+
         if (NewItem.ProductId <= 0)
         {
             ItemError =
@@ -799,6 +905,10 @@
             return;
         }
 
+
+        // =====================================================
+        // QUANTITY VALIDATION
+        // =====================================================
 
         if (NewItem.Quantity <= 0)
         {
@@ -809,6 +919,10 @@
         }
 
 
+        // =====================================================
+        // PRICE VALIDATION
+        // =====================================================
+
         if (NewItem.UnitPrice < 0)
         {
             ItemError =
@@ -818,9 +932,15 @@
         }
 
 
+        // =====================================================
+        // PRODUCT
+        // =====================================================
+
         var product =
             Products.FirstOrDefault(
-                x => x.Id == NewItem.ProductId);
+                x =>
+                    x.Id ==
+                    NewItem.ProductId);
 
 
         if (product == null)
@@ -833,12 +953,13 @@
 
 
         // =====================================================
-        // IF PRODUCT ALREADY EXISTS
+        // CHECK IF ALREADY EXISTS
         // =====================================================
 
         var existing =
             Items.FirstOrDefault(
-                x => x.ProductId ==
+                x =>
+                    x.ProductId ==
                     NewItem.ProductId);
 
 
@@ -846,6 +967,7 @@
         {
             existing.Quantity +=
                 NewItem.Quantity;
+
 
             existing.UnitPrice =
                 NewItem.UnitPrice;
@@ -873,7 +995,9 @@
         }
 
 
-        // Reset
+        // =====================================================
+        // RESET ITEM FORM
+        // =====================================================
 
         NewItem =
             new OrderItemModel();
@@ -887,7 +1011,8 @@
     // REMOVE ITEM
     // =========================================================
 
-    private void RemoveItem(OrderItemModel item)
+    private void RemoveItem(
+        OrderItemModel item)
     {
         Items.Remove(item);
 
@@ -896,7 +1021,7 @@
 
 
     // =========================================================
-    // SAVE
+    // SAVE ORDER
     // =========================================================
 
     private async Task SaveOrder()
@@ -912,9 +1037,9 @@
 
         try
         {
-            // -------------------------------------------------
+            // =================================================
             // CUSTOMER
-            // -------------------------------------------------
+            // =================================================
 
             if (Model.CustomerId <= 0)
             {
@@ -925,9 +1050,9 @@
             }
 
 
-            // -------------------------------------------------
+            // =================================================
             // ITEMS
-            // -------------------------------------------------
+            // =================================================
 
             if (Items.Count == 0)
             {
@@ -942,18 +1067,19 @@
                 await DbFactory.CreateDbContextAsync();
 
 
-            // -------------------------------------------------
+            // =================================================
             // CUSTOMER EXISTS
-            // -------------------------------------------------
+            // =================================================
 
             var customer =
                 await db.Customers
 
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.CustomerId &&
-
-                        x.IsActive);
+                    .FirstOrDefaultAsync(
+                        x =>
+                            x.Id ==
+                            Model.CustomerId
+                            &&
+                            x.IsActive);
 
 
             if (customer == null)
@@ -965,13 +1091,14 @@
             }
 
 
-            // -------------------------------------------------
+            // =================================================
             // ORDER NUMBER
-            // -------------------------------------------------
+            // =================================================
 
             var orderNumberExists =
-                await db.Orders.AnyAsync(x =>
-                    x.OrderNumber ==
+                await db.Orders.AnyAsync(
+                    x =>
+                        x.OrderNumber ==
                         Model.OrderNumber);
 
 
@@ -982,9 +1109,9 @@
             }
 
 
-            // -------------------------------------------------
-            // ORDER
-            // -------------------------------------------------
+            // =================================================
+            // CREATE ORDER
+            // =================================================
 
             var order =
                 new Order
@@ -997,6 +1124,8 @@
 
                     OrderDate =
                         Model.OrderDate,
+
+                    // New order is always draft.
 
                     Status =
                         OrderStatus.Entwurf,
@@ -1045,20 +1174,21 @@
                 };
 
 
-            // -------------------------------------------------
-            // ITEMS
-            // -------------------------------------------------
+            // =================================================
+            // CREATE ORDER ITEMS
+            // =================================================
 
             foreach (var item in Items)
             {
                 var product =
                     await db.Products
 
-                        .FirstOrDefaultAsync(x =>
-                            x.Id ==
-                                item.ProductId &&
-
-                            x.IsActive);
+                        .FirstOrDefaultAsync(
+                            x =>
+                                x.Id ==
+                                item.ProductId
+                                &&
+                                x.IsActive);
 
 
                 if (product == null)
@@ -1088,9 +1218,9 @@
             }
 
 
-            // -------------------------------------------------
+            // =================================================
             // SAVE
-            // -------------------------------------------------
+            // =================================================
 
             db.Orders.Add(order);
 
@@ -1098,9 +1228,9 @@
             await db.SaveChangesAsync();
 
 
-            // -------------------------------------------------
+            // =================================================
             // REDIRECT
-            // -------------------------------------------------
+            // =================================================
 
             Navigation.NavigateTo(
                 "/orders");
@@ -1118,7 +1248,7 @@
 
 
     // =========================================================
-    // ORDER MODEL
+    // ORDER CREATE MODEL
     // =========================================================
 
     private class OrderCreateModel
@@ -1130,7 +1260,8 @@
         [Range(
             1,
             int.MaxValue,
-            ErrorMessageResourceType = typeof(SharedResource),
+            ErrorMessageResourceType =
+                typeof(SharedResource),
             ErrorMessageResourceName =
                 "CustomerSelectionRequired")]
         public int CustomerId { get; set; }
@@ -1166,22 +1297,27 @@
 
 
     // =========================================================
-    // ITEM MODEL
+    // ORDER ITEM MODEL
     // =========================================================
 
     private class OrderItemModel
     {
         public int ProductId { get; set; }
 
+
         public string ProductName { get; set; }
             = string.Empty;
+
 
         public string SKU { get; set; }
             = string.Empty;
 
+
         public decimal Quantity { get; set; }
 
+
         public decimal UnitPrice { get; set; }
+
 
         public decimal Total =>
             Quantity * UnitPrice;

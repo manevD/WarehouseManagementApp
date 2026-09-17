@@ -3,9 +3,12 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
+@using WarehouseManagement.Components
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
@@ -18,11 +21,17 @@
 
 <div class="product-form-page">
 
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
     <div class="page-header">
 
         <div>
 
-            <h1>@L["EditOrder"]</h1>
+            <h1>
+                @L["EditOrder"]
+            </h1>
 
             @if (Order != null)
             {
@@ -43,10 +52,16 @@
     </div>
 
 
+    <!-- =========================================================
+         LOADING
+         ========================================================= -->
+
     @if (IsLoading)
     {
         <div class="loading-state">
+
             @L["OrderLoading"]
+
         </div>
     }
     else if (Order == null)
@@ -99,7 +114,9 @@
                     <div class="form-grid">
 
 
-                        <!-- ORDER NUMBER -->
+                        <!-- =================================================
+                             ORDER NUMBER
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -115,7 +132,9 @@
                         </div>
 
 
-                        <!-- CUSTOMER -->
+                        <!-- =================================================
+                             CUSTOMER
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -123,32 +142,26 @@
                                 @L["Customer"] <span>*</span>
                             </label>
 
-                            <InputSelect @bind-Value="Model.CustomerId"
-                                         class="form-control"
-                                         @bind:after="CustomerChanged">
-
-                                <option value="0">
-                                    @L["SelectCustomer"]
-                                </option>
-
-                                @foreach (var customer in Customers)
-                                {
-                                    <option value="@customer.Id">
-
-                                        @customer.CustomerNumber -
-                                        @customer.CompanyName
-
-                                    </option>
-                                }
-
-                            </InputSelect>
+                            <SearchableSelect TItem="Customer"
+                                              TValue="int"
+                                              Items="Customers"
+                                              Value="Model.CustomerId"
+                                              ValueChanged="OnCustomerChanged"
+                                              ValueSelector="@(x => x.Id)"
+                                              TextSelector="@(x => $"{x.CustomerNumber} - {x.CompanyName}")"
+                                              Placeholder="@L["SelectCustomer"]"
+                                              NoResultsText="@L["NoResultsFound"]"
+                                              ShowAllOption="false"
+                                              AllValue="0" />
 
                             <ValidationMessage For="@(() => Model.CustomerId)" />
 
                         </div>
 
 
-                        <!-- DATE -->
+                        <!-- =================================================
+                             DATE
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -162,7 +175,9 @@
                         </div>
 
 
-                        <!-- STATUS -->
+                        <!-- =================================================
+                             STATUS
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -170,43 +185,24 @@
                                 @L["Status"]
                             </label>
 
-                            <InputSelect @bind-Value="Model.Status"
-                                         class="form-control">
-
-                                <option value="@OrderStatus.Entwurf">
-                                    @L["OrderStatusDraft"]
-                                </option>
-
-                                <option value="@OrderStatus.Bestätigt">
-                                    @L["OrderStatusConfirmed"]
-                                </option>
-
-                                <option value="@OrderStatus.InBearbeitung">
-                                    @L["OrderStatusInProgress"]
-                                </option>
-
-                                <option value="@OrderStatus.TeilweiseGeliefert">
-                                    @L["OrderStatusPartiallyDelivered"]
-                                </option>
-
-                                <option value="@OrderStatus.Versendet">
-                                    @L["OrderStatusShipped"]
-                                </option>
-
-                                <option value="@OrderStatus.Abgeschlossen">
-                                    @L["OrderStatusCompleted"]
-                                </option>
-
-                                <option value="@OrderStatus.Storniert">
-                                    @L["OrderStatusCancelled"]
-                                </option>
-
-                            </InputSelect>
+                            <SearchableSelect TItem="OrderStatusOption"
+                                              TValue="OrderStatus"
+                                              Items="OrderStatusOptions"
+                                              Value="Model.Status"
+                                              ValueChanged="OnStatusChanged"
+                                              ValueSelector="@(x => x.Value)"
+                                              TextSelector="@(x => x.Text)"
+                                              Placeholder="@L["Status"]"
+                                              NoResultsText="@L["NoResultsFound"]"
+                                              ShowAllOption="false"
+                                              AllValue="default" />
 
                         </div>
 
 
-                        <!-- REFERENCE -->
+                        <!-- =================================================
+                             REFERENCE
+                             ================================================= -->
 
                         <div class="form-group">
 
@@ -242,6 +238,8 @@
                     <div class="form-grid">
 
 
+                        <!-- STREET -->
+
                         <div class="form-group">
 
                             <label>
@@ -253,6 +251,8 @@
 
                         </div>
 
+
+                        <!-- POSTAL CODE -->
 
                         <div class="form-group">
 
@@ -266,6 +266,8 @@
                         </div>
 
 
+                        <!-- CITY -->
+
                         <div class="form-group">
 
                             <label>
@@ -277,6 +279,8 @@
 
                         </div>
 
+
+                        <!-- COUNTRY -->
 
                         <div class="form-group">
 
@@ -302,33 +306,42 @@
 
                     <div class="form-section-title">
 
-                        <h2>
-                            @L["OrderItems"]
-                        </h2>
+                        <div>
 
-                        <p>
-                            @L["EditProductsAndQuantities"]
-                        </p>
+                            <h2>
+                                @L["OrderItems"]
+                            </h2>
+
+                            <p>
+                                @L["EditProductsAndQuantities"]
+                            </p>
 
 
-                        @if (Order.Status == OrderStatus.Bestätigt)
-                        {
-                            <div class="form-info"
-                                 style="margin-top:10px;">
+                            @if (Order.Status == OrderStatus.Bestätigt)
+                            {
+                                <div class="form-info"
+                                     style="margin-top:10px;">
 
-                                @L["ConfirmedOrderInfo"]
+                                    @L["ConfirmedOrderInfo"]
 
-                            </div>
-                        }
+                                </div>
+                            }
+
+                        </div>
 
                     </div>
 
 
-                    <!-- ADD ITEM -->
+                    <!-- =================================================
+                         ADD ITEM
+                         ================================================= -->
 
                     <div class="order-add-item">
 
                         <div class="form-grid">
+
+
+                            <!-- PRODUCT -->
 
                             <div class="form-group">
 
@@ -336,29 +349,22 @@
                                     @L["Product"]
                                 </label>
 
-                                <select class="form-control"
-                                        value="@NewItem.ProductId"
-                                        @onchange="OnProductChanged"
-                                        disabled="@(Order.Status == OrderStatus.Bestätigt)">
-
-                                    <option value="0">
-                                        @L["SelectProduct"]
-                                    </option>
-
-                                    @foreach (var product in Products)
-                                    {
-                                        <option value="@product.Id">
-
-                                            @product.SKU -
-                                            @product.Name
-
-                                        </option>
-                                    }
-
-                                </select>
+                                <SearchableSelect TItem="Product"
+                                                  TValue="int"
+                                                  Items="Products"
+                                                  Value="NewItem.ProductId"
+                                                  ValueChanged="OnProductSelected"
+                                                  ValueSelector="@(x => x.Id)"
+                                                  TextSelector="@(x => $"{x.SKU} - {x.Name}")"
+                                                  Placeholder="@L["SelectProduct"]"
+                                                  NoResultsText="@L["NoResultsFound"]"
+                                                  ShowAllOption="false"
+                                                  AllValue="0" />
 
                             </div>
 
+
+                            <!-- ADD -->
 
                             <div class="form-group">
 
@@ -370,7 +376,7 @@
                                         class="btn-primary"
                                         @onclick="AddItem"
                                         disabled="@(NewItem.ProductId <= 0 ||
-                                                                                       Order.Status == OrderStatus.Bestätigt)">
+                                                   Order.Status == OrderStatus.Bestätigt)">
 
                                     + @L["AddProduct"]
 
@@ -384,14 +390,19 @@
                         @if (!string.IsNullOrWhiteSpace(ItemError))
                         {
                             <div class="form-error">
+
                                 @ItemError
+
                             </div>
                         }
 
                     </div>
 
 
-                    <!-- ITEMS -->
+                    <!-- =================================================
+                         ITEMS
+                         ================================================= -->
+
                     @if (Items.Count == 0)
                     {
                         <div class="empty-products">
@@ -412,15 +423,25 @@
 
                                     <tr>
 
-                                        <th>@L["Product"]</th>
+                                        <th>
+                                            @L["Product"]
+                                        </th>
 
-                                        <th>@L["SKU"]</th>
+                                        <th>
+                                            @L["SKU"]
+                                        </th>
 
-                                        <th>@L["Quantity"]</th>
+                                        <th>
+                                            @L["Quantity"]
+                                        </th>
 
-                                        <th>@L["UnitPrice"]</th>
+                                        <th>
+                                            @L["UnitPrice"]
+                                        </th>
 
-                                        <th>@L["Total"]</th>
+                                        <th>
+                                            @L["Total"]
+                                        </th>
 
                                         <th></th>
 
@@ -435,6 +456,8 @@
                                     {
                                         <tr>
 
+                                            <!-- PRODUCT -->
+
                                             <td>
 
                                                 <strong>
@@ -444,6 +467,8 @@
                                             </td>
 
 
+                                            <!-- SKU -->
+
                                             <td>
 
                                                 <span class="product-sku">
@@ -452,6 +477,8 @@
 
                                             </td>
 
+
+                                            <!-- QUANTITY -->
 
                                             <td>
 
@@ -465,6 +492,8 @@
                                             </td>
 
 
+                                            <!-- PRICE -->
+
                                             <td>
 
                                                 <input type="number"
@@ -477,6 +506,8 @@
                                             </td>
 
 
+                                            <!-- TOTAL -->
+
                                             <td>
 
                                                 <strong>
@@ -485,6 +516,8 @@
 
                                             </td>
 
+
+                                            <!-- DELETE -->
 
                                             <td>
 
@@ -510,7 +543,9 @@
                     }
 
 
-                    <!-- TOTAL -->
+                    <!-- =================================================
+                         TOTAL
+                         ================================================= -->
 
                     <div class="order-total-box">
 
@@ -552,13 +587,23 @@
                 </div>
 
 
+                <!-- =====================================================
+                     ERROR
+                     ===================================================== -->
+
                 @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                 {
                     <div class="form-error">
+
                         @ErrorMessage
+
                     </div>
                 }
 
+
+                <!-- =====================================================
+                     ACTIONS
+                     ===================================================== -->
 
                 <div class="form-actions">
 
@@ -592,9 +637,17 @@
 
 @code {
 
+    // =========================================================
+    // PARAMETERS
+    // =========================================================
+
     [Parameter]
     public int Id { get; set; }
 
+
+    // =========================================================
+    // DATA
+    // =========================================================
 
     private Order? Order;
 
@@ -608,6 +661,26 @@
 
     private OrderItemModel NewItem = new();
 
+
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class OrderStatusOption
+    {
+        public OrderStatus Value { get; set; }
+
+        public string Text { get; set; } = string.Empty;
+    }
+
+
+    private List<OrderStatusOption> OrderStatusOptions = new();
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
     private bool IsLoading = true;
 
     private bool IsSaving;
@@ -617,15 +690,74 @@
     private string? ItemError;
 
 
+    // =========================================================
+    // TOTAL
+    // =========================================================
+
     private decimal GrandTotal =>
         Items.Sum(x => x.Total);
 
 
+    // =========================================================
+    // INIT
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
+        OrderStatusOptions =
+            new List<OrderStatusOption>
+            {
+                new()
+                {
+                    Value = OrderStatus.Entwurf,
+                    Text = L["OrderStatusDraft"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.Bestätigt,
+                    Text = L["OrderStatusConfirmed"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.InBearbeitung,
+                    Text = L["OrderStatusInProgress"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.TeilweiseGeliefert,
+                    Text = L["OrderStatusPartiallyDelivered"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.Versendet,
+                    Text = L["OrderStatusShipped"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.Abgeschlossen,
+                    Text = L["OrderStatusCompleted"].Value
+                },
+
+                new()
+                {
+                    Value = OrderStatus.Storniert,
+                    Text = L["OrderStatusCancelled"].Value
+                }
+            };
+
+
         await LoadData();
     }
 
+
+    // =========================================================
+    // LOAD DATA
+    // =========================================================
 
     private async Task LoadData()
     {
@@ -637,31 +769,67 @@
                 await DbFactory.CreateDbContextAsync();
 
 
+            // =====================================================
+            // CUSTOMERS
+            // =====================================================
+
             Customers =
                 await db.Customers
-                    .Where(x => x.IsActive)
-                    .OrderBy(x => x.CompanyName)
+
+                    .Where(x =>
+                        x.IsActive)
+
+                    .OrderBy(x =>
+                        x.CompanyName)
+
                     .ToListAsync();
 
+
+            // =====================================================
+            // PRODUCTS
+            // =====================================================
 
             Products =
                 await db.Products
-                    .Where(x => x.IsActive)
-                    .OrderBy(x => x.Name)
+
+                    .Where(x =>
+                        x.IsActive)
+
+                    .OrderBy(x =>
+                        x.Name)
+
                     .ToListAsync();
 
 
+            // =====================================================
+            // ORDER
+            // =====================================================
+
             Order =
                 await db.Orders
-                    .Include(x => x.Customer)
-                    .Include(x => x.Items)
-                        .ThenInclude(x => x.Product)
-                    .FirstOrDefaultAsync(x => x.Id == Id);
+
+                    .Include(x =>
+                        x.Customer)
+
+                    .Include(x =>
+                        x.Items)
+
+                        .ThenInclude(x =>
+                            x.Product)
+
+                    .FirstOrDefaultAsync(
+                        x =>
+                            x.Id ==
+                            Id);
 
 
             if (Order == null)
                 return;
 
+
+            // =====================================================
+            // MODEL
+            // =====================================================
 
             Model =
                 new OrderEditModel
@@ -698,21 +866,29 @@
                 };
 
 
+            // =====================================================
+            // ITEMS
+            // =====================================================
+
             Items =
                 Order.Items
+
                     .Select(x =>
                         new OrderItemModel
                         {
-                            Id = x.Id,
+                            Id =
+                                x.Id,
 
                             ProductId =
                                 x.ProductId,
 
                             ProductName =
-                                x.Product?.Name ?? "-",
+                                x.Product?.Name
+                                ?? "-",
 
                             SKU =
-                                x.Product?.SKU ?? "-",
+                                x.Product?.SKU
+                                ?? "-",
 
                             Quantity =
                                 x.Quantity,
@@ -723,6 +899,7 @@
                             WarehouseLocationId =
                                 x.WarehouseLocationId
                         })
+
                     .ToList();
         }
         finally
@@ -732,16 +909,33 @@
     }
 
 
-    private async Task CustomerChanged()
+    // =========================================================
+    // CUSTOMER CHANGED
+    // =========================================================
+
+    private async Task OnCustomerChanged(
+        int customerId)
     {
+        // Set new value first.
+
+        Model.CustomerId =
+            customerId;
+
+
         var customer =
             Customers.FirstOrDefault(
-                x => x.Id == Model.CustomerId);
+                x =>
+                    x.Id ==
+                    customerId);
 
 
         if (customer == null)
             return;
 
+
+        // =====================================================
+        // COPY ADDRESS
+        // =====================================================
 
         Model.DeliveryStreet =
             customer.Street;
@@ -760,26 +954,50 @@
     }
 
 
-    private void OnProductChanged(ChangeEventArgs e)
-    {
-        if (!int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            productId = 0;
-        }
+    // =========================================================
+    // STATUS CHANGED
+    // =========================================================
 
+    private Task OnStatusChanged(
+        OrderStatus value)
+    {
+        // Set the new status.
+
+        Model.Status =
+            value;
+
+        return Task.CompletedTask;
+    }
+
+
+    // =========================================================
+    // PRODUCT SELECTED
+    // =========================================================
+
+    private void OnProductSelected(
+        int productId)
+    {
+        // Set new value first.
 
         NewItem.ProductId =
             productId;
+
+
+        // Reset price.
 
         NewItem.UnitPrice =
             0;
 
 
+        if (productId <= 0)
+            return;
+
+
         var product =
             Products.FirstOrDefault(
-                x => x.Id == productId);
+                x =>
+                    x.Id ==
+                    productId);
 
 
         if (product != null)
@@ -790,10 +1008,18 @@
     }
 
 
+    // =========================================================
+    // ADD ITEM
+    // =========================================================
+
     private void AddItem()
     {
         ItemError = null;
 
+
+        // =====================================================
+        // PRODUCT
+        // =====================================================
 
         if (NewItem.ProductId <= 0)
         {
@@ -804,7 +1030,12 @@
         }
 
 
-        if (Order?.Status == OrderStatus.Bestätigt)
+        // =====================================================
+        // CONFIRMED ORDER
+        // =====================================================
+
+        if (Order?.Status ==
+            OrderStatus.Bestätigt)
         {
             ItemError =
                 L["ConfirmedOrderCannotAddItems"];
@@ -813,9 +1044,15 @@
         }
 
 
+        // =====================================================
+        // PRODUCT
+        // =====================================================
+
         var product =
             Products.FirstOrDefault(
-                x => x.Id == NewItem.ProductId);
+                x =>
+                    x.Id ==
+                    NewItem.ProductId);
 
 
         if (product == null)
@@ -827,9 +1064,15 @@
         }
 
 
+        // =====================================================
+        // EXISTING ITEM
+        // =====================================================
+
         var existing =
             Items.FirstOrDefault(
-                x => x.ProductId == NewItem.ProductId);
+                x =>
+                    x.ProductId ==
+                    NewItem.ProductId);
 
 
         if (existing != null)
@@ -864,6 +1107,10 @@
         }
 
 
+        // =====================================================
+        // RESET
+        // =====================================================
+
         NewItem =
             new OrderItemModel();
 
@@ -871,6 +1118,10 @@
         StateHasChanged();
     }
 
+
+    // =========================================================
+    // REMOVE ITEM
+    // =========================================================
 
     private void RemoveItem(
         OrderItemModel item)
@@ -880,6 +1131,10 @@
         StateHasChanged();
     }
 
+
+    // =========================================================
+    // CHANGE QUANTITY
+    // =========================================================
 
     private void ChangeQuantity(
         OrderItemModel item,
@@ -899,6 +1154,10 @@
         StateHasChanged();
     }
 
+
+    // =========================================================
+    // CHANGE PRICE
+    // =========================================================
 
     private void ChangePrice(
         OrderItemModel item,
@@ -936,6 +1195,10 @@
 
         try
         {
+            // =================================================
+            // CUSTOMER
+            // =================================================
+
             if (Model.CustomerId <= 0)
             {
                 ErrorMessage =
@@ -944,6 +1207,10 @@
                 return;
             }
 
+
+            // =================================================
+            // ITEMS
+            // =================================================
 
             if (Items.Count == 0)
             {
@@ -958,13 +1225,20 @@
                 await DbFactory.CreateDbContextAsync();
 
 
+            // =================================================
+            // ORDER
+            // =================================================
+
             var entity =
                 await db.Orders
 
-                    .Include(x => x.Items)
+                    .Include(x =>
+                        x.Items)
 
                     .FirstOrDefaultAsync(
-                        x => x.Id == Id);
+                        x =>
+                            x.Id ==
+                            Id);
 
 
             if (entity == null)
@@ -976,14 +1250,19 @@
             }
 
 
+            // =================================================
+            // CUSTOMER
+            // =================================================
+
             var customer =
                 await db.Customers
 
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.CustomerId &&
-
-                        x.IsActive);
+                    .FirstOrDefaultAsync(
+                        x =>
+                            x.Id ==
+                            Model.CustomerId
+                            &&
+                            x.IsActive);
 
 
             if (customer == null)
@@ -1002,6 +1281,9 @@
             if (entity.Status ==
                 OrderStatus.Bestätigt)
             {
+                // Confirmed order cannot be changed
+                // to another status.
+
                 if (Model.Status !=
                     OrderStatus.Bestätigt)
                 {
@@ -1012,22 +1294,23 @@
                 }
 
 
-                // -------------------------------------------------
+                // =================================================
                 // EXISTING + DELETED ITEMS
-                // -------------------------------------------------
+                // =================================================
 
                 foreach (var existingItem in
                     entity.Items.ToList())
                 {
                     var editedItem =
                         Items.FirstOrDefault(
-                            x => x.Id ==
+                            x =>
+                                x.Id ==
                                 existingItem.Id);
 
 
-                    // =============================================
+                    // =================================================
                     // ITEM DELETED
-                    // =============================================
+                    // =================================================
 
                     if (editedItem == null)
                     {
@@ -1038,11 +1321,12 @@
                             var stock =
                                 await db.Stocks
 
-                                    .FirstOrDefaultAsync(x =>
-                                        x.ProductId ==
-                                            existingItem.ProductId &&
-
-                                        x.WarehouseLocationId ==
+                                    .FirstOrDefaultAsync(
+                                        x =>
+                                            x.ProductId ==
+                                            existingItem.ProductId
+                                            &&
+                                            x.WarehouseLocationId ==
                                             existingItem
                                                 .WarehouseLocationId
                                                 .Value);
@@ -1069,9 +1353,9 @@
                     }
 
 
-                    // =============================================
+                    // =================================================
                     // PRODUCT CHANGE NOT ALLOWED
-                    // =============================================
+                    // =================================================
 
                     if (existingItem.ProductId !=
                         editedItem.ProductId)
@@ -1086,9 +1370,9 @@
                     }
 
 
-                    // =============================================
+                    // =================================================
                     // LOCATION REQUIRED
-                    // =============================================
+                    // =================================================
 
                     if (!existingItem
                         .WarehouseLocationId
@@ -1104,14 +1388,19 @@
                     }
 
 
+                    // =================================================
+                    // STOCK
+                    // =================================================
+
                     var stockForItem =
                         await db.Stocks
 
-                            .FirstOrDefaultAsync(x =>
-                                x.ProductId ==
-                                    existingItem.ProductId &&
-
-                                x.WarehouseLocationId ==
+                            .FirstOrDefaultAsync(
+                                x =>
+                                    x.ProductId ==
+                                    existingItem.ProductId
+                                    &&
+                                    x.WarehouseLocationId ==
                                     existingItem
                                         .WarehouseLocationId
                                         .Value);
@@ -1129,18 +1418,18 @@
                     }
 
 
-                    // =============================================
+                    // =================================================
                     // QUANTITY DIFFERENCE
-                    // =============================================
+                    // =================================================
 
                     var difference =
                         editedItem.Quantity -
                         existingItem.Quantity;
 
 
-                    // ---------------------------------------------
-                    // QUANTITY INCREASED
-                    // ---------------------------------------------
+                    // =================================================
+                    // INCREASE
+                    // =================================================
 
                     if (difference > 0)
                     {
@@ -1169,9 +1458,9 @@
                     }
 
 
-                    // ---------------------------------------------
-                    // QUANTITY REDUCED
-                    // ---------------------------------------------
+                    // =================================================
+                    // REDUCE
+                    // =================================================
 
                     else if (difference < 0)
                     {
@@ -1195,9 +1484,9 @@
                 }
 
 
-                // =============================================
+                // =================================================
                 // NO NEW ITEMS
-                // =============================================
+                // =================================================
 
                 if (Items.Any(x => x.Id == 0))
                 {
@@ -1218,9 +1507,14 @@
                 {
                     var editedItem =
                         Items.FirstOrDefault(
-                            x => x.Id ==
+                            x =>
+                                x.Id ==
                                 existingItem.Id);
 
+
+                    // =================================================
+                    // DELETE
+                    // =================================================
 
                     if (editedItem == null)
                     {
@@ -1230,6 +1524,10 @@
                         continue;
                     }
 
+
+                    // =================================================
+                    // UPDATE
+                    // =================================================
 
                     existingItem.ProductId =
                         editedItem.ProductId;
@@ -1242,9 +1540,9 @@
                 }
 
 
-                // -------------------------------------------------
+                // =================================================
                 // NEW ITEMS
-                // -------------------------------------------------
+                // =================================================
 
                 foreach (var editedItem in
                     Items.Where(x => x.Id == 0))
@@ -1252,11 +1550,12 @@
                     var productExists =
                         await db.Products
 
-                            .AnyAsync(x =>
-                                x.Id ==
-                                    editedItem.ProductId &&
-
-                                x.IsActive);
+                            .AnyAsync(
+                                x =>
+                                    x.Id ==
+                                    editedItem.ProductId
+                                    &&
+                                    x.IsActive);
 
 
                     if (!productExists)
@@ -1300,11 +1599,14 @@
             entity.CustomerId =
                 Model.CustomerId;
 
+
             entity.OrderDate =
                 Model.OrderDate;
 
+
             entity.Status =
                 Model.Status;
+
 
             entity.ReferenceNumber =
                 string.IsNullOrWhiteSpace(
@@ -1368,8 +1670,16 @@
                 DateTime.UtcNow;
 
 
+            // =====================================================
+            // SAVE
+            // =====================================================
+
             await db.SaveChangesAsync();
 
+
+            // =====================================================
+            // REDIRECT
+            // =====================================================
 
             Navigation.NavigateTo(
                 "/orders");
@@ -1387,7 +1697,7 @@
 
 
     // =========================================================
-    // MODELS
+    // EDIT MODEL
     // =========================================================
 
     private class OrderEditModel
@@ -1436,6 +1746,10 @@
         public string? Note { get; set; }
     }
 
+
+    // =========================================================
+    // ITEM MODEL
+    // =========================================================
 
     private class OrderItemModel
     {

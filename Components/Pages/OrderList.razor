@@ -3,6 +3,9 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
@@ -10,6 +13,7 @@
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -28,23 +32,37 @@
     <div class="page-header">
 
         <div>
-            <h1>@L["Orders"]</h1>
-            <p>@L["ManageOrdersDescription"]</p>
+
+            <h1>
+                @L["Orders"]
+            </h1>
+
+            <p>
+                @L["ManageOrdersDescription"]
+            </p>
+
         </div>
 
+
         <div>
+
             <button type="button"
                     class="btn-secondary"
-                    @onclick="ExportExcel">
+                    @onclick="ExportExcel"
+                    disabled="@(PagedOrders.Count == 0)">
 
                 📊 @L["ExportExcel"]
 
             </button>
 
+
             <a href="/orders/create"
                class="btn-primary">
+
                 + @L["NewOrder"]
+
             </a>
+
         </div>
 
     </div>
@@ -58,55 +76,34 @@
 
         <div class="search-box">
 
-            <span class="search-icon">⌕</span>
+            <span class="search-icon">
+                ⌕
+            </span>
+
 
             <input type="text"
                    class="search-input"
                    placeholder="@L["SearchOrderPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
-                   @bind:after="SearchChanged" />
+                   @bind:after="SearchChanged"
+                   autocomplete="off" />
 
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="0">
-                @L["AllOrderStatuses"]
-            </option>
-
-            <option value="@((int)OrderStatus.Entwurf)">
-                @L["OrderStatusDraft"]
-            </option>
-
-            <option value="@((int)OrderStatus.Bestätigt)">
-                @L["OrderStatusConfirmed"]
-            </option>
-
-            <option value="@((int)OrderStatus.InBearbeitung)">
-                @L["OrderStatusInProgress"]
-            </option>
-
-            <option value="@((int)OrderStatus.TeilweiseGeliefert)">
-                @L["OrderStatusPartiallyDelivered"]
-            </option>
-
-            <option value="@((int)OrderStatus.Versendet)">
-                @L["OrderStatusShipped"]
-            </option>
-
-            <option value="@((int)OrderStatus.Abgeschlossen)">
-                @L["OrderStatusCompleted"]
-            </option>
-
-            <option value="@((int)OrderStatus.Storniert)">
-                @L["OrderStatusCancelled"]
-            </option>
-
-        </select>
+        <SearchableSelect TItem="OrderStatusOption"
+                          TValue="int"
+                          Items="OrderStatusOptions"
+                          Value="SelectedStatus"
+                          ValueChanged="OnOrderStatusChanged"
+                          ValueSelector="@(x => x.Value)"
+                          TextSelector="@(x => x.Text)"
+                          Placeholder="@L["AllOrderStatuses"]"
+                          NoResultsText="@L["NoResultsFound"]"
+                          ShowAllOption="true"
+                          AllOptionText="@L["AllOrderStatuses"]"
+                          AllValue="0" />
 
     </div>
 
@@ -119,7 +116,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Orders"]</span>
+            <span>
+                @L["Orders"]
+            </span>
 
             <strong>
                 @Orders.Count
@@ -130,7 +129,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Open"]</span>
+            <span>
+                @L["Open"]
+            </span>
 
             <strong>
                 @OpenCount
@@ -141,7 +142,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Processing"]</span>
+            <span>
+                @L["Processing"]
+            </span>
 
             <strong>
                 @ProcessingCount
@@ -152,7 +155,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Completed"]</span>
+            <span>
+                @L["Completed"]
+            </span>
 
             <strong>
                 @CompletedCount
@@ -202,9 +207,11 @@
                     ☷
                 </div>
 
+
                 <h3>
                     @L["NoOrdersFound"]
                 </h3>
+
 
                 <p>
                     @L["NoOrdersForSearch"]
@@ -222,19 +229,33 @@
 
                         <tr>
 
-                            <th>@L["Order"]</th>
+                            <th>
+                                @L["Order"]
+                            </th>
 
-                            <th>@L["OrderDate"]</th>
+                            <th>
+                                @L["OrderDate"]
+                            </th>
 
-                            <th>@L["Customer"]</th>
+                            <th>
+                                @L["Customer"]
+                            </th>
 
-                            <th>@L["Positions"]</th>
+                            <th>
+                                @L["Positions"]
+                            </th>
 
-                            <th>@L["Status"]</th>
+                            <th>
+                                @L["Status"]
+                            </th>
 
-                            <th>@L["Total"]</th>
+                            <th>
+                                @L["Total"]
+                            </th>
 
-                            <th>@L["Actions"]</th>
+                            <th>
+                                @L["Actions"]
+                            </th>
 
                         </tr>
 
@@ -259,17 +280,22 @@
                                             #
                                         </div>
 
+
                                         <div>
 
                                             <strong>
                                                 @order.OrderNumber
                                             </strong>
 
+
                                             @if (!string.IsNullOrWhiteSpace(
                                                 order.ReferenceNumber))
                                             {
                                                 <small>
-                                                    @L["ReferenceShort"]: @order.ReferenceNumber
+
+                                                    @L["ReferenceShort"]:
+                                                    @order.ReferenceNumber
+
                                                 </small>
                                             }
 
@@ -314,11 +340,13 @@
 
                                             </div>
 
+
                                             <div>
 
                                                 <strong>
                                                     @order.Customer.CompanyName
                                                 </strong>
+
 
                                                 @if (!string.IsNullOrWhiteSpace(
                                                     order.Customer.CustomerNumber))
@@ -368,7 +396,9 @@
                                 <td>
 
                                     <span class="@GetStatusClass(order.Status)">
+
                                         @GetStatusText(order.Status)
+
                                     </span>
 
                                 </td>
@@ -481,9 +511,12 @@
 
                     <div class="pagination-pages">
 
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @for (int page = 1;
+                              page <= TotalPages;
+                              page++)
                         {
                             var pageNumber = page;
+
 
                             <button type="button"
                                     class="pagination-button @(CurrentPage == pageNumber ? "active" : "")"
@@ -512,11 +545,13 @@
 
             <div class="pagination-info">
 
-                @L["PaginationInfoOrders",
+                @L[
+                    "PaginationInfoOrders",
                     CurrentPage,
                     TotalPages,
                     PagedOrders.Count,
-                    Orders.Count]
+                    Orders.Count
+                ]
 
             </div>
 
@@ -542,9 +577,31 @@
 
     private string SearchTerm = string.Empty;
 
-    private int SelectedStatus;
+
+    // IMPORTANT:
+    //
+    // 0 = ALL ORDER STATUSES
+    // > 0 = specific OrderStatus enum value
+
+    private int SelectedStatus = 0;
+
 
     private bool IsDuplicating;
+
+
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class OrderStatusOption
+    {
+        public int Value { get; set; }
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<OrderStatusOption> OrderStatusOptions = new();
 
 
     // =========================================================
@@ -553,7 +610,9 @@
 
     private const int PageSize = 10;
 
+
     private int CurrentPage = 1;
+
 
     private int TotalPages =>
         Math.Max(
@@ -562,9 +621,12 @@
                 Orders.Count /
                 (double)PageSize));
 
+
     private List<Order> PagedOrders =>
         Orders
-            .Skip((CurrentPage - 1) * PageSize)
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
             .Take(PageSize)
             .ToList();
 
@@ -582,13 +644,15 @@
 
     private int OpenCount =>
         Orders.Count(x =>
-            x.Status == OrderStatus.Entwurf ||
+            x.Status == OrderStatus.Entwurf
+            ||
             x.Status == OrderStatus.Bestätigt);
 
 
     private int ProcessingCount =>
         Orders.Count(x =>
-            x.Status == OrderStatus.InBearbeitung ||
+            x.Status == OrderStatus.InBearbeitung
+            ||
             x.Status == OrderStatus.TeilweiseGeliefert);
 
 
@@ -603,6 +667,79 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // 0 = ALL
+
+        SelectedStatus = 0;
+
+
+        OrderStatusOptions =
+            new List<OrderStatusOption>
+            {
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.Entwurf,
+
+                    Text =
+                        L["OrderStatusDraft"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.Bestätigt,
+
+                    Text =
+                        L["OrderStatusConfirmed"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.InBearbeitung,
+
+                    Text =
+                        L["OrderStatusInProgress"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.TeilweiseGeliefert,
+
+                    Text =
+                        L["OrderStatusPartiallyDelivered"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.Versendet,
+
+                    Text =
+                        L["OrderStatusShipped"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.Abgeschlossen,
+
+                    Text =
+                        L["OrderStatusCompleted"].Value
+                },
+
+                new OrderStatusOption
+                {
+                    Value =
+                        (int)OrderStatus.Storniert,
+
+                    Text =
+                        L["OrderStatusCancelled"].Value
+                }
+            };
+
+
         await LoadOrders();
     }
 
@@ -611,12 +748,15 @@
     // DUPLICATE ORDER
     // =========================================================
 
-    private async Task DuplicateOrder(Order order)
+    private async Task DuplicateOrder(
+        Order order)
     {
         if (IsDuplicating)
             return;
 
+
         IsDuplicating = true;
+
 
         try
         {
@@ -631,10 +771,13 @@
             var original =
                 await db.Orders
 
-                    .Include(x => x.Items)
+                    .Include(x =>
+                        x.Items)
 
                     .FirstOrDefaultAsync(
-                        x => x.Id == order.Id);
+                        x =>
+                            x.Id ==
+                            order.Id);
 
 
             if (original == null)
@@ -653,7 +796,8 @@
                 await db.Orders
 
                     .Where(x =>
-                        x.OrderNumber.StartsWith(prefix))
+                        x.OrderNumber
+                            .StartsWith(prefix))
 
                     .Select(x =>
                         x.OrderNumber)
@@ -751,8 +895,9 @@
                         UnitPrice =
                             item.UnitPrice,
 
-                        // New order is Entwurf,
-                        // therefore it has NO reservation.
+                        // New order is Entwurf.
+                        // Therefore it has NO reservation.
+
                         WarehouseLocationId =
                             null
                     });
@@ -763,7 +908,9 @@
             // SAVE
             // =====================================================
 
-            db.Orders.Add(newOrder);
+            db.Orders.Add(
+                newOrder);
+
 
             await db.SaveChangesAsync();
 
@@ -788,18 +935,25 @@
 
 
     // =========================================================
-    // LOAD
+    // LOAD ORDERS FROM DATABASE
     // =========================================================
 
     private async Task LoadOrders()
     {
         IsLoading = true;
 
+
         try
         {
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
+
+            // IMPORTANT:
+            //
+            // Every filter change creates a NEW query.
+            //
+            // Nothing is filtered only locally.
 
             var query =
                 db.Orders
@@ -810,6 +964,7 @@
                     .Include(x =>
                         x.Items)
 
+                    .AsNoTracking()
                     .AsQueryable();
 
 
@@ -817,7 +972,8 @@
             // SEARCH
             // =====================================================
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
@@ -826,28 +982,36 @@
                 query =
                     query.Where(x =>
 
-                        x.OrderNumber.Contains(search)
+                        x.OrderNumber.Contains(
+                            search)
 
                         ||
 
                         (
-                            x.ReferenceNumber != null &&
-                            x.ReferenceNumber.Contains(search)
+                            x.ReferenceNumber != null
+                            &&
+                            x.ReferenceNumber.Contains(
+                                search)
                         )
 
                         ||
 
                         (
-                            x.Customer != null &&
-                            x.Customer.CompanyName.Contains(search)
+                            x.Customer != null
+                            &&
+                            x.Customer.CompanyName.Contains(
+                                search)
                         )
 
                         ||
 
                         (
-                            x.Customer != null &&
-                            x.Customer.CustomerNumber != null &&
-                            x.Customer.CustomerNumber.Contains(search)
+                            x.Customer != null
+                            &&
+                            x.Customer.CustomerNumber != null
+                            &&
+                            x.Customer.CustomerNumber.Contains(
+                                search)
                         )
                     );
             }
@@ -868,9 +1032,14 @@
                         x.Status == status);
             }
 
+            // SelectedStatus == 0
+            // means ALL statuses.
+            //
+            // Therefore there is NO status filter.
+
 
             // =====================================================
-            // LOAD
+            // EXECUTE DATABASE QUERY
             // =====================================================
 
             Orders =
@@ -880,6 +1049,7 @@
                         x.OrderDate)
 
                     .ToListAsync();
+
 
             CurrentPage = 1;
         }
@@ -891,7 +1061,7 @@
 
 
     // =========================================================
-    // SEARCH
+    // SEARCH CHANGED
     // =========================================================
 
     private async Task SearchChanged()
@@ -903,12 +1073,25 @@
 
 
     // =========================================================
-    // FILTER
+    // ORDER STATUS CHANGED
     // =========================================================
 
-    private async Task FilterChanged()
+    private async Task OnOrderStatusChanged(
+        int value)
     {
+        // IMPORTANT:
+        // Set the NEW value first.
+
+        SelectedStatus = value;
+
+
+        // Reset page.
+
         CurrentPage = 1;
+
+
+        // IMPORTANT:
+        // Query DATABASE again using the new status.
 
         await LoadOrders();
     }
@@ -918,10 +1101,15 @@
     // PAGINATION
     // =========================================================
 
-    private void GoToPage(int page)
+    private void GoToPage(
+        int page)
     {
-        if (page < 1 || page > TotalPages)
+        if (page < 1 ||
+            page > TotalPages)
+        {
             return;
+        }
+
 
         CurrentPage = page;
     }
@@ -953,7 +1141,12 @@
     {
         try
         {
-            var data = PagedOrders;
+            var data =
+                PagedOrders;
+
+
+            if (data.Count == 0)
+                return;
 
 
             var bytes =
@@ -962,52 +1155,74 @@
 
                     L["OrdersExportTitle"],
 
-                    L["OrdersExportSheet", CurrentPage],
+                    L["OrdersExportSheet",
+                        CurrentPage],
 
                     (
                         L["OrderNumber"],
-                        x => x.OrderNumber
+
+                        x =>
+                            x.OrderNumber
                     ),
 
                     (
                         L["OrderDate"],
-                        x => x.OrderDate
+
+                        x =>
+                            x.OrderDate
                     ),
 
                     (
                         L["Customer"],
-                        x => x.Customer?.CompanyName ?? ""
+
+                        x =>
+                            x.Customer?.CompanyName
+                            ?? ""
                     ),
 
                     (
                         L["CustomerNumber"],
-                        x => x.Customer?.CustomerNumber ?? ""
+
+                        x =>
+                            x.Customer?.CustomerNumber
+                            ?? ""
                     ),
 
                     (
                         L["Positions"],
-                        x => x.Items.Count
+
+                        x =>
+                            x.Items.Count
                     ),
 
                     (
                         L["Status"],
-                        x => GetStatusText(x.Status)
+
+                        x =>
+                            GetStatusText(
+                                x.Status)
                     ),
 
                     (
                         L["Total"],
-                        x => x.Total
+
+                        x =>
+                            x.Total
                     ),
 
                     (
                         L["Reference"],
-                        x => x.ReferenceNumber ?? ""
+
+                        x =>
+                            x.ReferenceNumber
+                            ?? ""
                     )
                 );
 
 
             var base64 =
-                Convert.ToBase64String(bytes);
+                Convert.ToBase64String(
+                    bytes);
 
 
             await JS.InvokeVoidAsync(
@@ -1031,7 +1246,8 @@
     // CANCEL ORDER
     // =========================================================
 
-    private async Task CancelOrder(Order order)
+    private async Task CancelOrder(
+        Order order)
     {
         await using var db =
             await DbFactory.CreateDbContextAsync();
@@ -1039,8 +1255,11 @@
 
         var entity =
             await db.Orders
+
                 .FirstOrDefaultAsync(
-                    x => x.Id == order.Id);
+                    x =>
+                        x.Id ==
+                        order.Id);
 
 
         if (entity == null)
@@ -1058,6 +1277,9 @@
         await db.SaveChangesAsync();
 
 
+        // Reload from database
+        // with current filter.
+
         await LoadOrders();
     }
 
@@ -1066,7 +1288,8 @@
     // STATUS TEXT
     // =========================================================
 
-    private string GetStatusText(OrderStatus status)
+    private string GetStatusText(
+        OrderStatus status)
     {
         return status switch
         {
@@ -1101,7 +1324,8 @@
     // STATUS CSS
     // =========================================================
 
-    private string GetStatusClass(OrderStatus status)
+    private string GetStatusClass(
+        OrderStatus status)
     {
         return status switch
         {
@@ -1136,7 +1360,8 @@
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";

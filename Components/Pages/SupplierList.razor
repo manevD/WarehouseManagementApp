@@ -3,6 +3,9 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
@@ -10,6 +13,7 @@
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -73,28 +77,24 @@
                    placeholder="@L["SearchSupplierPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
-                   @bind:after="SearchChanged" />
+                   @bind:after="SearchChanged"
+                   autocomplete="off" />
 
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="all">
-                @L["AllSuppliers"]
-            </option>
-
-            <option value="active">
-                @L["ActiveOnly"]
-            </option>
-
-            <option value="inactive">
-                @L["InactiveOnly"]
-            </option>
-
-        </select>
+        <SearchableSelect TItem="StatusOption"
+                          TValue="string"
+                          Items="StatusOptions"
+                          Value="SelectedStatus"
+                          ValueChanged="OnSupplierStatusChanged"
+                          ValueSelector="@(x => x.Value)"
+                          TextSelector="@(x => x.Text)"
+                          Placeholder="@L["AllSuppliers"]"
+                          NoResultsText="@L["NoResultsFound"]"
+                          ShowAllOption="true"
+                          AllOptionText="@L["AllSuppliers"]"
+                          AllValue="@("all")" />
 
     </div>
 
@@ -517,9 +517,28 @@
 
     private string SearchTerm = string.Empty;
 
+    // IMPORTANT:
+    // all     = all suppliers
+    // active  = active suppliers only
+    // inactive = inactive suppliers only
     private string SelectedStatus = "all";
 
     private bool IsLoading = true;
+
+
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class StatusOption
+    {
+        public string Value { get; set; } = "";
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<StatusOption> StatusOptions = new();
 
 
     // =========================================================
@@ -561,12 +580,31 @@
 
     protected override async Task OnInitializedAsync()
     {
+        SelectedStatus = "all";
+
+
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "active",
+                Text = L["ActiveOnly"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "inactive",
+                Text = L["InactiveOnly"].Value
+            }
+        };
+
+
         await LoadSuppliers();
     }
 
 
     // =========================================================
-    // LOAD SUPPLIERS
+    // LOAD SUPPLIERS FROM DATABASE
     // =========================================================
 
     private async Task LoadSuppliers()
@@ -581,6 +619,7 @@
 
             var query =
                 db.Suppliers
+                    .AsNoTracking()
                     .AsQueryable();
 
 
@@ -652,25 +691,41 @@
 
 
             // =================================================
-            // STATUS
+            // STATUS FILTER
             // =================================================
 
             if (SelectedStatus == "active")
             {
+                // ONLY ACTIVE
+
                 query =
                     query.Where(x =>
                         x.IsActive);
             }
             else if (SelectedStatus == "inactive")
             {
+                // ONLY INACTIVE
+
                 query =
                     query.Where(x =>
                         !x.IsActive);
             }
+            else
+            {
+                // ALL
+
+                // IMPORTANT:
+                // No IsActive filter here.
+                //
+                // This means:
+                // active + inactive
+
+                query = query;
+            }
 
 
             // =================================================
-            // LOAD
+            // DATABASE QUERY
             // =================================================
 
             Suppliers =
@@ -702,12 +757,30 @@
 
 
     // =========================================================
-    // FILTER CHANGED
+    // SUPPLIER STATUS CHANGED
     // =========================================================
 
-    private async Task FilterChanged()
+    private async Task OnSupplierStatusChanged(string value)
     {
+        // VERY IMPORTANT:
+        // Update the selected status FIRST.
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            SelectedStatus = "all";
+        }
+        else
+        {
+            SelectedStatus = value;
+        }
+
+
+        // Reset pagination
+
         CurrentPage = 1;
+
+
+        // NEW DATABASE QUERY
 
         await LoadSuppliers();
     }
@@ -763,11 +836,27 @@
             return;
 
 
+        var suppliersText =
+            L["Suppliers"].Value;
+
+
+        var pageText =
+            L["Page"].Value;
+
+
+        var exportTitle =
+            suppliersText
+            + " - "
+            + pageText
+            + " "
+            + CurrentPage;
+
+
         var fileBytes =
             ExcelExport.Export(
                 data,
                 "Lieferanten",
-                $"{L["Suppliers"]} – {L["Page"]} {CurrentPage}",
+                exportTitle,
 
                 ("Nr.", x =>
                     string.IsNullOrWhiteSpace(
@@ -818,8 +907,16 @@
 
         await JS.InvokeVoidAsync(
             "downloadFile",
-            $"{L["Suppliers"]}_{L["Page"]}_{CurrentPage}.xlsx",
+
+            suppliersText
+                + "_"
+                + pageText
+                + "_"
+                + CurrentPage
+                + ".xlsx",
+
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
             base64);
     }
 
@@ -831,9 +928,7 @@
     private async Task DeleteSupplier(
         Supplier supplier)
     {
-        // Soft delete.
-        // The existing page currently does not show
-        // a confirmation dialog.
+        // Soft delete / deactivate
 
         await using var db =
             await DbFactory.CreateDbContextAsync();
@@ -850,12 +945,22 @@
             return;
 
 
-        entity.IsActive =
-            false;
+        entity.IsActive = false;
 
 
         await db.SaveChangesAsync();
 
+
+        // Reload from DATABASE.
+        //
+        // If current filter = active:
+        // supplier disappears.
+        //
+        // If current filter = inactive:
+        // supplier is shown.
+        //
+        // If current filter = all:
+        // supplier is shown as inactive.
 
         await LoadSuppliers();
     }

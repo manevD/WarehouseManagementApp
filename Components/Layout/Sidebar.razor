@@ -22,9 +22,9 @@
 
 
     <div class="sidebar-brand">
-   <div class="brand-logo">
-                    <img class="brand-logo-image" src="/images/wm-logo-premium.webp" />
-                </div>
+        <div class="brand-logo">
+            <img class="brand-logo-image" src="/images/wm-logo-premium.webp" />
+        </div>
     </div>
 
 
@@ -121,42 +121,44 @@
             <span>@L["Movements"]</span>
 
         </NavLink>
+        @if (isLagerMitarbeiter || isAdmin)
+        {
 
+            <!-- VERWALTUNG -->
+            <div class="nav-section">
+                @L["Administration"]
+            </div>
 
-        <!-- VERWALTUNG -->
+            <NavLink href="/suppliers" class="nav-item">
 
-        <div class="nav-section">
-            @L["Administration"]
-        </div>
+                <span class="nav-icon">♙</span>
+                <span>@L["Suppliers"]</span>
 
-        <NavLink href="/suppliers" class="nav-item">
+            </NavLink>
 
-            <span class="nav-icon">♙</span>
-            <span>@L["Suppliers"]</span>
+            <NavLink href="/customers" class="nav-item">
 
-        </NavLink>
+                <span class="nav-icon">♙</span>
+                <span>@L["Customers"]</span>
 
-        <NavLink href="/customers" class="nav-item">
+            </NavLink>
 
-            <span class="nav-icon">♙</span>
-            <span>@L["Customers"]</span>
+            <NavLink href="/orders" class="nav-item">
 
-        </NavLink>
+                <span class="nav-icon">☷</span>
+                <span>@L["Orders"]</span>
 
-        <NavLink href="/orders" class="nav-item">
+            </NavLink>
 
-            <span class="nav-icon">☷</span>
-            <span>@L["Orders"]</span>
+            <NavLink href="/purchase-orders" class="nav-item">
 
-        </NavLink>
+                <span class="nav-icon">☷</span>
+                <span>@L["SupplierOrders"]</span>
 
-        <NavLink href="/purchase-orders" class="nav-item">
+            </NavLink>
+        }
 
-            <span class="nav-icon">☷</span>
-            <span>@L["SupplierOrders"]</span>
-
-        </NavLink>
-
+   
 
         <!-- ANALYSE -->
 
@@ -221,22 +223,22 @@
                     <span>@L["PersonalData"]</span>
 
                 </NavLink>
-                    @if (isAdmin)
+                @if (isAdmin)
                 {
-                     <NavLink href="/users" class="nav-item">
-                    <span class="nav-icon">•</span>
-                    <span>@L["UserManagement"]</span>
+                    <NavLink href="/users" class="nav-item">
+                        <span class="nav-icon">•</span>
+                        <span>@L["UserManagement"]</span>
 
-                </NavLink>
+                    </NavLink>
 
 
-                <NavLink href="/roles"
-                         class="nav-item">
+                    <NavLink href="/roles"
+                             class="nav-item">
 
-                    <span class="nav-icon">•</span>
-                    <span>@L["RoleManagement"]</span>
+                        <span class="nav-icon">•</span>
+                        <span>@L["RoleManagement"]</span>
 
-                </NavLink>
+                    </NavLink>
 
                 }
             </div>
@@ -248,12 +250,13 @@
 
 
 @code {
-     private bool isAdmin;
-
+    private bool isAdmin;
+    private bool isLagerMitarbeiter;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         isAdmin = authState.User.IsInRole("Admin");
+        isLagerMitarbeiter = authState.User.IsInRole("Warehouse Manager");
     }
     private bool SettingsOpen = false;
 

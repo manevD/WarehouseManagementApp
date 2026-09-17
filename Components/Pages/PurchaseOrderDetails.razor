@@ -269,7 +269,7 @@ else
                             <strong>
                                 @Order.Supplier.CompanyName
                             </strong>
-
+                            &nbsp
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.SupplierNumber))
@@ -282,18 +282,18 @@ else
                                 </span>
                             }
 
-
+                            &nbsp
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.ContactPerson))
                             {
                                 <span>
 
-                                    @L["ContactPersonLabel"]:
+                                    @L["ContactPerson"]:
                                     @Order.Supplier.ContactPerson
 
                                 </span>
                             }
-
+                            &nbsp
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.Email))
@@ -302,7 +302,7 @@ else
                                     @Order.Supplier.Email
                                 </span>
                             }
-
+                            &nbsp
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.Phone))
@@ -311,7 +311,7 @@ else
                                     @Order.Supplier.Phone
                                 </span>
                             }
-
+                            &nbsp
 
                             @if (!string.IsNullOrWhiteSpace(
                                 Order.Supplier.Street)
@@ -323,8 +323,9 @@ else
                                     Order.Supplier.City))
                             {
                                 <span>
-
+                                    <br />
                                     @Order.Supplier.Street
+                                     &nbsp
 
                                     @if (!string.IsNullOrWhiteSpace(
                                         Order.Supplier.PostalCode)
@@ -332,8 +333,6 @@ else
                                         !string.IsNullOrWhiteSpace(
                                             Order.Supplier.City))
                                     {
-                                        <br />
-
                                         @Order.Supplier.PostalCode
                                         @(" ")
                                         @Order.Supplier.City

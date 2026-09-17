@@ -3,6 +3,9 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
@@ -10,6 +13,7 @@
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject ExcelExportService ExcelExport
@@ -19,6 +23,11 @@
 <PageTitle>@L["StockMovements"]</PageTitle>
 
 <style>
+
+    /* =========================================================
+       FILTER
+       ========================================================= */
+
     .movements-filter {
         display: flex;
         flex-direction: column;
@@ -27,84 +36,198 @@
 
     .movements-filter-row {
         display: grid;
-        grid-template-columns: minmax(300px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr) minmax(180px, 1.1fr) minmax(180px, 1.1fr);
+
+        grid-template-columns:
+            minmax(320px, 2fr)
+            minmax(190px, 1fr)
+            minmax(190px, 1fr)
+            minmax(190px, 1fr)
+            minmax(220px, 1.1fr);
+
         gap: 10px;
         width: 100%;
+        align-items: center;
     }
 
-        .movements-filter-row > * {
-            min-width: 0;
-        }
+    .movements-filter-row > * {
+        min-width: 0;
+    }
 
-        .movements-filter-row .search-box {
-            width: 100%;
-            max-width: none;
-        }
 
-        .movements-filter-row .filter-select {
-            width: 100%;
-        }
+    /* =========================================================
+       LIVE SEARCH
+       ========================================================= */
+
+    .movements-filter-row .search-box {
+        display: flex;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        flex: none !important;
+    }
+
+    .movements-filter-row .search-input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        box-sizing: border-box;
+    }
+
+    .movements-filter-row .search-box input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+       SEARCHABLE SELECT
+       ========================================================= */
+
+    .movements-filter-row .searchable-select {
+        position: relative;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+    .movements-filter-row .searchable-select-input {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .movements-filter-row .searchable-select-input input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+       DATE FILTER
+       ========================================================= */
 
     .movements-date-row {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+
+        grid-template-columns:
+            1fr
+            1fr
+            auto;
+
         gap: 10px;
+
         align-items: end;
+
         width: 100%;
     }
 
     .movements-date-group {
         display: flex;
         flex-direction: column;
+
         gap: 5px;
+
         min-width: 0;
     }
 
-        .movements-date-group label {
-            font-size: 12px;
-            color: #6b7280;
-        }
+    .movements-date-group label {
+        font-size: 12px;
+        color: #6b7280;
+    }
 
-        .movements-date-group input {
-            width: 100%;
-            height: 40px;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            padding: 0 10px;
-            background: white;
-            font-size: 13px;
-            color: #374151;
-        }
+    .movements-date-group input {
+        width: 100%;
+        height: 40px;
+
+        border: 1px solid var(--border);
+        border-radius: 7px;
+
+        padding: 0 10px;
+
+        background: white;
+
+        font-size: 13px;
+        color: #374151;
+
+        box-sizing: border-box;
+    }
 
     .movements-reset-button {
         height: 40px;
         white-space: nowrap;
     }
 
-    @@media (max-width: 1200px) {
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1350px) {
+
         .movements-filter-row {
-            grid-template-columns: minmax(280px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr);
+            grid-template-columns:
+                minmax(300px, 2fr)
+                minmax(170px, 1fr)
+                minmax(170px, 1fr);
         }
+
     }
 
-    @@media (max-width: 850px) {
+
+    @@media (max-width: 1000px) {
+
         .movements-filter-row {
-            grid-template-columns: minmax(260px, 2fr) minmax(170px, 1fr);
+            grid-template-columns:
+                minmax(280px, 2fr)
+                minmax(180px, 1fr);
+        }
+
+        .movements-filter-row .search-box {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+
+    @@media (max-width: 850px) {
+
+        .movements-filter-row {
+            grid-template-columns:
+                minmax(260px, 2fr)
+                minmax(170px, 1fr);
         }
 
         .movements-date-row {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns:
+                1fr
+                1fr;
         }
 
         .movements-reset-button {
             grid-column: 1 / -1;
             width: fit-content;
         }
+
     }
 
+
     @@media (max-width: 600px) {
+
         .movements-filter-row {
             grid-template-columns: 1fr;
+        }
+
+        .movements-filter-row .search-box {
+            grid-column: auto;
         }
 
         .movements-date-row {
@@ -115,24 +238,32 @@
             grid-column: auto;
             width: 100%;
         }
+
     }
+
 </style>
+
 
 <div class="stock-page">
 
-    <!-- HEADER -->
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
 
     <div class="page-header">
 
         <div>
 
-            <h1>@L["StockMovements"]</h1>
+            <h1>
+                @L["StockMovements"]
+            </h1>
 
             <p>
                 @L["StockMovementsDescription"]
             </p>
 
         </div>
+
 
         <div>
 
@@ -144,6 +275,7 @@
                 📊 @L["ExportExcel"]
 
             </button>
+
 
             <a href="/stock"
                class="btn-secondary">
@@ -157,15 +289,18 @@
     </div>
 
 
-    <!-- FILTER -->
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
 
     <div class="filter-card movements-filter">
 
-        <!-- FIRST ROW -->
-
         <div class="movements-filter-row">
 
-            <!-- SEARCH -->
+
+            <!-- =================================================
+                 LIVE SEARCH
+                 ================================================= -->
 
             <div class="search-box">
 
@@ -174,125 +309,87 @@
                 </span>
 
                 <input type="text"
+                       class="search-input"
                        placeholder="@L["SearchMovementsPlaceholder"]"
-                       @bind="SearchTerm"
-                       @bind:event="oninput"
-                       @bind:after="SearchChanged" />
+                       value="@SearchTerm"
+                       @oninput="SearchInputChanged" />
 
             </div>
 
 
-            <!-- TYPE -->
+            <!-- =================================================
+                 TYPE
+                 ================================================= -->
 
-            <select class="filter-select"
-                    @bind="SelectedType"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllMovements"]
-                </option>
-
-                <option value="@((int)StockMovementType.Wareneingang)">
-                    @L["IncomingGoods"]
-                </option>
-
-                <option value="@((int)StockMovementType.Warenausgang)">
-                    @L["OutgoingGoods"]
-                </option>
-
-                <option value="@((int)StockMovementType.Umlagerung)">
-                    @L["StockTransfer"]
-                </option>
-
-                <option value="@((int)StockMovementType.Inventur)">
-                    @L["Inventory"]
-                </option>
-
-                <option value="@((int)StockMovementType.Korrektur)">
-                    @L["Correction"]
-                </option>
-
-            </select>
+            <SearchableSelect TItem="MovementTypeOption"
+                              TValue="int"
+                              Items="MovementTypeOptions"
+                              @bind-Value="SelectedType"
+                              ValueSelector="@(x => x.Value)"
+                              TextSelector="@(x => x.Text)"
+                              Placeholder="@L["SelectMovementType"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="false"
+                              AllValue="0"
+                              AfterValueChanged="FilterChanged" />
 
 
-            <!-- WAREHOUSE -->
+            <!-- =================================================
+                 WAREHOUSE
+                 ================================================= -->
 
-            <select class="filter-select"
-                    @bind="SelectedWarehouseId"
-                    @bind:after="WarehouseChanged">
-
-                <option value="0">
-                    @L["AllWarehouses"]
-                </option>
-
-                @foreach (var warehouse in Warehouses)
-                {
-                    <option value="@warehouse.Id">
-                        @warehouse.Name
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="Warehouse"
+                              TValue="int"
+                              Items="Warehouses"
+                              @bind-Value="SelectedWarehouseId"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => x.Name ?? "")"
+                              Placeholder="@L["SelectWarehouse"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="false"
+                              AllValue="0"
+                              AfterValueChanged="WarehouseChanged" />
 
 
-            <!-- LOCATION -->
+            <!-- =================================================
+                 LOCATION
+                 ================================================= -->
 
-            <select class="filter-select"
-                    @bind="SelectedLocationId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllLocations"]
-                </option>
-
-                @foreach (var location in Locations)
-                {
-                    <option value="@location.Id">
-
-                        @location.Code
-
-                        @if (!string.IsNullOrWhiteSpace(location.Name))
-                        {
-                            @($" - {location.Name}")
-                        }
-
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="WarehouseLocation"
+                              TValue="int"
+                              Items="Locations"
+                              @bind-Value="SelectedLocationId"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => GetLocationText(x))"
+                              Placeholder="@L["SelectLocation"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="false"
+                              AllValue="0"
+                              AfterValueChanged="FilterChanged" />
 
 
-            <!-- SUPPLIER -->
+            <!-- =================================================
+                 SUPPLIER
+                 ================================================= -->
 
-            <select class="filter-select"
-                    @bind="SelectedSupplierId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllSuppliers"]
-                </option>
-
-                @foreach (var supplier in Suppliers)
-                {
-                    <option value="@supplier.Id">
-
-                        @supplier.CompanyName
-
-                        @if (!string.IsNullOrWhiteSpace(
-                            supplier.SupplierNumber))
-                        {
-                            @($" ({supplier.SupplierNumber})")
-                        }
-
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="Supplier"
+                              TValue="int"
+                              Items="Suppliers"
+                              @bind-Value="SelectedSupplierId"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => GetSupplierText(x))"
+                              Placeholder="@L["SelectSupplier"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="false"
+                              AllValue="0"
+                              AfterValueChanged="FilterChanged" />
 
         </div>
 
 
-        <!-- SECOND ROW -->
+        <!-- =====================================================
+             DATE FILTER
+             ===================================================== -->
 
         <div class="movements-date-row">
 
@@ -335,7 +432,10 @@
     </div>
 
 
-    <!-- ACTIVE FILTER INFO -->
+    <!-- =========================================================
+         FILTER INFO
+         ========================================================= -->
+
     @if (HasActiveFilters)
     {
         <div class="filter-info">
@@ -352,7 +452,9 @@
     }
 
 
-    <!-- SUMMARY -->
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
 
     <div class="stock-summary-grid">
 
@@ -423,7 +525,9 @@
     </div>
 
 
-    <!-- TABLE -->
+    <!-- =========================================================
+         TABLE
+         ========================================================= -->
 
     <div class="products-card">
 
@@ -839,7 +943,10 @@
             </div>
 
 
-            <!-- PAGINATION -->
+            <!-- =====================================================
+                 PAGINATION
+                 ===================================================== -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -919,12 +1026,28 @@
 
 
     // =========================================================
+    // TYPE OPTION
+    // =========================================================
+
+    private class MovementTypeOption
+    {
+        public int Value { get; set; }
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<MovementTypeOption> MovementTypeOptions = new();
+
+
+    // =========================================================
     // PAGINATION
     // =========================================================
 
     private const int PageSize = 10;
 
     private int CurrentPage = 1;
+
 
     private int TotalPages =>
         Math.Max(
@@ -933,30 +1056,43 @@
                 Movements.Count /
                 (double)PageSize));
 
+
     private List<StockMovement> PagedMovements =>
         Movements
-            .Skip((CurrentPage - 1) * PageSize)
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
             .Take(PageSize)
             .ToList();
 
 
     // =========================================================
-    // FILTER
+    // FILTER VALUES
     // =========================================================
+
+    /*
+     * 0    = nothing selected
+     * ""   = no search
+     * null = no date filter
+     *
+     * Therefore:
+     *
+     * nothing selected = ALL MOVEMENTS
+     */
 
     private string SearchTerm = string.Empty;
 
-    private int SelectedType;
+    private int SelectedType = 0;
 
-    private int SelectedWarehouseId;
+    private int SelectedWarehouseId = 0;
 
-    private int SelectedLocationId;
+    private int SelectedLocationId = 0;
 
-    private int SelectedSupplierId;
+    private int SelectedSupplierId = 0;
 
-    private DateTime? FromDate;
+    private DateTime? FromDate = null;
 
-    private DateTime? ToDate;
+    private DateTime? ToDate = null;
 
 
     // =========================================================
@@ -1001,13 +1137,13 @@
     private bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm)
         ||
-        SelectedType > 0
+        SelectedType != 0
         ||
-        SelectedWarehouseId > 0
+        SelectedWarehouseId != 0
         ||
-        SelectedLocationId > 0
+        SelectedLocationId != 0
         ||
-        SelectedSupplierId > 0
+        SelectedSupplierId != 0
         ||
         FromDate.HasValue
         ||
@@ -1020,13 +1156,139 @@
 
     protected override async Task OnInitializedAsync()
     {
+        /*
+         * IMPORTANT:
+         *
+         * There is NO "All" option.
+         *
+         * Empty SearchableSelect means:
+         *
+         * Value = 0
+         *
+         * and therefore no filter is applied.
+         */
+
+        MovementTypeOptions =
+            new List<MovementTypeOption>
+            {
+                new MovementTypeOption
+                {
+                    Value =
+                        (int)StockMovementType.Wareneingang,
+
+                    Text =
+                        L["IncomingGoods"].Value
+                },
+
+                new MovementTypeOption
+                {
+                    Value =
+                        (int)StockMovementType.Warenausgang,
+
+                    Text =
+                        L["OutgoingGoods"].Value
+                },
+
+                new MovementTypeOption
+                {
+                    Value =
+                        (int)StockMovementType.Umlagerung,
+
+                    Text =
+                        L["StockTransfer"].Value
+                },
+
+                new MovementTypeOption
+                {
+                    Value =
+                        (int)StockMovementType.Inventur,
+
+                    Text =
+                        L["Inventory"].Value
+                },
+
+                new MovementTypeOption
+                {
+                    Value =
+                        (int)StockMovementType.Korrektur,
+
+                    Text =
+                        L["Correction"].Value
+                }
+            };
+
+
+        // =====================================================
+        // RESET FILTER STATE
+        // =====================================================
+
+        SearchTerm = string.Empty;
+
+        SelectedType = 0;
+
+        SelectedWarehouseId = 0;
+
+        SelectedLocationId = 0;
+
+        SelectedSupplierId = 0;
+
+        FromDate = null;
+
+        ToDate = null;
+
+
+        // =====================================================
+        // LOAD FILTER DATA
+        // =====================================================
+
         await LoadWarehouses();
 
         await LoadSuppliers();
 
         await LoadLocations();
 
+
+        // =====================================================
+        // LOAD ALL MOVEMENTS
+        // =====================================================
+
         await LoadMovements();
+    }
+
+
+    // =========================================================
+    // LOCATION TEXT
+    // =========================================================
+
+    private string GetLocationText(
+        WarehouseLocation location)
+    {
+        if (string.IsNullOrWhiteSpace(
+            location.Name))
+        {
+            return location.Code ?? "";
+        }
+
+        return
+            $"{location.Code} - {location.Name}";
+    }
+
+
+    // =========================================================
+    // SUPPLIER TEXT
+    // =========================================================
+
+    private string GetSupplierText(
+        Supplier supplier)
+    {
+        if (string.IsNullOrWhiteSpace(
+            supplier.SupplierNumber))
+        {
+            return supplier.CompanyName ?? "";
+        }
+
+        return
+            $"{supplier.CompanyName} ({supplier.SupplierNumber})";
     }
 
 
@@ -1087,7 +1349,17 @@
                 .AsQueryable();
 
 
-        if (SelectedWarehouseId > 0)
+        /*
+         * Warehouse = 0
+         * ----------------
+         * ALL locations
+         *
+         * Warehouse > 0
+         * ----------------
+         * only locations from selected warehouse
+         */
+
+        if (SelectedWarehouseId != 0)
         {
             query =
                 query.Where(x =>
@@ -1148,7 +1420,8 @@
             // SEARCH
             // =================================================
 
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            if (!string.IsNullOrWhiteSpace(
+                SearchTerm))
             {
                 var search =
                     SearchTerm.Trim();
@@ -1222,31 +1495,35 @@
                             &&
                             x.PurchaseOrder.OrderNumber.Contains(search)
                         )
-
                     );
             }
 
 
             // =================================================
             // TYPE
+            //
+            // 0 = NOTHING SELECTED
             // =================================================
 
-            if (SelectedType > 0)
+            if (SelectedType != 0)
             {
-                var type =
+                var selectedType =
                     (StockMovementType)SelectedType;
 
                 query =
                     query.Where(x =>
-                        x.Type == type);
+                        x.Type ==
+                        selectedType);
             }
 
 
             // =================================================
             // WAREHOUSE
+            //
+            // 0 = NOTHING SELECTED
             // =================================================
 
-            if (SelectedWarehouseId > 0)
+            if (SelectedWarehouseId != 0)
             {
                 query =
                     query.Where(x =>
@@ -1266,41 +1543,39 @@
                             x.ToWarehouseLocation.WarehouseId ==
                                 SelectedWarehouseId
                         )
-
                     );
             }
 
 
             // =================================================
             // LOCATION
+            //
+            // 0 = NOTHING SELECTED
             // =================================================
 
-            if (SelectedLocationId > 0)
+            if (SelectedLocationId != 0)
             {
                 query =
                     query.Where(x =>
 
-                        (
-                            x.FromWarehouseLocationId ==
-                                SelectedLocationId
-                        )
+                        x.FromWarehouseLocationId ==
+                            SelectedLocationId
 
                         ||
 
-                        (
-                            x.ToWarehouseLocationId ==
-                                SelectedLocationId
-                        )
-
+                        x.ToWarehouseLocationId ==
+                            SelectedLocationId
                     );
             }
 
 
             // =================================================
             // SUPPLIER
+            //
+            // 0 = NOTHING SELECTED
             // =================================================
 
-            if (SelectedSupplierId > 0)
+            if (SelectedSupplierId != 0)
             {
                 query =
                     query.Where(x =>
@@ -1320,7 +1595,8 @@
 
                 query =
                     query.Where(x =>
-                        x.CreatedAt >= from);
+                        x.CreatedAt >=
+                        from);
             }
 
 
@@ -1335,13 +1611,32 @@
 
                 query =
                     query.Where(x =>
-                        x.CreatedAt < to);
+                        x.CreatedAt <
+                        to);
             }
 
 
-            // =================================================
-            // LOAD
-            // =================================================
+            /*
+             * =====================================================
+             *
+             * IF NOTHING IS SELECTED:
+             *
+             * SearchTerm       = ""
+             * SelectedType     = 0
+             * SelectedWarehouse= 0
+             * SelectedLocation = 0
+             * SelectedSupplier = 0
+             * FromDate        = null
+             * ToDate          = null
+             *
+             * Then no filter is added.
+             *
+             * RESULT:
+             *
+             * ALL MOVEMENTS
+             *
+             * =====================================================
+             */
 
             Movements =
                 await query
@@ -1360,96 +1655,225 @@
 
 
     // =========================================================
+    // LIVE SEARCH
+    // =========================================================
+
+    private async Task SearchInputChanged(
+        ChangeEventArgs args)
+    {
+        SearchTerm =
+            args.Value?.ToString()
+            ?? string.Empty;
+
+
+        CurrentPage = 1;
+
+
+        /*
+         * Empty SearchTerm:
+         *
+         * no search filter.
+         *
+         * If all other filters are empty:
+         *
+         * => ALL MOVEMENTS
+         */
+
+        await LoadMovements();
+    }
+
+
+    // =========================================================
+    // FILTER CHANGED
+    // =========================================================
+
+    private async Task FilterChanged()
+    {
+        CurrentPage = 1;
+
+        await LoadMovements();
+    }
+
+
+    // =========================================================
+    // WAREHOUSE CHANGED
+    // =========================================================
+
+    private async Task WarehouseChanged()
+    {
+        CurrentPage = 1;
+
+
+        /*
+         * When warehouse changes,
+         * location must be cleared.
+         */
+
+        SelectedLocationId = 0;
+
+
+        /*
+         * Reload locations.
+         *
+         * Warehouse = 0:
+         * all locations
+         *
+         * Warehouse > 0:
+         * only locations from that warehouse
+         */
+
+        await LoadLocations();
+
+
+        /*
+         * Reload movements.
+         */
+
+        await LoadMovements();
+    }
+
+
+    // =========================================================
+    // RESET EVERYTHING
+    // =========================================================
+
+    private async Task ResetFilters()
+    {
+        SearchTerm =
+            string.Empty;
+
+
+        SelectedType =
+            0;
+
+
+        SelectedWarehouseId =
+            0;
+
+
+        SelectedLocationId =
+            0;
+
+
+        SelectedSupplierId =
+            0;
+
+
+        FromDate =
+            null;
+
+
+        ToDate =
+            null;
+
+
+        CurrentPage =
+            1;
+
+
+        /*
+         * Reload ALL locations.
+         */
+
+        await LoadLocations();
+
+
+        /*
+         * Reload ALL movements.
+         */
+
+        await LoadMovements();
+    }
+
+
+    // =========================================================
     // PAGINATION
     // =========================================================
 
-    private void GoToPage(int page)
+    private void GoToPage(
+        int page)
     {
-        if (page < 1 || page > TotalPages)
+        if (page < 1 ||
+            page > TotalPages)
+        {
             return;
+        }
 
-        CurrentPage = page;
+        CurrentPage =
+            page;
     }
 
 
     private void PreviousPage()
     {
         if (CurrentPage > 1)
+        {
             CurrentPage--;
+        }
     }
 
 
     private void NextPage()
     {
         if (CurrentPage < TotalPages)
+        {
             CurrentPage++;
+        }
     }
 
 
     // =========================================================
-    // EXCEL EXPORT
+    // EXCEL
     // =========================================================
 
     private async Task ExportExcel()
     {
-        var data =
-            PagedMovements
-                .Where(x => x != null)
-                .ToList();
-
+        var data = PagedMovements
+            .Where(x => x != null)
+            .ToList();
 
         if (data.Count == 0)
             return;
 
+        var fileBytes = ExcelExport.Export(
+            data,
+            "Bewegungen",
+            $"{L["StockMovements"]} - {L["Page"]} {CurrentPage}",
 
-        var fileBytes =
-            ExcelExport.Export(
-                data,
-                "Bewegungen",
-                $"{L["StockMovements"]} – {L["Page"]} {CurrentPage}",
+            ("Datum", x => x.CreatedAt),
 
-                ("Datum", x =>
-                    x.CreatedAt),
+            ("SKU", x => x.Product?.SKU ?? ""),
 
-                ("SKU", x =>
-                    x.Product?.SKU ?? ""),
+            ("Produkt", x => x.Product?.Name ?? ""),
 
-                ("Produkt", x =>
-                    x.Product?.Name ?? ""),
+            ("Typ", x => GetMovementTypeText(x.Type)),
 
-                ("Typ", x =>
-                    GetMovementTypeText(x.Type)),
+            ("Menge", x => x.Quantity),
 
-                ("Menge", x =>
-                    x.Quantity),
+            ("Von", x =>
+                x.FromWarehouseLocation == null
+                    ? ""
+                    : $"{x.FromWarehouseLocation.Code} - {x.FromWarehouseLocation.Warehouse?.Name ?? ""}"),
 
-                ("Von", x =>
-                    x.FromWarehouseLocation == null
-                        ? ""
-                        : $"{x.FromWarehouseLocation.Code} - {x.FromWarehouseLocation.Warehouse?.Name ?? ""}"),
+            ("Nach", x =>
+                x.ToWarehouseLocation == null
+                    ? ""
+                    : $"{x.ToWarehouseLocation.Code} - {x.ToWarehouseLocation.Warehouse?.Name ?? ""}"),
 
-                ("Nach", x =>
-                    x.ToWarehouseLocation == null
-                        ? ""
-                        : $"{x.ToWarehouseLocation.Code} - {x.ToWarehouseLocation.Warehouse?.Name ?? ""}"),
+            ("Lieferant", x =>
+                x.Supplier?.CompanyName ?? ""),
 
-                ("Lieferant", x =>
-                    x.Supplier?.CompanyName ?? ""),
+            ("Bestellung", x =>
+                x.PurchaseOrder?.OrderNumber ?? ""),
 
-                ("Bestellung", x =>
-                    x.PurchaseOrder?.OrderNumber ?? ""),
+            ("Referenz", x =>
+                x.ReferenceNumber ?? ""),
 
-                ("Referenz", x =>
-                    x.ReferenceNumber ?? ""),
+            ("Notiz", x =>
+                x.Note ?? "")
+        );
 
-                ("Notiz", x =>
-                    x.Note ?? "")
-            );
-
-
-        var base64 =
-            Convert.ToBase64String(fileBytes);
-
+        var base64 = Convert.ToBase64String(fileBytes);
 
         await JS.InvokeVoidAsync(
             "downloadFile",
@@ -1457,7 +1881,6 @@
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             base64);
     }
-
 
     // =========================================================
     // MOVEMENT TYPE TEXT
@@ -1490,89 +1913,16 @@
 
 
     // =========================================================
-    // SEARCH CHANGED
-    // =========================================================
-
-    private async Task SearchChanged()
-    {
-        CurrentPage = 1;
-
-        await LoadMovements();
-    }
-
-
-    // =========================================================
-    // FILTER CHANGED
-    // =========================================================
-
-    private async Task FilterChanged()
-    {
-        CurrentPage = 1;
-
-        await LoadMovements();
-    }
-
-
-    // =========================================================
-    // WAREHOUSE CHANGED
-    // =========================================================
-
-    private async Task WarehouseChanged()
-    {
-        CurrentPage = 1;
-
-        SelectedLocationId = 0;
-
-        await LoadLocations();
-
-        await LoadMovements();
-    }
-
-
-    // =========================================================
-    // RESET FILTERS
-    // =========================================================
-
-    private async Task ResetFilters()
-    {
-        SearchTerm =
-            string.Empty;
-
-        SelectedType =
-            0;
-
-        SelectedWarehouseId =
-            0;
-
-        SelectedLocationId =
-            0;
-
-        SelectedSupplierId =
-            0;
-
-        FromDate =
-            null;
-
-        ToDate =
-            null;
-
-        CurrentPage =
-            1;
-
-        await LoadLocations();
-
-        await LoadMovements();
-    }
-
-
-    // =========================================================
     // INITIALS
     // =========================================================
 
-    private string GetInitials(string? name)
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
+        {
             return "?";
+        }
 
 
         var words =

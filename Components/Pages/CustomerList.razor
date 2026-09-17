@@ -3,6 +3,9 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
@@ -10,6 +13,7 @@
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -26,22 +30,37 @@
     <div class="page-header">
 
         <div>
-            <h1>@L["Customers"]</h1>
-            <p>@L["ManageCustomersDescription"]</p>
+
+            <h1>
+                @L["Customers"]
+            </h1>
+
+            <p>
+                @L["ManageCustomersDescription"]
+            </p>
+
         </div>
 
+
         <div>
+
             <button type="button"
                     class="btn-secondary"
                     @onclick="ExportExcel"
                     disabled="@(PagedCustomers.Count == 0)">
+
                 📊 @L["ExportExcel"]
+
             </button>
+
 
             <a href="/customers/create"
                class="btn-primary">
+
                 + @L["NewCustomer"]
+
             </a>
+
         </div>
 
     </div>
@@ -53,35 +72,33 @@
 
         <div class="search-box">
 
-            <span class="search-icon">⌕</span>
+            <span class="search-icon">
+                ⌕
+            </span>
 
             <input type="text"
                    class="search-input"
                    placeholder="@L["SearchCustomerPlaceholder"]"
                    @bind="SearchTerm"
                    @bind:event="oninput"
-                   @bind:after="SearchChanged" />
+                   @bind:after="SearchChanged"
+                   autocomplete="off" />
 
         </div>
 
 
-        <select class="filter-select"
-                @bind="SelectedStatus"
-                @bind:after="FilterChanged">
-
-            <option value="all">
-                @L["AllCustomers"]
-            </option>
-
-            <option value="active">
-                @L["ActiveOnly"]
-            </option>
-
-            <option value="inactive">
-                @L["InactiveOnly"]
-            </option>
-
-        </select>
+        <SearchableSelect TItem="StatusOption"
+                          TValue="string"
+                          Items="StatusOptions"
+                          Value="SelectedStatus"
+                          ValueChanged="OnCustomerStatusChanged"
+                          ValueSelector="@(x => x.Value)"
+                          TextSelector="@(x => x.Text)"
+                          Placeholder="@L["AllCustomers"]"
+                          NoResultsText="@L["NoResultsFound"]"
+                          ShowAllOption="true"
+                          AllOptionText="@L["AllCustomers"]"
+                          AllValue="@("all")" />
 
     </div>
 
@@ -92,7 +109,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Customers"]</span>
+            <span>
+                @L["Customers"]
+            </span>
 
             <strong>
                 @Customers.Count
@@ -103,7 +122,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Active"]</span>
+            <span>
+                @L["Active"]
+            </span>
 
             <strong>
                 @ActiveCount
@@ -114,7 +135,9 @@
 
         <div class="stock-summary-card">
 
-            <span>@L["Inactive"]</span>
+            <span>
+                @L["Inactive"]
+            </span>
 
             <strong>
                 @InactiveCount
@@ -149,7 +172,9 @@
         @if (IsLoading)
         {
             <div class="loading-state">
+
                 @L["CustomersLoading"]
+
             </div>
         }
         else if (Customers.Count == 0)
@@ -180,15 +205,41 @@
 
                         <tr>
 
-                            <th>@L["Number"]</th>
-                            <th>@L["Company"]</th>
-                            <th>@L["ContactPerson"]</th>
-                            <th>@L["Email"]</th>
-                            <th>@L["Phone"]</th>
-                            <th>@L["City"]</th>
-                            <th>@L["VatNumber"]</th>
-                            <th>@L["Status"]</th>
-                            <th>@L["Actions"]</th>
+                            <th>
+                                @L["Number"]
+                            </th>
+
+                            <th>
+                                @L["Company"]
+                            </th>
+
+                            <th>
+                                @L["ContactPerson"]
+                            </th>
+
+                            <th>
+                                @L["Email"]
+                            </th>
+
+                            <th>
+                                @L["Phone"]
+                            </th>
+
+                            <th>
+                                @L["City"]
+                            </th>
+
+                            <th>
+                                @L["VatNumber"]
+                            </th>
+
+                            <th>
+                                @L["Status"]
+                            </th>
+
+                            <th>
+                                @L["Actions"]
+                            </th>
 
                         </tr>
 
@@ -201,36 +252,42 @@
                         {
                             <tr>
 
-                                <!-- NUMMER -->
+                                <!-- NUMBER -->
 
                                 <td>
 
                                     <span class="product-sku">
+
                                         @(string.IsNullOrWhiteSpace(
                                             customer.CustomerNumber)
                                             ? $"#{customer.Id}"
                                             : customer.CustomerNumber)
+
                                     </span>
 
                                 </td>
 
 
-                                <!-- FIRMA -->
+                                <!-- COMPANY -->
 
                                 <td>
 
                                     <div class="product-name">
 
                                         <div class="product-avatar">
+
                                             @GetInitials(
                                                 customer.CompanyName)
+
                                         </div>
+
 
                                         <div>
 
                                             <strong>
                                                 @customer.CompanyName
                                             </strong>
+
 
                                             @if (!string.IsNullOrWhiteSpace(
                                                 customer.Street))
@@ -247,7 +304,7 @@
                                 </td>
 
 
-                                <!-- ANSPRECHPARTNER -->
+                                <!-- CONTACT PERSON -->
 
                                 <td>
 
@@ -267,18 +324,22 @@
                                         customer.Email))
                                     {
                                         <a href="mailto:@customer.Email">
+
                                             @customer.Email
+
                                         </a>
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span>
+                                            -
+                                        </span>
                                     }
 
                                 </td>
 
 
-                                <!-- TELEFON -->
+                                <!-- PHONE -->
 
                                 <td>
 
@@ -290,7 +351,7 @@
                                 </td>
 
 
-                                <!-- ORT -->
+                                <!-- CITY -->
 
                                 <td>
 
@@ -303,7 +364,9 @@
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span>
+                                            -
+                                        </span>
                                     }
 
                                 </td>
@@ -328,13 +391,17 @@
                                     @if (customer.IsActive)
                                     {
                                         <span class="status-badge status-active">
+
                                             @L["Active"]
+
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="status-badge status-low">
+
                                             @L["Inactive"]
+
                                         </span>
                                     }
 
@@ -350,16 +417,23 @@
                                         <a href="/customers/edit/@customer.Id"
                                            class="action-button"
                                            title="@L["Edit"]">
+
                                             ✎
+
                                         </a>
 
 
-                                        <button type="button"
-                                                class="action-button delete-button"
-                                                title="@L["Deactivate"]"
-                                                @onclick="() => DeactivateCustomer(customer)">
-                                            🗑
-                                        </button>
+                                        @if (customer.IsActive)
+                                        {
+                                            <button type="button"
+                                                    class="action-button delete-button"
+                                                    title="@L["Deactivate"]"
+                                                    @onclick="() => DeactivateCustomer(customer)">
+
+                                                🗑
+
+                                            </button>
+                                        }
 
                                     </div>
 
@@ -392,7 +466,9 @@
 
                     <div class="pagination-pages">
 
-                        @for (int page = 1; page <= TotalPages; page++)
+                        @for (int page = 1;
+                              page <= TotalPages;
+                              page++)
                         {
                             var pageNumber = page;
 
@@ -424,7 +500,12 @@
             <div class="pagination-info">
 
                 @L["PageInfo", CurrentPage, TotalPages]
-                · @PagedCustomers.Count @L["OfCustomers", Customers.Count]
+
+                ·
+
+                @PagedCustomers.Count
+                @L["OfCustomers"]
+                @Customers.Count
 
             </div>
         }
@@ -436,26 +517,70 @@
 
 @code {
 
+    // =========================================================
+    // SETTINGS
+    // =========================================================
+
     private const int PageSize = 10;
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private int CurrentPage = 1;
 
+
     private List<Customer> Customers = new();
+
 
     private string SearchTerm = string.Empty;
 
+
+    // IMPORTANT:
+    //
+    // all      = ALL CUSTOMERS
+    // active   = ACTIVE CUSTOMERS ONLY
+    // inactive = INACTIVE CUSTOMERS ONLY
+
     private string SelectedStatus = "all";
+
 
     private bool IsLoading = true;
 
 
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class StatusOption
+    {
+        public string Value { get; set; } = "";
+
+        public string Text { get; set; } = "";
+    }
+
+
+    private List<StatusOption> StatusOptions = new();
+
+
+    // =========================================================
+    // SUMMARY
+    // =========================================================
+
     private int ActiveCount =>
-        Customers.Count(x => x.IsActive);
+        Customers.Count(x =>
+            x.IsActive);
 
 
     private int InactiveCount =>
-        Customers.Count(x => !x.IsActive);
+        Customers.Count(x =>
+            !x.IsActive);
 
+
+    // =========================================================
+    // PAGINATION
+    // =========================================================
 
     private int TotalPages =>
         Math.Max(
@@ -467,16 +592,49 @@
 
     private List<Customer> PagedCustomers =>
         Customers
-            .Skip((CurrentPage - 1) * PageSize)
+            .Skip(
+                (CurrentPage - 1) *
+                PageSize)
             .Take(PageSize)
             .ToList();
 
 
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+
     protected override async Task OnInitializedAsync()
     {
+        // Default = ALL
+
+        SelectedStatus = "all";
+
+
+        StatusOptions = new List<StatusOption>
+        {
+            new StatusOption
+            {
+                Value = "active",
+                Text = L["ActiveOnly"].Value
+            },
+
+            new StatusOption
+            {
+                Value = "inactive",
+                Text = L["InactiveOnly"].Value
+            }
+        };
+
+
+        // Initial database load
+
         await LoadCustomers();
     }
 
+
+    // =========================================================
+    // LOAD CUSTOMERS FROM DATABASE
+    // =========================================================
 
     private async Task LoadCustomers()
     {
@@ -488,11 +646,20 @@
                 await DbFactory.CreateDbContextAsync();
 
 
+            // Start fresh query every time.
+            //
+            // This is important because changing
+            // the status must create a NEW DB query.
+
             var query =
-                db.Customers.AsQueryable();
+                db.Customers
+                    .AsNoTracking()
+                    .AsQueryable();
 
 
+            // =================================================
             // SEARCH
+            // =================================================
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
@@ -508,67 +675,102 @@
                         ||
 
                         (
-                            x.ContactPerson != null &&
+                            x.ContactPerson != null
+                            &&
                             x.ContactPerson.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.Email != null &&
+                            x.Email != null
+                            &&
                             x.Email.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.Phone != null &&
+                            x.Phone != null
+                            &&
                             x.Phone.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.City != null &&
+                            x.City != null
+                            &&
                             x.City.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.CustomerNumber != null &&
+                            x.CustomerNumber != null
+                            &&
                             x.CustomerNumber.Contains(search)
                         )
 
                         ||
 
                         (
-                            x.VatNumber != null &&
+                            x.VatNumber != null
+                            &&
                             x.VatNumber.Contains(search)
                         )
+
                     );
             }
 
 
-            // STATUS
+            // =================================================
+            // STATUS FILTER
+            // =================================================
 
             if (SelectedStatus == "active")
             {
+                // ONLY ACTIVE CUSTOMERS
+
                 query =
-                    query.Where(x => x.IsActive);
+                    query.Where(x =>
+                        x.IsActive);
             }
             else if (SelectedStatus == "inactive")
             {
+                // ONLY INACTIVE CUSTOMERS
+
                 query =
-                    query.Where(x => !x.IsActive);
+                    query.Where(x =>
+                        !x.IsActive);
+            }
+            else
+            {
+                // ALL CUSTOMERS
+                //
+                // IMPORTANT:
+                // No IsActive WHERE clause.
+                //
+                // Therefore both active and inactive
+                // customers are returned.
+
+                query = query;
             }
 
 
+            // =================================================
+            // EXECUTE QUERY
+            // =================================================
+
             Customers =
                 await query
-                    .OrderBy(x => x.CompanyName)
+                    .OrderBy(x =>
+                        x.CompanyName)
                     .ToListAsync();
 
+
+            // Always return to first page
+            // after search/filter change.
 
             CurrentPage = 1;
         }
@@ -579,6 +781,10 @@
     }
 
 
+    // =========================================================
+    // SEARCH CHANGED
+    // =========================================================
+
     private async Task SearchChanged()
     {
         CurrentPage = 1;
@@ -587,18 +793,51 @@
     }
 
 
-    private async Task FilterChanged()
+    // =========================================================
+    // CUSTOMER STATUS CHANGED
+    // =========================================================
+
+    private async Task OnCustomerStatusChanged(
+        string value)
     {
+        // Set the NEW value first.
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            SelectedStatus = "all";
+        }
+        else
+        {
+            SelectedStatus = value;
+        }
+
+
+        // Reset pagination.
+
         CurrentPage = 1;
+
+
+        // IMPORTANT:
+        //
+        // Make a completely NEW query against
+        // the DATABASE with the new status.
 
         await LoadCustomers();
     }
 
 
+    // =========================================================
+    // PAGINATION
+    // =========================================================
+
     private void GoToPage(int page)
     {
-        if (page < 1 || page > TotalPages)
+        if (page < 1 ||
+            page > TotalPages)
+        {
             return;
+        }
+
 
         CurrentPage = page;
     }
@@ -622,77 +861,12 @@
     }
 
 
-    private async Task ExportExcel()
-    {
-        var data = PagedCustomers
-            .Where(x => x != null)
-            .ToList();
+    // =========================================================
+    // DEACTIVATE CUSTOMER
+    // =========================================================
 
-
-        if (data.Count == 0)
-            return;
-
-
-        var fileBytes = ExcelExport.Export(
-            data,
-            L["Customers"],
-            $"{L["Customers"]} – {L["Page"]} {CurrentPage}",
-
-            ($"{L["Number"]}", x =>
-                string.IsNullOrWhiteSpace(x.CustomerNumber)
-                    ? $"#{x.Id}"
-                    : x.CustomerNumber),
-
-            ($"{L["Company"]}", x =>
-                x.CompanyName ?? ""),
-
-            ($"{L["ContactPerson"]}", x =>
-                x.ContactPerson ?? ""),
-
-            ($"{L["Email"]}", x =>
-                x.Email ?? ""),
-
-            ($"{L["Phone"]}", x =>
-                x.Phone ?? ""),
-
-            ($"{L["Street"]}", x =>
-                x.Street ?? ""),
-
-            ($"{L["PostalCode"]}", x =>
-                x.PostalCode ?? ""),
-
-            ($"{L["City"]}", x =>
-                x.City ?? ""),
-
-            ($"{L["Country"]}", x =>
-                x.Country ?? ""),
-
-            ($"{L["VatNumber"]}", x =>
-                x.VatNumber ?? ""),
-
-            ($"{L["Status"]}", x =>
-                x.IsActive
-                    ? L["Active"]
-                    : L["Inactive"]),
-
-            ($"{L["Note"]}", x =>
-                x.Note ?? "")
-        );
-
-
-        var base64 =
-            Convert.ToBase64String(fileBytes);
-
-
-        await JS.InvokeVoidAsync(
-            "downloadFile",
-            $"{L["Customers"]}_Seite_{CurrentPage}.xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            base64);
-    }
-
-
-    private async Task DeactivateCustomer(Customer customer)
+    private async Task DeactivateCustomer(
+        Customer customer)
     {
         await using var db =
             await DbFactory.CreateDbContextAsync();
@@ -701,11 +875,15 @@
         var entity =
             await db.Customers
                 .FirstOrDefaultAsync(
-                    x => x.Id == customer.Id);
+                    x =>
+                        x.Id ==
+                        customer.Id);
 
 
         if (entity == null)
+        {
             return;
+        }
 
 
         entity.IsActive = false;
@@ -714,14 +892,190 @@
         await db.SaveChangesAsync();
 
 
+        // Reload FROM DATABASE.
+        //
+        // Current status filter is respected.
+        //
+        // If ACTIVE is selected:
+        // customer disappears.
+        //
+        // If INACTIVE is selected:
+        // customer appears.
+        //
+        // If ALL is selected:
+        // customer appears as inactive.
+
         await LoadCustomers();
     }
 
 
-    private string GetInitials(string? name)
+    // =========================================================
+    // EXCEL EXPORT
+    // =========================================================
+
+    private async Task ExportExcel()
+    {
+        var data =
+            PagedCustomers
+                .Where(x => x != null)
+                .ToList();
+
+
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+
+        var customersText =
+            L["Customers"].Value;
+
+
+        var pageText =
+            L["Page"].Value;
+
+
+        var exportTitle =
+            customersText
+            + " - "
+            + pageText
+            + " "
+            + CurrentPage;
+
+
+        var fileBytes =
+            ExcelExport.Export(
+                data,
+
+                customersText,
+
+                exportTitle,
+
+                (
+                    L["Number"].Value,
+
+                    x =>
+                        string.IsNullOrWhiteSpace(
+                            x.CustomerNumber)
+
+                            ? $"#{x.Id}"
+
+                            : x.CustomerNumber
+                ),
+
+                (
+                    L["Company"].Value,
+
+                    x =>
+                        x.CompanyName ?? ""
+                ),
+
+                (
+                    L["ContactPerson"].Value,
+
+                    x =>
+                        x.ContactPerson ?? ""
+                ),
+
+                (
+                    L["Email"].Value,
+
+                    x =>
+                        x.Email ?? ""
+                ),
+
+                (
+                    L["Phone"].Value,
+
+                    x =>
+                        x.Phone ?? ""
+                ),
+
+                (
+                    L["Street"].Value,
+
+                    x =>
+                        x.Street ?? ""
+                ),
+
+                (
+                    L["PostalCode"].Value,
+
+                    x =>
+                        x.PostalCode ?? ""
+                ),
+
+                (
+                    L["City"].Value,
+
+                    x =>
+                        x.City ?? ""
+                ),
+
+                (
+                    L["Country"].Value,
+
+                    x =>
+                        x.Country ?? ""
+                ),
+
+                (
+                    L["VatNumber"].Value,
+
+                    x =>
+                        x.VatNumber ?? ""
+                ),
+
+                (
+                    L["Status"].Value,
+
+                    x =>
+                        x.IsActive
+                            ? L["Active"].Value
+                            : L["Inactive"].Value
+                ),
+
+                (
+                    L["Note"].Value,
+
+                    x =>
+                        x.Note ?? ""
+                )
+            );
+
+
+        var base64 =
+            Convert.ToBase64String(
+                fileBytes);
+
+
+        await JS.InvokeVoidAsync(
+            "downloadFile",
+
+            customersText
+                + "_"
+                + pageText
+                + "_"
+                + CurrentPage
+                + ".xlsx",
+
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+            base64);
+    }
+
+
+    // =========================================================
+    // INITIALS
+    // =========================================================
+
+    private string GetInitials(
+        string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
+        {
             return "?";
+        }
 
 
         var words =
@@ -744,7 +1098,7 @@
 
         return
             $"{words[0][0]}{words[1][0]}"
-            .ToUpper();
+                .ToUpper();
     }
 
 }

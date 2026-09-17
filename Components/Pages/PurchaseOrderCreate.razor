@@ -87,30 +87,19 @@
                             <span>*</span>
                         </label>
 
-                        <select class="form-control"
-                                value="@Model.SupplierId"
-                                @onchange="OnSupplierChanged">
-
-                            <option value="0">
-                                @L["SelectSupplier"]
-                            </option>
-
-                            @foreach (var supplier in Suppliers)
-                            {
-                                <option value="@supplier.Id">
-
-                                    @supplier.CompanyName
-
-                                    @if (!string.IsNullOrWhiteSpace(
-                                        supplier.SupplierNumber))
-                                    {
-                                        @($" ({supplier.SupplierNumber})")
-                                    }
-
-                                </option>
-                            }
-
-                        </select>
+                       <SearchableSelect TItem="Supplier"
+                  TValue="int"
+                  Items="Suppliers"
+                  Value="Model.SupplierId"
+                  ValueChanged="OnSupplierChanged"
+                  ValueSelector="@(x => x.Id)"
+                  TextSelector="@(x => string.IsNullOrWhiteSpace(x.SupplierNumber)
+                      ? x.CompanyName
+                      : $"{x.CompanyName} ({x.SupplierNumber})")"
+                  Placeholder="@L["SelectSupplier"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  ShowAllOption="false"
+                  AllValue="0" />
 
 
                         @if (Model.SupplierId <= 0 &&
@@ -301,26 +290,17 @@
 
                                         <td>
 
-                                            <select class="form-control"
-                                                    value="@item.ProductId"
-                                                    @onchange="(e) => ProductChanged(item, e)">
-
-                                                <option value="0">
-                                                    @L["SelectProduct"]
-                                                </option>
-
-                                                @foreach (var product in
-                                                    GetAvailableProducts(item))
-                                                {
-                                                    <option value="@product.Id">
-
-                                                        @product.SKU -
-                                                        @product.Name
-
-                                                    </option>
-                                                }
-
-                                            </select>
+                                            <SearchableSelect TItem="Product"
+                  TValue="int"
+                  Items="GetAvailableProducts(item)"
+                  Value="item.ProductId"
+                  ValueChanged="@(value => ProductChanged(item, value))"
+                  ValueSelector="@(x => x.Id)"
+                  TextSelector="@(x => $"{x.SKU} - {x.Name}")"
+                  Placeholder="@L["SelectProduct"]"
+                  NoResultsText="@L["NoResultsFound"]"
+                  ShowAllOption="false"
+                  AllValue="0" />
 
 
                                             @if (item.ProductId <= 0 &&
@@ -696,33 +676,16 @@
     // SUPPLIER CHANGED
     // =========================================================
 
-    private Task OnSupplierChanged(
-        ChangeEventArgs e)
-    {
-        SupplierTouched =
-            true;
+   private Task OnSupplierChanged(int supplierId)
+{
+    SupplierTouched = true;
 
+    Model.SupplierId = supplierId;
 
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var supplierId))
-        {
-            Model.SupplierId =
-                supplierId;
-        }
-        else
-        {
-            Model.SupplierId =
-                0;
-        }
+    ErrorMessage = null;
 
-
-        ErrorMessage =
-            null;
-
-
-        return Task.CompletedTask;
-    }
+    return Task.CompletedTask;
+}
 
 
     // =========================================================
@@ -768,83 +731,56 @@
     // =========================================================
 
     private Task ProductChanged(
-        PurchaseOrderItemModel item,
-        ChangeEventArgs e)
+    PurchaseOrderItemModel item,
+    int productId)
+{
+    item.ProductTouched = true;
+
+    ErrorMessage = null;
+
+    // ==============================================
+    // DUPLICATE PROTECTION
+    // ==============================================
+
+    var alreadySelected =
+        Model.Items.Any(x =>
+            x != item &&
+            x.ProductId == productId);
+
+    if (productId > 0 && alreadySelected)
     {
-        item.ProductTouched =
-            true;
-
-
-        ErrorMessage =
-            null;
-
-
-        if (int.TryParse(
-                e.Value?.ToString(),
-                out var productId))
-        {
-            // ==============================================
-            // DUPLICATE PROTECTION
-            // ==============================================
-
-            var alreadySelected =
-                Model.Items.Any(x =>
-                    x != item
-                    &&
-                    x.ProductId ==
-                        productId);
-
-
-            if (productId > 0 &&
-                alreadySelected)
-            {
-                ErrorMessage =
-                    L["ProductAlreadyAdded"];
-
-                return Task.CompletedTask;
-            }
-
-
-            item.ProductId =
-                productId;
-
-
-            // ==============================================
-            // DEFAULT PURCHASE PRICE
-            // ==============================================
-
-            var product =
-                Products.FirstOrDefault(x =>
-                    x.Id == productId);
-
-
-            if (product != null)
-            {
-                // Only automatically set the price
-                // when the item has no price yet.
-
-                if (item.UnitPrice <= 0)
-                {
-                    item.UnitPrice =
-                        product.PurchasePrice;
-                }
-            }
-        }
-        else
-        {
-            item.ProductId =
-                0;
-
-            item.Quantity =
-                0;
-
-            item.UnitPrice =
-                0;
-        }
-
+        ErrorMessage = L["ProductAlreadyAdded"];
 
         return Task.CompletedTask;
     }
+
+    item.ProductId = productId;
+
+    // ==============================================
+    // DEFAULT PURCHASE PRICE
+    // ==============================================
+
+    var product =
+        Products.FirstOrDefault(x =>
+            x.Id == productId);
+
+    if (product != null)
+    {
+        // Only automatically set the price
+        // when the item has no price yet.
+        if (item.UnitPrice <= 0)
+        {
+            item.UnitPrice = product.PurchasePrice;
+        }
+    }
+    else
+    {
+        item.Quantity = 0;
+        item.UnitPrice = 0;
+    }
+
+    return Task.CompletedTask;
+}
 
 
     // =========================================================

@@ -142,7 +142,7 @@
     <value>Warenausgang</value>
   </data>
   <data name="Transfers" xml:space="preserve">
-    <value>Umlagerung</value>
+    <value>Umlagerungen</value>
   </data>
   <data name="Movements" xml:space="preserve">
     <value>Bewegungen</value>
@@ -181,10 +181,10 @@
     <value>Persönliche Daten</value>
   </data>
   <data name="Users" xml:space="preserve">
-    <value>Benutzerverwaltung</value>
+    <value>Benutzer</value>
   </data>
   <data name="Roles" xml:space="preserve">
-    <value>Rollenverwaltung</value>
+    <value>Rollen</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Abmelden</value>
@@ -280,7 +280,7 @@
     <value>Firmenname ist erforderlich.</value>
   </data>
   <data name="InvalidEmailAddress" xml:space="preserve">
-    <value>Ungültige E-Mail-Adresse.</value>
+    <value>Bitte geben Sie eine gültige E-Mail-Adresse ein.</value>
   </data>
   <data name="InventoryStatusDraft" xml:space="preserve">
     <value>Entwurf</value>
@@ -370,13 +370,13 @@
     <value>Lagerplatz</value>
   </data>
   <data name="Difference" xml:space="preserve">
-    <value>Difference</value>
+    <value>Differenz</value>
   </data>
   <data name="CompleteInventoryQuestion" xml:space="preserve">
     <value>Inventur abschließen?</value>
   </data>
   <data name="CompleteInventoryDescription" xml:space="preserve">
-    <value>Nach dem Abschließen werden die gezählten Mengen als neuer Lagerbestand übernommen.</value>
+    <value>Differenzen werden anschließend automatisch im Lagerbestand korrigiert.</value>
   </data>
   <data name="YesCompleteInventory" xml:space="preserve">
     <value>Ja, Inventur abschließen</value>
@@ -388,7 +388,7 @@
     <value>Fehler beim Laden der Inventur: {0}</value>
   </data>
   <data name="InventoryAlreadyCompleted" xml:space="preserve">
-    <value>Diese Inventur wurde bereits abgeschlossen.</value>
+    <value>Die Inventur wurde bereits abgeschlossen.</value>
   </data>
   <data name="ErrorSavingInventory" xml:space="preserve">
     <value>Fehler beim Speichern: {0}</value>
@@ -433,7 +433,7 @@
     <value>Gesamtbestand</value>
   </data>
   <data name="LowStock" xml:space="preserve">
-    <value>Niedriger Bestand</value>
+    <value>Niedrigbestand</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
     <value>Schnellaktionen</value>
@@ -481,7 +481,7 @@
     <value>Noch keine Lagerbewegungen vorhanden.</value>
   </data>
   <data name="Overview" xml:space="preserve">
-    <value>Übersicht</value>
+    <value>ÜBERSICHT</value>
   </data>
   <data name="CurrentSystemOverview" xml:space="preserve">
     <value>Aktuelle Systemübersicht.</value>
@@ -787,7 +787,7 @@
     <value>Bestand wird geladen...</value>
   </data>
   <data name="NoStockFound" xml:space="preserve">
-    <value>Kein Bestand gefunden</value>
+    <value>Keine Bestände gefunden</value>
   </data>
   <data name="NoStockForCurrentFilters" xml:space="preserve">
     <value>Für die aktuellen Filter wurden keine Bestandsdaten gefunden.</value>
@@ -817,7 +817,7 @@
     <value>Seite {0} von {1}</value>
   </data>
   <data name="EntriesInfo" xml:space="preserve">
-    <value>{0} von {1} Einträgen</value>
+    <value>{0} von {1} Bestellungen</value>
   </data>
   <data name="StockManuallySetToZero" xml:space="preserve">
     <value>Bestand manuell auf 0 gesetzt.</value>
@@ -826,7 +826,7 @@
     <value>Bestand</value>
   </data>
   <data name="Ok" xml:space="preserve">
-    <value>Ok</value>
+    <value>OK</value>
   </data>
   <data name="StockNotFound" xml:space="preserve">
     <value>Bestand nicht gefunden.</value>
@@ -1006,7 +1006,7 @@
     <value>Wareneingang buchen</value>
   </data>
   <data name="PurchaseOrderNotFound" xml:space="preserve">
-    <value>Die Bestellung wurde nicht gefunden.</value>
+    <value>Bestellung nicht gefunden</value>
   </data>
   <data name="NoOpenQuantityForProduct" xml:space="preserve">
     <value>Für dieses Produkt ist in der Bestellung keine offene Menge vorhanden.</value>
@@ -1189,7 +1189,7 @@
     <value>Neuer Lieferant</value>
   </data>
   <data name="SearchSupplierPlaceholder" xml:space="preserve">
-    <value>Lieferant, Ansprechpartner, E-Mail oder Telefonnummer suchen...</value>
+    <value>Lieferant, Nummer, Kontakt oder E-Mail suchen...</value>
   </data>
   <data name="ActiveOnly" xml:space="preserve">
     <value>Nur aktive</value>
@@ -1231,7 +1231,7 @@
     <value>Lieferant wird geladen...</value>
   </data>
   <data name="SupplierNotFound" xml:space="preserve">
-    <value>Lieferant nicht gefunden</value>
+    <value>Lieferant nicht gefunden.</value>
   </data>
   <data name="BackToSuppliers" xml:space="preserve">
     <value>Zurück zu Lieferanten</value>
@@ -1692,1801 +1692,1112 @@
   <data name="PurchaseOrderConfirmationError" xml:space="preserve">
     <value>Fehler beim Bestätigen: {0}</value>
   </data>
-	<data name="CreatePurchaseOrder" xml:space="preserve">
-  <value>Bestellung erstellen</value>
-</data>
-	<data name="CreatePurchaseOrderDescription" xml:space="preserve">
-  <value>Neue Bestellung bei einem Lieferanten erstellen.</value>
-</data>
-	<data name="PurchaseOrder" xml:space="preserve">
-  <value>Bestellung</value>
-</data>
-	<data name="SupplierAndOrderData" xml:space="preserve">
-  <value>Lieferant und Bestelldaten.</value>
-</data>
-	<data name="SelectSupplier" xml:space="preserve">
-  <value>Lieferant auswählen</value>
-</data>
-	<data name="SupplierSelectionRequired" xml:space="preserve">
-  <value>Bitte einen Lieferanten auswählen.</value>
-</data>
-	<data name="PurchaseOrderReferencePlaceholder" xml:space="preserve">
-  <value>z.B. Ihre Referenz</value>
-</data>
-	<data name="AddProductsAndQuantities" xml:space="preserve">
-  <value>Produkte und Mengen hinzufügen.</value>
-</data>
-	<data name="AddProduct" xml:space="preserve">
-  <value>Produkt hinzufügen</value>
-</data>
-	<data name="NoPurchaseOrderItems" xml:space="preserve">
-  <value>Keine Positionen</value>
-</data>
-	<data name="AddAtLeastOneProduct" xml:space="preserve">
-  <value>Fügen Sie mindestens ein Produkt hinzu.</value>
-</data>
-	<data name="SelectProduct" xml:space="preserve">
-  <value>Produkt auswählen</value>
-</data>
-	<data name="ProductSelectionRequired" xml:space="preserve">
-  <value>Bitte ein Produkt auswählen.</value>
-</data>
-	<data name="QuantityMustBeGreaterThanZero" xml:space="preserve">
-  <value>Die Menge muss größer als 0 sein.</value>
-</data>
-	<data name="UnitPriceCannotBeNegative" xml:space="preserve">
-  <value>Der Einzelpreis darf nicht negativ sein.</value>
-</data>
-	<data name="RemoveItem" xml:space="preserve">
-  <value>Position entfernen</value>
-</data>
-	<data name="GrandTotal" xml:space="preserve">
-  <value>Gesamt</value>
-</data>
-	<data name="OptionalPurchaseOrderInformation" xml:space="preserve">
-  <value>Optionale Informationen zur Bestellung.</value>
-</data>
-	<data name="NotePlaceholder" xml:space="preserve">
-  <value>Notiz...</value>
-</data>
-	<data name="ProductAlreadyAdded" xml:space="preserve">
-  <value>Dieses Produkt wurde bereits als Position hinzugefügt.</value>
-</data>
-	<data name="OrderNumberRequired" xml:space="preserve">
-  <value>Bitte eine Bestellnummer eingeben.</value>
-</data>
-	<data name="OrderNumberMaxLength" xml:space="preserve">
-  <value>Die Bestellnummer darf maximal 50 Zeichen lang sein.</value>
-</data>
-	<data name="AtLeastOneProductRequired" xml:space="preserve">
-  <value>Bitte mindestens ein Produkt hinzufügen.</value>
-</data>
-	<data name="ProductRequiredForEveryItem" xml:space="preserve">
-  <value>Bitte für jede Position ein Produkt auswählen.</value>
-</data>
-	<data name="ProductCanOnlyBeAddedOnce" xml:space="preserve">
-  <value>Ein Produkt darf nur einmal als Bestellposition vorhanden sein.</value>
-</data>
-	<data name="SelectedSupplierNotFoundOrInactive" xml:space="preserve">
-  <value>Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.</value>
-</data>
-	<data name="OrderNumberAlreadyExists" xml:space="preserve">
-  <value>Diese Bestellnummer existiert bereits.</value>
-</data>
-	<data name="SelectedProductsNotFoundOrInactive" xml:space="preserve">
-  <value>Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.</value>
-</data>
-	<data name="PurchaseOrderSaveError" xml:space="preserve">
-  <value>Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Bestellnummer und die Daten.</value>
-</data>
-	<data name="PurchaseOrderCreateError" xml:space="preserve">
-  <value>Fehler beim Erstellen der Bestellung: {0}</value>
-</data>
-	<data name="PurchaseOrderDetails" xml:space="preserve">
-  <value>Bestelldetails</value>
-</data>
-	<data name="PurchaseOrderLoading" xml:space="preserve">
-  <value>Bestellung wird geladen...</value>
-</data>
-	<data name="PurchaseOrderNotFound" xml:space="preserve">
-  <value>Bestellung nicht gefunden</value>
-</data>
-	<data name="BackToPurchaseOrders" xml:space="preserve">
-  <value>Zurück zu Bestellungen</value>
-</data>
-	<data name="SupplierPurchaseOrder" xml:space="preserve">
-  <value>Lieferantenbestellung</value>
-</data>
-	<data name="BookIncomingGoods" xml:space="preserve">
-  <value>Wareneingang buchen</value>
-</data>
-	<data name="PurchaseOrderItemsOverview" xml:space="preserve">
-  <value>Übersicht über bestellte und gelieferte Mengen.</value>
-</data>
-	<data name="SupplierOfThisOrder" xml:space="preserve">
-  <value>Lieferant dieser Bestellung.</value>
-</data>
-	<data name="SupplierNotFound" xml:space="preserve">
-  <value>Lieferant nicht gefunden.</value>
-</data>
-	<data name="Ordered" xml:space="preserve">
-  <value>Bestellt</value>
-</data>
-	<data name="Delivered" xml:space="preserve">
-  <value>Geliefert</value>
-</data>
-	<data name="Open" xml:space="preserve">
-  <value>Offen</value>
-</data>
-	<data name="PartiallyDelivered" xml:space="preserve">
-  <value>Teilweise</value>
-</data>
-	<data name="Action" xml:space="preserve">
-  <value>Aktion</value>
-</data>
-	<data name="Incoming" xml:space="preserve">
-  <value>Eingang</value>
-</data>
-	<data name="DeliveryStatus" xml:space="preserve">
-  <value>Lieferstatus</value>
-</data>
-	<data name="CurrentDeliveryProgress" xml:space="preserve">
-  <value>Übersicht über den aktuellen Lieferfortschritt.</value>
-</data>
-	<data name="TotalOrdered" xml:space="preserve">
-  <value>Bestellte Menge</value>
-</data>
-	<data name="TotalDelivered" xml:space="preserve">
-  <value>Gelieferte Menge</value>
-</data>
-	<data name="TotalRemaining" xml:space="preserve">
-  <value>Offene Menge</value>
-</data>
-	<data name="UnitsStillOpen" xml:space="preserve">
-  <value> Einheiten noch offen</value>
-</data>
-	<data name="OpenGoodsCanBeBooked" xml:space="preserve">
-  <value>Die noch offene Ware kann über den Wareneingang ins Lager gebucht werden.</value>
-</data>
-	<data name="PurchaseOrderFullyDelivered" xml:space="preserve">
-  <value>Diese Bestellung wurde vollständig geliefert.</value>
-</data>
-	<data name="Reference" xml:space="preserve">
-  <value>Referenz</value>
-</data>
-	<data name="EditPurchaseOrder" xml:space="preserve">
-  <value>Bestellung bearbeiten</value>
-</data>
-	<data name="EditSupplierAndOrderData" xml:space="preserve">
-  <value>Lieferant und Bestelldaten bearbeiten.</value>
-</data>
-	<data name="PurchaseOrderCannotBeEdited" xml:space="preserve">
-  <value>Bestellung kann nicht bearbeitet werden</value>
-</data>
-	<data name="PurchaseOrderAlreadyHasStatus" xml:space="preserve">
-  <value>Diese Bestellung hat bereits den Status</value>
-</data>
-	<data name="ToPurchaseOrder" xml:space="preserve">
-  <value>Zur Bestellung</value>
-</data>
-	<data name="EditProductsQuantitiesAndPrices" xml:space="preserve">
-  <value>Produkte, Mengen und Preise bearbeiten.</value>
-</data>
-	<data name="AlreadyDelivered" xml:space="preserve">
-  <value>Bereits geliefert</value>
-</data>
-	<data name="PriceCannotBeNegative" xml:space="preserve">
-  <value>Der Preis darf nicht negativ sein.</value>
-</data>
-	<data name="DeliveredItemCannotBeRemoved" xml:space="preserve">
-  <value>Eine bereits gelieferte Position kann nicht entfernt werden.</value>
-</data>
-	<data name="DeliveredItemProductCannotBeChanged" xml:space="preserve">
-  <value>Das Produkt einer bereits gelieferten Position kann nicht geändert werden.</value>
-</data>
-	<data name="AllProductsAlreadyAdded" xml:space="preserve">
-  <value>Alle verfügbaren Produkte wurden bereits hinzugefügt.</value>
-</data>
-	<data name="PurchaseOrderItemNotFound" xml:space="preserve">
-  <value>Eine Bestellposition wurde nicht gefunden.</value>
-</data>
-	<data name="QuantityCannotBeLessThanDelivered" xml:space="preserve">
-  <value>Die Bestellmenge darf nicht kleiner als die bereits gelieferte Menge sein.</value>
-</data>
-	<data name="DeliveredQuantityCannotExceedOrdered" xml:space="preserve">
-  <value>Die gelieferte Menge darf nicht größer als die Bestellmenge sein.</value>
-</data>
-	<data name="PurchaseOrderChangedMeanwhile" xml:space="preserve">
-  <value>Diese Bestellung wurde inzwischen bestätigt und kann nicht mehr bearbeitet werden.</value>
-</data>
-	<data name="PurchaseOrderSaveException" xml:space="preserve">
-  <value>Fehler beim Speichern: {0}</value>
-</data>
-	<data name="ManagePurchaseOrdersDescription" xml:space="preserve">
-  <value>Übersicht und Verwaltung aller Lieferantenbestellungen.</value>
-</data>
-	<data name="CreatePurchaseOrder" xml:space="preserve">
-  <value>Bestellung erstellen</value>
-</data>
-	<data name="SearchPurchaseOrderPlaceholder" xml:space="preserve">
-  <value>Bestellnummer, Lieferant oder Referenz suchen...</value>
-</data>
-	<data name="AllStatuses" xml:space="preserve">
-  <value>Alle Status</value>
-</data>
-	<data name="AllSuppliers" xml:space="preserve">
-  <value>Alle Lieferanten</value>
-</data>
-	<data name="Drafts" xml:space="preserve">
-  <value>Entwürfe</value>
-</data>
-	<data name="TotalValue" xml:space="preserve">
-  <value>Gesamtwert</value>
-</data>
-	<data name="SupplierPurchaseOrders" xml:space="preserve">
-  <value>Lieferantenbestellungen</value>
-</data>
-	<data name="PurchaseOrdersLoading" xml:space="preserve">
-  <value>Bestellungen werden geladen...</value>
-</data>
-	<data name="NoPurchaseOrdersFound" xml:space="preserve">
-  <value>Keine Bestellungen gefunden</value>
-</data>
-	<data name="NoPurchaseOrdersForFilters" xml:space="preserve">
-  <value>Für die gewählten Filter wurden keine Bestellungen gefunden.</value>
-</data>
-	<data name="CreateFirstPurchaseOrder" xml:space="preserve">
-  <value>Erste Bestellung erstellen</value>
-</data>
-	<data name="Confirm" xml:space="preserve">
-  <value>Bestätigen</value>
-</data>
-	<data name="EntriesInfo" xml:space="preserve">
-  <value>{0} von {1} Bestellungen</value>
-</data>
-	<data name="PurchaseOrdersFileName" xml:space="preserve">
-  <value>Lieferantenbestellungen</value>
-</data>
-	<data name="ExcelExportError" xml:space="preserve">
-  <value>Fehler beim Excel-Export</value>
-</data>
-	<data name="RoleManagement" xml:space="preserve">
-  <value>Rollenverwaltung</value>
-</data>
-
-	<data name="ManageRolesAndPermissions" xml:space="preserve">
-  <value>Rollen und Berechtigungen verwalten</value>
-</data>
-
-	<data name="NewRole" xml:space="preserve">
-  <value>Neue Rolle</value>
-</data>
-
-	<data name="SearchRolePlaceholder" xml:space="preserve">
-  <value>Rolle suchen...</value>
-</data>
-
-	<data name="Roles" xml:space="preserve">
-  <value>Rollen</value>
-</data>
-
-	<data name="RolesLoading" xml:space="preserve">
-  <value>Rollen werden geladen...</value>
-</data>
-
-	<data name="NoRolesFound" xml:space="preserve">
-  <value>Keine Rollen gefunden</value>
-</data>
-
-	<data name="NoRolesAvailable" xml:space="preserve">
-  <value>Es wurden keine Rollen gefunden.</value>
-</data>
-
-	<data name="Role" xml:space="preserve">
-  <value>Rolle</value>
-</data>
-
-	<data name="Users" xml:space="preserve">
-  <value>Benutzer</value>
-</data>
-
-	<data name="Created" xml:space="preserve">
-  <value>Erstellt</value>
-</data>
-
-	<data name="EditRole" xml:space="preserve">
-  <value>Rolle bearbeiten</value>
-</data>
-
-	<data name="ChangeRoleName" xml:space="preserve">
-  <value>Namen der Rolle ändern</value>
-</data>
-
-	<data name="CreateNewRole" xml:space="preserve">
-  <value>Neue Rolle anlegen</value>
-</data>
-
-	<data name="RoleName" xml:space="preserve">
-  <value>Rollenname</value>
-</data>
-
-	<data name="RoleNamePlaceholder" xml:space="preserve">
-  <value>z. B. Lagerleiter</value>
-</data>
-
-	<data name="DeleteRole" xml:space="preserve">
-  <value>Rolle löschen</value>
-</data>
-
-	<data name="DeleteRoleCannotBeUndone" xml:space="preserve">
-  <value>Diese Aktion kann nicht rückgängig gemacht werden.</value>
-</data>
-
-	<data name="DeleteRoleQuestion" xml:space="preserve">
-  <value>Möchten Sie die Rolle</value>
-</data>
-
-	<data name="DeleteRoleQuestionEnd" xml:space="preserve">
-  <value>wirklich löschen?</value>
-</data>
-
-	<data name="RoleNameRequired" xml:space="preserve">
-  <value>Rollenname ist erforderlich.</value>
-</data>
-
-	<data name="RoleNameMaxLength" xml:space="preserve">
-  <value>Der Rollenname darf maximal 256 Zeichen lang sein.</value>
-</data>
-
-	<data name="RoleAlreadyExists" xml:space="preserve">
-  <value>Eine Rolle mit diesem Namen existiert bereits.</value>
-</data>
-
-	<data name="RoleNotFound" xml:space="preserve">
-  <value>Rolle wurde nicht gefunden.</value>
-</data>
-
-	<data name="AnotherRoleAlreadyExists" xml:space="preserve">
-  <value>Eine andere Rolle mit diesem Namen existiert bereits.</value>
-</data>
-
-	<data name="RoleNameNotFound" xml:space="preserve">
-  <value>Rollenname wurde nicht gefunden.</value>
-</data>
-
-	<data name="AdminRoleCannotBeDeleted" xml:space="preserve">
-  <value>Die Rolle „Admin“ kann nicht gelöscht werden.</value>
-</data>
-
-	<data name="RoleCannotBeDeletedUsers" xml:space="preserve">
-  <value>Die Rolle kann nicht gelöscht werden, da {0} Benutzer diese Rolle verwenden.</value>
-</data>
-
-	<data name="RoleEntriesInfo" xml:space="preserve">
-  <value>{0} von {1} Einträgen</value>
-</data>
-
-	<data name="RolesFileName" xml:space="preserve">
-  <value>Rollen</value>
-</data>
-	<data name="UserManagement" xml:space="preserve">
-  <value>Benutzerverwaltung</value>
-</data>
-
-	<data name="ManageUsersAndRoles" xml:space="preserve">
-  <value>Benutzer und Rollen verwalten</value>
-</data>
-
-	<data name="NewUser" xml:space="preserve">
-  <value>Neuer Benutzer</value>
-</data>
-
-	<data name="SearchUserPlaceholder" xml:space="preserve">
-  <value>Benutzer, E-Mail oder Rolle suchen...</value>
-</data>
-
-	<data name="UsersLoading" xml:space="preserve">
-  <value>Benutzer werden geladen...</value>
-</data>
-
-	<data name="NoUsersFound" xml:space="preserve">
-  <value>Keine Benutzer gefunden</value>
-</data>
-
-	<data name="NoUsersAvailable" xml:space="preserve">
-  <value>Es wurden keine Benutzer gefunden.</value>
-</data>
-
-	<data name="User" xml:space="preserve">
-  <value>Benutzer</value>
-</data>
-
-	<data name="Roles" xml:space="preserve">
-  <value>Rollen</value>
-</data>
-
-	<data name="NoRole" xml:space="preserve">
-  <value>Keine Rolle</value>
-</data>
-
-	<data name="EditUser" xml:space="preserve">
-  <value>Benutzer bearbeiten</value>
-</data>
-
-	<data name="ChangeUserDataAndRole" xml:space="preserve">
-  <value>Benutzerdaten und Rolle ändern</value>
-</data>
-
-	<data name="CreateNewUser" xml:space="preserve">
-  <value>Neuen Benutzer anlegen</value>
-</data>
-
-	<data name="Username" xml:space="preserve">
-  <value>Benutzername</value>
-</data>
-
-	<data name="Password" xml:space="preserve">
-  <value>Passwort</value>
-</data>
-
-	<data name="Role" xml:space="preserve">
-  <value>Rolle</value>
-</data>
-
-	<data name="UserIsActive" xml:space="preserve">
-  <value>Benutzer ist aktiv</value>
-</data>
-
-	<data name="DeleteUser" xml:space="preserve">
-  <value>Benutzer löschen</value>
-</data>
-
-	<data name="DeleteUserCannotBeUndone" xml:space="preserve">
-  <value>Diese Aktion kann nicht rückgängig gemacht werden.</value>
-</data>
-
-	<data name="DeleteUserQuestion" xml:space="preserve">
-  <value>Möchten Sie den Benutzer</value>
-</data>
-
-	<data name="DeleteUserQuestionEnd" xml:space="preserve">
-  <value>wirklich löschen?</value>
-</data>
-
-	<data name="UsernameRequired" xml:space="preserve">
-  <value>Benutzername ist erforderlich.</value>
-</data>
-
-	<data name="PasswordRequired" xml:space="preserve">
-  <value>Passwort ist erforderlich.</value>
-</data>
-
-	<data name="UserNotFound" xml:space="preserve">
-  <value>Benutzer wurde nicht gefunden.</value>
-</data>
-
-	<data name="CannotDeleteOwnUser" xml:space="preserve">
-  <value>Sie können Ihren eigenen Benutzer nicht löschen.</value>
-</data>
-
-	<data name="EmailConfirmed" xml:space="preserve">
-  <value>E-Mail bestätigt</value>
-</data>
-
-	<data name="UserEntriesInfo" xml:space="preserve">
-  <value>{0} von {1} Einträgen</value>
-</data>
-
-	<data name="UsersFileName" xml:space="preserve">
-  <value>Benutzer</value>
-</data>
-	<data name="Login" xml:space="preserve">
-  <value>Anmelden</value>
-</data>
-
-	<data name="WarehouseManagement" xml:space="preserve">
-  <value>Lagerverwaltung</value>
-</data>
-
-	<data name="WelcomeBack" xml:space="preserve">
-  <value>Willkommen zurück</value>
-</data>
-
-	<data name="LoginToContinue" xml:space="preserve">
-  <value>Melden Sie sich an, um fortzufahren.</value>
-</data>
-
-	<data name="EmailAddressPlaceholder" xml:space="preserve">
-  <value>E-Mail-Adresse</value>
-</data>
-
-	<data name="PasswordPlaceholder" xml:space="preserve">
-  <value>Passwort</value>
-</data>
-
-	<data name="RememberMe" xml:space="preserve">
-  <value>Angemeldet bleiben</value>
-</data>
-
-	<data name="LoginButton" xml:space="preserve">
-  <value>Anmelden</value>
-</data>
-
-	<data name="Or" xml:space="preserve">
-  <value>ODER</value>
-</data>
-
-	<data name="ForgotPassword" xml:space="preserve">
-  <value>Passwort vergessen?</value>
-</data>
-
-	<data name="InvalidLogin" xml:space="preserve">
-  <value>Fehler: E-Mail oder Passwort ist falsch.</value>
-</data>
-
-	<data name="PasskeyError" xml:space="preserve">
-  <value>Fehler: {0}</value>
-</data>
-
-	<data name="EmailRequired" xml:space="preserve">
-  <value>E-Mail ist erforderlich.</value>
-</data>
-
-	<data name="InvalidEmailAddress" xml:space="preserve">
-  <value>Bitte geben Sie eine gültige E-Mail-Adresse ein.</value>
-</data>
-
-	<data name="PasswordRequired" xml:space="preserve">
-  <value>Passwort ist erforderlich.</value>
-</data>
-	<data name="PersonalData" xml:space="preserve">
-  <value>Persönliche Daten</value>
-</data>
-
-	<data name="ManagePersonalDataDescription" xml:space="preserve">
-  <value>Verwalten Sie die persönlichen Daten Ihres Kontos.</value>
-</data>
-
-	<data name="YourPersonalData" xml:space="preserve">
-  <value>Ihre persönlichen Daten</value>
-</data>
-
-	<data name="PersonalDataActionsDescription" xml:space="preserve">
-  <value>Sie können Ihre gespeicherten Daten herunterladen oder Ihr Konto löschen.</value>
-</data>
-
-	<data name="PersonalDataInformation" xml:space="preserve">
-  <value>Ihr Konto enthält persönliche Daten, die Sie uns zur Verfügung gestellt haben. Auf dieser Seite können Sie diese Daten herunterladen oder Ihr Konto löschen.</value>
-</data>
-
-	<data name="Warning" xml:space="preserve">
-  <value>Achtung:</value>
-</data>
-
-	<data name="DeleteAccountWarning" xml:space="preserve">
-  <value>Das Löschen dieser Daten entfernt Ihr Konto dauerhaft. Dieser Vorgang kann nicht rückgängig gemacht werden.</value>
-</data>
-
-	<data name="DownloadPersonalData" xml:space="preserve">
-  <value>Daten herunterladen</value>
-</data>
-
-	<data name="DeleteAccount" xml:space="preserve">
-  <value>Konto löschen</value>
-</data>
-	<data name="ChangeEmail" xml:space="preserve">
-  <value>E-Mail ändern</value>
-</data>
-
-	<data name="ManageAndChangeEmailDescription" xml:space="preserve">
-  <value>Verwalten und ändern Sie Ihre E-Mail-Adresse.</value>
-</data>
-
-	<data name="EmailAddress" xml:space="preserve">
-  <value>E-Mail-Adresse</value>
-</data>
-
-	<data name="CurrentAndNewEmailDescription" xml:space="preserve">
-  <value>Ihre aktuelle E-Mail-Adresse und die neue E-Mail-Adresse.</value>
-</data>
-
-	<data name="CurrentEmailAddress" xml:space="preserve">
-  <value>Aktuelle E-Mail-Adresse</value>
-</data>
-
-	<data name="EmailAddressPlaceholder" xml:space="preserve">
-  <value>E-Mail-Adresse</value>
-</data>
-
-	<data name="Confirmed" xml:space="preserve">
-  <value>Bestätigt</value>
-</data>
-
-	<data name="SendConfirmationEmail" xml:space="preserve">
-  <value>Bestätigungs-E-Mail senden</value>
-</data>
-
-	<data name="NewEmailAddress" xml:space="preserve">
-  <value>Neue E-Mail-Adresse</value>
-</data>
-
-	<data name="NewEmailAddressPlaceholder" xml:space="preserve">
-  <value>Neue E-Mail-Adresse</value>
-</data>
-
-	<data name="ChangeEmailButton" xml:space="preserve">
-  <value>E-Mail ändern</value>
-</data>
-
-	<data name="EmailNotChanged" xml:space="preserve">
-  <value>Ihre E-Mail-Adresse wurde nicht geändert.</value>
-</data>
-
-	<data name="NewEmailConfirmationSent" xml:space="preserve">
-  <value>Der Bestätigungslink wurde an Ihre neue E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.</value>
-</data>
-
-	<data name="EmailConfirmationSent" xml:space="preserve">
-  <value>Die Bestätigungs-E-Mail wurde gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.</value>
-</data>
-
-	<data name="NewEmailRequired" xml:space="preserve">
-  <value>Die neue E-Mail-Adresse ist erforderlich.</value>
-</data>
-	<data name="ChangePassword" xml:space="preserve">
-  <value>Passwort ändern</value>
-</data>
-
-	<data name="ChangeCurrentPasswordDescription" xml:space="preserve">
-  <value>Ändern Sie hier Ihr aktuelles Passwort.</value>
-</data>
-
-	<data name="ChangePasswordDescription" xml:space="preserve">
-  <value>Geben Sie Ihr aktuelles und anschließend Ihr neues Passwort ein.</value>
-</data>
-
-	<data name="CurrentPassword" xml:space="preserve">
-  <value>Aktuelles Passwort</value>
-</data>
-
-	<data name="CurrentPasswordPlaceholder" xml:space="preserve">
-  <value>Aktuelles Passwort</value>
-</data>
-
-	<data name="NewPassword" xml:space="preserve">
-  <value>Neues Passwort</value>
-</data>
-
-	<data name="NewPasswordPlaceholder" xml:space="preserve">
-  <value>Neues Passwort</value>
-</data>
-
-	<data name="ConfirmNewPassword" xml:space="preserve">
-  <value>Neues Passwort bestätigen</value>
-</data>
-
-	<data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
-  <value>Neues Passwort erneut eingeben</value>
-</data>
-
-	<data name="ChangePasswordButton" xml:space="preserve">
-  <value>Passwort ändern</value>
-</data>
-
-	<data name="PasswordChangeError" xml:space="preserve">
-  <value>Fehler: {0}</value>
-</data>
-
-	<data name="PasswordChangedSuccessfully" xml:space="preserve">
-  <value>Ihr Passwort wurde erfolgreich geändert.</value>
-</data>
-
-	<data name="CurrentPasswordRequired" xml:space="preserve">
-  <value>Das aktuelle Passwort ist erforderlich.</value>
-</data>
-
-	<data name="NewPasswordRequired" xml:space="preserve">
-  <value>Das neue Passwort ist erforderlich.</value>
-</data>
-
-	<data name="PasswordLength" xml:space="preserve">
-  <value>Das Passwort muss mindestens {2} und maximal {1} Zeichen lang sein.</value>
-</data>
-
-	<data name="PasswordsDoNotMatch" xml:space="preserve">
-  <value>Das neue Passwort und die Bestätigung stimmen nicht überein.</value>
-</data>
-	<data name="Profile" xml:space="preserve">
-  <value>Profil</value>
-</data>
-
-	<data name="ManagePersonalAccountInformation" xml:space="preserve">
-  <value>Verwalten Sie Ihre persönlichen Kontoinformationen.</value>
-</data>
-
-	<data name="AccountInformation" xml:space="preserve">
-  <value>Kontoinformationen</value>
-</data>
-
-	<data name="BasicAccountData" xml:space="preserve">
-  <value>Ihre grundlegenden Kontodaten</value>
-</data>
-
-	<data name="Username" xml:space="preserve">
-  <value>Benutzername</value>
-</data>
-
-	<data name="Phone" xml:space="preserve">
-  <value>Telefonnummer</value>
-</data>
-
-	<data name="PhoneSaveError" xml:space="preserve">
-  <value>Fehler: Telefonnummer konnte nicht gespeichert werden.</value>
-</data>
-
-	<data name="ProfileUpdatedSuccessfully" xml:space="preserve">
-  <value>Ihr Profil wurde erfolgreich aktualisiert.</value>
-</data>
-
-	<data name="InvalidPhoneNumber" xml:space="preserve">
-  <value>Bitte geben Sie eine gültige Telefonnummer ein.</value>
-</data>
-	<data name="OpenMenu" xml:space="preserve">
-  <value>Menü öffnen</value>
-</data>
-
-	<data name="German" xml:space="preserve">
-  <value>Deutsch</value>
-</data>
-
-	<data name="Macedonian" xml:space="preserve">
-  <value>Mazedonisch</value>
-</data>
-
-	<data name="Croatian" xml:space="preserve">
-  <value>Kroatisch</value>
-</data>
-
-	<data name="English" xml:space="preserve">
-  <value>Englisch</value>
-</data>
-
-	<data name="Logout" xml:space="preserve">
-  <value>Abmelden</value>
-</data>
-
-	<data name="UnhandledError" xml:space="preserve">
-  <value>Ein unbehandelter Fehler ist aufgetreten.</value>
-</data>
-
-	<data name="Reload" xml:space="preserve">
-  <value>Neu laden</value>
-</data>
-	<data name="Reports" xml:space="preserve">
-  <value>Berichte</value>
-</data>
-
-	<data name="ReportsOverviewDescription" xml:space="preserve">
-  <value>Übersicht und Auswertungen Ihrer Lagerverwaltung</value>
-</data>
-
-	<data name="AvailableReports" xml:space="preserve">
-  <value>Verfügbare Berichte</value>
-</data>
-
-	<data name="AvailableReportsDescription" xml:space="preserve">
-  <value>Wählen Sie einen Bericht aus, um die entsprechenden Lagerdaten auszuwerten.</value>
-</data>
-
-	<data name="StockReport" xml:space="preserve">
-  <value>Bestandsbericht</value>
-</data>
-
-	<data name="StockReportDescription" xml:space="preserve">
-  <value>Aktuellen Lagerbestand nach Produkt, Lager und Lagerplatz anzeigen.</value>
-</data>
-
-	<data name="InventoryReport" xml:space="preserve">
-  <value>Inventurbericht</value>
-</data>
-
-	<data name="InventoryReportDescription" xml:space="preserve">
-  <value>Inventuren, gezählte Mengen und Bestandsabweichungen auswerten.</value>
-</data>
-
-	<data name="StockMovementsReport" xml:space="preserve">
-  <value>Warenbewegungen</value>
-</data>
-
-	<data name="StockMovementsReportDescription" xml:space="preserve">
-  <value>Wareneingänge, Warenausgänge und Umlagerungen analysieren.</value>
-</data>
-
-	<data name="SupplierReport" xml:space="preserve">
-  <value>Lieferantenbericht</value>
-</data>
-
-	<data name="SupplierReportDescription" xml:space="preserve">
-  <value>Lieferanten, Wareneingänge und Warenbewegungen nach Lieferant auswerten.</value>
-</data>
-
-	<data name="LowStockReport" xml:space="preserve">
-  <value>Niedrigbestand</value>
-</data>
-
-	<data name="LowStockReportDescription" xml:space="preserve">
-  <value>Produkte mit niedrigem oder kritischem Lagerbestand anzeigen.</value>
-</data>
-
-	<data name="StockValueReport" xml:space="preserve">
-  <value>Lagerwert</value>
-</data>
-
-	<data name="StockValueReportDescription" xml:space="preserve">
-  <value>Gesamtwert des aktuellen Lagerbestands auswerten.</value>
-</data>
-
-	<data name="ProductReport" xml:space="preserve">
-  <value>Produktbericht</value>
-</data>
-
-	<data name="ProductReportDescription" xml:space="preserve">
-  <value>Bestände und Bewegungen einzelner Produkte analysieren.</value>
-</data>
-	<data name="Inventories" xml:space="preserve">
-  <value>Inventuren</value>
-</data>
-
-	<data name="InventoriesOverviewDescription" xml:space="preserve">
-  <value>Übersicht und Verwaltung der Inventuren</value>
-</data>
-
-	<data name="ExportToExcel" xml:space="preserve">
-  <value>Excel exportieren</value>
-</data>
-
-	<data name="NewInventory" xml:space="preserve">
-  <value>Neue Inventur</value>
-</data>
-
-	<data name="SearchInventoryPlaceholder" xml:space="preserve">
-  <value>Lager, Status oder Notiz suchen...</value>
-</data>
-
-	<data name="AllStatuses" xml:space="preserve">
-  <value>Alle Status</value>
-</data>
-
-	<data name="Draft" xml:space="preserve">
+  <data name="CreatePurchaseOrder" xml:space="preserve">
+    <value>Bestellung erstellen</value>
+  </data>
+  <data name="CreatePurchaseOrderDescription" xml:space="preserve">
+    <value>Neue Bestellung bei einem Lieferanten erstellen.</value>
+  </data>
+  <data name="SupplierAndOrderData" xml:space="preserve">
+    <value>Lieferant und Bestelldaten.</value>
+  </data>
+  <data name="PurchaseOrderReferencePlaceholder" xml:space="preserve">
+    <value>z.B. Ihre Referenz</value>
+  </data>
+  <data name="AddProductsAndQuantities" xml:space="preserve">
+    <value>Produkte und Mengen hinzufügen.</value>
+  </data>
+  <data name="AddAtLeastOneProduct" xml:space="preserve">
+    <value>Fügen Sie mindestens ein Produkt hinzu.</value>
+  </data>
+  <data name="GrandTotal" xml:space="preserve">
+    <value>Gesamt</value>
+  </data>
+  <data name="OptionalPurchaseOrderInformation" xml:space="preserve">
+    <value>Optionale Informationen zur Bestellung.</value>
+  </data>
+  <data name="ProductAlreadyAdded" xml:space="preserve">
+    <value>Dieses Produkt wurde bereits als Position hinzugefügt.</value>
+  </data>
+  <data name="OrderNumberRequired" xml:space="preserve">
+    <value>Bitte eine Bestellnummer eingeben.</value>
+  </data>
+  <data name="OrderNumberMaxLength" xml:space="preserve">
+    <value>Die Bestellnummer darf maximal 50 Zeichen lang sein.</value>
+  </data>
+  <data name="AtLeastOneProductRequired" xml:space="preserve">
+    <value>Bitte mindestens ein Produkt hinzufügen.</value>
+  </data>
+  <data name="ProductRequiredForEveryItem" xml:space="preserve">
+    <value>Bitte für jede Position ein Produkt auswählen.</value>
+  </data>
+  <data name="ProductCanOnlyBeAddedOnce" xml:space="preserve">
+    <value>Ein Produkt darf nur einmal als Bestellposition vorhanden sein.</value>
+  </data>
+  <data name="SelectedSupplierNotFoundOrInactive" xml:space="preserve">
+    <value>Der ausgewählte Lieferant wurde nicht gefunden oder ist deaktiviert.</value>
+  </data>
+  <data name="OrderNumberAlreadyExists" xml:space="preserve">
+    <value>Diese Bestellnummer existiert bereits.</value>
+  </data>
+  <data name="SelectedProductsNotFoundOrInactive" xml:space="preserve">
+    <value>Mindestens ein ausgewähltes Produkt wurde nicht gefunden oder ist deaktiviert.</value>
+  </data>
+  <data name="PurchaseOrderSaveError" xml:space="preserve">
+    <value>Die Bestellung konnte nicht gespeichert werden. Bitte prüfen Sie die Bestellnummer und die Daten.</value>
+  </data>
+  <data name="PurchaseOrderCreateError" xml:space="preserve">
+    <value>Fehler beim Erstellen der Bestellung: {0}</value>
+  </data>
+  <data name="PurchaseOrderDetails" xml:space="preserve">
+    <value>Bestelldetails</value>
+  </data>
+  <data name="PurchaseOrderLoading" xml:space="preserve">
+    <value>Bestellung wird geladen...</value>
+  </data>
+  <data name="BackToPurchaseOrders" xml:space="preserve">
+    <value>Zurück zu Bestellungen</value>
+  </data>
+  <data name="SupplierPurchaseOrder" xml:space="preserve">
+    <value>Lieferantenbestellung</value>
+  </data>
+  <data name="PurchaseOrderItemsOverview" xml:space="preserve">
+    <value>Übersicht über bestellte und gelieferte Mengen.</value>
+  </data>
+  <data name="SupplierOfThisOrder" xml:space="preserve">
+    <value>Lieferant dieser Bestellung.</value>
+  </data>
+  <data name="Delivered" xml:space="preserve">
+    <value>Geliefert</value>
+  </data>
+  <data name="PartiallyDelivered" xml:space="preserve">
+    <value>Teilweise</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Aktion</value>
+  </data>
+  <data name="Incoming" xml:space="preserve">
+    <value>Eingang</value>
+  </data>
+  <data name="DeliveryStatus" xml:space="preserve">
+    <value>Lieferstatus</value>
+  </data>
+  <data name="CurrentDeliveryProgress" xml:space="preserve">
+    <value>Übersicht über den aktuellen Lieferfortschritt.</value>
+  </data>
+  <data name="TotalOrdered" xml:space="preserve">
+    <value>Bestellte Menge</value>
+  </data>
+  <data name="TotalDelivered" xml:space="preserve">
+    <value>Gelieferte Menge</value>
+  </data>
+  <data name="TotalRemaining" xml:space="preserve">
+    <value>Offene Menge</value>
+  </data>
+  <data name="UnitsStillOpen" xml:space="preserve">
+    <value> Einheiten noch offen</value>
+  </data>
+  <data name="OpenGoodsCanBeBooked" xml:space="preserve">
+    <value>Die noch offene Ware kann über den Wareneingang ins Lager gebucht werden.</value>
+  </data>
+  <data name="PurchaseOrderFullyDelivered" xml:space="preserve">
+    <value>Diese Bestellung wurde vollständig geliefert.</value>
+  </data>
+  <data name="EditPurchaseOrder" xml:space="preserve">
+    <value>Bestellung bearbeiten</value>
+  </data>
+  <data name="EditSupplierAndOrderData" xml:space="preserve">
+    <value>Lieferant und Bestelldaten bearbeiten.</value>
+  </data>
+  <data name="PurchaseOrderCannotBeEdited" xml:space="preserve">
+    <value>Bestellung kann nicht bearbeitet werden</value>
+  </data>
+  <data name="PurchaseOrderAlreadyHasStatus" xml:space="preserve">
+    <value>Diese Bestellung hat bereits den Status</value>
+  </data>
+  <data name="EditProductsQuantitiesAndPrices" xml:space="preserve">
+    <value>Produkte, Mengen und Preise bearbeiten.</value>
+  </data>
+  <data name="PriceCannotBeNegative" xml:space="preserve">
+    <value>Der Preis darf nicht negativ sein.</value>
+  </data>
+  <data name="DeliveredItemCannotBeRemoved" xml:space="preserve">
+    <value>Eine bereits gelieferte Position kann nicht entfernt werden.</value>
+  </data>
+  <data name="DeliveredItemProductCannotBeChanged" xml:space="preserve">
+    <value>Das Produkt einer bereits gelieferten Position kann nicht geändert werden.</value>
+  </data>
+  <data name="AllProductsAlreadyAdded" xml:space="preserve">
+    <value>Alle verfügbaren Produkte wurden bereits hinzugefügt.</value>
+  </data>
+  <data name="PurchaseOrderItemNotFound" xml:space="preserve">
+    <value>Eine Bestellposition wurde nicht gefunden.</value>
+  </data>
+  <data name="QuantityCannotBeLessThanDelivered" xml:space="preserve">
+    <value>Die Bestellmenge darf nicht kleiner als die bereits gelieferte Menge sein.</value>
+  </data>
+  <data name="DeliveredQuantityCannotExceedOrdered" xml:space="preserve">
+    <value>Die gelieferte Menge darf nicht größer als die Bestellmenge sein.</value>
+  </data>
+  <data name="PurchaseOrderChangedMeanwhile" xml:space="preserve">
+    <value>Diese Bestellung wurde inzwischen bestätigt und kann nicht mehr bearbeitet werden.</value>
+  </data>
+  <data name="PurchaseOrderSaveException" xml:space="preserve">
+    <value>Fehler beim Speichern: {0}</value>
+  </data>
+  <data name="ManagePurchaseOrdersDescription" xml:space="preserve">
+    <value>Übersicht und Verwaltung aller Lieferantenbestellungen.</value>
+  </data>
+  <data name="SearchPurchaseOrderPlaceholder" xml:space="preserve">
+    <value>Bestellnummer, Lieferant oder Referenz suchen...</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>Entwürfe</value>
+  </data>
+  <data name="TotalValue" xml:space="preserve">
+    <value>Gesamtwert</value>
+  </data>
+  <data name="SupplierPurchaseOrders" xml:space="preserve">
+    <value>Lieferantenbestellungen</value>
+  </data>
+  <data name="PurchaseOrdersLoading" xml:space="preserve">
+    <value>Bestellungen werden geladen...</value>
+  </data>
+  <data name="NoPurchaseOrdersFound" xml:space="preserve">
+    <value>Keine Bestellungen gefunden</value>
+  </data>
+  <data name="NoPurchaseOrdersForFilters" xml:space="preserve">
+    <value>Für die gewählten Filter wurden keine Bestellungen gefunden.</value>
+  </data>
+  <data name="CreateFirstPurchaseOrder" xml:space="preserve">
+    <value>Erste Bestellung erstellen</value>
+  </data>
+  <data name="PurchaseOrdersFileName" xml:space="preserve">
+    <value>Lieferantenbestellungen</value>
+  </data>
+  <data name="ExcelExportError" xml:space="preserve">
+    <value>Fehler beim Excel-Export</value>
+  </data>
+  <data name="RoleManagement" xml:space="preserve">
+    <value>Rollenverwaltung</value>
+  </data>
+  <data name="ManageRolesAndPermissions" xml:space="preserve">
+    <value>Rollen und Berechtigungen verwalten</value>
+  </data>
+  <data name="NewRole" xml:space="preserve">
+    <value>Neue Rolle</value>
+  </data>
+  <data name="SearchRolePlaceholder" xml:space="preserve">
+    <value>Rolle suchen...</value>
+  </data>
+  <data name="RolesLoading" xml:space="preserve">
+    <value>Rollen werden geladen...</value>
+  </data>
+  <data name="NoRolesFound" xml:space="preserve">
+    <value>Keine Rollen gefunden</value>
+  </data>
+  <data name="NoRolesAvailable" xml:space="preserve">
+    <value>Es wurden keine Rollen gefunden.</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rolle</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Erstellt</value>
+  </data>
+  <data name="EditRole" xml:space="preserve">
+    <value>Rolle bearbeiten</value>
+  </data>
+  <data name="ChangeRoleName" xml:space="preserve">
+    <value>Namen der Rolle ändern</value>
+  </data>
+  <data name="CreateNewRole" xml:space="preserve">
+    <value>Neue Rolle anlegen</value>
+  </data>
+  <data name="RoleName" xml:space="preserve">
+    <value>Rollenname</value>
+  </data>
+  <data name="RoleNamePlaceholder" xml:space="preserve">
+    <value>z. B. Lagerleiter</value>
+  </data>
+  <data name="DeleteRole" xml:space="preserve">
+    <value>Rolle löschen</value>
+  </data>
+  <data name="DeleteRoleCannotBeUndone" xml:space="preserve">
+    <value>Diese Aktion kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="DeleteRoleQuestion" xml:space="preserve">
+    <value>Möchten Sie die Rolle</value>
+  </data>
+  <data name="DeleteRoleQuestionEnd" xml:space="preserve">
+    <value>wirklich löschen?</value>
+  </data>
+  <data name="RoleNameRequired" xml:space="preserve">
+    <value>Rollenname ist erforderlich.</value>
+  </data>
+  <data name="RoleNameMaxLength" xml:space="preserve">
+    <value>Der Rollenname darf maximal 256 Zeichen lang sein.</value>
+  </data>
+  <data name="RoleAlreadyExists" xml:space="preserve">
+    <value>Eine Rolle mit diesem Namen existiert bereits.</value>
+  </data>
+  <data name="RoleNotFound" xml:space="preserve">
+    <value>Rolle wurde nicht gefunden.</value>
+  </data>
+  <data name="AnotherRoleAlreadyExists" xml:space="preserve">
+    <value>Eine andere Rolle mit diesem Namen existiert bereits.</value>
+  </data>
+  <data name="RoleNameNotFound" xml:space="preserve">
+    <value>Rollenname wurde nicht gefunden.</value>
+  </data>
+  <data name="AdminRoleCannotBeDeleted" xml:space="preserve">
+    <value>Die Rolle „Admin“ kann nicht gelöscht werden.</value>
+  </data>
+  <data name="RoleCannotBeDeletedUsers" xml:space="preserve">
+    <value>Die Rolle kann nicht gelöscht werden, da {0} Benutzer diese Rolle verwenden.</value>
+  </data>
+  <data name="RoleEntriesInfo" xml:space="preserve">
+    <value>{0} von {1} Einträgen</value>
+  </data>
+  <data name="RolesFileName" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>Benutzerverwaltung</value>
+  </data>
+  <data name="ManageUsersAndRoles" xml:space="preserve">
+    <value>Benutzer und Rollen verwalten</value>
+  </data>
+  <data name="NewUser" xml:space="preserve">
+    <value>Neuer Benutzer</value>
+  </data>
+  <data name="SearchUserPlaceholder" xml:space="preserve">
+    <value>Benutzer, E-Mail oder Rolle suchen...</value>
+  </data>
+  <data name="UsersLoading" xml:space="preserve">
+    <value>Benutzer werden geladen...</value>
+  </data>
+  <data name="NoUsersFound" xml:space="preserve">
+    <value>Keine Benutzer gefunden</value>
+  </data>
+  <data name="NoUsersAvailable" xml:space="preserve">
+    <value>Es wurden keine Benutzer gefunden.</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Keine Rolle</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Benutzer bearbeiten</value>
+  </data>
+  <data name="ChangeUserDataAndRole" xml:space="preserve">
+    <value>Benutzerdaten und Rolle ändern</value>
+  </data>
+  <data name="CreateNewUser" xml:space="preserve">
+    <value>Neuen Benutzer anlegen</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="UserIsActive" xml:space="preserve">
+    <value>Benutzer ist aktiv</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Benutzer löschen</value>
+  </data>
+  <data name="DeleteUserCannotBeUndone" xml:space="preserve">
+    <value>Diese Aktion kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="DeleteUserQuestion" xml:space="preserve">
+    <value>Möchten Sie den Benutzer</value>
+  </data>
+  <data name="DeleteUserQuestionEnd" xml:space="preserve">
+    <value>wirklich löschen?</value>
+  </data>
+  <data name="UsernameRequired" xml:space="preserve">
+    <value>Benutzername ist erforderlich.</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Passwort ist erforderlich.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Benutzer wurde nicht gefunden.</value>
+  </data>
+  <data name="CannotDeleteOwnUser" xml:space="preserve">
+    <value>Sie können Ihren eigenen Benutzer nicht löschen.</value>
+  </data>
+  <data name="EmailConfirmed" xml:space="preserve">
+    <value>E-Mail bestätigt</value>
+  </data>
+  <data name="UserEntriesInfo" xml:space="preserve">
+    <value>{0} von {1} Einträgen</value>
+  </data>
+  <data name="UsersFileName" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="WarehouseManagement" xml:space="preserve">
+    <value>Lagerverwaltung</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Willkommen zurück</value>
+  </data>
+  <data name="LoginToContinue" xml:space="preserve">
+    <value>Melden Sie sich an, um fortzufahren.</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>E-Mail-Adresse</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Angemeldet bleiben</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>ODER</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Passwort vergessen?</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Fehler: E-Mail oder Passwort ist falsch.</value>
+  </data>
+  <data name="PasskeyError" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-Mail ist erforderlich.</value>
+  </data>
+  <data name="ManagePersonalDataDescription" xml:space="preserve">
+    <value>Verwalten Sie die persönlichen Daten Ihres Kontos.</value>
+  </data>
+  <data name="YourPersonalData" xml:space="preserve">
+    <value>Ihre persönlichen Daten</value>
+  </data>
+  <data name="PersonalDataActionsDescription" xml:space="preserve">
+    <value>Sie können Ihre gespeicherten Daten herunterladen oder Ihr Konto löschen.</value>
+  </data>
+  <data name="PersonalDataInformation" xml:space="preserve">
+    <value>Ihr Konto enthält persönliche Daten, die Sie uns zur Verfügung gestellt haben. Auf dieser Seite können Sie diese Daten herunterladen oder Ihr Konto löschen.</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Achtung:</value>
+  </data>
+  <data name="DeleteAccountWarning" xml:space="preserve">
+    <value>Das Löschen dieser Daten entfernt Ihr Konto dauerhaft. Dieser Vorgang kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="DownloadPersonalData" xml:space="preserve">
+    <value>Daten herunterladen</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Konto löschen</value>
+  </data>
+  <data name="ManageAndChangeEmailDescription" xml:space="preserve">
+    <value>Verwalten und ändern Sie Ihre E-Mail-Adresse.</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>E-Mail-Adresse</value>
+  </data>
+  <data name="CurrentAndNewEmailDescription" xml:space="preserve">
+    <value>Ihre aktuelle E-Mail-Adresse und die neue E-Mail-Adresse.</value>
+  </data>
+  <data name="CurrentEmailAddress" xml:space="preserve">
+    <value>Aktuelle E-Mail-Adresse</value>
+  </data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>Bestätigt</value>
+  </data>
+  <data name="SendConfirmationEmail" xml:space="preserve">
+    <value>Bestätigungs-E-Mail senden</value>
+  </data>
+  <data name="NewEmailAddress" xml:space="preserve">
+    <value>Neue E-Mail-Adresse</value>
+  </data>
+  <data name="NewEmailAddressPlaceholder" xml:space="preserve">
+    <value>Neue E-Mail-Adresse</value>
+  </data>
+  <data name="ChangeEmailButton" xml:space="preserve">
+    <value>E-Mail ändern</value>
+  </data>
+  <data name="EmailNotChanged" xml:space="preserve">
+    <value>Ihre E-Mail-Adresse wurde nicht geändert.</value>
+  </data>
+  <data name="NewEmailConfirmationSent" xml:space="preserve">
+    <value>Der Bestätigungslink wurde an Ihre neue E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.</value>
+  </data>
+  <data name="EmailConfirmationSent" xml:space="preserve">
+    <value>Die Bestätigungs-E-Mail wurde gesendet. Bitte überprüfen Sie Ihr E-Mail-Postfach.</value>
+  </data>
+  <data name="NewEmailRequired" xml:space="preserve">
+    <value>Die neue E-Mail-Adresse ist erforderlich.</value>
+  </data>
+  <data name="ChangeCurrentPasswordDescription" xml:space="preserve">
+    <value>Ändern Sie hier Ihr aktuelles Passwort.</value>
+  </data>
+  <data name="ChangePasswordDescription" xml:space="preserve">
+    <value>Geben Sie Ihr aktuelles und anschließend Ihr neues Passwort ein.</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Aktuelles Passwort</value>
+  </data>
+  <data name="CurrentPasswordPlaceholder" xml:space="preserve">
+    <value>Aktuelles Passwort</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Neues Passwort</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Neues Passwort</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Neues Passwort bestätigen</value>
+  </data>
+  <data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Neues Passwort erneut eingeben</value>
+  </data>
+  <data name="ChangePasswordButton" xml:space="preserve">
+    <value>Passwort ändern</value>
+  </data>
+  <data name="PasswordChangeError" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Ihr Passwort wurde erfolgreich geändert.</value>
+  </data>
+  <data name="CurrentPasswordRequired" xml:space="preserve">
+    <value>Das aktuelle Passwort ist erforderlich.</value>
+  </data>
+  <data name="NewPasswordRequired" xml:space="preserve">
+    <value>Das neue Passwort ist erforderlich.</value>
+  </data>
+  <data name="PasswordLength" xml:space="preserve">
+    <value>Das Passwort muss mindestens {2} und maximal {1} Zeichen lang sein.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Das neue Passwort und die Bestätigung stimmen nicht überein.</value>
+  </data>
+  <data name="ManagePersonalAccountInformation" xml:space="preserve">
+    <value>Verwalten Sie Ihre persönlichen Kontoinformationen.</value>
+  </data>
+  <data name="AccountInformation" xml:space="preserve">
+    <value>Kontoinformationen</value>
+  </data>
+  <data name="BasicAccountData" xml:space="preserve">
+    <value>Ihre grundlegenden Kontodaten</value>
+  </data>
+  <data name="PhoneSaveError" xml:space="preserve">
+    <value>Fehler: Telefonnummer konnte nicht gespeichert werden.</value>
+  </data>
+  <data name="ProfileUpdatedSuccessfully" xml:space="preserve">
+    <value>Ihr Profil wurde erfolgreich aktualisiert.</value>
+  </data>
+  <data name="InvalidPhoneNumber" xml:space="preserve">
+    <value>Bitte geben Sie eine gültige Telefonnummer ein.</value>
+  </data>
+  <data name="OpenMenu" xml:space="preserve">
+    <value>Menü öffnen</value>
+  </data>
+  <data name="German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Macedonian" xml:space="preserve">
+    <value>Mazedonisch</value>
+  </data>
+  <data name="Croatian" xml:space="preserve">
+    <value>Kroatisch</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Englisch</value>
+  </data>
+  <data name="UnhandledError" xml:space="preserve">
+    <value>Ein unbehandelter Fehler ist aufgetreten.</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Neu laden</value>
+  </data>
+  <data name="ReportsOverviewDescription" xml:space="preserve">
+    <value>Übersicht und Auswertungen Ihrer Lagerverwaltung</value>
+  </data>
+  <data name="AvailableReports" xml:space="preserve">
+    <value>Verfügbare Berichte</value>
+  </data>
+  <data name="AvailableReportsDescription" xml:space="preserve">
+    <value>Wählen Sie einen Bericht aus, um die entsprechenden Lagerdaten auszuwerten.</value>
+  </data>
+  <data name="StockReport" xml:space="preserve">
+    <value>Bestandsbericht</value>
+  </data>
+  <data name="StockReportDescription" xml:space="preserve">
+    <value>Aktueller Lagerbestand nach Produkt und Lagerplatz.</value>
+  </data>
+  <data name="InventoryReport" xml:space="preserve">
+    <value>Inventurbericht</value>
+  </data>
+  <data name="InventoryReportDescription" xml:space="preserve">
+    <value>Übersicht über durchgeführte Inventuren und Bestandsabweichungen.</value>
+  </data>
+  <data name="StockMovementsReport" xml:space="preserve">
+    <value>Bericht Warenbewegungen</value>
+  </data>
+  <data name="StockMovementsReportDescription" xml:space="preserve">
+    <value>Übersicht und Historie aller Lagerbewegungen.</value>
+  </data>
+  <data name="SupplierReport" xml:space="preserve">
+    <value>Lieferantenbericht</value>
+  </data>
+  <data name="SupplierReportDescription" xml:space="preserve">
+    <value>Übersicht der Lieferanten und Warenbewegungen</value>
+  </data>
+  <data name="LowStockReport" xml:space="preserve">
+    <value>Niedrigbestand</value>
+  </data>
+  <data name="LowStockReportDescription" xml:space="preserve">
+    <value>Produkte mit niedrigem oder kritischem Lagerbestand</value>
+  </data>
+  <data name="StockValueReport" xml:space="preserve">
+    <value>Lagerwert</value>
+  </data>
+  <data name="StockValueReportDescription" xml:space="preserve">
+    <value>Gesamtwert des aktuellen Lagerbestands</value>
+  </data>
+  <data name="ProductReport" xml:space="preserve">
+    <value>Produktbericht</value>
+  </data>
+  <data name="ProductReportDescription" xml:space="preserve">
+    <value>Bestände und Bewegungen einzelner Produkte analysieren.</value>
+  </data>
+  <data name="Inventories" xml:space="preserve">
+    <value>Inventuren</value>
+  </data>
+  <data name="InventoriesOverviewDescription" xml:space="preserve">
+    <value>Übersicht und Verwaltung der Inventuren</value>
+  </data>
+  <data name="ExportToExcel" xml:space="preserve">
+    <value>Excel exportieren</value>
+  </data>
+  <data name="NewInventory" xml:space="preserve">
+    <value>Neue Inventur</value>
+  </data>
+  <data name="SearchInventoryPlaceholder" xml:space="preserve">
+    <value>Lager, Status oder Notiz suchen...</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Entwurf</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="Entries" xml:space="preserve">
+    <value>Einträge</value>
+  </data>
+  <data name="LoadingInventories" xml:space="preserve">
+    <value>Inventuren werden geladen...</value>
+  </data>
+  <data name="NoInventoriesFound" xml:space="preserve">
+    <value>Keine Inventuren gefunden</value>
+  </data>
+  <data name="NoInventoryMatchesSearchCriteria" xml:space="preserve">
+    <value>Keine Inventur entspricht Ihren Suchkriterien.</value>
+  </data>
+  <data name="NoInventoriesCreated" xml:space="preserve">
+    <value>Es wurden noch keine Inventuren erstellt.</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>von</value>
+  </data>
+  <data name="CreateNewInventoryDescription" xml:space="preserve">
+    <value>Neue Inventur für ein Lager erstellen.</value>
+  </data>
+  <data name="InventoryInformation" xml:space="preserve">
+    <value>Inventurinformationen</value>
+  </data>
+  <data name="InventoryInformationDescription" xml:space="preserve">
+    <value>Wählen Sie das Lager aus und hinterlegen Sie bei Bedarf eine Notiz.</value>
+  </data>
+  <data name="ActiveStorageLocations" xml:space="preserve">
+    <value>aktive Lagerplätze</value>
+  </data>
+  <data name="InventoryNotePlaceholder" xml:space="preserve">
+    <value>Optionale Notiz zur Inventur...</value>
+  </data>
+  <data name="Maximum500Characters" xml:space="preserve">
+    <value>Maximal 500 Zeichen.</value>
+  </data>
+  <data name="HowInventoryWorks" xml:space="preserve">
+    <value>So funktioniert die Inventur</value>
+  </data>
+  <data name="HowInventoryWorksDescription" xml:space="preserve">
+    <value>Die vorhandenen Bestände werden automatisch als Systembestand übernommen.</value>
+  </data>
+  <data name="WhatHappensWhenStarted" xml:space="preserve">
+    <value>Was passiert beim Start?</value>
+  </data>
+  <data name="InventoryStartExplanation" xml:space="preserve">
+    <value>Für das ausgewählte Lager werden automatisch die vorhandenen Lagerbestände als Systembestand übernommen. Danach können die tatsächlich gezählten Mengen eingetragen werden.</value>
+  </data>
+  <data name="SelectWarehouseDescription" xml:space="preserve">
+    <value>Wählen Sie das Lager aus, das gezählt werden soll.</value>
+  </data>
+  <data name="CountStock" xml:space="preserve">
+    <value>Bestand zählen</value>
+  </data>
+  <data name="CountStockDescription" xml:space="preserve">
+    <value>Tragen Sie später die tatsächlich gezählte Menge ein.</value>
+  </data>
+  <data name="Creating" xml:space="preserve">
+    <value>Wird erstellt...</value>
+  </data>
+  <data name="StartInventory" xml:space="preserve">
+    <value>Inventur starten</value>
+  </data>
+  <data name="WarehouseRequired" xml:space="preserve">
+    <value>Bitte ein Lager auswählen.</value>
+  </data>
+  <data name="WarehouseNotFound" xml:space="preserve">
+    <value>Lager nicht gefunden</value>
+  </data>
+  <data name="NoActiveStorageLocations" xml:space="preserve">
+    <value>Für dieses Lager sind keine aktiven Lagerplätze vorhanden.</value>
+  </data>
+  <data name="NoStockFoundForWarehouse" xml:space="preserve">
+    <value>Für dieses Lager wurden keine Artikelbestände gefunden.</value>
+  </data>
+  <data name="InventoryCreationError" xml:space="preserve">
+    <value>Die Inventur konnte nicht erstellt werden: {0}</value>
+  </data>
+  <data name="EditInventory" xml:space="preserve">
+    <value>Inventur bearbeiten</value>
+  </data>
+  <data name="LoadingInventory" xml:space="preserve">
+    <value>Inventur wird geladen...</value>
+  </data>
+  <data name="RequestedInventoryNotFound" xml:space="preserve">
+    <value>Die gewünschte Inventur konnte nicht gefunden werden.</value>
+  </data>
+  <data name="CurrentInventoryStatus" xml:space="preserve">
+    <value>Aktueller Status der Inventur.</value>
+  </data>
+  <data name="WarehouseCannotBeChanged" xml:space="preserve">
+    <value>Das Lager kann nach dem Start der Inventur nicht mehr geändert werden.</value>
+  </data>
+  <data name="InventoryData" xml:space="preserve">
+    <value>Inventurdaten</value>
+  </data>
+  <data name="EditInventoryAdditionalInformation" xml:space="preserve">
+    <value>Bearbeiten Sie die zusätzlichen Informationen dieser Inventur.</value>
+  </data>
+  <data name="OptionalNote" xml:space="preserve">
+    <value>Optionale Notiz...</value>
+  </data>
+  <data name="InventoryPositions" xml:space="preserve">
+    <value>Inventurpositionen</value>
+  </data>
+  <data name="InventoryPositionsOverview" xml:space="preserve">
+    <value>Übersicht aller Positionen dieser Inventur.</value>
+  </data>
+  <data name="NoPositionsAvailable" xml:space="preserve">
+    <value>Keine Positionen vorhanden</value>
+  </data>
+  <data name="InventoryContainsNoPositions" xml:space="preserve">
+    <value>Diese Inventur enthält keine Positionen.</value>
+  </data>
+  <data name="StorageLocation" xml:space="preserve">
+    <value>Lagerplatz</value>
+  </data>
+  <data name="NotYetCounted" xml:space="preserve">
+    <value>Noch nicht gezählt</value>
+  </data>
+  <data name="InventoryLoadError" xml:space="preserve">
+    <value>Die Inventur konnte nicht geladen werden: {0}</value>
+  </data>
+  <data name="CompletedInventoryCannotBeEdited" xml:space="preserve">
+    <value>Eine abgeschlossene Inventur kann nicht mehr bearbeitet werden.</value>
+  </data>
+  <data name="NoteMaximum500Characters" xml:space="preserve">
+    <value>Die Notiz darf maximal 500 Zeichen enthalten.</value>
+  </data>
+  <data name="InventorySavedSuccessfully" xml:space="preserve">
+    <value>Die Inventur wurde erfolgreich gespeichert.</value>
+  </data>
+  <data name="InventorySaveError" xml:space="preserve">
+    <value>Die Inventur konnte nicht gespeichert werden: {0}</value>
+  </data>
+  <data name="ConfirmPurchaseOrderQuestion" xml:space="preserve">
+    <value>Bestellung wirklich bestätigen?</value>
+  </data>
+  <data name="SearchWarehouseOrNotePlaceholder" xml:space="preserve">
+    <value>Lager oder Notiz suchen...</value>
+  </data>
+  <data name="FilterActive" xml:space="preserve">
+    <value>Filter aktiv</value>
+  </data>
+  <data name="InventoryHistory" xml:space="preserve">
+    <value>Inventurhistorie</value>
+  </data>
+  <data name="NoInventoriesMatchFilters" xml:space="preserve">
+    <value>Für die aktuellen Filter wurden keine Inventuren gefunden.</value>
+  </data>
+  <data name="PageOf" xml:space="preserve">
+    <value>Seite {0} von {1}</value>
+  </data>
+  <data name="PaginationInventories" xml:space="preserve">
+    <value>{0} von {1} Inventuren</value>
+  </data>
+  <data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
+    <value>Produkt, SKU oder Barcode suchen...</value>
+  </data>
+  <data name="AffectedPositions" xml:space="preserve">
+    <value>Betroffene Positionen</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Kritisch</value>
+  </data>
+  <data name="NoAvailableStock" xml:space="preserve">
+    <value>Kein verfügbarer Bestand</value>
+  </data>
+  <data name="AfterReservations" xml:space="preserve">
+    <value>Nach Reservierungen</value>
+  </data>
+  <data name="Shortage" xml:space="preserve">
+    <value>Fehlmenge</value>
+  </data>
+  <data name="UntilMinimumStock" xml:space="preserve">
+    <value>Bis zum Mindestbestand</value>
+  </data>
+  <data name="LoadingLowStock" xml:space="preserve">
+    <value>Niedrigbestände werden geladen...</value>
+  </data>
+  <data name="NoLowStock" xml:space="preserve">
+    <value>Keine Niedrigbestände</value>
+  </data>
+  <data name="NoLowStockForFilters" xml:space="preserve">
+    <value>Für die gewählten Filter wurden keine Produkte mit niedrigem Lagerbestand gefunden.</value>
+  </data>
+  <data name="PaginationItems" xml:space="preserve">
+    <value>{0} von {1} Items</value>
+  </data>
+  <data name="SearchProductSkuBarcodeSupplierReferencePlaceholder" xml:space="preserve">
+    <value>Produkt, SKU, Barcode, Lieferant oder Referenz suchen...</value>
+  </data>
+  <data name="LoadingMovements" xml:space="preserve">
+    <value>Bewegungen werden geladen...</value>
+  </data>
+  <data name="PaginationMovements" xml:space="preserve">
+    <value>{0} von {1} Bewegungen</value>
+  </data>
+  <data name="FilteredProducts" xml:space="preserve">
+    <value>Gefilterte Produkte</value>
+  </data>
+  <data name="CurrentQuantity" xml:space="preserve">
+    <value>Aktuelle Menge</value>
+  </data>
+  <data name="IncomingEntries" xml:space="preserve">
+    <value>Eingänge</value>
+  </data>
+  <data name="OutgoingEntries" xml:space="preserve">
+    <value>Ausgänge</value>
+  </data>
+  <data name="TotalMovements" xml:space="preserve">
+    <value>Gesamtbewegungen</value>
+  </data>
+  <data name="StockValue" xml:space="preserve">
+    <value>Lagerwert</value>
+  </data>
+  <data name="LastMovement" xml:space="preserve">
+    <value>Letzte Bewegung</value>
+  </data>
+  <data name="LoadingProductData" xml:space="preserve">
+    <value>Produktdaten werden geladen...</value>
+  </data>
+  <data name="NoProductsForFilters" xml:space="preserve">
+    <value>Für die gewählten Filter wurden keine Produkte gefunden.</value>
+  </data>
+  <data name="PaginationProducts" xml:space="preserve">
+    <value>{0} von {1} Produkte</value>
+  </data>
+  <data name="LoadingStock" xml:space="preserve">
+    <value>Bestand wird geladen...</value>
+  </data>
+  <data name="AllStock" xml:space="preserve">
+    <value>Alle Bestände</value>
+  </data>
+  <data name="NoStockForFilters" xml:space="preserve">
+    <value>Für die aktuellen Filter wurden keine Bestandsdaten gefunden.</value>
+  </data>
+  <data name="PaginationStock" xml:space="preserve">
+    <value>{0} von {1} Einträge</value>
+  </data>
+  <data name="ActiveSuppliers" xml:space="preserve">
+    <value>Aktive Lieferanten</value>
+  </data>
+  <data name="InactiveSuppliers" xml:space="preserve">
+    <value>Inaktive Lieferanten</value>
+  </data>
+  <data name="FilteredSuppliers" xml:space="preserve">
+    <value>Gefilterte Lieferanten</value>
+  </data>
+  <data name="ReceivedQuantity" xml:space="preserve">
+    <value>Eingegangene Menge</value>
+  </data>
+  <data name="AssignedPurchaseOrders" xml:space="preserve">
+    <value>Zugeordnete Bestellungen</value>
+  </data>
+  <data name="SuppliersOverview" xml:space="preserve">
+    <value>Lieferantenübersicht</value>
+  </data>
+  <data name="PaginationEntries" xml:space="preserve">
+    <value>{0} Einträge</value>
+  </data>
+  <data name="LoadingSuppliers" xml:space="preserve">
+    <value>Lieferanten werden geladen...</value>
+  </data>
+  <data name="PaginationSuppliers" xml:space="preserve">
+    <value>{0} von {1} Lieferanten</value>
+  </data>
+  <data name="PurchaseValue" xml:space="preserve">
+    <value>Einkaufswert</value>
+  </data>
+  <data name="SaleValue" xml:space="preserve">
+    <value>Verkaufswert</value>
+  </data>
+  <data name="AtPurchasePrice" xml:space="preserve">
+    <value>Zum Einkaufspreis</value>
+  </data>
+  <data name="AtSalePrice" xml:space="preserve">
+    <value>Zum Verkaufspreis</value>
+  </data>
+  <data name="StockPositions" xml:space="preserve">
+    <value>Lagerpositionen</value>
+  </data>
+  <data name="StockValueOverview" xml:space="preserve">
+    <value>Lagerwert</value>
+  </data>
+  <data name="LoadingStockValues" xml:space="preserve">
+    <value>Lagerwerte werden geladen...</value>
+  </data>
+  <data name="NoStockBalances" xml:space="preserve">
+    <value>Keine Lagerbestände</value>
+  </data>
+  <data name="NoStockBalancesForFilters" xml:space="preserve">
+    <value>Für die gewählten Filter wurden keine Lagerbestände gefunden.</value>
+  </data>
+  <data name="WarehousesOverviewDescription" xml:space="preserve">
+    <value>Verwalten Sie Ihre Lager und Standorte.</value>
+  </data>
+  <data name="NewWarehouse" xml:space="preserve">
+    <value>Neues Lager</value>
+  </data>
+  <data name="SearchWarehousePlaceholder" xml:space="preserve">
+    <value>Lager suchen...</value>
+  </data>
+  <data name="WarehouseList" xml:space="preserve">
+    <value>Lagerliste</value>
+  </data>
+  <data name="PaginationWarehouses" xml:space="preserve">
+    <value>{0} Lager</value>
+  </data>
+  <data name="LoadingWarehouses" xml:space="preserve">
+    <value>Lager werden geladen...</value>
+  </data>
+  <data name="NoWarehousesFound" xml:space="preserve">
+    <value>Keine Lager gefunden</value>
+  </data>
+  <data name="NoWarehousesForFilters" xml:space="preserve">
+    <value>Für die aktuellen Filter wurden keine Lager gefunden.</value>
+  </data>
+  <data name="StorageLocations" xml:space="preserve">
+    <value>Lagerplätze</value>
+  </data>
+  <data name="DeactivateWarehouseQuestion" xml:space="preserve">
+    <value>Lager deaktivieren?</value>
+  </data>
+  <data name="DeactivateWarehouseText" xml:space="preserve">
+    <value>Möchten Sie</value>
+  </data>
+  <data name="DeactivateWarehouseConfirm" xml:space="preserve">
+    <value>wirklich deaktivieren?</value>
+  </data>
+  <data name="WarehouseWillNotBeDeleted" xml:space="preserve">
+    <value>Das Lager wird nicht gelöscht. Es wird nur als inaktiv markiert.</value>
+  </data>
+  <data name="WarehouseContainsLocations" xml:space="preserve">
+    <value>Dieses Lager enthält {0} Lagerplatz/Lagerplätze.</value>
+  </data>
+  <data name="LocationsWillRemain" xml:space="preserve">
+    <value>Diese bleiben erhalten.</value>
+  </data>
+  <data name="EditWarehouse" xml:space="preserve">
+    <value>Lager bearbeiten</value>
+  </data>
+  <data name="LoadingWarehouse" xml:space="preserve">
+    <value>Lager wird geladen...</value>
+  </data>
+  <data name="BackToWarehouses" xml:space="preserve">
+    <value>Zurück zu Lager</value>
+  </data>
+  <data name="WarehouseInformation" xml:space="preserve">
+    <value>Lagerinformationen</value>
+  </data>
+  <data name="EditWarehouseInformationDescription" xml:space="preserve">
+    <value>Lagerdaten bearbeiten.</value>
+  </data>
+  <data name="WarehouseIsActive" xml:space="preserve">
+    <value>Lager ist aktiv</value>
+  </data>
+  <data name="WarehouseNameAlreadyExists" xml:space="preserve">
+    <value>Ein anderes Lager mit diesem Namen existiert bereits.</value>
+  </data>
+  <data name="CreateNewWarehouseDescription" xml:space="preserve">
+    <value>Neues Lager anlegen.</value>
+  </data>
+  <data name="BasicWarehouseInformation" xml:space="preserve">
+    <value>Grundlegende Informationen zum Lager.</value>
+  </data>
+  <data name="WarehouseNamePlaceholder" xml:space="preserve">
+    <value>z.B. Hauptlager München</value>
+  </data>
+  <data name="WarehouseDescriptionPlaceholder" xml:space="preserve">
+    <value>Beschreibung...</value>
+  </data>
+  <data name="SaveWarehouse" xml:space="preserve">
+    <value>Lager speichern</value>
+  </data>
+  <data name="StorageLocationsOverviewDescription" xml:space="preserve">
+    <value>Verwalten Sie Ihre Lagerplätze.</value>
+  </data>
+  <data name="NewStorageLocation" xml:space="preserve">
+    <value>Neuer Lagerplatz</value>
+  </data>
+  <data name="SearchLocationPlaceholder" xml:space="preserve">
+    <value>Code, Name oder Lager suchen...</value>
+  </data>
+  <data name="StorageLocationList" xml:space="preserve">
+    <value>Lagerplatzliste</value>
+  </data>
+  <data name="PaginationStorageLocations" xml:space="preserve">
+    <value>{0} Lagerplätze</value>
+  </data>
+  <data name="LoadingStorageLocations" xml:space="preserve">
+    <value>Lagerplätze werden geladen...</value>
+  </data>
+  <data name="NoStorageLocationsFound" xml:space="preserve">
+    <value>Keine Lagerplätze gefunden</value>
+  </data>
+  <data name="NoStorageLocationsForFilters" xml:space="preserve">
+    <value>Für die aktuellen Filter wurden keine Lagerplätze gefunden.</value>
+  </data>
+  <data name="DeactivateStorageLocationQuestion" xml:space="preserve">
+    <value>Lagerplatz deaktivieren?</value>
+  </data>
+  <data name="DeactivateStorageLocationText" xml:space="preserve">
+    <value>Möchten Sie</value>
+  </data>
+  <data name="StorageLocationContainsStock" xml:space="preserve">
+    <value>Dieser Lagerplatz enthält noch Bestand.</value>
+  </data>
+  <data name="MoveStockBeforeDeactivation" xml:space="preserve">
+    <value>Bitte verschieben Sie den Bestand zuerst.</value>
+  </data>
+  <data name="StorageLocationWillNotBeDeleted" xml:space="preserve">
+    <value>Der Lagerplatz wird nicht gelöscht. Er wird nur als inaktiv markiert.</value>
+  </data>
+  <data name="EditStorageLocation" xml:space="preserve">
+    <value>Lagerplatz bearbeiten</value>
+  </data>
+  <data name="LoadingStorageLocation" xml:space="preserve">
+    <value>Lagerplatz wird geladen...</value>
+  </data>
+  <data name="StorageLocationNotFound" xml:space="preserve">
+    <value>Lagerplatz nicht gefunden</value>
+  </data>
+  <data name="StorageLocationInformation" xml:space="preserve">
+    <value>Lagerplatzinformationen</value>
+  </data>
+  <data name="StorageLocationIsActive" xml:space="preserve">
+    <value>Lagerplatz ist aktiv</value>
+  </data>
+  <data name="StorageLocationCodeAlreadyExists" xml:space="preserve">
+    <value>Dieser Lagerplatz-Code existiert in diesem Lager bereits.</value>
+  </data>
+  <data name="CodeRequired" xml:space="preserve">
+    <value>Code ist erforderlich.</value>
+  </data>
+  <data name="CreateNewStorageLocationDescription" xml:space="preserve">
+    <value>Neuen Lagerplatz in einem Lager anlegen.</value>
+  </data>
+  <data name="StorageLocationInformationDescription" xml:space="preserve">
+    <value>Geben Sie die Position des Lagerplatzes an.</value>
+  </data>
+  <data name="StorageLocationCodePlaceholder" xml:space="preserve">
+    <value>z.B. A-01-01</value>
+  </data>
+  <data name="StorageLocationNamePlaceholder" xml:space="preserve">
+    <value>z.B. Regal A - Fach 01</value>
+  </data>
+  <data name="StorageLocationDescriptionPlaceholder" xml:space="preserve">
+    <value>Beschreibung...</value>
+  </data>
+  <data name="SaveStorageLocation" xml:space="preserve">
+    <value>Lagerplatz speichern</value>
+  </data>
+  <data name="CloseMenu" xml:space="preserve">
+    <value>Menü schließen</value>
+  </data>
+  <data name="WarehouseSection" xml:space="preserve">
+    <value>LAGER</value>
+  </data>
+  <data name="StockSection" xml:space="preserve">
+    <value>BESTAND</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>VERWALTUNG</value>
+  </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>ANALYSE</value>
+  </data>
+  <data name="SupplierOrders" xml:space="preserve">
+    <value>Lieferant-Bestellungen</value>
+  </data>
+  <data name="ForgotPasswordDescription" xml:space="preserve">
+    <value>Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Passwort zurücksetzen</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Zurück zur Anmeldung</value>
+  </data>
+  <data name="SelectMovementType" xml:space="preserve">
+    <value>Bewegungstyp</value>
+  </data>
+	<data name="PurchaseOrderStatusDraft" xml:space="preserve">
   <value>Entwurf</value>
 </data>
 
-	<data name="InProgress" xml:space="preserve">
-  <value>In Bearbeitung</value>
+	<data name="PurchaseOrderStatusOrdered" xml:space="preserve">
+  <value>Bestellt</value>
 </data>
 
-	<data name="Completed" xml:space="preserve">
-  <value>Abgeschlossen</value>
+	<data name="PurchaseOrderStatusPartiallyDelivered" xml:space="preserve">
+  <value>Teilweise geliefert</value>
 </data>
 
-	<data name="Open" xml:space="preserve">
-  <value>Offen</value>
+	<data name="PurchaseOrderStatusDelivered" xml:space="preserve">
+  <value>Geliefert</value>
 </data>
 
-	<data name="Entries" xml:space="preserve">
-  <value>Einträge</value>
+	<data name="PurchaseOrderStatusCancelled" xml:space="preserve">
+  <value>Storniert</value>
 </data>
-
-	<data name="Positions" xml:space="preserve">
-  <value>Positionen</value>
-</data>
-
-	<data name="CreatedAt" xml:space="preserve">
-  <value>Erstellt am</value>
-</data>
-
-	<data name="CompletedAt" xml:space="preserve">
-  <value>Abgeschlossen am</value>
-</data>
-
-	<data name="LoadingInventories" xml:space="preserve">
-  <value>Inventuren werden geladen...</value>
-</data>
-
-	<data name="NoInventoriesFound" xml:space="preserve">
-  <value>Keine Inventuren gefunden</value>
-</data>
-
-	<data name="NoInventoryMatchesSearchCriteria" xml:space="preserve">
-  <value>Keine Inventur entspricht Ihren Suchkriterien.</value>
-</data>
-
-	<data name="NoInventoriesCreated" xml:space="preserve">
-  <value>Es wurden noch keine Inventuren erstellt.</value>
-</data>
-
-	<data name="ResetFilters" xml:space="preserve">
-  <value>Filter zurücksetzen</value>
-</data>
-
-	<data name="Page" xml:space="preserve">
-  <value>Seite</value>
-</data>
-
-	<data name="Of" xml:space="preserve">
-  <value>von</value>
-</data>
-
-	<data name="Note" xml:space="preserve">
-  <value>Notiz</value>
-</data>
-	<data name="CreateNewInventoryDescription" xml:space="preserve">
-  <value>Neue Inventur für ein Lager erstellen.</value>
-</data>
-
-	<data name="InventoryInformation" xml:space="preserve">
-  <value>Inventurinformationen</value>
-</data>
-
-	<data name="InventoryInformationDescription" xml:space="preserve">
-  <value>Wählen Sie das Lager aus und hinterlegen Sie bei Bedarf eine Notiz.</value>
-</data>
-
-	<data name="SelectWarehouse" xml:space="preserve">
-  <value>Lager auswählen</value>
-</data>
-
-	<data name="ActiveStorageLocations" xml:space="preserve">
-  <value>aktive Lagerplätze</value>
-</data>
-
-	<data name="InventoryNotePlaceholder" xml:space="preserve">
-  <value>Optionale Notiz zur Inventur...</value>
-</data>
-
-	<data name="Maximum500Characters" xml:space="preserve">
-  <value>Maximal 500 Zeichen.</value>
-</data>
-
-	<data name="HowInventoryWorks" xml:space="preserve">
-  <value>So funktioniert die Inventur</value>
-</data>
-
-	<data name="HowInventoryWorksDescription" xml:space="preserve">
-  <value>Die vorhandenen Bestände werden automatisch als Systembestand übernommen.</value>
-</data>
-
-	<data name="WhatHappensWhenStarted" xml:space="preserve">
-  <value>Was passiert beim Start?</value>
-</data>
-
-	<data name="InventoryStartExplanation" xml:space="preserve">
-  <value>Für das ausgewählte Lager werden automatisch die vorhandenen Lagerbestände als Systembestand übernommen. Danach können die tatsächlich gezählten Mengen eingetragen werden.</value>
-</data>
-
-	<data name="SelectWarehouseDescription" xml:space="preserve">
-  <value>Wählen Sie das Lager aus, das gezählt werden soll.</value>
-</data>
-
-	<data name="CountStock" xml:space="preserve">
-  <value>Bestand zählen</value>
-</data>
-
-	<data name="CountStockDescription" xml:space="preserve">
-  <value>Tragen Sie später die tatsächlich gezählte Menge ein.</value>
-</data>
-
-	<data name="CompleteInventory" xml:space="preserve">
-  <value>Inventur abschließen</value>
-</data>
-
-	<data name="CompleteInventoryDescription" xml:space="preserve">
-  <value>Differenzen werden anschließend automatisch im Lagerbestand korrigiert.</value>
-</data>
-
-	<data name="Creating" xml:space="preserve">
-  <value>Wird erstellt...</value>
-</data>
-
-	<data name="StartInventory" xml:space="preserve">
-  <value>Inventur starten</value>
-</data>
-
-	<data name="WarehouseRequired" xml:space="preserve">
-  <value>Bitte wählen Sie ein Lager aus.</value>
-</data>
-
-	<data name="WarehouseNotFound" xml:space="preserve">
-  <value>Das ausgewählte Lager wurde nicht gefunden.</value>
-</data>
-
-	<data name="NoActiveStorageLocations" xml:space="preserve">
-  <value>Für dieses Lager sind keine aktiven Lagerplätze vorhanden.</value>
-</data>
-
-	<data name="NoStockFoundForWarehouse" xml:space="preserve">
-  <value>Für dieses Lager wurden keine Artikelbestände gefunden.</value>
-</data>
-
-	<data name="InventoryCreationError" xml:space="preserve">
-  <value>Die Inventur konnte nicht erstellt werden: {0}</value>
-</data>
-	<data name="EditInventory" xml:space="preserve">
-  <value>Inventur bearbeiten</value>
-</data>
-
-	<data name="LoadingInventory" xml:space="preserve">
-  <value>Inventur wird geladen...</value>
-</data>
-
-	<data name="InventoryNotFound" xml:space="preserve">
-  <value>Inventur nicht gefunden</value>
-</data>
-
-	<data name="RequestedInventoryNotFound" xml:space="preserve">
-  <value>Die gewünschte Inventur konnte nicht gefunden werden.</value>
-</data>
-
-	<data name="BackToInventories" xml:space="preserve">
-  <value>Zurück zu Inventuren</value>
-</data>
-
-	<data name="CurrentInventoryStatus" xml:space="preserve">
-  <value>Aktueller Status der Inventur.</value>
-</data>
-
-	<data name="WarehouseCannotBeChanged" xml:space="preserve">
-  <value>Das Lager kann nach dem Start der Inventur nicht mehr geändert werden.</value>
-</data>
-
-	<data name="InventoryData" xml:space="preserve">
-  <value>Inventurdaten</value>
-</data>
-
-	<data name="EditInventoryAdditionalInformation" xml:space="preserve">
-  <value>Bearbeiten Sie die zusätzlichen Informationen dieser Inventur.</value>
-</data>
-
-	<data name="OptionalNote" xml:space="preserve">
-  <value>Optionale Notiz...</value>
-</data>
-
-	<data name="InventoryPositions" xml:space="preserve">
-  <value>Inventurpositionen</value>
-</data>
-
-	<data name="InventoryPositionsOverview" xml:space="preserve">
-  <value>Übersicht aller Positionen dieser Inventur.</value>
-</data>
-
-	<data name="NoPositionsAvailable" xml:space="preserve">
-  <value>Keine Positionen vorhanden</value>
-</data>
-
-	<data name="InventoryContainsNoPositions" xml:space="preserve">
-  <value>Diese Inventur enthält keine Positionen.</value>
-</data>
-
-	<data name="StorageLocation" xml:space="preserve">
-  <value>Lagerplatz</value>
-</data>
-
-	<data name="SystemStock" xml:space="preserve">
-  <value>Systembestand</value>
-</data>
-
-	<data name="Counted" xml:space="preserve">
-  <value>Gezählt</value>
-</data>
-
-	<data name="Difference" xml:space="preserve">
-  <value>Differenz</value>
-</data>
-
-	<data name="NotYetCounted" xml:space="preserve">
-  <value>Noch nicht gezählt</value>
-</data>
-
-	<data name="InventoryLoadError" xml:space="preserve">
-  <value>Die Inventur konnte nicht geladen werden: {0}</value>
-</data>
-
-	<data name="CompletedInventoryCannotBeEdited" xml:space="preserve">
-  <value>Eine abgeschlossene Inventur kann nicht mehr bearbeitet werden.</value>
-</data>
-
-	<data name="NoteMaximum500Characters" xml:space="preserve">
-  <value>Die Notiz darf maximal 500 Zeichen enthalten.</value>
-</data>
-
-	<data name="InventoryAlreadyCompleted" xml:space="preserve">
-  <value>Die Inventur wurde bereits abgeschlossen.</value>
-</data>
-
-	<data name="InventorySavedSuccessfully" xml:space="preserve">
-  <value>Die Inventur wurde erfolgreich gespeichert.</value>
-</data>
-
-	<data name="InventorySaveError" xml:space="preserve">
-  <value>Die Inventur konnte nicht gespeichert werden: {0}</value>
-</data>
-	<data name="ConfirmPurchaseOrderQuestion" xml:space="preserve">
-    <value>Bestellung wirklich bestätigen?</value>
-</data>
-	<data name="InventoryReport" xml:space="preserve">
-    <value>Inventurbericht</value>
-</data>
-
-	<data name="InventoryReportDescription" xml:space="preserve">
-    <value>Übersicht über durchgeführte Inventuren und Bestandsabweichungen.</value>
-</data>
-
-	<data name="SearchWarehouseOrNotePlaceholder" xml:space="preserve">
-    <value>Lager oder Notiz suchen...</value>
-</data>
-
-	<data name="AllWarehouses" xml:space="preserve">
-    <value>Alle Lager</value>
-</data>
-
-	<data name="FilterActive" xml:space="preserve">
-    <value>Filter aktiv</value>
-</data>
-
-	<data name="DifferentPositions" xml:space="preserve">
-    <value>Abweichende Positionen</value>
-</data>
-
-	<data name="TotalDifference" xml:space="preserve">
-    <value>Gesamtdifferenz</value>
-</data>
-
-	<data name="InventoryHistory" xml:space="preserve">
-    <value>Inventurhistorie</value>
-</data>
-
-	<data name="NoInventoriesMatchFilters" xml:space="preserve">
-    <value>Für die aktuellen Filter wurden keine Inventuren gefunden.</value>
-</data>
-
-	<data name="PageOf" xml:space="preserve">
-    <value>Seite {0} von {1}</value>
-</data>
-
-	<data name="PaginationInventories" xml:space="preserve">
-    <value>{0} von {1} Inventuren</value>
-</data>
-	<data name="LowStockReport" xml:space="preserve">
-    <value>Niedrigbestand</value>
-</data>
-
-<data name="LowStockReportDescription" xml:space="preserve">
-    <value>Produkte mit niedrigem oder kritischem Lagerbestand</value>
-</data>
-
-<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
-    <value>Produkt, SKU oder Barcode suchen...</value>
-</data>
-
-<data name="AllWarehouses" xml:space="preserve">
-    <value>Alle Lager</value>
-</data>
-
-<data name="AllLocations" xml:space="preserve">
-    <value>Alle Lagerplätze</value>
-</data>
-
-<data name="LowStock" xml:space="preserve">
-    <value>Niedrigbestand</value>
-</data>
-
-<data name="AffectedPositions" xml:space="preserve">
-    <value>Betroffene Positionen</value>
-</data>
-
-<data name="Critical" xml:space="preserve">
-    <value>Kritisch</value>
-</data>
-
-<data name="NoAvailableStock" xml:space="preserve">
-    <value>Kein verfügbarer Bestand</value>
-</data>
-
-<data name="TotalStock" xml:space="preserve">
-    <value>Gesamtbestand</value>
-</data>
-
-<data name="CurrentStock" xml:space="preserve">
-    <value>Aktueller Bestand</value>
-</data>
-
-<data name="Available" xml:space="preserve">
-    <value>Verfügbar</value>
-</data>
-
-<data name="AfterReservations" xml:space="preserve">
-    <value>Nach Reservierungen</value>
-</data>
-
-<data name="Shortage" xml:space="preserve">
-    <value>Fehlmenge</value>
-</data>
-
-<data name="UntilMinimumStock" xml:space="preserve">
-    <value>Bis zum Mindestbestand</value>
-</data>
-
-<data name="Entries" xml:space="preserve">
-    <value>Einträge</value>
-</data>
-
-<data name="LoadingLowStock" xml:space="preserve">
-    <value>Niedrigbestände werden geladen...</value>
-</data>
-
-<data name="NoLowStock" xml:space="preserve">
-    <value>Keine Niedrigbestände</value>
-</data>
-
-<data name="NoLowStockForFilters" xml:space="preserve">
-    <value>Für die gewählten Filter wurden keine Produkte mit niedrigem Lagerbestand gefunden.</value>
-</data>
-
-<data name="Reserved" xml:space="preserve">
-    <value>Reserviert</value>
-</data>
-
-<data name="PageOf" xml:space="preserve">
-    <value>Seite {0} von {1}</value>
-</data>
-
-<data name="PaginationItems" xml:space="preserve">
-    <value>{0} von {1} Items</value>
-</data>
-	<data name="LowStockReport" xml:space="preserve">
-    <value>Niedrigbestand</value>
-</data>
-
-	<data name="LowStockReportDescription" xml:space="preserve">
-    <value>Produkte mit niedrigem oder kritischem Lagerbestand</value>
-</data>
-
-	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
-    <value>Produkt, SKU oder Barcode suchen...</value>
-</data>
-
-	<data name="AllWarehouses" xml:space="preserve">
-    <value>Alle Lager</value>
-</data>
-
-	<data name="AllLocations" xml:space="preserve">
-    <value>Alle Lagerplätze</value>
-</data>
-
-	<data name="LowStock" xml:space="preserve">
-    <value>Niedrigbestand</value>
-</data>
-
-	<data name="AffectedPositions" xml:space="preserve">
-    <value>Betroffene Positionen</value>
-</data>
-
-	<data name="Critical" xml:space="preserve">
-    <value>Kritisch</value>
-</data>
-
-	<data name="NoAvailableStock" xml:space="preserve">
-    <value>Kein verfügbarer Bestand</value>
-</data>
-
-	<data name="TotalStock" xml:space="preserve">
-    <value>Gesamtbestand</value>
-</data>
-
-	<data name="CurrentStock" xml:space="preserve">
-    <value>Aktueller Bestand</value>
-</data>
-
-	<data name="Available" xml:space="preserve">
-    <value>Verfügbar</value>
-</data>
-
-	<data name="AfterReservations" xml:space="preserve">
-    <value>Nach Reservierungen</value>
-</data>
-
-	<data name="Shortage" xml:space="preserve">
-    <value>Fehlmenge</value>
-</data>
-
-	<data name="UntilMinimumStock" xml:space="preserve">
-    <value>Bis zum Mindestbestand</value>
-</data>
-
-	<data name="Entries" xml:space="preserve">
-    <value>Einträge</value>
-</data>
-
-	<data name="LoadingLowStock" xml:space="preserve">
-    <value>Niedrigbestände werden geladen...</value>
-</data>
-
-	<data name="NoLowStock" xml:space="preserve">
-    <value>Keine Niedrigbestände</value>
-</data>
-
-	<data name="NoLowStockForFilters" xml:space="preserve">
-    <value>Für die gewählten Filter wurden keine Produkte mit niedrigem Lagerbestand gefunden.</value>
-</data>
-
-	<data name="Reserved" xml:space="preserve">
-    <value>Reserviert</value>
-</data>
-
-	<data name="PageOf" xml:space="preserve">
-    <value>Seite {0} von {1}</value>
-</data>
-
-	<data name="PaginationItems" xml:space="preserve">
-    <value>{0} von {1} Items</value>
-</data>
-	<data name="StockMovementsReport" xml:space="preserve">
-    <value>Bericht Warenbewegungen</value>
-</data>
-
-	<data name="StockMovementsReportDescription" xml:space="preserve">
-    <value>Übersicht und Historie aller Lagerbewegungen.</value>
-</data>
-
-	<data name="SearchProductSkuBarcodeSupplierReferencePlaceholder" xml:space="preserve">
-    <value>Produkt, SKU, Barcode, Lieferant oder Referenz suchen...</value>
-</data>
-
-	<data name="AllMovements" xml:space="preserve">
-    <value>Alle Bewegungen</value>
-</data>
-
-	<data name="Correction" xml:space="preserve">
-    <value>Korrektur</value>
-</data>
-
-	<data name="LoadingMovements" xml:space="preserve">
-    <value>Bewegungen werden geladen...</value>
-</data>
-
-	<data name="Transfers" xml:space="preserve">
-    <value>Umlagerungen</value>
-</data>
-
-	<data name="NoMovementsFound" xml:space="preserve">
-    <value>Keine Bewegungen gefunden</value>
-</data>
-
-	<data name="NoMovementsForFilters" xml:space="preserve">
-    <value>Für die gewählten Filter wurden keine Bewegungen gefunden.</value>
-</data>
-
-	<data name="Type" xml:space="preserve">
-    <value>Typ</value>
-</data>
-
-	<data name="Reference" xml:space="preserve">
-    <value>Referenz</value>
-</data>
-
-	<data name="PaginationMovements" xml:space="preserve">
-    <value>{0} von {1} Bewegungen</value>
-</data>
-	<data name="ProductReport" xml:space="preserve">
-    <value>Produktbericht</value>
-</data>
-
-	<data name="ProductReportDescription" xml:space="preserve">
-    <value>Bestände und Bewegungen einzelner Produkte analysieren.</value>
-</data>
-
-	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
-    <value>Produkt, SKU oder Barcode suchen...</value>
-</data>
-
-	<data name="AllCategories" xml:space="preserve">
-    <value>Alle Kategorien</value>
-</data>
-
-	<data name="Products" xml:space="preserve">
-    <value>Produkte</value>
-</data>
-
-	<data name="FilteredProducts" xml:space="preserve">
-    <value>Gefilterte Produkte</value>
-</data>
-
-	<data name="TotalStock" xml:space="preserve">
-    <value>Gesamtbestand</value>
-</data>
-
-	<data name="CurrentQuantity" xml:space="preserve">
-    <value>Aktuelle Menge</value>
-</data>
-
-	<data name="IncomingEntries" xml:space="preserve">
-    <value>Eingänge</value>
-</data>
-
-	<data name="OutgoingEntries" xml:space="preserve">
-    <value>Ausgänge</value>
-</data>
-
-	<data name="TotalMovements" xml:space="preserve">
-    <value>Gesamtbewegungen</value>
-</data>
-
-	<data name="Category" xml:space="preserve">
-    <value>Kategorie</value>
-</data>
-
-	<data name="StockValue" xml:space="preserve">
-    <value>Lagerwert</value>
-</data>
-
-	<data name="LastMovement" xml:space="preserve">
-    <value>Letzte Bewegung</value>
-</data>
-
-	<data name="LoadingProductData" xml:space="preserve">
-    <value>Produktdaten werden geladen...</value>
-</data>
-
-	<data name="NoProductsFound" xml:space="preserve">
-    <value>Keine Produkte gefunden</value>
-</data>
-
-	<data name="NoProductsForFilters" xml:space="preserve">
-    <value>Für die gewählten Filter wurden keine Produkte gefunden.</value>
-</data>
-
-	<data name="PaginationProducts" xml:space="preserve">
-    <value>{0} von {1} Produkte</value>
-</data>
-
-	<data name="PurchasePrice" xml:space="preserve">
-    <value>Einkaufspreis</value>
-</data>
-	<data name="StockReport" xml:space="preserve">
-    <value>Bestandsbericht</value>
-</data>
-	<data name="StockReportDescription" xml:space="preserve">
-    <value>Aktueller Lagerbestand nach Produkt und Lagerplatz.</value>
-</data>
-	<data name="LoadingStock" xml:space="preserve">
-    <value>Bestand wird geladen...</value>
-</data>
-	<data name="SearchProductSkuBarcodePlaceholder" xml:space="preserve">
-    <value>Produkt, SKU oder Barcode suchen...</value>
-</data>
-	<data name="AllStock" xml:space="preserve">
-    <value>Alle Bestände</value>
-</data>
-	<data name="StockOk" xml:space="preserve">
-    <value>Bestand OK</value>
-</data>
-	<data name="NoStock" xml:space="preserve">
-    <value>Kein Bestand</value>
-</data>
-	<data name="NoStockFound" xml:space="preserve">
-    <value>Keine Bestände gefunden</value>
-</data>
-	<data name="NoStockForFilters" xml:space="preserve">
-    <value>Für die aktuellen Filter wurden keine Bestandsdaten gefunden.</value>
-</data>
-	<data name="Low" xml:space="preserve">
-    <value>Niedrig</value>
-</data>
-	<data name="PaginationStock" xml:space="preserve">
-    <value>{0} von {1} Einträge</value>
-</data>
-	<data name="Ok" xml:space="preserve">
-    <value>OK</value>
-</data>
-	<data name="SupplierReport" xml:space="preserve">
-    <value>Lieferantenbericht</value>
-</data>
-	<data name="SupplierReportDescription" xml:space="preserve">
-    <value>Übersicht der Lieferanten und Warenbewegungen</value>
-</data>
-	<data name="NewSupplier" xml:space="preserve">
-    <value>Neuer Lieferant</value>
-</data>
-	<data name="SearchSupplierPlaceholder" xml:space="preserve">
-    <value>Lieferant, Nummer, Kontakt oder E-Mail suchen...</value>
-</data>
-	<data name="AllSuppliers" xml:space="preserve">
-    <value>Alle Lieferanten</value>
-</data>
-	<data name="ActiveSuppliers" xml:space="preserve">
-    <value>Aktive Lieferanten</value>
-</data>
-	<data name="InactiveSuppliers" xml:space="preserve">
-    <value>Inaktive Lieferanten</value>
-</data>
-	<data name="FilteredSuppliers" xml:space="preserve">
-    <value>Gefilterte Lieferanten</value>
-</data>
-	<data name="ReceivedQuantity" xml:space="preserve">
-    <value>Eingegangene Menge</value>
-</data>
-	<data name="TotalQuantity" xml:space="preserve">
-    <value>Gesamtmenge</value>
-</data>
-	<data name="AssignedPurchaseOrders" xml:space="preserve">
-    <value>Zugeordnete Bestellungen</value>
-</data>
-	<data name="SuppliersOverview" xml:space="preserve">
-    <value>Lieferantenübersicht</value>
-</data>
-	<data name="PaginationEntries" xml:space="preserve">
-    <value>{0} Einträge</value>
-</data>
-	<data name="LoadingSuppliers" xml:space="preserve">
-    <value>Lieferanten werden geladen...</value>
-</data>
-	<data name="NoSuppliersFound" xml:space="preserve">
-    <value>Keine Lieferanten gefunden</value>
-</data>
-	<data name="NoSuppliersForSearch" xml:space="preserve">
-    <value>Für die aktuelle Suche wurden keine Lieferanten gefunden.</value>
-</data>
-	<data name="SupplierNumber" xml:space="preserve">
-    <value>Lieferantennummer</value>
-</data>
-	<data name="ContactPerson" xml:space="preserve">
-    <value>Ansprechpartner</value>
-</data>
-	<data name="LastMovement" xml:space="preserve">
-    <value>Letzte Bewegung</value>
-</data>
-	<data name="PaginationSuppliers" xml:space="preserve">
-    <value>{0} von {1} Lieferanten</value>
-</data>
-	<data name="StockValueReport" xml:space="preserve"><value>Lagerwert</value></data>
-	<data name="StockValueReportDescription" xml:space="preserve"><value>Gesamtwert des aktuellen Lagerbestands</value></data>
-	<data name="PurchaseValue" xml:space="preserve"><value>Einkaufswert</value></data>
-	<data name="SaleValue" xml:space="preserve"><value>Verkaufswert</value></data>
-	<data name="AtPurchasePrice" xml:space="preserve"><value>Zum Einkaufspreis</value></data>
-	<data name="AtSalePrice" xml:space="preserve"><value>Zum Verkaufspreis</value></data>
-	<data name="CurrentQuantity" xml:space="preserve"><value>Aktuelle Menge</value></data>
-	<data name="StockPositions" xml:space="preserve"><value>Lagerpositionen</value></data>
-	<data name="StockValueOverview" xml:space="preserve"><value>Lagerwert</value></data>
-	<data name="LoadingStockValues" xml:space="preserve"><value>Lagerwerte werden geladen...</value></data>
-	<data name="NoStockBalances" xml:space="preserve"><value>Keine Lagerbestände</value></data>
-	<data name="NoStockBalancesForFilters" xml:space="preserve"><value>Für die gewählten Filter wurden keine Lagerbestände gefunden.</value></data>
-	<data name="SalePrice" xml:space="preserve"><value>Verkaufspreis</value></data>
-	<data name="SaleValue" xml:space="preserve"><value>Verkaufswert</value></data>
-	<data name="WarehousesOverviewDescription" xml:space="preserve">
-    <value>Verwalten Sie Ihre Lager und Standorte.</value>
-</data>
-	<data name="NewWarehouse" xml:space="preserve">
-    <value>Neues Lager</value>
-</data>
-	<data name="SearchWarehousePlaceholder" xml:space="preserve">
-    <value>Lager suchen...</value>
-</data>
-	<data name="WarehouseList" xml:space="preserve">
-    <value>Lagerliste</value>
-</data>
-	<data name="PaginationWarehouses" xml:space="preserve">
-    <value>{0} Lager</value>
-</data>
-	<data name="LoadingWarehouses" xml:space="preserve">
-    <value>Lager werden geladen...</value>
-</data>
-	<data name="NoWarehousesFound" xml:space="preserve">
-    <value>Keine Lager gefunden</value>
-</data>
-	<data name="NoWarehousesForFilters" xml:space="preserve">
-    <value>Für die aktuellen Filter wurden keine Lager gefunden.</value>
-</data>
-	<data name="StorageLocations" xml:space="preserve">
-    <value>Lagerplätze</value>
-</data>
-	<data name="Deactivate" xml:space="preserve">
-    <value>Deaktivieren</value>
-</data>
-	<data name="DeactivateWarehouseQuestion" xml:space="preserve">
-    <value>Lager deaktivieren?</value>
-</data>
-	<data name="DeactivateWarehouseText" xml:space="preserve">
-    <value>Möchten Sie</value>
-</data>
-	<data name="DeactivateWarehouseConfirm" xml:space="preserve">
-    <value>wirklich deaktivieren?</value>
-</data>
-	<data name="WarehouseWillNotBeDeleted" xml:space="preserve">
-    <value>Das Lager wird nicht gelöscht. Es wird nur als inaktiv markiert.</value>
-</data>
-	<data name="WarehouseContainsLocations" xml:space="preserve">
-    <value>Dieses Lager enthält {0} Lagerplatz/Lagerplätze.</value>
-</data>
-	<data name="LocationsWillRemain" xml:space="preserve">
-    <value>Diese bleiben erhalten.</value>
-</data>
-	<data name="EditWarehouse" xml:space="preserve">
-    <value>Lager bearbeiten</value>
-</data>
-	<data name="LoadingWarehouse" xml:space="preserve">
-    <value>Lager wird geladen...</value>
-</data>
-	<data name="WarehouseNotFound" xml:space="preserve">
-    <value>Lager nicht gefunden</value>
-</data>
-	<data name="BackToWarehouses" xml:space="preserve">
-    <value>Zurück zu Lager</value>
-</data>
-	<data name="WarehouseInformation" xml:space="preserve">
-    <value>Lagerinformationen</value>
-</data>
-	<data name="EditWarehouseInformationDescription" xml:space="preserve">
-    <value>Lagerdaten bearbeiten.</value>
-</data>
-	<data name="WarehouseIsActive" xml:space="preserve">
-    <value>Lager ist aktiv</value>
-</data>
-	<data name="SaveChanges" xml:space="preserve">
-    <value>Änderungen speichern</value>
-</data>
-	<data name="WarehouseNameAlreadyExists" xml:space="preserve">
-    <value>Ein anderes Lager mit diesem Namen existiert bereits.</value>
-</data>
-	<data name="CreateNewWarehouseDescription" xml:space="preserve">
-    <value>Neues Lager anlegen.</value>
-</data>
-	<data name="BasicWarehouseInformation" xml:space="preserve">
-    <value>Grundlegende Informationen zum Lager.</value>
-</data>
-	<data name="WarehouseNamePlaceholder" xml:space="preserve">
-    <value>z.B. Hauptlager München</value>
-</data>
-	<data name="WarehouseDescriptionPlaceholder" xml:space="preserve">
-    <value>Beschreibung...</value>
-</data>
-	<data name="SaveWarehouse" xml:space="preserve">
-    <value>Lager speichern</value>
-</data>
-	<data name="StorageLocationsOverviewDescription" xml:space="preserve">
-    <value>Verwalten Sie Ihre Lagerplätze.</value>
-</data>
-	<data name="NewStorageLocation" xml:space="preserve">
-    <value>Neuer Lagerplatz</value>
-</data>
-	<data name="SearchLocationPlaceholder" xml:space="preserve">
-    <value>Code, Name oder Lager suchen...</value>
-</data>
-	<data name="StorageLocationList" xml:space="preserve">
-    <value>Lagerplatzliste</value>
-</data>
-	<data name="PaginationStorageLocations" xml:space="preserve">
-    <value>{0} Lagerplätze</value>
-</data>
-	<data name="LoadingStorageLocations" xml:space="preserve">
-    <value>Lagerplätze werden geladen...</value>
-</data>
-	<data name="NoStorageLocationsFound" xml:space="preserve">
-    <value>Keine Lagerplätze gefunden</value>
-</data>
-	<data name="NoStorageLocationsForFilters" xml:space="preserve">
-    <value>Für die aktuellen Filter wurden keine Lagerplätze gefunden.</value>
-</data>
-	<data name="DeactivateStorageLocationQuestion" xml:space="preserve">
-    <value>Lagerplatz deaktivieren?</value>
-</data>
-	<data name="DeactivateStorageLocationText" xml:space="preserve">
-    <value>Möchten Sie</value>
-</data>
-	<data name="StorageLocationContainsStock" xml:space="preserve">
-    <value>Dieser Lagerplatz enthält noch Bestand.</value>
-</data>
-	<data name="MoveStockBeforeDeactivation" xml:space="preserve">
-    <value>Bitte verschieben Sie den Bestand zuerst.</value>
-</data>
-	<data name="StorageLocationWillNotBeDeleted" xml:space="preserve">
-    <value>Der Lagerplatz wird nicht gelöscht. Er wird nur als inaktiv markiert.</value>
-</data>
-	<data name="EditStorageLocation" xml:space="preserve">
-    <value>Lagerplatz bearbeiten</value>
-</data>
-	<data name="LoadingStorageLocation" xml:space="preserve">
-    <value>Lagerplatz wird geladen...</value>
-</data>
-	<data name="StorageLocationNotFound" xml:space="preserve">
-    <value>Lagerplatz nicht gefunden</value>
-</data>
-	<data name="StorageLocationInformation" xml:space="preserve">
-    <value>Lagerplatzinformationen</value>
-</data>
-	<data name="SelectWarehouse" xml:space="preserve">
-    <value>Lager auswählen</value>
-</data>
-	<data name="StorageLocationIsActive" xml:space="preserve">
-    <value>Lagerplatz ist aktiv</value>
-</data>
-	<data name="SelectedWarehouseNotFound" xml:space="preserve">
-    <value>Das ausgewählte Lager wurde nicht gefunden.</value>
-</data>
-	<data name="StorageLocationCodeAlreadyExists" xml:space="preserve">
-    <value>Dieser Lagerplatz-Code existiert in diesem Lager bereits.</value>
-</data>
-	<data name="WarehouseRequired" xml:space="preserve">
-    <value>Bitte ein Lager auswählen.</value>
-</data>
-	<data name="CodeRequired" xml:space="preserve">
-    <value>Code ist erforderlich.</value>
-</data>
-	<data name="CreateNewStorageLocationDescription" xml:space="preserve">
-  <value>Neuen Lagerplatz in einem Lager anlegen.</value>
-</data>
-	<data name="StorageLocationInformation" xml:space="preserve">
-  <value>Lagerplatzinformationen</value>
-</data>
-	<data name="StorageLocationInformationDescription" xml:space="preserve">
-  <value>Geben Sie die Position des Lagerplatzes an.</value>
-</data>
-	<data name="StorageLocationCodePlaceholder" xml:space="preserve">
-  <value>z.B. A-01-01</value>
-</data>
-	<data name="StorageLocationNamePlaceholder" xml:space="preserve">
-  <value>z.B. Regal A - Fach 01</value>
-</data>
-	<data name="StorageLocationDescriptionPlaceholder" xml:space="preserve">
-  <value>Beschreibung...</value>
-</data>
-	<data name="SaveStorageLocation" xml:space="preserve">
-  <value>Lagerplatz speichern</value>
-</data>
-	<data name="CloseMenu" xml:space="preserve">
-  <value>Menü schließen</value>
-</data>
-
-	<data name="Overview" xml:space="preserve">
-  <value>ÜBERSICHT</value>
-</data>
-
-	<data name="WarehouseSection" xml:space="preserve">
-  <value>LAGER</value>
-</data>
-
-	<data name="StockSection" xml:space="preserve">
-  <value>BESTAND</value>
-</data>
-
-	<data name="Administration" xml:space="preserve">
-  <value>VERWALTUNG</value>
-</data>
-
-	<data name="Analysis" xml:space="preserve">
-  <value>ANALYSE</value>
-</data>
-
-	<data name="SupplierOrders" xml:space="preserve">
-  <value>Lieferant-Bestellungen</value>
-</data>
-
-	<data name="UserManagement" xml:space="preserve">
-  <value>Benutzerverwaltung</value>
-</data>
-
-	<data name="RoleManagement" xml:space="preserve">
-  <value>Rollenverwaltung</value>
-</data>
-	<data name="ForgotPassword">
-		<value>Passwort vergessen?</value>
-	</data>
-	<data name="ForgotPasswordDescription">
-		<value>Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.</value>
-	</data>
-	<data name="ResetPassword">
-		<value>Passwort zurücksetzen</value>
-	</data>
-	<data name="BackToLogin">
-		<value>Zurück zur Anmeldung</value>
-	</data>
 </root>

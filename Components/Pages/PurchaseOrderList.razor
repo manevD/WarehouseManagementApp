@@ -10,6 +10,7 @@
 @using WarehouseManagement.Localization
 @using WarehouseManagement.Models
 @using WarehouseManagement.Services
+@using WarehouseManagement.Components
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -26,15 +27,15 @@
         min-width: 190px;
     }
 
-        .filter-date-group label {
-            margin: 0;
-            padding: 0;
-            height: auto;
-            color: #374151;
-            font-size: 13px;
-            line-height: 40px;
-            white-space: nowrap;
-        }
+    .filter-date-group label {
+        margin: 0;
+        padding: 0;
+        height: auto;
+        color: #374151;
+        font-size: 13px;
+        line-height: 40px;
+        white-space: nowrap;
+    }
 
     .filter-date {
         width: 145px;
@@ -49,14 +50,14 @@
         outline: none;
     }
 
-        .filter-date:hover {
-            border-color: #cbd5e1;
-        }
+    .filter-date:hover {
+        border-color: #cbd5e1;
+    }
 
-        .filter-date:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
-        }
+    .filter-date:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
 </style>
 
 
@@ -135,63 +136,36 @@
 
             <!-- STATUS -->
 
-            <select class="filter-select"
-                    @bind="SelectedStatus"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllStatuses"]
-                </option>
-
-                <option value="@((int)PurchaseOrderStatus.Entwurf)">
-                    @L["PurchaseOrderStatusDraft"]
-                </option>
-
-                <option value="@((int)PurchaseOrderStatus.Bestellt)">
-                    @L["PurchaseOrderStatusOrdered"]
-                </option>
-
-                <option value="@((int)PurchaseOrderStatus.TeilweiseGeliefert)">
-                    @L["PurchaseOrderStatusPartiallyDelivered"]
-                </option>
-
-                <option value="@((int)PurchaseOrderStatus.Geliefert)">
-                    @L["PurchaseOrderStatusDelivered"]
-                </option>
-
-                <option value="@((int)PurchaseOrderStatus.Storniert)">
-                    @L["PurchaseOrderStatusCancelled"]
-                </option>
-
-            </select>
+            <SearchableSelect TItem="PurchaseOrderStatusOption"
+                              TValue="int"
+                              Items="PurchaseOrderStatusOptions"
+                              Value="SelectedStatus"
+                              ValueChanged="OnPurchaseOrderStatusChanged"
+                              ValueSelector="@(x => x.Value)"
+                              TextSelector="@(x => x.Text)"
+                              Placeholder="@L["AllStatuses"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllStatuses"]"
+                              AllValue="0" />
 
 
             <!-- SUPPLIER -->
 
-            <select class="filter-select"
-                    @bind="SelectedSupplierId"
-                    @bind:after="FilterChanged">
-
-                <option value="0">
-                    @L["AllSuppliers"]
-                </option>
-
-                @foreach (var supplier in Suppliers)
-                {
-                    <option value="@supplier.Id">
-
-                        @supplier.CompanyName
-
-                        @if (!string.IsNullOrWhiteSpace(
-                            supplier.SupplierNumber))
-                        {
-                            @($" ({supplier.SupplierNumber})")
-                        }
-
-                    </option>
-                }
-
-            </select>
+            <SearchableSelect TItem="Supplier"
+                              TValue="int"
+                              Items="Suppliers"
+                              Value="SelectedSupplierId"
+                              ValueChanged="OnSupplierChanged"
+                              ValueSelector="@(x => x.Id)"
+                              TextSelector="@(x => string.IsNullOrWhiteSpace(x.SupplierNumber)
+                                  ? x.CompanyName
+                                  : $"{x.CompanyName} ({x.SupplierNumber})")"
+                              Placeholder="@L["AllSuppliers"]"
+                              NoResultsText="@L["NoResultsFound"]"
+                              ShowAllOption="true"
+                              AllOptionText="@L["AllSuppliers"]"
+                              AllValue="0" />
 
 
             <!-- FROM -->
@@ -644,6 +618,7 @@
             <!-- =====================================================
                  PAGINATION
                  ===================================================== -->
+
             @if (TotalPages > 1)
             {
                 <div class="pagination">
@@ -720,6 +695,22 @@
     private List<PurchaseOrder> Orders = new();
 
     private List<Supplier> Suppliers = new();
+
+
+    // =========================================================
+    // STATUS OPTIONS
+    // =========================================================
+
+    private class PurchaseOrderStatusOption
+    {
+        public int Value { get; set; }
+
+        public string Text { get; set; } = string.Empty;
+    }
+
+
+    private List<PurchaseOrderStatusOption>
+        PurchaseOrderStatusOptions = new();
 
 
     // =========================================================
@@ -803,6 +794,60 @@
 
     protected override async Task OnInitializedAsync()
     {
+        SelectedStatus = 0;
+        SelectedSupplierId = 0;
+
+
+        PurchaseOrderStatusOptions =
+            new List<PurchaseOrderStatusOption>
+            {
+                new()
+                {
+                    Value =
+                        (int)PurchaseOrderStatus.Entwurf,
+
+                    Text =
+                        L["PurchaseOrderStatusDraft"].Value
+                },
+
+                new()
+                {
+                    Value =
+                        (int)PurchaseOrderStatus.Bestellt,
+
+                    Text =
+                        L["PurchaseOrderStatusOrdered"].Value
+                },
+
+                new()
+                {
+                    Value =
+                        (int)PurchaseOrderStatus.TeilweiseGeliefert,
+
+                    Text =
+                        L["PurchaseOrderStatusPartiallyDelivered"].Value
+                },
+
+                new()
+                {
+                    Value =
+                        (int)PurchaseOrderStatus.Geliefert,
+
+                    Text =
+                        L["PurchaseOrderStatusDelivered"].Value
+                },
+
+                new()
+                {
+                    Value =
+                        (int)PurchaseOrderStatus.Storniert,
+
+                    Text =
+                        L["PurchaseOrderStatusCancelled"].Value
+                }
+            };
+
+
         await LoadSuppliers();
 
         await LoadOrders();
@@ -1013,6 +1058,38 @@
             args.Value?.ToString()
             ?? string.Empty;
 
+
+        CurrentPage = 1;
+
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // STATUS CHANGED
+    // =========================================================
+
+    private async Task OnPurchaseOrderStatusChanged(
+        int value)
+    {
+        SelectedStatus =
+            value;
+
+        CurrentPage = 1;
+
+        await LoadOrders();
+    }
+
+
+    // =========================================================
+    // SUPPLIER CHANGED
+    // =========================================================
+
+    private async Task OnSupplierChanged(
+        int value)
+    {
+        SelectedSupplierId =
+            value;
 
         CurrentPage = 1;
 
