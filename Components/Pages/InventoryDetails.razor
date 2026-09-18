@@ -1,188 +1,100 @@
 @page "/inventory/details/{Id:int}"
-@rendermode InteractiveServer
+
 @attribute [Authorize]
+@rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
+@using WarehouseManagement.Models
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
-@using WarehouseManagement.Models
-@using WarehouseManagement.Components
 
-@inject IStringLocalizer<SharedResource> L
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ApplicationDbContext Db
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> L
 
+<PageTitle>@L["EditInventory"]</PageTitle>
 
-<PageTitle>@L["InventoryDetails"]</PageTitle>
+<div class="product-form-page">
 
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
-@if (IsLoading)
-{
-    <div class="loading-state">
-        @L["InventoryLoading"]
-    </div>
-}
-else if (Inventory == null)
-{
-    <div class="empty-products">
+    <div class="page-header">
 
-        <div class="empty-products-icon">
-            ⚠
+        <div>
+
+            <h1>
+                @L["EditInventory"] #@Id
+            </h1>
+
+            <p>
+                @(Inventory?.Warehouse?.Name ?? "-")
+            </p>
+
         </div>
 
-        <h3>
-            @L["InventoryNotFound"]
-        </h3>
-
-        <a href="/inventory"
-           class="btn-primary">
-            @L["BackToInventories"]
-        </a>
-
-    </div>
-}
-else
-{
-    <div class="product-form-page">
-
-        <!-- =====================================================
-             HEADER
-             ===================================================== -->
-
-        <div class="page-header">
-
-            <div>
-
-                <h1>
-                    @L["InventoryNumber", Inventory.Id]
-                </h1>
-
-                <p>
-                    @(Inventory.Warehouse?.Name ?? "-")
-                </p>
-
-            </div>
-
+        @if (Inventory != null)
+        {
             <div class="page-header-actions">
 
                 <a href="/inventory"
                    class="btn-secondary">
+
                     ← @L["Back"]
+
+                </a>
+            </div>
+        }
+
+    </div>
+
+
+    @if (IsLoading)
+    {
+        <div class="form-card">
+
+            <div class="loading-state">
+                @L["LoadingInventory"]
+            </div>
+
+        </div>
+    }
+    else if (Inventory == null)
+    {
+        <div class="form-card">
+
+            <div class="empty-products">
+
+                <div class="empty-products-icon">
+                    ⚠
+                </div>
+
+                <h3>
+                    @L["InventoryNotFound"]
+                </h3>
+
+                <p>
+                    @L["RequestedInventoryNotFound"]
+                </p>
+
+                <a href="/inventory"
+                   class="btn-primary">
+
+                    ← @L["BackToInventories"]
+
                 </a>
 
-                @if (Inventory.Status != InventoryStatus.Abgeschlossen)
-                {
-                    <button type="button"
-                            class="btn-secondary"
-                            disabled="@IsSaving"
-                            @onclick="SaveInventory">
-
-                        @(IsSaving
-                            ? L["Saving"]
-                            : L["SaveDraft"])
-
-                    </button>
-
-                    <button type="button"
-                            class="btn-primary"
-                            disabled="@(IsSaving || Items.Count == 0)"
-                            @onclick="ShowCompleteConfirmation">
-
-                        ✓ @L["CompleteInventory"]
-
-                    </button>
-                }
-
             </div>
 
         </div>
-
-
+    }
+    else
+    {
         <!-- =====================================================
-             STATUS / INFO
-             ===================================================== -->
-
-        <div class="inventory-info-bar">
-
-            <div class="inventory-info-item">
-
-                <span class="inventory-info-label">
-                    @L["Status"]
-                </span>
-
-                @if (Inventory.Status == InventoryStatus.Entwurf)
-                {
-                    <span class="status-badge status-draft">
-                        @GetInventoryStatusText(
-                            InventoryStatus.Entwurf)
-                    </span>
-                }
-                else if (Inventory.Status == InventoryStatus.InBearbeitung)
-                {
-                    <span class="status-badge status-warning">
-                        @GetInventoryStatusText(
-                            InventoryStatus.InBearbeitung)
-                    </span>
-                }
-                else
-                {
-                    <span class="status-badge status-active">
-                        @GetInventoryStatusText(
-                            InventoryStatus.Abgeschlossen)
-                    </span>
-                }
-
-            </div>
-
-
-            <div class="inventory-info-item">
-
-                <span class="inventory-info-label">
-                    @L["Warehouse"]
-                </span>
-
-                <strong>
-                    @(Inventory.Warehouse?.Name ?? "-")
-                </strong>
-
-            </div>
-
-
-            <div class="inventory-info-item">
-
-                <span class="inventory-info-label">
-                    @L["CreatedAt"]
-                </span>
-
-                <strong>
-                    @Inventory.CreatedAt
-                </strong>
-
-            </div>
-
-
-            @if (Inventory.CompletedAt.HasValue)
-            {
-                <div class="inventory-info-item">
-
-                    <span class="inventory-info-label">
-                        @L["CompletedAt"]
-                    </span>
-
-                    <strong>
-                        @Inventory.CompletedAt.Value
-                    </strong>
-
-                </div>
-            }
-
-        </div>
-
-
-        <!-- =====================================================
-             MESSAGE
+             MESSAGES
              ===================================================== -->
         @if (!string.IsNullOrWhiteSpace(ErrorMessage))
         {
@@ -200,13 +112,13 @@ else
 
 
         <!-- =====================================================
-             MAIN CARD
+             MAIN FORM CARD
              ===================================================== -->
 
         <div class="form-card">
 
             <!-- =================================================
-                 SUMMARY
+                 STATUS
                  ================================================= -->
 
             <div class="form-section">
@@ -214,171 +126,97 @@ else
                 <div class="form-section-title">
 
                     <h2>
-                        @L["InventoryOverview"]
+                        @L["Status"]
                     </h2>
 
                     <p>
-                        @L["InventoryComparisonDescription"]
+                        @L["CurrentInventoryStatus"]
                     </p>
 
                 </div>
 
 
-                <div class="stock-summary-grid">
+                <div class="form-grid">
 
-                    <div class="stock-summary-card">
+                    <div class="form-group">
 
-                        <span>
-                            @L["Positions"]
-                        </span>
+                        <label>
+                            @L["Status"]
+                        </label>
 
-                        <strong>
-                            @Items.Count
-                        </strong>
+                        <div class="form-control"
+                             style="display:flex;align-items:center;">
 
-                    </div>
+                            @if (Inventory.Status == InventoryStatus.Entwurf)
+                            {
+                                <span class="status-badge status-draft">
+                                    @L["Draft"]
+                                </span>
+                            }
+                            else if (Inventory.Status == InventoryStatus.InBearbeitung)
+                            {
+                                <span class="status-badge status-warning">
+                                    @L["InProgress"]
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-active">
+                                    @L["Completed"]
+                                </span>
+                            }
 
-
-                    <div class="stock-summary-card">
-
-                        <span>
-                            @L["SystemStock"]
-                        </span>
-
-                        <strong>
-                            @TotalSystemQuantity
-                        </strong>
-
-                    </div>
-
-
-                    <div class="stock-summary-card">
-
-                        <span>
-                            @L["Counted"]
-                        </span>
-
-                        <strong>
-                            @TotalCountedQuantity
-                        </strong>
+                        </div>
 
                     </div>
 
 
-                    <div class="stock-summary-card">
+                    <div class="form-group">
 
-                        <span>
-                            @L["DifferentPositions"]
-                        </span>
-
-                        <strong>
-                            @DifferenceCount
-                        </strong>
-
-                    </div>
-
-
-                    <div class="stock-summary-card">
-
-                        <span>
-                            @L["TotalDifference"]
-                        </span>
-
-                        <strong>
-                            @FormatDifference(TotalDifference)
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 NOTE
-                 ================================================= -->
-            @if (!string.IsNullOrWhiteSpace(Inventory.Note))
-            {
-                <div class="form-section">
-
-                    <div class="form-section-title">
-
-                        <h2>
-                            @L["Note"]
-                        </h2>
-
-                    </div>
-
-                    <div class="note-box">
-                        @Inventory.Note
-                    </div>
-
-                </div>
-            }
-
-
-            <!-- =================================================
-                 SEARCH
-                 ================================================= -->
-
-            <div class="form-section">
-
-                <div class="form-section-title">
-
-                    <h2>
-                        @L["StockCount"]
-                    </h2>
-
-                    <p>
-                        @L["EnterCountedQuantities"]
-                    </p>
-
-                </div>
-
-
-                <div class="filter-card">
-
-                    <div class="search-box">
-
-                        <span class="search-icon">
-                            🔎
-                        </span>
+                        <label>
+                            @L["CreatedAt"]
+                        </label>
 
                         <input type="text"
-                               placeholder="@L["SearchProductSkuLocation"]"
-                               @bind="SearchText"
-                               @bind:event="oninput" />
+                               class="form-control"
+                               value="@Inventory.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")"
+                               disabled />
 
                     </div>
 
 
-                    <SearchableSelect TItem="WarehouseLocation"
-                                      TValue="int"
-                                      Items="Locations"
-                                      Value="SelectedLocationId"
-                                      ValueChanged="OnLocationChanged"
-                                      ValueSelector="@(x => x.Id)"
-                                      TextSelector="@(x => string.IsNullOrWhiteSpace(x.Name)
-                                          ? x.Code
-                                          : $"{x.Code} - {x.Name}")"
-                                      Placeholder="@L["AllLocations"]"
-                                      NoResultsText="@L["NoResultsFound"]"
-                                      ShowAllOption="true"
-                                      AllOptionText="@L["AllLocations"]"
-                                      AllValue="0" />
+                    <div class="form-group">
+
+                        <label>
+                            @L["Warehouse"]
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@(Inventory.Warehouse?.Name ?? "-")"
+                               disabled />
+
+                        <small>
+                            @L["WarehouseCannotBeChanged"]
+                        </small>
+
+                    </div>
 
 
-                    @if (!string.IsNullOrWhiteSpace(SearchText)
-                        || SelectedLocationId > 0)
+                    @if (Inventory.CompletedAt.HasValue)
                     {
-                        <button type="button"
-                                class="btn-secondary"
-                                @onclick="ClearFilters">
+                        <div class="form-group">
 
-                            @L["ResetFilters"]
+                            <label>
+                                @L["CompletedAt"]
+                            </label>
 
-                        </button>
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Inventory.CompletedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")"
+                                   disabled />
+
+                        </div>
                     }
 
                 </div>
@@ -387,12 +225,70 @@ else
 
 
             <!-- =================================================
-                 ITEMS TABLE
+                 INVENTORY DATA
                  ================================================= -->
 
             <div class="form-section">
 
-                @if (FilteredItems.Count == 0)
+                <div class="form-section-title">
+
+                    <h2>
+                        @L["InventoryData"]
+                    </h2>
+
+                    <p>
+                        @L["EditInventoryAdditionalInformation"]
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="note">
+                            @L["Note"]
+                        </label>
+
+                        <textarea id="note"
+                                  class="form-control textarea"
+                                  rows="4"
+                                  maxlength="500"
+                                  placeholder="@L["OptionalNote"]"
+                                  @bind="Note" readonly="true"></textarea>
+
+                        <small>
+                            @L["Maximum500Characters"]
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 POSITIONS
+                 ================================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <h2>
+                        @L["InventoryPositions"]
+                    </h2>
+
+                    <p>
+                        @L["InventoryPositionsOverview"]
+                    </p>
+
+                </div>
+
+
+                @if (Inventory.Items == null || Inventory.Items.Count == 0)
                 {
                     <div class="empty-products">
 
@@ -401,11 +297,11 @@ else
                         </div>
 
                         <h3>
-                            @L["NoPositionsFound"]
+                            @L["NoPositionsAvailable"]
                         </h3>
 
                         <p>
-                            @L["NoPositionMatchesFilter"]
+                            @L["InventoryContainsNoPositions"]
                         </p>
 
                     </div>
@@ -425,11 +321,11 @@ else
                                     </th>
 
                                     <th>
-                                        SKU
+                                        @L["SKU"]
                                     </th>
 
                                     <th>
-                                        @L["Location"]
+                                        @L["StorageLocation"]
                                     </th>
 
                                     <th>
@@ -451,8 +347,14 @@ else
 
                             <tbody>
 
-                                @foreach (var item in FilteredItems)
+                                @foreach (var item in Inventory.Items
+                                    .OrderBy(x => x.WarehouseLocation?.Code)
+                                    .ThenBy(x => x.Product?.Name))
                                 {
+                                    var difference =
+                                        (item.CountedQuantity ?? 0) -
+                                        item.SystemQuantity;
+
                                     <tr>
 
                                         <!-- PRODUCT -->
@@ -462,23 +364,18 @@ else
                                             <div class="product-name">
 
                                                 <div class="product-avatar">
-                                                    @GetInitials(
-                                                        item.ProductName)
+                                                    @GetInitials(item.Product?.Name)
                                                 </div>
 
                                                 <div>
 
                                                     <strong>
-                                                        @item.ProductName
+                                                        @(item.Product?.Name ?? "-")
                                                     </strong>
 
-                                                    @if (!string.IsNullOrWhiteSpace(
-                                                        item.Barcode))
-                                                    {
-                                                        <small>
-                                                            @item.Barcode
-                                                        </small>
-                                                    }
+                                                    <small>
+                                                        SKU: @(item.Product?.SKU ?? "-")
+                                                    </small>
 
                                                 </div>
 
@@ -490,7 +387,7 @@ else
                                         <!-- SKU -->
 
                                         <td>
-                                            @item.SKU
+                                            @(item.Product?.SKU ?? "-")
                                         </td>
 
 
@@ -501,14 +398,14 @@ else
                                             <div class="movement-location">
 
                                                 <strong>
-                                                    @item.LocationCode
+                                                    @(item.WarehouseLocation?.Code ?? "-")
                                                 </strong>
 
                                                 @if (!string.IsNullOrWhiteSpace(
-                                                    item.LocationName))
+                                                    item.WarehouseLocation?.Name))
                                                 {
                                                     <small>
-                                                        @item.LocationName
+                                                        @item.WarehouseLocation.Name
                                                     </small>
                                                 }
 
@@ -522,7 +419,7 @@ else
                                         <td>
 
                                             <strong>
-                                                @item.SystemQuantity.ToString("N2")
+                                                @item.SystemQuantity.ToString("0.###")
                                             </strong>
 
                                         </td>
@@ -530,31 +427,19 @@ else
 
                                         <!-- COUNTED -->
 
-                                        <td style="min-width:150px;">
+                                        <td>
 
-                                            @if (Inventory.Status ==
-                                                InventoryStatus.Abgeschlossen)
+                                            @if (item.CountedQuantity.HasValue)
                                             {
                                                 <strong>
-                                                    @(item.CountedQuantity?.ToString("N2") ?? "-")
+                                                    @item.CountedQuantity.Value.ToString("0.###")
                                                 </strong>
                                             }
                                             else
                                             {
-                                                <input type="number"
-                                                       class="form-control"
-                                                       min="0"
-                                                       step="0.01"
-                                                       value="@(item.CountedQuantity?
-                                                                                                           .ToString(
-                                                                                                               System.Globalization
-                                                                                                                   .CultureInfo
-                                                                                                                   .InvariantCulture)
-                                                                                                           ?? "")"
-                                                       @oninput="e =>
-                                                                                                           CountedQuantityChanged(
-                                                                                                               item,
-                                                                                                               e.Value?.ToString())" />
+                                                <span class="text-muted">
+                                                    @L["NotYetCounted"]
+                                                </span>
                                             }
 
                                         </td>
@@ -564,22 +449,22 @@ else
 
                                         <td>
 
-                                            @{
-                                                var difference =
-                                                    (item.CountedQuantity ?? 0)
-                                                    - item.SystemQuantity;
+                                            @if (!item.CountedQuantity.HasValue)
+                                            {
+                                                <span class="status-badge">
+                                                    –
+                                                </span>
                                             }
-
-                                            @if (difference > 0)
+                                            else if (difference > 0)
                                             {
                                                 <span class="status-badge status-active">
-                                                    +@difference.ToString("N2")
+                                                    +@difference.ToString("0.###")
                                                 </span>
                                             }
                                             else if (difference < 0)
                                             {
                                                 <span class="status-badge status-low">
-                                                    @difference.ToString("N2")
+                                                    @difference.ToString("0.###")
                                                 </span>
                                             }
                                             else
@@ -605,120 +490,23 @@ else
 
 
             <!-- =================================================
-                 BOTTOM ACTIONS
+                 ACTIONS
                  ================================================= -->
 
             <div class="form-actions">
 
                 <a href="/inventory"
                    class="btn-secondary">
-                    ← @L["Back"]
+
+                    @L["Cancel"]
+
                 </a>
-
-
-                @if (Inventory.Status != InventoryStatus.Abgeschlossen)
-                {
-                    <button type="button"
-                            class="btn-secondary"
-                            disabled="@IsSaving"
-                            @onclick="SaveInventory">
-
-                        @(IsSaving
-                            ? L["Saving"]
-                            : L["SaveDraft"])
-
-                    </button>
-
-
-                    <button type="button"
-                            class="btn-primary"
-                            disabled="@(IsSaving || Items.Count == 0)"
-                            @onclick="ShowCompleteConfirmation">
-
-                        ✓ @L["CompleteInventory"]
-
-                    </button>
-                }
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================================================
-         CONFIRM COMPLETE
-         ========================================================= -->
-    @if (ShowCompleteDialog)
-    {
-        <div class="modal-backdrop-custom">
-
-            <div class="confirm-dialog">
-
-                <div class="confirm-warning-icon">
-                    ⚠
-                </div>
-
-                <h3>
-                    @L["CompleteInventoryQuestion"]
-                </h3>
-
-                <p>
-                    @L["CompleteInventoryDescription"]
-                </p>
-
-
-                @if (DifferenceCount > 0)
-                {
-                    <div class="confirm-warning">
-
-                        <strong>
-                            @L[
-                                "DifferentPositionsWithCount",
-                                DifferenceCount
-                            ]
-                        </strong>
-
-                        <p>
-                            @L["TotalDifferenceWithValue",
-                                FormatDifference(TotalDifference)]
-                        </p>
-
-                    </div>
-                }
-
-
-                <div class="form-actions">
-
-                    <button type="button"
-                            class="btn-secondary"
-                            disabled="@IsSaving"
-                            @onclick="CancelComplete">
-
-                        @L["Cancel"]
-
-                    </button>
-
-
-                    <button type="button"
-                            class="btn-primary"
-                            disabled="@IsSaving"
-                            @onclick="CompleteInventory">
-
-                        @(IsSaving
-                            ? L["Completing"]
-                            : L["YesCompleteInventory"])
-
-                    </button>
-
-                </div>
 
             </div>
 
         </div>
     }
-}
+</div>
 
 
 @code {
@@ -737,29 +525,11 @@ else
 
     private Inventory? Inventory;
 
-    private List<InventoryRow> Items = new();
-
-    private List<WarehouseLocation> Locations = new();
-
-
-    // =========================================================
-    // FILTER
-    // =========================================================
-
-    private string SearchText = string.Empty;
-
-    private int SelectedLocationId;
-
-
-    // =========================================================
-    // STATE
-    // =========================================================
-
     private bool IsLoading = true;
 
     private bool IsSaving;
 
-    private bool ShowCompleteDialog;
+    private string? Note;
 
     private string? ErrorMessage;
 
@@ -767,80 +537,10 @@ else
 
 
     // =========================================================
-    // FILTERED ITEMS
-    // =========================================================
-
-    private List<InventoryRow> FilteredItems =>
-        Items
-            .Where(x =>
-                string.IsNullOrWhiteSpace(SearchText)
-                ||
-                x.ProductName.Contains(
-                    SearchText,
-                    StringComparison.OrdinalIgnoreCase)
-                ||
-                x.SKU.Contains(
-                    SearchText,
-                    StringComparison.OrdinalIgnoreCase)
-                ||
-                x.LocationCode.Contains(
-                    SearchText,
-                    StringComparison.OrdinalIgnoreCase)
-                ||
-                (
-                    !string.IsNullOrWhiteSpace(x.LocationName)
-                    &&
-                    x.LocationName.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase)
-                )
-                ||
-                (
-                    !string.IsNullOrWhiteSpace(x.Barcode)
-                    &&
-                    x.Barcode.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase)
-                ))
-            .Where(x =>
-                SelectedLocationId == 0
-                ||
-                x.WarehouseLocationId ==
-                    SelectedLocationId)
-            .OrderBy(x => x.LocationCode)
-            .ThenBy(x => x.ProductName)
-            .ToList();
-
-
-    // =========================================================
-    // SUMMARY
-    // =========================================================
-
-    private decimal TotalSystemQuantity =>
-        Items.Sum(x => x.SystemQuantity);
-
-
-    private decimal TotalCountedQuantity =>
-        Items.Sum(x => x.CountedQuantity ?? 0);
-
-
-    private decimal TotalDifference =>
-        Items.Sum(x =>
-            (x.CountedQuantity ?? 0)
-            - x.SystemQuantity);
-
-
-    private int DifferenceCount =>
-        Items.Count(x =>
-            (x.CountedQuantity ?? 0)
-            != x.SystemQuantity);
-
-
-    // =========================================================
     // INITIALIZATION
     // =========================================================
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await LoadInventory();
     }
@@ -857,92 +557,31 @@ else
 
         try
         {
-            await using var db =
-                await DbFactory.CreateDbContextAsync();
-
-
             Inventory =
-                await db.Inventories
-                    .AsNoTracking()
+                await Db.Inventories
+
                     .Include(x => x.Warehouse)
+
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.Product)
+
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.WarehouseLocation)
+
                     .FirstOrDefaultAsync(x =>
                         x.Id == Id);
 
 
-            if (Inventory == null)
-                return;
-
-
-            Items =
-                await db.InventoryItems
-                    .AsNoTracking()
-                    .Where(x =>
-                        x.InventoryId == Id)
-                    .Include(x => x.Product)
-                    .Include(x => x.WarehouseLocation)
-                    .Select(x => new InventoryRow
-                    {
-                        Id = x.Id,
-
-                        ProductId = x.ProductId,
-
-                        WarehouseLocationId =
-                            x.WarehouseLocationId,
-
-                        ProductName =
-                            x.Product != null
-                                ? x.Product.Name
-                                : "-",
-
-                        SKU =
-                            x.Product != null
-                                ? x.Product.SKU
-                                : "-",
-
-                        Barcode =
-                            x.Product != null
-                                ? x.Product.Barcode
-                                : null,
-
-                        LocationCode =
-                            x.WarehouseLocation != null
-                                ? x.WarehouseLocation.Code
-                                : "-",
-
-                        LocationName =
-                            x.WarehouseLocation != null
-                                ? x.WarehouseLocation.Name
-                                : null,
-
-                        SystemQuantity =
-                            x.SystemQuantity,
-
-                        CountedQuantity =
-                            x.CountedQuantity
-                    })
-                    .OrderBy(x =>
-                        x.LocationCode)
-                    .ThenBy(x =>
-                        x.ProductName)
-                    .ToListAsync();
-
-
-            Locations =
-                await db.WarehouseLocations
-                    .AsNoTracking()
-                    .Where(x =>
-                        x.WarehouseId ==
-                            Inventory.WarehouseId
-                        &&
-                        x.IsActive)
-                    .OrderBy(x =>
-                        x.Code)
-                    .ToListAsync();
+            if (Inventory != null)
+            {
+                Note = Inventory.Note;
+            }
         }
         catch (Exception ex)
         {
             ErrorMessage =
-                L["ErrorLoadingInventory", ex.Message];
+                L["InventoryLoadError",
+                    ex.GetBaseException().Message].Value;
         }
         finally
         {
@@ -951,476 +590,12 @@ else
     }
 
 
-    // =========================================================
-    // COUNTED QUANTITY
-    // =========================================================
-
-    private void CountedQuantityChanged(
-        InventoryRow item,
-        string? value)
-    {
-        if (Inventory?.Status ==
-            InventoryStatus.Abgeschlossen)
-        {
-            return;
-        }
-
-
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            item.CountedQuantity = null;
-            SuccessMessage = null;
-            return;
-        }
-
-
-        if (decimal.TryParse(
-            value,
-            System.Globalization.NumberStyles.Any,
-            System.Globalization.CultureInfo.InvariantCulture,
-            out var quantity))
-        {
-            item.CountedQuantity =
-                Math.Max(0, quantity);
-
-            SuccessMessage = null;
-        }
-    }
-
-
-    // =========================================================
-    // SAVE
-    // =========================================================
-
-    private async Task SaveInventory()
-    {
-        if (Inventory == null ||
-            Inventory.Status ==
-                InventoryStatus.Abgeschlossen ||
-            IsSaving)
-        {
-            return;
-        }
-
-
-        IsSaving = true;
-        ErrorMessage = null;
-        SuccessMessage = null;
-
-
-        try
-        {
-            await using var db =
-                await DbFactory.CreateDbContextAsync();
-
-
-            var inventory =
-                await db.Inventories
-                    .Include(x => x.Items)
-                    .FirstOrDefaultAsync(x =>
-                        x.Id == Id);
-
-
-            if (inventory == null)
-            {
-                ErrorMessage =
-                    L["InventoryNotFound"];
-
-                return;
-            }
-
-
-            if (inventory.Status ==
-                InventoryStatus.Abgeschlossen)
-            {
-                ErrorMessage =
-                    L["InventoryAlreadyCompleted"];
-
-                return;
-            }
-
-
-            foreach (var dbItem in inventory.Items)
-            {
-                var row =
-                    Items.FirstOrDefault(x =>
-                        x.Id == dbItem.Id);
-
-
-                if (row == null)
-                    continue;
-
-
-                dbItem.CountedQuantity =
-                    row.CountedQuantity;
-
-                dbItem.Difference =
-                    Math.Round(
-                        (row.CountedQuantity ?? 0)
-                        - dbItem.SystemQuantity,
-                        2);
-            }
-
-
-            if (inventory.Status ==
-                InventoryStatus.Entwurf)
-            {
-                inventory.Status =
-                    InventoryStatus.InBearbeitung;
-            }
-
-
-            await db.SaveChangesAsync();
-
-
-            Inventory.Status =
-                inventory.Status;
-
-
-            SuccessMessage =
-                L["InventorySaved"];
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage =
-                L["ErrorSavingInventory", ex.Message];
-        }
-        finally
-        {
-            IsSaving = false;
-        }
-    }
-
-
-    // =========================================================
-    // COMPLETE CONFIRMATION
-    // =========================================================
-
-    private void ShowCompleteConfirmation()
-    {
-        if (Inventory == null ||
-            Inventory.Status ==
-                InventoryStatus.Abgeschlossen)
-        {
-            return;
-        }
-
-
-        ErrorMessage = null;
-        SuccessMessage = null;
-
-        ShowCompleteDialog = true;
-    }
-
-
-    private void CancelComplete()
-    {
-        ShowCompleteDialog = false;
-    }
-
-
-    // =========================================================
-    // COMPLETE INVENTORY
-    // =========================================================
-
-    private async Task CompleteInventory()
-    {
-        if (Inventory == null ||
-            Inventory.Status ==
-                InventoryStatus.Abgeschlossen ||
-            IsSaving)
-        {
-            return;
-        }
-
-
-        IsSaving = true;
-        ErrorMessage = null;
-        SuccessMessage = null;
-
-
-        await using var db =
-            await DbFactory.CreateDbContextAsync();
-
-        await using var transaction =
-            await db.Database.BeginTransactionAsync();
-
-
-        try
-        {
-            var inventory =
-                await db.Inventories
-                    .Include(x => x.Items)
-                    .FirstOrDefaultAsync(x =>
-                        x.Id == Id);
-
-
-            if (inventory == null)
-            {
-                ErrorMessage =
-                    L["InventoryNotFound"];
-
-                return;
-            }
-
-
-            if (inventory.Status ==
-                InventoryStatus.Abgeschlossen)
-            {
-                ErrorMessage =
-                    L["InventoryAlreadyCompleted"];
-
-                return;
-            }
-
-
-            foreach (var dbItem in inventory.Items)
-            {
-                var row =
-                    Items.FirstOrDefault(x =>
-                        x.Id == dbItem.Id);
-
-
-                if (row == null)
-                {
-                    throw new InvalidOperationException(
-                        L["InventoryPositionNotFound"]);
-                }
-
-
-                if (!row.CountedQuantity.HasValue)
-                {
-                    throw new InvalidOperationException(
-                        L[
-                            "NoQuantityForProduct",
-                            row.ProductName
-                        ]);
-                }
-
-
-                var countedQuantity =
-                    row.CountedQuantity.Value;
-
-
-                if (countedQuantity < 0)
-                {
-                    throw new InvalidOperationException(
-                        L["CountedQuantityCannotBeNegative"]);
-                }
-
-
-                // -------------------------------------------------
-                // CURRENT STOCK
-                // -------------------------------------------------
-
-                var stock =
-                    await db.Stocks
-                        .FirstOrDefaultAsync(x =>
-                            x.ProductId ==
-                                dbItem.ProductId
-                            &&
-                            x.WarehouseLocationId ==
-                                dbItem.WarehouseLocationId);
-
-
-                if (stock == null)
-                {
-                    throw new InvalidOperationException(
-                        L[
-                            "NoStockForProduct",
-                            dbItem.ProductId
-                        ]);
-                }
-
-
-                /*
-                 * WICHTIG:
-                 *
-                 * Die Differenz wird gegen den AKTUELLEN Bestand
-                 * berechnet.
-                 *
-                 * Falls seit Start der Inventur ein Wareneingang,
-                 * Warenausgang oder eine Umlagerung stattgefunden
-                 * hat, überschreiben wir den Bestand nicht blind.
-                 */
-
-                var currentQuantity =
-                    stock.Quantity;
-
-                var difference =
-                    countedQuantity -
-                    currentQuantity;
-
-
-                dbItem.CountedQuantity =
-                    countedQuantity;
-
-                dbItem.Difference =
-                    countedQuantity -
-                    dbItem.SystemQuantity;
-
-
-                // -------------------------------------------------
-                // NO DIFFERENCE
-                // -------------------------------------------------
-
-                if (difference == 0)
-                    continue;
-
-
-                // -------------------------------------------------
-                // RESERVED STOCK PROTECTION
-                // -------------------------------------------------
-
-                if (countedQuantity <
-                    stock.ReservedQuantity)
-                {
-                    throw new InvalidOperationException(
-                        L[
-                            "CountedBelowReserved",
-                            countedQuantity,
-                            stock.ReservedQuantity
-                        ]);
-                }
-
-
-                // -------------------------------------------------
-                // STOCK MOVEMENT
-                // -------------------------------------------------
-
-                var movement =
-                    new StockMovement
-                    {
-                        ProductId =
-                            dbItem.ProductId,
-
-                        Quantity =
-                            Math.Abs(difference),
-
-                        Type =
-                            StockMovementType.Inventur,
-
-                        FromWarehouseLocationId =
-                            difference < 0
-                                ? dbItem.WarehouseLocationId
-                                : null,
-
-                        ToWarehouseLocationId =
-                            difference > 0
-                                ? dbItem.WarehouseLocationId
-                                : null,
-
-                        ReferenceNumber =
-                            $"INV-{inventory.Id}",
-
-                        Note =
-                            L[
-                                "InventoryMovementNote",
-                                inventory.Id,
-                                currentQuantity,
-                                countedQuantity
-                            ],
-
-                        CreatedAt =
-                            DateTime.UtcNow
-                    };
-
-
-                db.StockMovements.Add(
-                    movement);
-
-
-                // -------------------------------------------------
-                // UPDATE STOCK
-                // -------------------------------------------------
-
-                stock.Quantity =
-                    countedQuantity;
-
-                stock.UpdatedAt =
-                    DateTime.UtcNow;
-            }
-
-
-            // =====================================================
-            // COMPLETE
-            // =====================================================
-
-            inventory.Status =
-                InventoryStatus.Abgeschlossen;
-
-            inventory.CompletedAt =
-                DateTime.UtcNow;
-
-
-            await db.SaveChangesAsync();
-
-            await transaction.CommitAsync();
-
-
-            ShowCompleteDialog = false;
-
-
-            await LoadInventory();
-
-
-            SuccessMessage =
-                L["InventoryCompletedSuccessfully"];
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-
-            ErrorMessage =
-                L[
-                    "ErrorCompletingInventory",
-                    ex.Message
-                ];
-        }
-        finally
-        {
-            IsSaving = false;
-        }
-    }
-
-
-    // =========================================================
-    // LOCATION CHANGED
-    // =========================================================
-
-    private void OnLocationChanged(int locationId)
-    {
-        SelectedLocationId = locationId;
-    }
-
-
-    // =========================================================
-    // FILTER
-    // =========================================================
-
-    private void ClearFilters()
-    {
-        SearchText = string.Empty;
-        SelectedLocationId = 0;
-    }
-
-
+    
     // =========================================================
     // HELPERS
     // =========================================================
 
-    private string FormatDifference(
-        decimal difference)
-    {
-        if (difference > 0)
-            return $"+{difference:N2}";
-
-        return difference.ToString("N2");
-    }
-
-
-    private string GetInitials(
-        string? name)
+    private string GetInitials(string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "?";
@@ -1449,59 +624,4 @@ else
                 .ToUpper();
     }
 
-
-    // =========================================================
-    // VIEW MODEL
-    // =========================================================
-
-    private class InventoryRow
-    {
-        public int Id { get; set; }
-
-        public int ProductId { get; set; }
-
-        public int WarehouseLocationId { get; set; }
-
-        public string ProductName { get; set; }
-            = string.Empty;
-
-        public string SKU { get; set; }
-            = string.Empty;
-
-        public string? Barcode { get; set; }
-
-        public string LocationCode { get; set; }
-            = string.Empty;
-
-        public string? LocationName { get; set; }
-
-        public decimal SystemQuantity { get; set; }
-
-        public decimal? CountedQuantity { get; set; }
-
-        public int? Difference { get; set; }
-    }
-
-
-    // =========================================================
-    // INVENTORY STATUS LOCALIZATION
-    // =========================================================
-
-    private string GetInventoryStatusText(
-        InventoryStatus status)
-    {
-        return status switch
-        {
-            InventoryStatus.Entwurf =>
-                L["InventoryStatusDraft"],
-
-            InventoryStatus.InBearbeitung =>
-                L["InventoryStatusInProgress"],
-
-            InventoryStatus.Abgeschlossen =>
-                L["InventoryStatusCompleted"],
-
-            _ => status.ToString()
-        };
-    }
 }

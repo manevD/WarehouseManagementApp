@@ -1,4 +1,4 @@
-@page "/"
+@page "/en"
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Components.Forms
@@ -8,7 +8,7 @@
 @layout PublicLayout
 
 <PageTitle>
-    Warehouse Management | Die digitale Lösung für moderne Lager
+    Warehouse Management | Digital Solution for Modern Warehouses
 </PageTitle>
 
 <div class="page-wrapper">
@@ -23,8 +23,8 @@
 
             <!-- LOGO -->
             <a class="brand"
-               href="#top"
-               aria-label="Warehouse Management Startseite">
+               href="/en#topen"
+               aria-label="Warehouse Management Homepage">
 
                 <div class="brand-logo">
                     <img class="brand-logo-image"
@@ -38,32 +38,32 @@
             <!-- NAVIGATION -->
             <nav class="nav-menu @(MenuOpen ? "active" : string.Empty)">
 
-                <a href="#loesung"
+                <a href="/en#loesungen"
                    @onclick="CloseMenu">
-                    Lösung
+                    Solution
                 </a>
 
-                <a href="#funktionen"
+                <a href="/en#functionen"
                    @onclick="CloseMenu">
-                    Funktionen
+                    Features
                 </a>
 
-                <a href="#prozesse"
+                <a href="/en#prozesseen"
                    @onclick="CloseMenu">
-                    Prozesse
+                    Processes
                 </a>
 
-                <a href="#branchen"
+                <a href="/en#branchenen"
                    @onclick="CloseMenu">
-                    Branchen
+                    Industries
                 </a>
 
-                <a href="#reports"
+                <a href="/en#reportsen"
                    @onclick="CloseMenu">
                     Reports
                 </a>
 
-                <a href="#faq"
+                <a href="/en#faqen"
                    @onclick="CloseMenu">
                     FAQ
                 </a>
@@ -78,7 +78,7 @@
                 <div class="language-selector">
 
                     <a href="/"
-                       class="language active"
+                       class="language"
                        title="Deutsch">
 
                         DE
@@ -86,7 +86,7 @@
                     </a>
 
                     <a href="/en"
-                       class="language"
+                       class="language active"
                        title="English">
 
                         EN
@@ -114,14 +114,14 @@
 
                 <!-- DEMO BUTTON -->
                 <a class="btn btn-primary"
-                   href="#demo">
+                   href="/en#demoen">
 
-                    Demo buchen
+                    Request Demo
 
                     <span>→</span>
 
                 </a>
-                          <div class="mobile-language-selector">
+                <div class="mobile-language-selector">
     <a href="/"
        class="mobile-language @(IsActiveLanguage("de") ? "active" : "")">
         DE
@@ -146,7 +146,7 @@
                 <!-- MOBILE MENU -->
                 <button class="mobile-toggle"
                         type="button"
-                        aria-label="Menü öffnen"
+                        aria-label="Open menu"
                         @onclick="ToggleMenu">
 
                     ☰
@@ -164,7 +164,7 @@
          MAIN
          ========================================================= -->
 
-    <main id="top">
+    <main id="topen">
 
 
         <!-- =========================================================
@@ -178,17 +178,17 @@
                 <div class="hero-content">
 
                     <span class="badge">
-                        Digitale Lagerverwaltung für moderne Unternehmen
+                        Digital Warehouse Management for Modern Businesses
                     </span>
 
 
                     <h1 class="hero-title">
 
-                        Ihr Lager.
+                        Your Warehouse.
                         <br />
 
                         <span>
-                            Ein System. Volle Kontrolle.
+                            One System. Complete Control.
                         </span>
 
                     </h1>
@@ -196,10 +196,10 @@
 
                     <p class="hero-subtitle">
 
-                        Warehouse Management verbindet Produkte, Lager,
-                        Lagerplätze, Bestände, Einkauf, Bestellungen,
-                        Wareneingang, Warenausgang und Inventur
-                        in einer zentralen Plattform.
+                        Warehouse Management connects products, warehouses,
+                        storage locations, inventory, purchasing, orders,
+                        goods receipt, goods issue, and stocktaking
+                        in one central platform.
 
                     </p>
 
@@ -207,9 +207,9 @@
                     <div class="hero-actions">
 
                         <a class="btn btn-primary"
-                           href="#demo">
+                           href="/en#demoen">
 
-                            Persönliche Demo buchen
+                            Request Personalized Demo
 
                             <span>→</span>
 
@@ -217,9 +217,9 @@
 
 
                         <a class="btn btn-secondary"
-                           href="#funktionen">
+                           href="/en#functionen">
 
-                            Funktionen entdecken
+                            Explore Features
 
                             <span>→</span>
 
@@ -231,11 +231,11 @@
                     <div class="microproof">
 
                         <span class="avatars">
-                            Lager&nbsp;&nbsp;Einkauf&nbsp;&nbsp;Verkauf&nbsp;&nbsp;Management
+                            Warehouse&nbsp;&nbsp;Purchasing&nbsp;&nbsp;Sales&nbsp;&nbsp;Management
                         </span>
 
                         <span>
-                            Eine Plattform für Ihre täglichen Prozesse.
+                            One platform for your daily business processes.
                         </span>
 
                     </div>
@@ -256,14 +256,14 @@
 
                             <span class="status-dot"></span>
 
-                            Bestände jederzeit im Blick
+                            Inventory always in control
 
                         </div>
 
 
                         <div class="floating-badge badge-bottom">
 
-                            ✓ Einkauf · Lager · Verkauf · Reports
+                            ✓ Purchasing · Warehouse · Sales · Reports
 
                         </div>
 
@@ -286,11 +286,11 @@
 
                 <p>
 
-                    Eine zentrale Plattform für
+                    One central platform for
 
                     <strong>
-                        strukturierte Lagerprozesse,
-                        aktuelle Bestände und klare Entscheidungen.
+                        structured warehouse processes,
+                        up-to-date inventory, and clear decisions.
                     </strong>
 
                 </p>
@@ -298,10 +298,10 @@
 
                 <div class="logos">
 
-                    <span>GROSSHANDEL</span>
-                    <span>BAUSTOFFHANDEL</span>
-                    <span>ERSATZTEILE</span>
-                    <span>PRODUKTION</span>
+                    <span>WHOLESALE</span>
+                    <span>BUILDING MATERIALS</span>
+                    <span>SPARE PARTS</span>
+                    <span>MANUFACTURING</span>
                     <span>E-COMMERCE</span>
 
                 </div>
@@ -316,29 +316,27 @@
              ========================================================= -->
 
         <section class="section"
-                 id="loesung">
+                 id="loesungen">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Mehr als eine Lagerliste
+                        More Than a Simple Stock List
                     </span>
 
 
                     <h2>
-                        Vom Einkauf bis zum Warenausgang –
-                        alles miteinander verbunden.
+                        From Purchasing to Goods Issue –
+                        Everything is Connected.
                     </h2>
 
 
                     <p>
 
-                        Moderne Lagerverwaltung bedeutet nicht nur,
-                        den aktuellen Bestand zu kennen.
-                        Sie bedeutet, jeden relevanten Prozess
-                        miteinander zu verbinden.
+                        Modern warehouse management is not just about knowing current stock levels.
+                        It means connecting every relevant process with one another.
 
                     </p>
 
@@ -355,15 +353,14 @@
                         </div>
 
                         <h3>
-                            Ein zentraler Datenbestand
+                            One Central Database
                         </h3>
 
                         <p>
 
-                            Produkte, Kategorien, Lager,
-                            Lagerplätze, Lieferanten, Kunden
-                            und Bestellungen werden zentral
-                            verwaltet.
+                            Products, categories, warehouses,
+                            storage locations, suppliers, customers,
+                            and orders are managed centrally.
 
                         </p>
 
@@ -377,14 +374,14 @@
                         </div>
 
                         <h3>
-                            Jeder Warenfluss nachvollziehbar
+                            Traceability of Every Movement
                         </h3>
 
                         <p>
 
-                            Wareneingänge, Warenausgänge,
-                            Umlagerungen, Korrekturen und
-                            Inventuren werden dokumentiert.
+                            Goods receipts, goods issues,
+                            relocations, corrections, and
+                            stocktaking are fully documented.
 
                         </p>
 
@@ -398,15 +395,14 @@
                         </div>
 
                         <h3>
-                            Informationen für Entscheidungen
+                            Data-Driven Decision Making
                         </h3>
 
                         <p>
 
-                            Bestandsberichte, Lagerwert,
-                            Bewegungen, Niedrigbestände,
-                            Produkte und Lieferanten
-                            übersichtlich auswerten.
+                            Analyze stock reports, warehouse valuation,
+                            movements, low stock levels,
+                            products, and suppliers clearly.
 
                         </p>
 
@@ -424,28 +420,28 @@
              ========================================================= -->
 
         <section class="section workflow-section"
-                 id="prozesse">
+                 id="prozesseen">
 
             <div class="container">
 
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Der komplette Warenfluss
+                        Complete Goods Flow
                     </span>
 
 
                     <h2>
-                        Ein durchgängiger Prozess statt
-                        vieler Einzellösungen.
+                        An End-to-End Process
+                        Instead of Isolated Solutions.
                     </h2>
 
 
                     <p>
 
-                        Jeder Schritt baut auf dem vorherigen auf.
-                        So bleibt Ihr Bestand nachvollziehbar
-                        und Ihre Mitarbeiter arbeiten mit denselben Daten.
+                        Every step builds upon the previous one.
+                        Your inventory stays fully traceable
+                        and your employees work with consistent data.
 
                     </p>
 
@@ -466,14 +462,14 @@
                         </div>
 
                         <h3>
-                            Einkauf
+                            Purchasing
                         </h3>
 
                         <p>
 
-                            Lieferanten verwalten,
-                            Bestellungen erstellen und
-                            benötigte Waren planen.
+                            Manage suppliers,
+                            create purchase orders, and
+                            plan required items.
 
                         </p>
 
@@ -491,14 +487,14 @@
                         </div>
 
                         <h3>
-                            Wareneingang
+                            Goods Receipt
                         </h3>
 
                         <p>
 
-                            Gelieferte Mengen erfassen
-                            und Waren dem richtigen
-                            Lager beziehungsweise Lagerplatz zuordnen.
+                            Record delivered quantities
+                            and assign goods to the correct
+                            warehouse or storage location.
 
                         </p>
 
@@ -516,14 +512,14 @@
                         </div>
 
                         <h3>
-                            Einlagern
+                            Storage
                         </h3>
 
                         <p>
 
-                            Bestände gezielt auf Lagerplätze
-                            verteilen und jederzeit wissen,
-                            wo sich ein Artikel befindet.
+                            Distribute stock to specific locations
+                            and know at all times
+                            where an item is placed.
 
                         </p>
 
@@ -541,14 +537,13 @@
                         </div>
 
                         <h3>
-                            Umlagern
+                            Relocation
                         </h3>
 
                         <p>
 
-                            Waren zwischen Lagerplätzen
-                            oder Lagern bewegen und jede
-                            Bewegung dokumentieren.
+                            Move goods between storage locations
+                            or warehouses and document every movement.
 
                         </p>
 
@@ -566,14 +561,14 @@
                         </div>
 
                         <h3>
-                            Bestellung
+                            Sales Order
                         </h3>
 
                         <p>
 
-                            Kundenbestellungen verwalten,
-                            Positionen prüfen und verfügbare
-                            Bestände berücksichtigen.
+                            Manage customer orders,
+                            verify line items, and check
+                            available stock levels.
 
                         </p>
 
@@ -591,14 +586,14 @@
                         </div>
 
                         <h3>
-                            Warenausgang
+                            Goods Issue
                         </h3>
 
                         <p>
 
-                            Waren kontrolliert ausbuchen
-                            und den Bestand automatisch
-                            aktuell halten.
+                            Book out goods in a controlled manner
+                            and keep your inventory
+                            automatically up to date.
 
                         </p>
 
@@ -616,28 +611,28 @@
              ========================================================= -->
 
         <section class="section"
-                 id="funktionen">
+                 id="functionen">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Die wichtigsten Werkzeuge
+                        Essential Tools
                     </span>
 
 
                     <h2>
-                        Alles, was ein modernes Lager braucht.
+                        Everything a Modern Warehouse Needs.
                     </h2>
 
 
                     <p>
 
-                        Von der Stammdatenverwaltung bis zur
-                        detaillierten Bestandsanalyse –
-                        Warehouse Management bündelt Ihre Prozesse
-                        in einem System.
+                        From master data management to
+                        detailed inventory analysis –
+                        Warehouse Management consolidates your processes
+                        into a single system.
 
                     </p>
 
@@ -652,15 +647,14 @@
                         <span>01</span>
 
                         <h3>
-                            Produkte & Kategorien
+                            Products & Categories
                         </h3>
 
                         <p>
 
-                            Produkte zentral verwalten,
-                            kategorisieren und mit SKU,
-                            Barcode, Preisen und Mindestbeständen
-                            organisieren.
+                            Manage products centrally,
+                            categorize them, and organize with SKU,
+                            barcodes, pricing, and minimum stock levels.
 
                         </p>
 
@@ -674,15 +668,14 @@
                         <span>02</span>
 
                         <h3>
-                            Lager & Lagerplätze
+                            Warehouses & Locations
                         </h3>
 
                         <p>
 
-                            Mehrere Lager und strukturierte
-                            Lagerplätze verwalten.
-                            Finden Sie schnell heraus,
-                            wo ein Artikel liegt.
+                            Manage multiple warehouses and structured
+                            storage bins. Quickly locate
+                            where any item is stored.
 
                         </p>
 
@@ -696,15 +689,15 @@
                         <span>03</span>
 
                         <h3>
-                            Bestandsverwaltung
+                            Inventory Control
                         </h3>
 
                         <p>
 
-                            Aktuellen Bestand,
-                            reservierte Mengen,
-                            verfügbare Mengen und
-                            Mindestbestände überwachen.
+                            Monitor total stock,
+                            reserved quantities,
+                            available quantities, and
+                            minimum stock thresholds.
 
                         </p>
 
@@ -718,14 +711,13 @@
                         <span>04</span>
 
                         <h3>
-                            Lieferanten
+                            Suppliers
                         </h3>
 
                         <p>
 
-                            Lieferanten zentral verwalten
-                            und mit Ihren Beschaffungsprozessen
-                            verbinden.
+                            Manage suppliers centrally
+                            and integrate them into your procurement processes.
 
                         </p>
 
@@ -739,14 +731,13 @@
                         <span>05</span>
 
                         <h3>
-                            Kunden & Bestellungen
+                            Customers & Orders
                         </h3>
 
                         <p>
 
-                            Kunden und Aufträge strukturiert
-                            verwalten und Bestände bei der
-                            Auftragsabwicklung berücksichtigen.
+                            Manage customers and sales orders in a structured way,
+                            taking stock levels into account during order processing.
 
                         </p>
 
@@ -760,14 +751,14 @@
                         <span>06</span>
 
                         <h3>
-                            Inventur
+                            Stocktaking
                         </h3>
 
                         <p>
 
-                            Inventuren erstellen,
-                            Systembestand mit gezählten Mengen
-                            vergleichen und Differenzen nachvollziehen.
+                            Create inventory audits,
+                            compare system stock with physical counts,
+                            and track variances easily.
 
                         </p>
 
@@ -781,14 +772,13 @@
                         <span>07</span>
 
                         <h3>
-                            Warenbewegungen
+                            Stock Movements
                         </h3>
 
                         <p>
 
-                            Eingänge, Ausgänge, Umlagerungen,
-                            Inventuren und Korrekturen
-                            nachvollziehbar dokumentieren.
+                            Document receipts, shipments, relocations,
+                            inventory counts, and manual adjustments clearly.
 
                         </p>
 
@@ -802,14 +792,13 @@
                         <span>08</span>
 
                         <h3>
-                            Rollen & Benutzer
+                            Users & Roles
                         </h3>
 
                         <p>
 
-                            Benutzer verwalten und Zugriffe
-                            über Rollen und Berechtigungen
-                            strukturieren.
+                            Manage users and structure access
+                            through custom roles and granular permissions.
 
                         </p>
 
@@ -836,22 +825,21 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Einkauf digital organisieren
+                        Digital Procurement
                     </span>
 
 
                     <h2>
-                        Lieferanten-Bestellungen
-                        ohne den Überblick zu verlieren.
+                        Supplier Purchase Orders
+                        Without Losing Track.
                     </h2>
 
 
                     <p>
 
-                        Erstellen und verwalten Sie
-                        Bestellungen bei Lieferanten und
-                        behalten Sie gelieferte sowie noch
-                        offene Mengen im Blick.
+                        Create and manage purchase orders
+                        with suppliers and keep track of delivered
+                        as well as pending quantities.
 
                     </p>
 
@@ -859,27 +847,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Lieferantenverwaltung
+                            ✓ Supplier Management
                         </li>
 
                         <li>
-                            ✓ Lieferanten-Bestellungen
+                            ✓ Purchase Orders
                         </li>
 
                         <li>
-                            ✓ Bestellpositionen
+                            ✓ Order Line Items
                         </li>
 
                         <li>
-                            ✓ Bestellstatus
+                            ✓ Order Status Tracking
                         </li>
 
                         <li>
-                            ✓ Teil-Lieferungen
+                            ✓ Partial Deliveries
                         </li>
 
                         <li>
-                            ✓ Gelieferte Mengen
+                            ✓ Delivered Quantities
                         </li>
 
                     </ul>
@@ -892,23 +880,23 @@
                     <div class="ops-top">
 
                         <span>
-                            LIEFERANTEN-BESTELLUNG
+                            PURCHASE ORDER
                         </span>
 
                         <b class="live-tag">
-                            AKTUELL
+                            ACTIVE
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Bestellung
+                        Order
                     </div>
 
 
                     <small>
-                        Lieferant · Positionen · Mengen · Status
+                        Supplier · Items · Quantities · Status
                     </small>
 
 
@@ -917,7 +905,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Bestellt
+                                Ordered
                             </span>
 
                             <strong>
@@ -930,7 +918,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Geliefert
+                                Delivered
                             </span>
 
                             <strong>
@@ -943,7 +931,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Offen
+                                Pending
                             </span>
 
                             <strong>
@@ -973,24 +961,24 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Bestände verstehen
+                        Inventory Intelligence
                     </span>
 
 
                     <h2>
-                        Nicht nur Bestand sehen.
-                        Bestand verstehen.
+                        Don't Just View Inventory.
+                        Understand It.
                     </h2>
 
 
                     <p>
 
-                        Warehouse Management unterscheidet
-                        zwischen vorhandenem, reserviertem
-                        und verfügbarem Bestand.
+                        Warehouse Management differentiates
+                        between physical, reserved,
+                        and available stock.
 
-                        So erhalten Sie ein realistischeres
-                        Bild Ihrer Lagerkapazität.
+                        This provides you with a realistic
+                        picture of your actual warehouse capacity.
 
                     </p>
 
@@ -998,27 +986,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Gesamtbestand
+                            ✓ Total Stock
                         </li>
 
                         <li>
-                            ✓ Reservierter Bestand
+                            ✓ Reserved Stock
                         </li>
 
                         <li>
-                            ✓ Verfügbarer Bestand
+                            ✓ Available Stock
                         </li>
 
                         <li>
-                            ✓ Mindestbestand
+                            ✓ Minimum Stock Threshold
                         </li>
 
                         <li>
-                            ✓ Niedrigbestand
+                            ✓ Low Stock Alerts
                         </li>
 
                         <li>
-                            ✓ Fehlmengen
+                            ✓ Quantity Shortages
                         </li>
 
                     </ul>
@@ -1031,7 +1019,7 @@
                     <div class="ops-top">
 
                         <span>
-                            BESTANDSÜBERSICHT
+                            STOCK OVERVIEW
                         </span>
 
                         <b class="live-tag">
@@ -1042,12 +1030,12 @@
 
 
                     <div class="ops-number">
-                        Bestandsstatus
+                        Stock Status
                     </div>
 
 
                     <small>
-                        Zentrale Übersicht für Ihre Lagerbestände
+                        Central Overview of Your Stock
                     </small>
 
 
@@ -1056,11 +1044,11 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Gesamtbestand
+                                Total Stock
                             </span>
 
                             <strong>
-                                8.642
+                                8,642
                             </strong>
 
                         </div>
@@ -1069,11 +1057,11 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Reserviert
+                                Reserved
                             </span>
 
                             <strong>
-                                1.186
+                                1,186
                             </strong>
 
                         </div>
@@ -1082,11 +1070,11 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verfügbar
+                                Available
                             </span>
 
                             <strong>
-                                7.456
+                                7,456
                             </strong>
 
                         </div>
@@ -1095,7 +1083,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Niedrigbestand
+                                Low Stock
                             </span>
 
                             <strong>
@@ -1118,29 +1106,28 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="reports">
+                 id="reportsen">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Reports & Analysen
+                        Reports & Analytics
                     </span>
 
 
                     <h2>
-                        Aus Ihren Lagerdaten werden
-                        klare Informationen.
+                        Turn Your Warehouse Data
+                        Into Actionable Insights.
                     </h2>
 
 
                     <p>
 
-                        Finden Sie schneller heraus,
-                        was passiert, wo Probleme entstehen
-                        und welchen Wert Ihr aktueller
-                        Lagerbestand besitzt.
+                        Discover faster what is happening,
+                        where bottlenecks occur, and the total value
+                        of your current warehouse inventory.
 
                     </p>
 
@@ -1155,12 +1142,12 @@
                         <span>01</span>
 
                         <h3>
-                            Bestandsbericht
+                            Inventory Report
                         </h3>
 
                         <p>
-                            Aktuelle Bestände nach Lager,
-                            Lagerplatz und Produkt.
+                            Current stock levels grouped by warehouse,
+                            storage location, and product.
                         </p>
 
                         <b>→</b>
@@ -1173,12 +1160,12 @@
                         <span>02</span>
 
                         <h3>
-                            Lagerwert
+                            Warehouse Valuation
                         </h3>
 
                         <p>
-                            Einkaufswert und Verkaufswert
-                            Ihres aktuellen Lagerbestands.
+                            Total purchasing value and sales value
+                            of your current stock.
                         </p>
 
                         <b>→</b>
@@ -1191,13 +1178,13 @@
                         <span>03</span>
 
                         <h3>
-                            Warenbewegungen
+                            Goods Movements
                         </h3>
 
                         <p>
-                            Historie von Eingängen,
-                            Ausgängen, Umlagerungen,
-                            Inventuren und Korrekturen.
+
+                            History of receipts, shipments,
+                            relocations, stocktaking, and adjustments.
                         </p>
 
                         <b>→</b>
@@ -1210,13 +1197,12 @@
                         <span>04</span>
 
                         <h3>
-                            Niedrigbestand
+                            Low Stock Report
                         </h3>
 
                         <p>
-                            Produkte erkennen, deren
-                            Bestand unter den definierten
-                            Mindestbestand fällt.
+                            Identify products whose inventory level
+                            falls below the defined minimum.
                         </p>
 
                         <b>→</b>
@@ -1229,12 +1215,12 @@
                         <span>05</span>
 
                         <h3>
-                            Produktbericht
+                            Product Report
                         </h3>
 
                         <p>
-                            Bestände und Bewegungen
-                            einzelner Produkte analysieren.
+                            Analyze inventory trends and movement history
+                            for individual products.
                         </p>
 
                         <b>→</b>
@@ -1247,13 +1233,12 @@
                         <span>06</span>
 
                         <h3>
-                            Lieferantenbericht
+                            Supplier Report
                         </h3>
 
                         <p>
-                            Lieferanten und deren
-                            Warenbewegungen übersichtlich
-                            analysieren.
+                            Analyze suppliers and their corresponding
+                            goods movement history clearly.
                         </p>
 
                         <b>→</b>
@@ -1279,23 +1264,23 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Inventur neu gedacht
+                        Modern Stocktaking
                     </span>
 
 
                     <h2>
-                        Inventur mit System statt
-                        Listen und manueller Suche.
+                        Systematic Stocktaking Instead of
+                        Paper Lists & Manual Search.
                     </h2>
 
 
                     <p>
 
-                        Erstellen Sie eine Inventur,
-                        wählen Sie das gewünschte Lager,
-                        erfassen Sie die gezählten Mengen
-                        und vergleichen Sie diese direkt
-                        mit dem Systembestand.
+                        Create a stocktaking task,
+                        select the target warehouse,
+                        record counted quantities,
+                        and compare them directly
+                        with the system stock.
 
                     </p>
 
@@ -1303,27 +1288,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Inventur erstellen
+                            ✓ Create Stocktaking Audits
                         </li>
 
                         <li>
-                            ✓ Lager auswählen
+                            ✓ Select Warehouse Locations
                         </li>
 
                         <li>
-                            ✓ Positionen erfassen
+                            ✓ Record Counted Items
                         </li>
 
                         <li>
-                            ✓ Systembestand vergleichen
+                            ✓ Real-time Comparison with System Stock
                         </li>
 
                         <li>
-                            ✓ Differenzen erkennen
+                            ✓ Identify Variance & Discrepancies
                         </li>
 
                         <li>
-                            ✓ Inventur abschließen
+                            ✓ Complete & Finalize Audits
                         </li>
 
                     </ul>
@@ -1336,23 +1321,23 @@
                     <div class="ops-top">
 
                         <span>
-                            INVENTUR
+                            STOCKTAKING
                         </span>
 
                         <b class="live-tag">
-                            KONTROLLE
+                            AUDIT
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Differenz
+                        Variance
                     </div>
 
 
                     <small>
-                        Systembestand vs. gezählter Bestand
+                        System Stock vs. Physical Count
                     </small>
 
 
@@ -1361,11 +1346,11 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Systembestand
+                                System Stock
                             </span>
 
                             <strong>
-                                1.250
+                                1,250
                             </strong>
 
                         </div>
@@ -1374,11 +1359,11 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Gezählt
+                                Physical Count
                             </span>
 
                             <strong>
-                                1.244
+                                1,244
                             </strong>
 
                         </div>
@@ -1387,7 +1372,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Differenz
+                                Variance
                             </span>
 
                             <strong>
@@ -1416,23 +1401,23 @@
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Daten bleiben zugänglich
+                        Data Remains Accessible
                     </span>
 
 
                     <h2>
-                        Digitale Prozesse ohne
-                        Ihre bestehenden Daten zu verlieren.
+                        Digital Processes Without
+                        Losing Existing Data.
                     </h2>
 
 
                     <p>
 
-                        Excel bleibt dort verfügbar,
-                        wo es sinnvoll ist.
-                        Informationen können strukturiert
-                        importiert und relevante Daten
-                        für weitere Verarbeitung exportiert werden.
+                        Excel remains available
+                        wherever it makes sense.
+                        Data can be imported structurally
+                        and relevant information can be
+                        exported for further processing.
 
                     </p>
 
@@ -1453,8 +1438,10 @@
                         </h3>
 
                         <p>
-                            Bestehende Stammdaten strukturiert
-                            in das System übernehmen.
+
+                            Transfer existing master data
+                            into the system smoothly.
+
                         </p>
 
                     </article>
@@ -1471,9 +1458,10 @@
                         </h3>
 
                         <p>
-                            Berichte und relevante
-                            Systemdaten für weitere
-                            Verarbeitung exportieren.
+
+                            Export reports and relevant
+                            system data for further analysis.
+
                         </p>
 
                     </article>
@@ -1486,13 +1474,15 @@
                         </div>
 
                         <h3>
-                            Klare Datenstrukturen
+                            Clear Data Structures
                         </h3>
 
                         <p>
-                            Einheitliche Stammdaten schaffen
-                            eine zuverlässige Grundlage
-                            für Ihre täglichen Prozesse.
+
+                            Standardized master data provides
+                            a reliable foundation
+                            for your daily operations.
+
                         </p>
 
                     </article>
@@ -1509,29 +1499,28 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="branchen">
+                 id="branchenen">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Für unterschiedliche Geschäftsmodelle
+                        For Various Business Models
                     </span>
 
 
                     <h2>
-                        Ein System, das sich an
-                        Ihren Betrieb anpasst.
+                        A System That Adapts
+                        to Your Business.
                     </h2>
 
 
                     <p>
 
-                        Die Prozesse unterscheiden sich von
-                        Unternehmen zu Unternehmen.
-                        Die Grundlage bleibt jedoch dieselbe:
-                        Produkte, Bestände, Bewegungen und klare Abläufe.
+                        Processes vary from company to company.
+                        However, the core foundation remains the same:
+                        products, inventory, movements, and clear workflows.
 
                     </p>
 
@@ -1546,13 +1535,14 @@
                         <span>01</span>
 
                         <h3>
-                            Großhandel
+                            Wholesale
                         </h3>
 
                         <p>
-                            Viele Artikel, viele Bestellungen
-                            und hohe Warenbewegungen zentral
-                            organisieren.
+
+                            Organize large item catalogs, high order volumes,
+                            and extensive goods movements centrally.
+
                         </p>
 
                         <b>→</b>
@@ -1565,12 +1555,14 @@
                         <span>02</span>
 
                         <h3>
-                            Baustoffhandel
+                            Building Materials
                         </h3>
 
                         <p>
-                            Große Warenmengen und viele
-                            Lagerplätze strukturiert verwalten.
+
+                            Manage large inventory volumes and multiple
+                            storage locations systematically.
+
                         </p>
 
                         <b>→</b>
@@ -1583,13 +1575,14 @@
                         <span>03</span>
 
                         <h3>
-                            Ersatzteilhandel
+                            Spare Parts Trade
                         </h3>
 
                         <p>
-                            Viele SKUs schnell finden,
-                            Bestände kontrollieren und
-                            Bewegungen nachvollziehen.
+
+                            Find high-volume SKUs quickly,
+                            monitor stock levels, and track movements.
+
                         </p>
 
                         <b>→</b>
@@ -1602,13 +1595,14 @@
                         <span>04</span>
 
                         <h3>
-                            Produktionsunternehmen
+                            Manufacturing
                         </h3>
 
                         <p>
-                            Materialien, Lagerbestände
-                            und Warenbewegungen strukturiert
-                            abbilden.
+
+                            Structure raw materials, warehouse stock,
+                            and goods movement efficiently.
+
                         </p>
 
                         <b>→</b>
@@ -1625,9 +1619,10 @@
                         </h3>
 
                         <p>
-                            Produkte, Bestellungen,
-                            Bestand und Fulfillment
-                            miteinander verbinden.
+
+                            Seamlessly connect products, orders,
+                            inventory levels, and fulfillment.
+
                         </p>
 
                         <b>→</b>
@@ -1640,13 +1635,14 @@
                         <span>06</span>
 
                         <h3>
-                            Technischer Handel
+                            Technical Supply
                         </h3>
 
                         <p>
-                            Artikelvielfalt und komplexe
-                            Lagerstrukturen übersichtlich
-                            verwalten.
+
+                            Manage diverse product lines and complex
+                            storage bin structures with ease.
+
                         </p>
 
                         <b>→</b>
@@ -1672,24 +1668,24 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Für Teams gemacht
+                        Built for Teams
                     </span>
 
 
                     <h2>
-                        Die richtigen Informationen
-                        für die richtigen Benutzer.
+                        The Right Information
+                        for the Right Users.
                     </h2>
 
 
                     <p>
 
-                        Nicht jeder Mitarbeiter benötigt
-                        Zugriff auf dieselben Funktionen.
+                        Not every employee needs access
+                        to every function.
 
-                        Mit Benutzerverwaltung, Rollen
-                        und Berechtigungen lässt sich
-                        der Zugriff strukturiert organisieren.
+                        With user management, custom roles,
+                        and permissions, access control can be
+                        structured effectively.
 
                     </p>
 
@@ -1697,27 +1693,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Benutzerverwaltung
+                            ✓ User Management
                         </li>
 
                         <li>
-                            ✓ Rollenverwaltung
+                            ✓ Role Management
                         </li>
 
                         <li>
-                            ✓ Berechtigungen
+                            ✓ Granular Permissions
                         </li>
 
                         <li>
-                            ✓ Lagerbezogene Prozesse
+                            ✓ Warehouse Workflows
                         </li>
 
                         <li>
-                            ✓ Einkauf & Verwaltung
+                            ✓ Procurement & Admin
                         </li>
 
                         <li>
-                            ✓ Management & Reports
+                            ✓ Executive & Reporting
                         </li>
 
                     </ul>
@@ -1730,23 +1726,23 @@
                     <div class="ops-top">
 
                         <span>
-                            BENUTZER & ROLLEN
+                            USERS & ROLES
                         </span>
 
                         <b class="live-tag">
-                            SICHER
+                            SECURE
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Zugriff
+                        Access
                     </div>
 
 
                     <small>
-                        Strukturierte Benutzer- und Rollenverwaltung
+                        Structured User & Role Management
                     </small>
 
 
@@ -1755,7 +1751,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Lager
+                                Warehouse
                             </span>
 
                             <strong>
@@ -1768,7 +1764,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Einkauf
+                                Purchasing
                             </span>
 
                             <strong>
@@ -1781,7 +1777,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verkauf
+                                Sales
                             </span>
 
                             <strong>
@@ -1827,7 +1823,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        zentrale Plattform
+                        central platform
                     </span>
 
                 </div>
@@ -1840,7 +1836,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Zugriff auf Ihre Daten
+                        access to your data
                     </span>
 
                 </div>
@@ -1853,7 +1849,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Überblick über Ihre Prozesse
+                        overview of your processes
                     </span>
 
                 </div>
@@ -1866,7 +1862,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Möglichkeiten zur Erweiterung
+                        expansion possibilities
                     </span>
 
                 </div>
@@ -1881,7 +1877,7 @@
              ========================================================= -->
 
         <section class="section faq-section"
-                 id="faq">
+                 id="faqen">
 
             <div class="container faq-grid">
 
@@ -1889,29 +1885,28 @@
                 <div>
 
                     <span class="section-tag">
-                        Häufige Fragen
+                        Frequently Asked Questions
                     </span>
 
 
                     <h2>
-                        Was möchten Sie über
-                        Warehouse Management wissen?
+                        What Would You Like to Know About
+                        Warehouse Management?
                     </h2>
 
 
                     <p>
 
-                        In einer persönlichen Demo können
-                        wir zusätzlich Ihre individuellen
-                        Anforderungen und Prozesse besprechen.
+                        In a personal demo session, we can discuss
+                        your specific requirements and business processes.
 
                     </p>
 
 
                     <a class="btn btn-secondary"
-                       href="#demo">
+                       href="/en#demoen">
 
-                        Demo anfragen →
+                        Request Demo →
 
                     </a>
 
@@ -1924,17 +1919,14 @@
                     <details open>
 
                         <summary>
-                            Für welche Unternehmen ist die Lösung geeignet?
+                            Which companies is this solution suitable for?
                         </summary>
 
                         <p>
 
-                            Warehouse Management eignet sich insbesondere
-                            für Unternehmen mit eigenem Lager,
-                            vielen Artikeln oder regelmäßigen
-                            Warenbewegungen – unter anderem Großhandel,
-                            Baustoffhandel, Ersatzteilhandel,
-                            Produktion und E-Commerce.
+                            Warehouse Management is designed for companies with physical warehouses,
+                            large item catalogs, or frequent goods movements – including wholesale,
+                            building materials trade, spare parts trade, manufacturing, and e-commerce.
 
                         </p>
 
@@ -1944,14 +1936,13 @@
                     <details>
 
                         <summary>
-                            Kann ich mehrere Lager verwalten?
+                            Can I manage multiple warehouses?
                         </summary>
 
                         <p>
 
-                            Ja. Lager können separat verwaltet
-                            und mit ihren jeweiligen Lagerplätzen
-                            organisiert werden.
+                            Yes. Multiple warehouses can be managed separately and organized
+                            with their respective storage locations.
 
                         </p>
 
@@ -1961,14 +1952,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Lagerplätze verwalten?
+                            Can I manage specific storage bins/locations?
                         </summary>
 
                         <p>
 
-                            Ja. Lagerplätze können angelegt,
-                            aktiviert, deaktiviert und
-                            bestimmten Lagern zugeordnet werden.
+                            Yes. Storage bins can be created, activated, deactivated,
+                            and assigned to specific warehouses.
 
                         </p>
 
@@ -1978,14 +1968,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Lieferanten-Bestellungen verwalten?
+                            Can I manage supplier purchase orders?
                         </summary>
 
                         <p>
 
-                            Ja. Lieferanten-Bestellungen,
-                            Positionen, Mengen und Lieferstatus
-                            können zentral verwaltet werden.
+                            Yes. Supplier orders, items, quantities, and delivery status
+                            can be managed centrally.
 
                         </p>
 
@@ -1995,14 +1984,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Kundenbestellungen verwalten?
+                            Can I manage customer orders?
                         </summary>
 
                         <p>
 
-                            Ja. Kunden und Bestellungen können
-                            verwaltet und mit den
-                            Bestandsprozessen verbunden werden.
+                            Yes. Customers and sales orders can be managed and seamlessly connected
+                            to inventory processes.
 
                         </p>
 
@@ -2012,15 +2000,13 @@
                     <details>
 
                         <summary>
-                            Gibt es Inventur und Bestandsberichte?
+                            Are stocktaking and inventory reports included?
                         </summary>
 
                         <p>
 
-                            Ja. Das System bietet Inventuren,
-                            Bestandsberichte, Lagerwert,
-                            Warenbewegungen, Niedrigbestand,
-                            Produkt- und Lieferantenberichte.
+                            Yes. The system includes full inventory counting tools, stock level reports,
+                            warehouse valuation, goods movement logs, low stock alerts, as well as product and supplier reports.
 
                         </p>
 
@@ -2030,14 +2016,13 @@
                     <details>
 
                         <summary>
-                            Können mehrere Benutzer mit dem System arbeiten?
+                            Can multiple users work in the system simultaneously?
                         </summary>
 
                         <p>
 
-                            Ja. Benutzer und Rollen können
-                            zentral verwaltet und Zugriffe
-                            entsprechend den Aufgaben organisiert werden.
+                            Yes. Users and roles can be managed centrally, and access rights
+                            can be granted based on specific job responsibilities.
 
                         </p>
 
@@ -2047,14 +2032,12 @@
                     <details>
 
                         <summary>
-                            Kann ich Daten nach Excel exportieren?
+                            Can I export data to Excel?
                         </summary>
 
                         <p>
 
-                            Ja. Relevante Listen und Reports
-                            können für die weitere Verarbeitung
-                            nach Excel exportiert werden.
+                            Yes. All relevant lists and reports can be exported to Excel for further processing.
 
                         </p>
 
@@ -2072,7 +2055,7 @@
              ========================================================= -->
 
         <section class="demo-section"
-                 id="demo">
+                 id="demoen">
 
             <div class="container">
 
@@ -2082,46 +2065,44 @@
                     <div class="demo-info">
 
                         <span class="section-tag">
-                            Persönliche Demo
+                            Personalized Demo
                         </span>
 
 
                         <h2>
-                            Sehen Sie selbst,
+                            See for Yourself
                             <em>
-                                was Ihr Lager heute schon können kann.
+                                What Your Warehouse Can Achieve Today.
                             </em>
                         </h2>
 
 
                         <p>
 
-                            In einer persönlichen Demo zeigen wir
-                            Ihnen die wichtigsten Funktionen von
-                            Warehouse Management und besprechen,
-                            wie Ihre bestehenden Prozesse abgebildet
-                            werden können.
+                            In a 1-on-1 personalized demo, we will present the key features of
+                            Warehouse Management and discuss how your current processes
+                            can be mapped into the system.
 
                         </p>
 
 
                         <p class="demo-note">
-                            ◷ Persönlich · Unverbindlich · Auf Deutsch
+                            ◷ Personalized · No Obligation · Available in English
                         </p>
 
 
                         <div class="demo-benefits">
 
                             <span>
-                                ✓ Keine Vorbereitung notwendig
+                                ✓ No preparation needed
                             </span>
 
                             <span>
-                                ✓ An Ihrem Anwendungsfall orientiert
+                                ✓ Tailored to your use case
                             </span>
 
                             <span>
-                                ✓ Konkrete nächste Schritte
+                                ✓ Clear next steps
                             </span>
 
                         </div>
@@ -2132,12 +2113,12 @@
                     <div class="demo-card glass-card">
 
                         <h3>
-                            Demo-Termin anfragen
+                            Schedule a Demo
                         </h3>
 
 
                         <p class="card-subtitle">
-                            Wir melden uns innerhalb eines Werktags bei Ihnen.
+                            We will contact you within one business day.
                         </p>
 
 
@@ -2152,12 +2133,12 @@
                             <div class="form-group">
 
                                 <label>
-                                    Vor- und Nachname *
+                                    Full Name *
                                 </label>
 
                                 <InputText @bind-Value="DemoRequestItem.Name"
                                            class="form-control"
-                                           placeholder="Anna Müller" />
+                                           placeholder="Anna Miller" />
 
                                 <ValidationMessage For="@(() => DemoRequestItem.Name)"
                                                    class="val-msg" />
@@ -2170,12 +2151,12 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Unternehmen *
+                                        Company *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Company"
                                                class="form-control"
-                                               placeholder="Muster GmbH" />
+                                               placeholder="Acme Corp" />
 
                                     <ValidationMessage For="@(() => DemoRequestItem.Company)"
                                                        class="val-msg" />
@@ -2186,13 +2167,13 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Geschäftliche E-Mail *
+                                        Work Email *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Email"
                                                type="email"
                                                class="form-control"
-                                               placeholder="anna@muster.de" />
+                                               placeholder="anna@acme.com" />
 
                                     <ValidationMessage For="@(() => DemoRequestItem.Email)"
                                                        class="val-msg" />
@@ -2205,42 +2186,42 @@
                             <div class="form-group">
 
                                 <label>
-                                    Branche
+                                    Industry
                                 </label>
 
                                 <InputSelect @bind-Value="DemoRequestItem.Industry"
                                              class="form-control">
 
                                     <option value="">
-                                        Bitte auswählen...
+                                        Please select...
                                     </option>
 
-                                    <option value="Großhandel">
-                                        Großhandel
+                                    <option value="Wholesale">
+                                        Wholesale
                                     </option>
 
-                                    <option value="Baustoffhandel">
-                                        Baustoffhandel
+                                    <option value="Building Materials">
+                                        Building Materials
                                     </option>
 
-                                    <option value="Ersatzteilhandel">
-                                        Ersatzteilhandel
+                                    <option value="Spare Parts Trade">
+                                        Spare Parts Trade
                                     </option>
 
-                                    <option value="Produktionsbetrieb">
-                                        Produktionsbetrieb
+                                    <option value="Manufacturing">
+                                        Manufacturing
                                     </option>
 
-                                    <option value="Online-Handel / E-Commerce">
-                                        Online-Handel / E-Commerce
+                                    <option value="E-Commerce">
+                                        E-Commerce
                                     </option>
 
-                                    <option value="Technischer Handel">
-                                        Technischer Handel
+                                    <option value="Technical Supply">
+                                        Technical Supply
                                     </option>
 
-                                    <option value="Andere">
-                                        Andere
+                                    <option value="Other">
+                                        Other
                                     </option>
 
                                 </InputSelect>
@@ -2251,12 +2232,12 @@
                             <div class="form-group">
 
                                 <label>
-                                    Was möchten Sie verbessern?
+                                    What Would You Like to Improve?
                                 </label>
 
                                 <InputTextArea @bind-Value="DemoRequestItem.Message"
                                                class="form-control textarea"
-                                               placeholder="Erzählen Sie uns kurz von Ihrem Lager, Ihren aktuellen Prozessen und Ihren Herausforderungen..." />
+                                               placeholder="Briefly describe your warehouse, current workflows, and key challenges..." />
 
                             </div>
 
@@ -2264,7 +2245,7 @@
                             <button type="submit"
                                     class="btn btn-primary btn-full">
 
-                                Demo anfragen
+                                Request Demo
 
                                 <span>
                                     →
@@ -2277,9 +2258,9 @@
                             {
                                 <div class="alert alert-success">
 
-                                    Vielen Dank!
-                                    Ihre Anfrage ist eingegangen.
-                                    Wir melden uns bald bei Ihnen.
+                                    Thank you!
+                                    Your request has been successfully received.
+                                    We will contact you shortly.
 
                                 </div>
                             }
@@ -2323,28 +2304,28 @@
 
             <div class="footer-links">
 
-                <a href="#loesung">
-                    Lösung
+                <a href="/en#loesungen">
+                    Solution
                 </a>
 
-                <a href="#funktionen">
-                    Funktionen
+                <a href="/en#functionen">
+                    Features
                 </a>
 
-                <a href="#prozesse">
-                    Prozesse
+                <a href="/en#prozesseen">
+                    Processes
                 </a>
 
-                <a href="#branchen">
-                    Branchen
+                <a href="/en#branchenen">
+                    Industries
                 </a>
 
-                <a href="#reports">
+                <a href="/en#reportsen">
                     Reports
                 </a>
 
-                <a href="#demo">
-                    Demo buchen
+                <a href="/en#demoen">
+                    Request Demo
                 </a>
 
             </div>
@@ -2370,7 +2351,7 @@
             .Trim('/');
 
         if (string.IsNullOrWhiteSpace(path))
-            return language == "de";
+            return language == "en";
 
         return path.Equals(
             language,
@@ -2389,4 +2370,5 @@
 
         public string Message { get; set; } = string.Empty;
     }
+
 }

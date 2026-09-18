@@ -61,7 +61,9 @@
 
                 <div class="form-section-title">
 
-                    <h2>@L["PurchaseOrder"]</h2>
+                    <h2>
+                        @L["PurchaseOrder"]
+                    </h2>
 
                     <p>
                         @L["OptionalOpenPurchaseOrder"]
@@ -71,6 +73,8 @@
 
 
                 <div class="form-grid">
+
+                    <!-- BESTELLUNG -->
 
                     <div class="form-group">
 
@@ -91,6 +95,7 @@
                     </div>
 
 
+                    <!-- SUPPLIER AUTOMATIC FROM BESTELLUNG -->
                     @if (SelectedPurchaseOrder != null)
                     {
                         <div class="form-group">
@@ -101,12 +106,14 @@
 
                             <input class="form-control"
                                    value="@(
-                                   SelectedPurchaseOrder
-                                       .Supplier
-                                       ?.CompanyName
+                                   SelectedPurchaseOrder.Supplier?.CompanyName
                                    ?? "-"
                                                            )"
-                                   disabled />
+                                   readonly />
+
+                            <small class="form-help">
+                                Lieferant wird automatisch aus der Bestellung übernommen.
+                            </small>
 
                         </div>
                     }
@@ -124,7 +131,9 @@
 
                 <div class="form-section-title">
 
-                    <h2>@L["IncomingGoods"]</h2>
+                    <h2>
+                        @L["IncomingGoods"]
+                    </h2>
 
                     <p>
                         @L["SelectProductSupplierWarehouseLocationQuantity"]
@@ -137,105 +146,35 @@
 
 
                     <!-- =================================================
-                         PRODUKT
+                         PRODUCT
+                         ONLY MANUAL MODE
                          ================================================= -->
-
-                    <div class="form-group">
-
-                        <label>
-                            @L["Product"] <span>*</span>
-                        </label>
-
-                        <SearchableSelect TItem="Product"
-                                          TValue="int"
-                                          Items="Products"
-                                          Value="@Model.ProductId"
-                                          ValueChanged="OnProductChanged"
-                                          ValueSelector="@(p => p.Id)"
-                                          TextSelector="@(p => $"{p.SKU} - {p.Name}")"
-                                          Placeholder="@L["SelectProduct"]"
-                                          NoResultsText="@L["NoResultsFound"]"
-                                          Disabled="@(Model.PurchaseOrderId > 0)" />
-
-                        <ValidationMessage For="@(() => Model.ProductId)" />
-
-                    </div>
-
-
-                    <!-- =================================================
-                         LIEFERANT
-                         ================================================= -->
-                    @if (Model.PurchaseOrderId <= 0)
+                    @if (SelectedPurchaseOrder == null)
                     {
                         <div class="form-group">
 
                             <label>
-                                @L["Supplier"] <span>*</span>
+                                @L["Product"] <span>*</span>
                             </label>
 
-                            <SearchableSelect TItem="Supplier"
+                            <SearchableSelect TItem="Product"
                                               TValue="int"
-                                              Items="Suppliers"
-                                              Value="@Model.SupplierId"
-                                              ValueChanged="OnSupplierChanged"
-                                              ValueSelector="@(x => x.Id)"
-                                              TextSelector="@(x => $"{x.CompanyName}{(string.IsNullOrWhiteSpace(x.SupplierNumber) ? "" : $" ({x.SupplierNumber})")}")"
-                                              Placeholder="@L["SelectSupplier"]"
+                                              Items="Products"
+                                              Value="@Model.ProductId"
+                                              ValueChanged="OnProductChanged"
+                                              ValueSelector="@(p => p.Id)"
+                                              TextSelector="@(p => $"{p.SKU} - {p.Name}")"
+                                              Placeholder="@L["SelectProduct"]"
                                               NoResultsText="@L["NoResultsFound"]" />
 
-                            <ValidationMessage For="@(() => Model.SupplierId)" />
+                            <ValidationMessage For="@(() => Model.ProductId)" />
 
                         </div>
                     }
 
 
                     <!-- =================================================
-                         BESTELLTE MENGE
-                         ================================================= -->
-                    @if (SelectedOrderItem != null)
-                    {
-                        <div class="form-group">
-
-                            <label>
-                                @L["OrderedQuantity"]
-                            </label>
-
-                            <input class="form-control"
-                                   value="@SelectedOrderItem.Quantity.ToString("N2")"
-                                   disabled />
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label>
-                                @L["AlreadyDelivered"]
-                            </label>
-
-                            <input class="form-control"
-                                   value="@SelectedOrderItem.DeliveredQuantity.ToString("N2")"
-                                   disabled />
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label>
-                                @L["RemainingQuantity"]
-                            </label>
-
-                            <input class="form-control"
-                                   value="@RemainingQuantity.ToString("N2")"
-                                   disabled />
-
-                        </div>
-                    }
-
-
-                    <!-- =================================================
-                         LAGER
+                         WAREHOUSE
                          ================================================= -->
 
                     <div class="form-group">
@@ -286,40 +225,79 @@
 
 
                     <!-- =================================================
-                         MENGE
+                         QUANTITY
                          ================================================= -->
+                    @if (SelectedPurchaseOrder != null)
+                    {
+                        <!-- =================================================
+                             BESTELLUNG MODE
 
-                    <div class="form-group">
+NO INPUT!
+                             USER CANNOT CHANGE QUANTITY.
+                             ================================================= -->
 
-                        <label>
-                            @L["Quantity"] <span>*</span>
-                        </label>
+                        <div class="form-group">
 
-                        <InputNumber @bind-Value="Model.Quantity"
-                                     class="form-control"
-                                     step="0.01"
-                                     min="0.01"
-                                     max="@(
-                                     SelectedOrderItem != null
-                                         ? RemainingQuantity
-                                         : null
-                                                         )" />
+                            <label>
+                                @L["Quantity"]
+                            </label>
 
-                        <ValidationMessage For="@(() => Model.Quantity)" />
+                            <div class="form-control"
+                                 style="background-color:#f5f5f5;
+                                cursor:not-allowed;
+                                user-select:none;">
 
-                        @if (SelectedOrderItem != null)
-                        {
+                                @TotalIncomingQuantity.ToString("N2")
+
+                            </div>
+
                             <small class="form-help">
 
-                                @L["MaximumAvailable"]:
+                                @L["PurchaseOrder"]:
                                 <strong>
-                                    @RemainingQuantity.ToString("N2")
+                                    @SelectedPurchaseOrder.OrderNumber
                                 </strong>
 
-                            </small>
-                        }
+                                <br />
 
-                    </div>
+                                @L["Quantity"]:
+                                <strong>
+                                    @TotalIncomingQuantity.ToString("N2")
+                                </strong>
+
+                                <br />
+
+                                <span>
+                                    Automatisch aus der Bestellung übernommen.
+                                </span>
+
+                            </small>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- =================================================
+                             MANUAL MODE
+
+USER CAN ENTER QUANTITY.
+                             ================================================= -->
+
+                        <div class="form-group">
+
+                            <label>
+                                @L["Quantity"] <span>*</span>
+                            </label>
+
+                            <InputNumber @bind-Value="Model.Quantity"
+                                         class="form-control"
+                                         step="0.01"
+                                         min="0.01" />
+
+                            <ValidationMessage For="@(() => Model.Quantity)" />
+
+                        </div>
+                    }
 
 
                     <!-- =================================================
@@ -344,9 +322,9 @@
 
 
             <!-- =====================================================
-                 BESTELLUNGSINFORMATION
+                 PURCHASE ORDER INFORMATION
                  ===================================================== -->
-            @if (SelectedOrderItem != null)
+            @if (SelectedPurchaseOrder != null)
             {
                 <div class="form-section">
 
@@ -356,10 +334,27 @@
                             @L["DeliveryProgress"]
                         </h2>
 
+                        <p>
+
+                            @L["PurchaseOrder"]:
+
+                            <strong>
+                                @SelectedPurchaseOrder.OrderNumber
+                            </strong>
+
+                        </p>
+
                     </div>
 
 
+                    <!-- =================================================
+                         SUMMARY
+                         ================================================= -->
+
                     <div class="stock-summary-grid">
+
+
+                        <!-- ORDERED -->
 
                         <div class="stock-summary-card">
 
@@ -368,11 +363,13 @@
                             </span>
 
                             <strong>
-                                @SelectedOrderItem.Quantity.ToString("N2")
+                                @TotalOrderedQuantity.ToString("N2")
                             </strong>
 
                         </div>
 
+
+                        <!-- ALREADY DELIVERED -->
 
                         <div class="stock-summary-card">
 
@@ -381,13 +378,13 @@
                             </span>
 
                             <strong>
-                                @SelectedOrderItem
-                                .DeliveredQuantity
-                                .ToString("N2")
+                                @TotalDeliveredQuantity.ToString("N2")
                             </strong>
 
                         </div>
 
+
+                        <!-- THIS RECEIPT -->
 
                         <div class="stock-summary-card">
 
@@ -396,11 +393,13 @@
                             </span>
 
                             <strong>
-                                @Model.Quantity.ToString("N2")
+                                @TotalIncomingQuantity.ToString("N2")
                             </strong>
 
                         </div>
 
+
+                        <!-- REMAINING -->
 
                         <div class="stock-summary-card">
 
@@ -411,10 +410,108 @@
                             <strong>
                                 @Math.Max(
                                     0,
-                                    RemainingQuantity -
-                                    Model.Quantity
+                                    TotalRemainingQuantity -
+                                    TotalIncomingQuantity
                                 ).ToString("N2")
                             </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PRODUCTS IN BESTELLUNG
+                         ================================================= -->
+
+                    <div style="margin-top:20px;">
+
+                        <h3>
+                            @L["Product"]
+                        </h3>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            @L["Product"]
+                                        </th>
+
+                                        <th>
+                                            @L["Ordered"]
+                                        </th>
+
+                                        <th>
+                                            @L["AlreadyDelivered"]
+                                        </th>
+
+                                        <th>
+                                            @L["RemainingQuantity"]
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    @if (IncomingOrderItems.Any())
+                                    {
+                                        @foreach (var item in IncomingOrderItems)
+                                        {
+                                            <tr>
+
+                                                <td>
+
+                                                    @(item.Product?.SKU ?? "-")
+                                                    -
+                                                    @(item.Product?.Name ?? "-")
+
+                                                </td>
+
+                                                <td>
+                                                    @item.Quantity.ToString("N2")
+                                                </td>
+
+                                                <td>
+                                                    @item.DeliveredQuantity.ToString("N2")
+                                                </td>
+
+                                                <td>
+                                                    @Math.Max(
+                                                        0,
+                                                        item.Quantity -
+                                                        item.DeliveredQuantity
+                                                    ).ToString("N2")
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+
+                                            <td colspan="4"
+                                                style="text-align:center;">
+
+                                                Keine offenen Positionen.
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
 
                         </div>
 
@@ -432,7 +529,9 @@
 
                 <div class="form-section-title">
 
-                    <h2>@L["Note"]</h2>
+                    <h2>
+                        @L["Note"]
+                    </h2>
 
                     <p>
                         @L["OptionalIncomingGoodsInformation"]
@@ -459,9 +558,7 @@
             @if (!string.IsNullOrWhiteSpace(ErrorMessage))
             {
                 <div class="form-error">
-
                     @ErrorMessage
-
                 </div>
             }
 
@@ -472,9 +569,7 @@
             @if (!string.IsNullOrWhiteSpace(SuccessMessage))
             {
                 <div class="form-success">
-
                     @SuccessMessage
-
                 </div>
             }
 
@@ -514,13 +609,6 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "purchaseOrderId")]
-    public int? QueryPurchaseOrderId { get; set; }
-
-    [SupplyParameterFromQuery(Name = "productId")]
-    public int? QueryProductId { get; set; }
-
-
     // =========================================================
     // DATA
     // =========================================================
@@ -539,12 +627,10 @@
 
 
     // =========================================================
-    // SELECTED ORDER
+    // SELECTED PURCHASE ORDER
     // =========================================================
 
     private PurchaseOrder? SelectedPurchaseOrder;
-
-    private PurchaseOrderItem? SelectedOrderItem;
 
 
     // =========================================================
@@ -559,16 +645,68 @@
 
 
     // =========================================================
-    // REMAINING QUANTITY
+    // OPEN ITEMS
     // =========================================================
 
-    private decimal RemainingQuantity =>
-        SelectedOrderItem == null
-            ? 0
-            : Math.Max(
-                0,
-                SelectedOrderItem.Quantity -
-                SelectedOrderItem.DeliveredQuantity);
+    private List<PurchaseOrderItem> IncomingOrderItems =>
+        SelectedPurchaseOrder?.Items
+            .Where(x =>
+                x.Quantity >
+                x.DeliveredQuantity)
+            .ToList()
+        ?? new List<PurchaseOrderItem>();
+
+
+    // =========================================================
+    // TOTAL ORDERED
+    // =========================================================
+
+    private decimal TotalOrderedQuantity =>
+        SelectedPurchaseOrder?.Items
+            .Sum(x =>
+                x.Quantity)
+        ?? 0;
+
+
+    // =========================================================
+    // TOTAL DELIVERED
+    // =========================================================
+
+    private decimal TotalDeliveredQuantity =>
+        SelectedPurchaseOrder?.Items
+            .Sum(x =>
+                x.DeliveredQuantity)
+        ?? 0;
+
+
+    // =========================================================
+    // TOTAL REMAINING
+    // =========================================================
+
+    private decimal TotalRemainingQuantity =>
+        SelectedPurchaseOrder?.Items
+            .Sum(x =>
+                Math.Max(
+                    0,
+                    x.Quantity -
+                    x.DeliveredQuantity))
+        ?? 0;
+
+
+    // =========================================================
+    // TOTAL INCOMING
+    //
+    // BESTELLUNG:
+    // automatically calculated.
+    //
+    // MANUAL:
+    // user entered quantity.
+    // =========================================================
+
+    private decimal TotalIncomingQuantity =>
+        SelectedPurchaseOrder != null
+            ? TotalRemainingQuantity
+            : Model.Quantity;
 
 
     // =========================================================
@@ -627,6 +765,17 @@
         // OPEN PURCHASE ORDERS
         // =====================================================
 
+        await LoadPurchaseOrders(db);
+    }
+
+
+    // =========================================================
+    // LOAD PURCHASE ORDERS
+    // =========================================================
+
+    private async Task LoadPurchaseOrders(
+        ApplicationDbContext db)
+    {
         PurchaseOrders =
             await db.PurchaseOrders
                 .AsNoTracking()
@@ -647,73 +796,6 @@
                 .ThenByDescending(x =>
                     x.Id)
                 .ToListAsync();
-
-
-        // =====================================================
-        // QUERY PARAMETERS FROM PURCHASE ORDER DETAILS
-        // =====================================================
-
-        if (QueryPurchaseOrderId.HasValue &&
-            QueryPurchaseOrderId.Value > 0)
-        {
-            var purchaseOrderId =
-                QueryPurchaseOrderId.Value;
-
-            var purchaseOrder =
-                PurchaseOrders.FirstOrDefault(x =>
-                    x.Id == purchaseOrderId);
-
-            if (purchaseOrder != null)
-            {
-                Model.PurchaseOrderId =
-                    purchaseOrder.Id;
-
-                SelectedPurchaseOrder =
-                    purchaseOrder;
-
-                Model.SupplierId =
-                    purchaseOrder.SupplierId;
-
-
-                // =================================================
-                // SELECT PRODUCT FROM URL
-                // =================================================
-
-                if (QueryProductId.HasValue &&
-                    QueryProductId.Value > 0)
-                {
-                    var productId =
-                        QueryProductId.Value;
-
-                    var orderItem =
-                        purchaseOrder.Items
-                            .FirstOrDefault(x =>
-                                x.ProductId == productId
-                                &&
-                                x.Quantity >
-                                    x.DeliveredQuantity);
-
-                    if (orderItem != null)
-                    {
-                        Model.ProductId =
-                            orderItem.ProductId;
-
-                        SelectedOrderItem =
-                            orderItem;
-
-
-                        // Automatically use remaining quantity
-                        Model.Quantity =
-                            Math.Max(
-                                0,
-                                orderItem.Quantity -
-                                orderItem.DeliveredQuantity);
-                    }
-                }
-            }
-        }
-
-        Locations.Clear();
     }
 
 
@@ -721,26 +803,29 @@
     // PURCHASE ORDER CHANGED
     // =========================================================
 
-    private async Task OnPurchaseOrderChanged(int purchaseOrderId)
+    private async Task OnPurchaseOrderChanged(
+        int purchaseOrderId)
     {
         ErrorMessage = null;
+
         SuccessMessage = null;
 
-        Model.PurchaseOrderId = purchaseOrderId;
+        Model.PurchaseOrderId =
+            purchaseOrderId;
 
         SelectedPurchaseOrder = null;
-        SelectedOrderItem = null;
+
 
         // =====================================================
-        // MANUAL
+        // MANUAL MODE
         // =====================================================
 
         if (purchaseOrderId <= 0)
         {
             Model.ProductId = 0;
+
             Model.SupplierId = 0;
-            Model.WarehouseId = 0;
-            Model.WarehouseLocationId = 0;
+
             Model.Quantity = 0;
 
             Locations.Clear();
@@ -750,21 +835,28 @@
             return;
         }
 
+
         await using var db =
             await DbFactory.CreateDbContextAsync();
 
+
         // =====================================================
-        // LOAD ORDER
+        // LOAD PURCHASE ORDER
         // =====================================================
 
         SelectedPurchaseOrder =
             await db.PurchaseOrders
                 .AsNoTracking()
-                .Include(x => x.Supplier)
-                .Include(x => x.Items)
-                    .ThenInclude(x => x.Product)
+                .Include(x =>
+                    x.Supplier)
+                .Include(x =>
+                    x.Items)
+                    .ThenInclude(x =>
+                        x.Product)
                 .FirstOrDefaultAsync(x =>
-                    x.Id == purchaseOrderId);
+                    x.Id ==
+                    purchaseOrderId);
+
 
         if (SelectedPurchaseOrder == null)
         {
@@ -774,135 +866,176 @@
             return;
         }
 
+
         // =====================================================
-        // AUTOMATIC SUPPLIER
+        // CHECK STATUS
+        // =====================================================
+
+        if (SelectedPurchaseOrder.Status !=
+                PurchaseOrderStatus.Bestellt
+            &&
+            SelectedPurchaseOrder.Status !=
+                PurchaseOrderStatus.TeilweiseGeliefert)
+        {
+            ErrorMessage =
+                L["PurchaseOrderCannotReceive"];
+
+            SelectedPurchaseOrder = null;
+
+            return;
+        }
+
+
+        // =====================================================
+        // SUPPLIER AUTOMATICALLY
         // =====================================================
 
         Model.SupplierId =
             SelectedPurchaseOrder.SupplierId;
 
+
         // =====================================================
-        // CLEAR PRODUCT
+        // PRODUCT IS NOT USED
+        //
+        // IMPORTANT:
+        // User does NOT select a Product.
+        // ProductId is not validated.
+        // ProductId is not used by BookIncoming()
+        // in PurchaseOrder mode.
         // =====================================================
 
         Model.ProductId = 0;
-        Model.Quantity = 0;
+
+
+        // =====================================================
+        // QUANTITY AUTOMATICALLY
+        //
+        // SUM OF ALL REMAINING ITEMS
+        // =====================================================
+
+        Model.Quantity =
+            SelectedPurchaseOrder.Items
+                .Sum(x =>
+                    Math.Max(
+                        0,
+                        x.Quantity -
+                        x.DeliveredQuantity));
+
 
         StateHasChanged();
     }
 
+
     // =========================================================
     // PRODUCT CHANGED
+    //
+    // ONLY MANUAL MODE
     // =========================================================
 
-    private Task OnProductChanged(int productId)
+    private Task OnProductChanged(
+        int productId)
     {
         ErrorMessage = null;
+
         SuccessMessage = null;
 
-        Model.ProductId = productId;
+        // Product can only be changed in manual mode.
+        if (Model.PurchaseOrderId > 0)
+            return Task.CompletedTask;
 
-        SelectedOrderItem = null;
-
-        // =====================================================
-        // IF PURCHASE ORDER SELECTED
-        // =====================================================
-
-        if (SelectedPurchaseOrder != null &&
-            Model.ProductId > 0)
-        {
-            SelectedOrderItem =
-                SelectedPurchaseOrder.Items
-                    .FirstOrDefault(x =>
-                        x.ProductId == Model.ProductId &&
-                        x.Quantity > x.DeliveredQuantity);
-
-            if (SelectedOrderItem != null)
-            {
-                var remaining =
-                    Math.Max(
-                        0,
-                        SelectedOrderItem.Quantity -
-                        SelectedOrderItem.DeliveredQuantity);
-
-                // Automatically suggest remaining quantity
-                Model.Quantity = remaining;
-            }
-            else
-            {
-                Model.Quantity = 0;
-
-                ErrorMessage =
-                    L["NoOpenQuantityForProduct"];
-            }
-        }
-        else if (Model.ProductId <= 0)
-        {
-            Model.Quantity = 0;
-        }
+        Model.ProductId =
+            productId;
 
         return Task.CompletedTask;
     }
+
 
     // =========================================================
     // SUPPLIER CHANGED
+    //
+    // ONLY MANUAL MODE
     // =========================================================
 
-    private Task OnSupplierChanged(int supplierId)
+    private Task OnSupplierChanged(
+        int supplierId)
     {
         ErrorMessage = null;
+
         SuccessMessage = null;
 
-        Model.SupplierId = supplierId;
+        // Supplier from Bestellung cannot be changed.
+        if (Model.PurchaseOrderId > 0)
+            return Task.CompletedTask;
+
+        Model.SupplierId =
+            supplierId;
 
         return Task.CompletedTask;
     }
+
 
     // =========================================================
     // WAREHOUSE CHANGED
     // =========================================================
 
-    private async Task OnWarehouseChanged(int warehouseId)
+    private async Task OnWarehouseChanged(
+        int warehouseId)
     {
         ErrorMessage = null;
+
         SuccessMessage = null;
 
-        Model.WarehouseId = warehouseId;
-        Model.WarehouseLocationId = 0;
+        Model.WarehouseId =
+            warehouseId;
+
+        Model.WarehouseLocationId =
+            0;
 
         Locations.Clear();
+
 
         if (warehouseId <= 0)
         {
             StateHasChanged();
+
             return;
         }
 
+
         await using var db =
             await DbFactory.CreateDbContextAsync();
+
 
         Locations =
             await db.WarehouseLocations
                 .AsNoTracking()
                 .Where(x =>
-                    x.IsActive &&
-                    x.WarehouseId == warehouseId)
-                .OrderBy(x => x.Code)
+                    x.IsActive
+                    &&
+                    x.WarehouseId ==
+                        warehouseId)
+                .OrderBy(x =>
+                    x.Code)
                 .ToListAsync();
+
 
         StateHasChanged();
     }
+
 
     // =========================================================
     // LOCATION CHANGED
     // =========================================================
 
-    private Task OnLocationChanged(int locationId)
+    private Task OnLocationChanged(
+        int locationId)
     {
-        Model.WarehouseLocationId = locationId;
+        Model.WarehouseLocationId =
+            locationId;
 
         return Task.CompletedTask;
     }
+
 
     // =========================================================
     // BOOK INCOMING
@@ -923,32 +1056,6 @@
 
         try
         {
-            // =================================================
-            // PRODUCT
-            // =================================================
-
-            if (Model.ProductId <= 0)
-            {
-                ErrorMessage =
-                    L["ProductSelectionRequired"];
-
-                return;
-            }
-
-
-            // =================================================
-            // SUPPLIER
-            // =================================================
-
-            if (Model.SupplierId <= 0)
-            {
-                ErrorMessage =
-                    L["SupplierSelectionRequired"];
-
-                return;
-            }
-
-
             // =================================================
             // WAREHOUSE
             // =================================================
@@ -975,82 +1082,28 @@
             }
 
 
-            // =================================================
-            // QUANTITY
-            // =================================================
-
-            if (Model.Quantity <= 0)
-            {
-                ErrorMessage =
-                    L["QuantityMustBeGreaterThanZero"];
-
-                return;
-            }
-
-
             await using var db =
                 await DbFactory.CreateDbContextAsync();
 
 
             // =================================================
-            // PRODUCT
+            // BESTELLUNG MODE
             // =================================================
-
-            var product =
-                await db.Products
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.ProductId
-                        &&
-                        x.IsActive);
-
-
-            if (product == null)
-            {
-                ErrorMessage =
-                    L["SelectedProductNotFound"];
-
-                return;
-            }
-
-
-            // =================================================
-            // SUPPLIER
-            // =================================================
-
-            var supplier =
-                await db.Suppliers
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.SupplierId
-                        &&
-                        x.IsActive);
-
-
-            if (supplier == null)
-            {
-                ErrorMessage =
-                    L["SelectedSupplierNotFound"];
-
-                return;
-            }
-
-
-            // =================================================
-            // PURCHASE ORDER
-            // =================================================
-
-            PurchaseOrder? purchaseOrder = null;
-
-            PurchaseOrderItem? orderItem = null;
-
 
             if (Model.PurchaseOrderId > 0)
             {
-                purchaseOrder =
+                // =============================================
+                // LOAD BESTELLUNG
+                // =============================================
+
+                var purchaseOrder =
                     await db.PurchaseOrders
                         .Include(x =>
+                            x.Supplier)
+                        .Include(x =>
                             x.Items)
+                            .ThenInclude(x =>
+                                x.Product)
                         .FirstOrDefaultAsync(x =>
                             x.Id ==
                             Model.PurchaseOrderId);
@@ -1066,7 +1119,7 @@
 
 
                 // =============================================
-                // STATUS
+                // CHECK STATUS
                 // =============================================
 
                 if (purchaseOrder.Status !=
@@ -1083,245 +1136,232 @@
 
 
                 // =============================================
-                // SUPPLIER MUST MATCH
+                // SUPPLIER
+                //
+                // AUTOMATIC FROM BESTELLUNG
                 // =============================================
 
-                if (purchaseOrder.SupplierId !=
-                    Model.SupplierId)
+                if (purchaseOrder.SupplierId <= 0)
                 {
                     ErrorMessage =
-                        L["SupplierDoesNotMatchPurchaseOrder"];
+                        L["SelectedSupplierNotFound"];
 
                     return;
                 }
 
 
                 // =============================================
-                // FIND ORDER ITEM
+                // LOCATION
                 // =============================================
 
-                orderItem =
+                var location =
+                    await db.WarehouseLocations
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                Model.WarehouseLocationId
+                            &&
+                            x.WarehouseId ==
+                                Model.WarehouseId
+                            &&
+                            x.IsActive);
+
+
+                if (location == null)
+                {
+                    ErrorMessage =
+                        L["SelectedLocationNotFound"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // CHECK OPEN ITEMS
+                // =============================================
+
+                var openItems =
                     purchaseOrder.Items
-                        .FirstOrDefault(x =>
-                            x.ProductId ==
-                            Model.ProductId);
+                        .Where(x =>
+                            x.Quantity >
+                            x.DeliveredQuantity)
+                        .ToList();
 
 
-                if (orderItem == null)
+                if (!openItems.Any())
                 {
                     ErrorMessage =
-                        L["ProductNotInPurchaseOrder"];
+                        L["PurchaseOrderCannotReceive"];
 
                     return;
                 }
 
 
                 // =============================================
-                // REMAINING
+                // PROCESS ALL PRODUCTS
+                //
+                // IMPORTANT:
+                //
+                // NO Model.ProductId
+                //
+                // Product comes directly from:
+                //
+                // orderItem.ProductId
+                //
                 // =============================================
 
-                var remaining =
-                    Math.Max(
-                        0,
-                        orderItem.Quantity -
-                        orderItem.DeliveredQuantity);
-
-
-                if (remaining <= 0)
+                foreach (var orderItem in openItems)
                 {
-                    ErrorMessage =
-                        L["NoOpenQuantityRemaining"];
+                    // -----------------------------------------
+                    // REMAINING
+                    // -----------------------------------------
 
-                    return;
-                }
-
-
-                // =============================================
-                // TOO MUCH
-                // =============================================
-
-                if (Model.Quantity >
-                    remaining)
-                {
-                    ErrorMessage =
-                        L["QuantityExceedsRemaining",
-                            remaining.ToString("N2")];
-
-                    return;
-                }
-            }
-
-
-            // =================================================
-            // WAREHOUSE
-            // =================================================
-
-            var warehouse =
-                await db.Warehouses
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.WarehouseId
-                        &&
-                        x.IsActive);
-
-
-            if (warehouse == null)
-            {
-                ErrorMessage =
-                    L["SelectedWarehouseNotFound"];
-
-                return;
-            }
-
-
-            // =================================================
-            // LOCATION
-            // =================================================
-
-            var location =
-                await db.WarehouseLocations
-                    .FirstOrDefaultAsync(x =>
-                        x.Id ==
-                            Model.WarehouseLocationId
-                        &&
-                        x.WarehouseId ==
-                            Model.WarehouseId
-                        &&
-                        x.IsActive);
-
-
-            if (location == null)
-            {
-                ErrorMessage =
-                    L["SelectedLocationNotFound"];
-
-                return;
-            }
-
-
-            // =================================================
-            // STOCK
-            // =================================================
-
-            var stock =
-                await db.Stocks
-                    .FirstOrDefaultAsync(x =>
-                        x.ProductId ==
-                            Model.ProductId
-                        &&
-                        x.WarehouseLocationId ==
-                            Model.WarehouseLocationId);
-
-
-            // =================================================
-            // CREATE STOCK
-            // =================================================
-
-            if (stock == null)
-            {
-                stock =
-                    new Stock
-                    {
-                        ProductId =
-                            Model.ProductId,
-
-                        WarehouseLocationId =
-                            Model.WarehouseLocationId,
-
-                        Quantity =
-                            Model.Quantity,
-
-                        ReservedQuantity =
+                    var remaining =
+                        Math.Max(
                             0,
-
-                        UpdatedAt =
-                            DateTime.UtcNow
-                    };
+                            orderItem.Quantity -
+                            orderItem.DeliveredQuantity);
 
 
-                db.Stocks.Add(stock);
-            }
-            else
-            {
+                    if (remaining <= 0)
+                        continue;
+
+
+                    // -----------------------------------------
+                    // PRODUCT FROM BESTELLUNG
+                    // -----------------------------------------
+
+                    var product =
+                        await db.Products
+                            .FirstOrDefaultAsync(x =>
+                                x.Id ==
+                                    orderItem.ProductId
+                                &&
+                                x.IsActive);
+
+
+                    if (product == null)
+                    {
+                        ErrorMessage =
+                            L["SelectedProductNotFound"];
+
+                        return;
+                    }
+
+
+                    // =========================================
+                    // STOCK
+                    // =========================================
+
+                    var stock =
+                        await db.Stocks
+                            .FirstOrDefaultAsync(x =>
+                                x.ProductId ==
+                                    orderItem.ProductId
+                                &&
+                                x.WarehouseLocationId ==
+                                    Model.WarehouseLocationId);
+
+
+                    // =========================================
+                    // CREATE STOCK
+                    // =========================================
+
+                    if (stock == null)
+                    {
+                        stock =
+                            new Stock
+                            {
+                                ProductId =
+                                    orderItem.ProductId,
+
+                                WarehouseLocationId =
+                                    Model.WarehouseLocationId,
+
+                                Quantity =
+                                    remaining,
+
+                                ReservedQuantity =
+                                    0,
+
+                                UpdatedAt =
+                                    DateTime.UtcNow
+                            };
+
+                        db.Stocks.Add(stock);
+                    }
+                    else
+                    {
+                        stock.Quantity +=
+                            remaining;
+
+                        stock.UpdatedAt =
+                            DateTime.UtcNow;
+                    }
+
+
+                    // =========================================
+                    // STOCK MOVEMENT
+                    // =========================================
+
+                    var movement =
+                        new StockMovement
+                        {
+                            ProductId =
+                                orderItem.ProductId,
+
+                            SupplierId =
+                                purchaseOrder.SupplierId,
+
+                            PurchaseOrderId =
+                                purchaseOrder.Id,
+
+                            Quantity =
+                                remaining,
+
+                            Type =
+                                StockMovementType.Wareneingang,
+
+                            FromWarehouseLocationId =
+                                null,
+
+                            ToWarehouseLocationId =
+                                Model.WarehouseLocationId,
+
+                            ReferenceNumber =
+                                string.IsNullOrWhiteSpace(
+                                    Model.ReferenceNumber)
+                                    ? null
+                                    : Model.ReferenceNumber.Trim(),
+
+                            Note =
+                                string.IsNullOrWhiteSpace(
+                                    Model.Note)
+                                    ? null
+                                    : Model.Note.Trim(),
+
+                            UserId =
+                                null,
+
+                            CreatedAt =
+                                DateTime.UtcNow
+                        };
+
+
+                    db.StockMovements.Add(
+                        movement);
+
+
+                    // =========================================
+                    // UPDATE DELIVERED
+                    // =========================================
+
+                    orderItem.DeliveredQuantity +=
+                        remaining;
+                }
+
+
                 // =============================================
-                // UPDATE STOCK
-                // =============================================
-
-                stock.Quantity +=
-                    Model.Quantity;
-
-                stock.UpdatedAt =
-                    DateTime.UtcNow;
-            }
-
-
-            // =================================================
-            // STOCK MOVEMENT
-            // =================================================
-
-            var movement =
-                new StockMovement
-                {
-                    ProductId =
-                        Model.ProductId,
-
-                    SupplierId =
-                        Model.SupplierId,
-
-                    PurchaseOrderId =
-                        Model.PurchaseOrderId > 0
-                            ? Model.PurchaseOrderId
-                            : null,
-
-                    Quantity =
-                        Model.Quantity,
-
-                    Type =
-                        StockMovementType.Wareneingang,
-
-                    FromWarehouseLocationId =
-                        null,
-
-                    ToWarehouseLocationId =
-                        Model.WarehouseLocationId,
-
-                    ReferenceNumber =
-                        string.IsNullOrWhiteSpace(
-                            Model.ReferenceNumber)
-                            ? null
-                            : Model.ReferenceNumber.Trim(),
-
-                    Note =
-                        string.IsNullOrWhiteSpace(
-                            Model.Note)
-                            ? null
-                            : Model.Note.Trim(),
-
-                    UserId =
-                        null,
-
-                    CreatedAt =
-                        DateTime.UtcNow
-                };
-
-
-            db.StockMovements.Add(
-                movement);
-
-
-            // =================================================
-            // UPDATE PURCHASE ORDER
-            // =================================================
-
-            if (purchaseOrder != null &&
-                orderItem != null)
-            {
-                orderItem.DeliveredQuantity +=
-                    Model.Quantity;
-
-
-                // =============================================
-                // CHECK ALL ITEMS
+                // PURCHASE ORDER STATUS
                 // =============================================
 
                 var allDelivered =
@@ -1354,22 +1394,26 @@
 
                 purchaseOrder.UpdatedAt =
                     DateTime.UtcNow;
-            }
 
 
-            // =================================================
-            // SAVE EVERYTHING
-            // =================================================
+                // =============================================
+                // SAVE ALL
+                // =============================================
 
-            await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
 
 
-            // =================================================
-            // SUCCESS
-            // =================================================
+                // =============================================
+                // SUCCESS
+                // =============================================
 
-            if (purchaseOrder != null)
-            {
+                var receivedQuantity =
+                    openItems.Sum(x =>
+                        Math.Max(
+                            0,
+                            x.Quantity -
+                            x.DeliveredQuantity));
+
                 SuccessMessage =
                     L["PurchaseOrderReceiptSuccess",
                         Model.Quantity.ToString("N2"),
@@ -1377,6 +1421,254 @@
             }
             else
             {
+                // =================================================
+                // MANUAL MODE
+                // =================================================
+
+                // =============================================
+                // PRODUCT
+                // =============================================
+
+                if (Model.ProductId <= 0)
+                {
+                    ErrorMessage =
+                        L["ProductSelectionRequired"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // SUPPLIER
+                // =============================================
+
+                if (Model.SupplierId <= 0)
+                {
+                    ErrorMessage =
+                        L["SupplierSelectionRequired"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // QUANTITY
+                // =============================================
+
+                if (Model.Quantity <= 0)
+                {
+                    ErrorMessage =
+                        L["QuantityMustBeGreaterThanZero"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // PRODUCT
+                // =============================================
+
+                var product =
+                    await db.Products
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                Model.ProductId
+                            &&
+                            x.IsActive);
+
+
+                if (product == null)
+                {
+                    ErrorMessage =
+                        L["SelectedProductNotFound"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // SUPPLIER
+                // =============================================
+
+                var supplier =
+                    await db.Suppliers
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                Model.SupplierId
+                            &&
+                            x.IsActive);
+
+
+                if (supplier == null)
+                {
+                    ErrorMessage =
+                        L["SelectedSupplierNotFound"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // WAREHOUSE
+                // =============================================
+
+                var warehouse =
+                    await db.Warehouses
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                Model.WarehouseId
+                            &&
+                            x.IsActive);
+
+
+                if (warehouse == null)
+                {
+                    ErrorMessage =
+                        L["SelectedWarehouseNotFound"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // LOCATION
+                // =============================================
+
+                var location =
+                    await db.WarehouseLocations
+                        .FirstOrDefaultAsync(x =>
+                            x.Id ==
+                                Model.WarehouseLocationId
+                            &&
+                            x.WarehouseId ==
+                                Model.WarehouseId
+                            &&
+                            x.IsActive);
+
+
+                if (location == null)
+                {
+                    ErrorMessage =
+                        L["SelectedLocationNotFound"];
+
+                    return;
+                }
+
+
+                // =============================================
+                // STOCK
+                // =============================================
+
+                var stock =
+                    await db.Stocks
+                        .FirstOrDefaultAsync(x =>
+                            x.ProductId ==
+                                Model.ProductId
+                            &&
+                            x.WarehouseLocationId ==
+                                Model.WarehouseLocationId);
+
+
+                // =============================================
+                // CREATE / UPDATE STOCK
+                // =============================================
+
+                if (stock == null)
+                {
+                    stock =
+                        new Stock
+                        {
+                            ProductId =
+                                Model.ProductId,
+
+                            WarehouseLocationId =
+                                Model.WarehouseLocationId,
+
+                            Quantity =
+                                Model.Quantity,
+
+                            ReservedQuantity =
+                                0,
+
+                            UpdatedAt =
+                                DateTime.UtcNow
+                        };
+
+                    db.Stocks.Add(stock);
+                }
+                else
+                {
+                    stock.Quantity +=
+                        Model.Quantity;
+
+                    stock.UpdatedAt =
+                        DateTime.UtcNow;
+                }
+
+
+                // =============================================
+                // STOCK MOVEMENT
+                // =============================================
+
+                var movement =
+                    new StockMovement
+                    {
+                        ProductId =
+                            Model.ProductId,
+
+                        SupplierId =
+                            Model.SupplierId,
+
+                        PurchaseOrderId =
+                            null,
+
+                        Quantity =
+                            Model.Quantity,
+
+                        Type =
+                            StockMovementType.Wareneingang,
+
+                        FromWarehouseLocationId =
+                            null,
+
+                        ToWarehouseLocationId =
+                            Model.WarehouseLocationId,
+
+                        ReferenceNumber =
+                            string.IsNullOrWhiteSpace(
+                                Model.ReferenceNumber)
+                                ? null
+                                : Model.ReferenceNumber.Trim(),
+
+                        Note =
+                            string.IsNullOrWhiteSpace(
+                                Model.Note)
+                                ? null
+                                : Model.Note.Trim(),
+
+                        UserId =
+                            null,
+
+                        CreatedAt =
+                            DateTime.UtcNow
+                    };
+
+
+                db.StockMovements.Add(
+                    movement);
+
+
+                // =============================================
+                // SAVE
+                // =============================================
+
+                await db.SaveChangesAsync();
+
+
+                // =============================================
+                // SUCCESS
+                // =============================================
+
                 SuccessMessage =
                     L["ManualReceiptSuccess",
                         Model.Quantity.ToString("N2"),
@@ -1384,51 +1676,62 @@
             }
 
 
-            // =================================================
+            // =====================================================
             // RESET
-            // =================================================
+            // =====================================================
 
             Model =
                 new GoodsReceiptModel();
 
-
-            SelectedPurchaseOrder = null;
-
-            SelectedOrderItem = null;
+            SelectedPurchaseOrder =
+                null;
 
             Locations.Clear();
 
 
-            // Reload open orders because the status may have changed.
-            PurchaseOrders =
-                await db.PurchaseOrders
-                    .AsNoTracking()
-                    .Include(x =>
-                        x.Supplier)
-                    .Include(x =>
-                        x.Items)
-                        .ThenInclude(x =>
-                            x.Product)
-                    .Where(x =>
-                        x.Status ==
-                            PurchaseOrderStatus.Bestellt
-                        ||
-                        x.Status ==
-                            PurchaseOrderStatus.TeilweiseGeliefert)
-                    .OrderByDescending(x =>
-                        x.OrderDate)
-                    .ThenByDescending(x =>
-                        x.Id)
-                    .ToListAsync();
+            // =====================================================
+            // RELOAD PURCHASE ORDERS
+            // =====================================================
+
+            await LoadPurchaseOrders(db);
 
 
             StateHasChanged();
         }
+        catch (DbUpdateException ex)
+        {
+            var error =
+                ex.InnerException?.InnerException?.Message
+                ??
+                ex.InnerException?.Message
+                ??
+                ex.Message;
+
+            ErrorMessage =
+                $"Database error: {error}";
+
+            Console.WriteLine(
+                "========== INCOMING GOODS DB ERROR ==========");
+
+            Console.WriteLine(
+                ex.ToString());
+
+            Console.WriteLine(
+                "==============================================");
+        }
         catch (Exception ex)
         {
             ErrorMessage =
-                L["IncomingGoodsBookingError",
-                    ex.Message];
+                $"Error: {ex.Message}";
+
+            Console.WriteLine(
+                "========== INCOMING GOODS ERROR ==========");
+
+            Console.WriteLine(
+                ex.ToString());
+
+            Console.WriteLine(
+                "==========================================");
         }
         finally
         {
@@ -1443,28 +1746,52 @@
 
     private class GoodsReceiptModel
     {
-        public int PurchaseOrderId { get; set; }
+        public int PurchaseOrderId
+        {
+            get;
+            set;
+        }
 
 
-        [Range(
-            1,
-            int.MaxValue,
-            ErrorMessageResourceType =
-                typeof(SharedResource),
-            ErrorMessageResourceName =
-                "ProductSelectionRequired")]
-        public int ProductId { get; set; }
+        // =====================================================
+        // NO VALIDATION!
+        //
+        // Product is NOT required here because:
+        //
+        // PurchaseOrder mode:
+        //     ProductId is completely ignored.
+        //
+        // Manual mode:
+        //     ProductId is validated manually in BookIncoming().
+        // =====================================================
+
+        public int ProductId
+        {
+            get;
+            set;
+        }
 
 
-        [Range(
-            1,
-            int.MaxValue,
-            ErrorMessageResourceType =
-                typeof(SharedResource),
-            ErrorMessageResourceName =
-                "SupplierSelectionRequired")]
-        public int SupplierId { get; set; }
+        // =====================================================
+        // NO VALIDATION!
+        //
+        // PurchaseOrder mode:
+        //     Supplier comes automatically from Bestellung.
+        //
+        // Manual mode:
+        //     Supplier is validated manually.
+        // =====================================================
 
+        public int SupplierId
+        {
+            get;
+            set;
+        }
+
+
+        // =====================================================
+        // WAREHOUSE
+        // =====================================================
 
         [Range(
             1,
@@ -1473,8 +1800,16 @@
                 typeof(SharedResource),
             ErrorMessageResourceName =
                 "WarehouseSelectionRequired")]
-        public int WarehouseId { get; set; }
+        public int WarehouseId
+        {
+            get;
+            set;
+        }
 
+
+        // =====================================================
+        // LOCATION
+        // =====================================================
 
         [Range(
             1,
@@ -1483,24 +1818,51 @@
                 typeof(SharedResource),
             ErrorMessageResourceName =
                 "LocationSelectionRequired")]
-        public int WarehouseLocationId { get; set; }
+        public int WarehouseLocationId
+        {
+            get;
+            set;
+        }
 
 
-        [Range(
-            0.01,
-            double.MaxValue,
-            ErrorMessageResourceType =
-                typeof(SharedResource),
-            ErrorMessageResourceName =
-                "QuantityMustBeGreaterThanZero")]
-        public decimal Quantity { get; set; }
+        // =====================================================
+        // NO DATA ANNOTATION VALIDATION!
+        //
+        // PurchaseOrder:
+        //     automatically calculated.
+        //
+        // Manual:
+        //     validated manually in BookIncoming().
+        // =====================================================
 
+        public decimal Quantity
+        {
+            get;
+            set;
+        }
+
+
+        // =====================================================
+        // REFERENCE
+        // =====================================================
 
         [MaxLength(100)]
-        public string? ReferenceNumber { get; set; }
+        public string? ReferenceNumber
+        {
+            get;
+            set;
+        }
 
+
+        // =====================================================
+        // NOTE
+        // =====================================================
 
         [MaxLength(500)]
-        public string? Note { get; set; }
+        public string? Note
+        {
+            get;
+            set;
+        }
     }
 }

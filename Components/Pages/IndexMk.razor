@@ -1,4 +1,4 @@
-@page "/"
+@page "/mk"
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Components.Forms
@@ -8,7 +8,7 @@
 @layout PublicLayout
 
 <PageTitle>
-    Warehouse Management | Die digitale Lösung für moderne Lager
+    Warehouse Менаџмент | Дигитално решение за современи магацини
 </PageTitle>
 
 <div class="page-wrapper">
@@ -23,13 +23,13 @@
 
             <!-- LOGO -->
             <a class="brand"
-               href="#top"
-               aria-label="Warehouse Management Startseite">
+               href="/mk#topmk"
+               aria-label="Warehouse Менаџмент почетна страница">
 
                 <div class="brand-logo">
                     <img class="brand-logo-image"
                          src="/images/wm-logo-premium.webp"
-                         alt="Warehouse Management" />
+                         alt="Warehouse Менаџмент" />
                 </div>
 
             </a>
@@ -38,32 +38,32 @@
             <!-- NAVIGATION -->
             <nav class="nav-menu @(MenuOpen ? "active" : string.Empty)">
 
-                <a href="#loesung"
+                <a href="/mk#loesungmk"
                    @onclick="CloseMenu">
-                    Lösung
+                    Решение
                 </a>
 
-                <a href="#funktionen"
+                <a href="/mk#functionmk"
                    @onclick="CloseMenu">
-                    Funktionen
+                    Функции
                 </a>
 
-                <a href="#prozesse"
+                <a href="/mk#prozessemk"
                    @onclick="CloseMenu">
-                    Prozesse
+                    Процеси
                 </a>
 
-                <a href="#branchen"
+                <a href="/mk#branchenmk"
                    @onclick="CloseMenu">
-                    Branchen
+                    Индустрии
                 </a>
 
-                <a href="#reports"
+                <a href="/mk#reportsmk"
                    @onclick="CloseMenu">
-                    Reports
+                    Извештаи
                 </a>
 
-                <a href="#faq"
+                <a href="/mk#faqmk"
                    @onclick="CloseMenu">
                     FAQ
                 </a>
@@ -78,10 +78,10 @@
                 <div class="language-selector">
 
                     <a href="/"
-                       class="language active"
+                       class="language"
                        title="Deutsch">
 
-                        DE
+                         DE
 
                     </a>
 
@@ -102,10 +102,10 @@
                     </a>
 
                     <a href="/mk"
-                       class="language"
+                       class="language active"
                        title="Македонски">
 
-                        MK
+                       MK
 
                     </a>
 
@@ -114,14 +114,14 @@
 
                 <!-- DEMO BUTTON -->
                 <a class="btn btn-primary"
-                   href="#demo">
+                   href="/mk#demomk">
 
-                    Demo buchen
+                    Закажете демо
 
                     <span>→</span>
 
                 </a>
-                          <div class="mobile-language-selector">
+                <div class="mobile-language-selector">
     <a href="/"
        class="mobile-language @(IsActiveLanguage("de") ? "active" : "")">
         DE
@@ -146,7 +146,7 @@
                 <!-- MOBILE MENU -->
                 <button class="mobile-toggle"
                         type="button"
-                        aria-label="Menü öffnen"
+                        aria-label="Отвори мени"
                         @onclick="ToggleMenu">
 
                     ☰
@@ -164,7 +164,7 @@
          MAIN
          ========================================================= -->
 
-    <main id="top">
+    <main id="topmk">
 
 
         <!-- =========================================================
@@ -178,17 +178,17 @@
                 <div class="hero-content">
 
                     <span class="badge">
-                        Digitale Lagerverwaltung für moderne Unternehmen
+                        Дигитално управување со магацин за современи компании
                     </span>
 
 
                     <h1 class="hero-title">
 
-                        Ihr Lager.
+                        Вашиот магацин.
                         <br />
 
                         <span>
-                            Ein System. Volle Kontrolle.
+                            Еден систем. Целосна контрола.
                         </span>
 
                     </h1>
@@ -196,10 +196,10 @@
 
                     <p class="hero-subtitle">
 
-                        Warehouse Management verbindet Produkte, Lager,
-                        Lagerplätze, Bestände, Einkauf, Bestellungen,
-                        Wareneingang, Warenausgang und Inventur
-                        in einer zentralen Plattform.
+                        Warehouse Менаџмент ги поврзува производите, магацините,
+                        магацинските позиции, залихите, набавките, нарачките,
+                        приемот, издавањето на стока и инвентарот
+                        во една централна платформа.
 
                     </p>
 
@@ -207,9 +207,9 @@
                     <div class="hero-actions">
 
                         <a class="btn btn-primary"
-                           href="#demo">
+                           href="/mk#demomk">
 
-                            Persönliche Demo buchen
+                            Закажете персонализирано демо
 
                             <span>→</span>
 
@@ -217,9 +217,9 @@
 
 
                         <a class="btn btn-secondary"
-                           href="#funktionen">
+                           href="/mk#functionmk">
 
-                            Funktionen entdecken
+                            Истражете ги функциите
 
                             <span>→</span>
 
@@ -231,11 +231,11 @@
                     <div class="microproof">
 
                         <span class="avatars">
-                            Lager&nbsp;&nbsp;Einkauf&nbsp;&nbsp;Verkauf&nbsp;&nbsp;Management
+                            Магацин&nbsp;&nbsp;Набавка&nbsp;&nbsp;Продажба&nbsp;&nbsp;Менаџмент
                         </span>
 
                         <span>
-                            Eine Plattform für Ihre täglichen Prozesse.
+                            Една платформа за вашите секојдневни процеси.
                         </span>
 
                     </div>
@@ -248,7 +248,7 @@
                     <div class="glass-card mockup-card">
 
                         <img src="/images/DemoImg.png"
-                             alt="Warehouse Management Dashboard"
+                             alt="Warehouse Менаџмент Dashboard"
                              class="dashboard-img" />
 
 
@@ -256,14 +256,14 @@
 
                             <span class="status-dot"></span>
 
-                            Bestände jederzeit im Blick
+                            Залихите секогаш под контрола
 
                         </div>
 
 
                         <div class="floating-badge badge-bottom">
 
-                            ✓ Einkauf · Lager · Verkauf · Reports
+                            ✓ Набавка · Магацин · Продажба · Извештаи
 
                         </div>
 
@@ -286,11 +286,11 @@
 
                 <p>
 
-                    Eine zentrale Plattform für
+                    Една централна платформа за
 
                     <strong>
-                        strukturierte Lagerprozesse,
-                        aktuelle Bestände und klare Entscheidungen.
+                        структурирани магацински процеси,
+                        ажурни залихи и јасни одлуки.
                     </strong>
 
                 </p>
@@ -298,11 +298,11 @@
 
                 <div class="logos">
 
-                    <span>GROSSHANDEL</span>
-                    <span>BAUSTOFFHANDEL</span>
-                    <span>ERSATZTEILE</span>
-                    <span>PRODUKTION</span>
-                    <span>E-COMMERCE</span>
+                    <span>ГОЛЕМОПРОДАЖБА</span>
+                    <span>ТРГОВИЈА СО ГРАДЕЖНИ МАТЕРИЈАЛИ</span>
+                    <span>РЕЗЕРВНИ ДЕЛОВИ</span>
+                    <span>ПРОИЗВОДСТВО</span>
+                    <span>Е-ТРГОВИЈА</span>
 
                 </div>
 
@@ -316,29 +316,29 @@
              ========================================================= -->
 
         <section class="section"
-                 id="loesung">
+                 id="loesungmk">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Mehr als eine Lagerliste
+                        Повеќе од обична магацинска листа
                     </span>
 
 
                     <h2>
-                        Vom Einkauf bis zum Warenausgang –
-                        alles miteinander verbunden.
+                        Од набавката до издавањето на стоката –
+                        сè е меѓусебно поврзано.
                     </h2>
 
 
                     <p>
 
-                        Moderne Lagerverwaltung bedeutet nicht nur,
-                        den aktuellen Bestand zu kennen.
-                        Sie bedeutet, jeden relevanten Prozess
-                        miteinander zu verbinden.
+                        Современото управување со магацин не значи само
+                        да ја знаете моменталната состојба на залихите.
+                        Тоа значи секој важен процес
+                        да биде меѓусебно поврзан.
 
                     </p>
 
@@ -355,15 +355,15 @@
                         </div>
 
                         <h3>
-                            Ein zentraler Datenbestand
+                            Една централна база на податоци
                         </h3>
 
                         <p>
 
-                            Produkte, Kategorien, Lager,
-                            Lagerplätze, Lieferanten, Kunden
-                            und Bestellungen werden zentral
-                            verwaltet.
+                            Производите, категориите, магацините,
+                            магацинските позиции, добавувачите, клиентите
+                            и нарачките се управуваат централно
+                            во системот.
 
                         </p>
 
@@ -377,14 +377,14 @@
                         </div>
 
                         <h3>
-                            Jeder Warenfluss nachvollziehbar
+                            Следлив тек на секоја стока
                         </h3>
 
                         <p>
 
-                            Wareneingänge, Warenausgänge,
-                            Umlagerungen, Korrekturen und
-                            Inventuren werden dokumentiert.
+                            Приемите, издавањата,
+                            преместувањата, корекциите и
+                            инвентарите се евидентираат.
 
                         </p>
 
@@ -398,15 +398,15 @@
                         </div>
 
                         <h3>
-                            Informationen für Entscheidungen
+                            Информации за донесување одлуки
                         </h3>
 
                         <p>
 
-                            Bestandsberichte, Lagerwert,
-                            Bewegungen, Niedrigbestände,
-                            Produkte und Lieferanten
-                            übersichtlich auswerten.
+                            извештаи за залихи, вредност на магацинот,
+                            движења, ниски залихи,
+                            производи и добавувачи
+                            можат прегледно да се анализираат.
 
                         </p>
 
@@ -424,28 +424,28 @@
              ========================================================= -->
 
         <section class="section workflow-section"
-                 id="prozesse">
+                 id="prozessemk">
 
             <div class="container">
 
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Der komplette Warenfluss
+                        Целосниот тек на стоката
                     </span>
 
 
                     <h2>
-                        Ein durchgängiger Prozess statt
-                        vieler Einzellösungen.
+                        Еден непрекинат процес наместо
+                        многу одделни решенија.
                     </h2>
 
 
                     <p>
 
-                        Jeder Schritt baut auf dem vorherigen auf.
-                        So bleibt Ihr Bestand nachvollziehbar
-                        und Ihre Mitarbeiter arbeiten mit denselben Daten.
+                        Секој чекор се надоврзува на претходниот.
+                        Така вашите залихи остануваат следливи
+                        а вработените работат со истите податоци.
 
                     </p>
 
@@ -466,14 +466,14 @@
                         </div>
 
                         <h3>
-                            Einkauf
+                            Набавка
                         </h3>
 
                         <p>
 
-                            Lieferanten verwalten,
-                            Bestellungen erstellen und
-                            benötigte Waren planen.
+                            Управувајте со добавувачите,
+                            креирајте нарачки и
+                            планирајте ја потребната стока.
 
                         </p>
 
@@ -491,14 +491,14 @@
                         </div>
 
                         <h3>
-                            Wareneingang
+                            Прием на стока
                         </h3>
 
                         <p>
 
-                            Gelieferte Mengen erfassen
-                            und Waren dem richtigen
-                            Lager beziehungsweise Lagerplatz zuordnen.
+                            Евидентирајте ги испорачаните количини
+                            и доделете ја стоката на соодветниот
+                            магацин, односно магацинска позиција.
 
                         </p>
 
@@ -516,14 +516,14 @@
                         </div>
 
                         <h3>
-                            Einlagern
+                            Складирање
                         </h3>
 
                         <p>
 
-                            Bestände gezielt auf Lagerplätze
-                            verteilen und jederzeit wissen,
-                            wo sich ein Artikel befindet.
+                            Распределете ги залихите на магацинските позиции
+                            и во секое време знајте
+                            каде се наоѓа одреден артикл.
 
                         </p>
 
@@ -541,14 +541,14 @@
                         </div>
 
                         <h3>
-                            Umlagern
+                            Преместување
                         </h3>
 
                         <p>
 
-                            Waren zwischen Lagerplätzen
-                            oder Lagern bewegen und jede
-                            Bewegung dokumentieren.
+                            Преместувајте стока помеѓу магацински позиции
+                            или магацини и секое
+                            движење евидентирајте го.
 
                         </p>
 
@@ -566,14 +566,14 @@
                         </div>
 
                         <h3>
-                            Bestellung
+                            Нарачка
                         </h3>
 
                         <p>
 
-                            Kundenbestellungen verwalten,
-                            Positionen prüfen und verfügbare
-                            Bestände berücksichtigen.
+                            Управувајте со нарачките од клиентите,
+                            проверувајте ги ставките и достапните
+                            залихи.
 
                         </p>
 
@@ -591,14 +591,14 @@
                         </div>
 
                         <h3>
-                            Warenausgang
+                            Издавање на стока
                         </h3>
 
                         <p>
 
-                            Waren kontrolliert ausbuchen
-                            und den Bestand automatisch
-                            aktuell halten.
+                            Контролирано издавајте ја стоката од системот
+                            и автоматски одржувајте ги залихите
+                            ажурирани.
 
                         </p>
 
@@ -616,28 +616,28 @@
              ========================================================= -->
 
         <section class="section"
-                 id="funktionen">
+                 id="functionmk">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Die wichtigsten Werkzeuge
+                        Најважните алатки
                     </span>
 
 
                     <h2>
-                        Alles, was ein modernes Lager braucht.
+                        Сè што му е потребно на современиот магацин.
                     </h2>
 
 
                     <p>
 
-                        Von der Stammdatenverwaltung bis zur
-                        detaillierten Bestandsanalyse –
-                        Warehouse Management bündelt Ihre Prozesse
-                        in einem System.
+                        Од управување со основните податоци до
+                        детална анализа на залихите –
+                        Warehouse Менаџмент ги обединува вашите процеси
+                        во еден систем.
 
                     </p>
 
@@ -652,15 +652,15 @@
                         <span>01</span>
 
                         <h3>
-                            Produkte & Kategorien
+                            Производи и категории
                         </h3>
 
                         <p>
 
-                            Produkte zentral verwalten,
-                            kategorisieren und mit SKU,
-                            Barcode, Preisen und Mindestbeständen
-                            organisieren.
+                            Управувајте со производите централно,
+                            категоризирајте ги и организирајте ги со SKU,
+                            баркод, цени и минимални залихи
+                            да се организираат.
 
                         </p>
 
@@ -674,15 +674,15 @@
                         <span>02</span>
 
                         <h3>
-                            Lager & Lagerplätze
+                            Магацини и магацински позиции
                         </h3>
 
                         <p>
 
-                            Mehrere Lager und strukturierte
-                            Lagerplätze verwalten.
-                            Finden Sie schnell heraus,
-                            wo ein Artikel liegt.
+                            Управувајте со повеќе магацини и структурирани
+                            магацински позиции.
+                            Брзо дознајте
+                            каде се наоѓа одреден артикл.
 
                         </p>
 
@@ -696,15 +696,15 @@
                         <span>03</span>
 
                         <h3>
-                            Bestandsverwaltung
+                            Управување со залихи
                         </h3>
 
                         <p>
 
-                            Aktuellen Bestand,
-                            reservierte Mengen,
-                            verfügbare Mengen und
-                            Mindestbestände überwachen.
+                            Моменталните залихи,
+                            резервираните количини,
+                            достапните количини и
+                            минималните залихи се следат.
 
                         </p>
 
@@ -718,14 +718,14 @@
                         <span>04</span>
 
                         <h3>
-                            Lieferanten
+                            Добавувачи
                         </h3>
 
                         <p>
 
-                            Lieferanten zentral verwalten
-                            und mit Ihren Beschaffungsprozessen
-                            verbinden.
+                            Управувајте со добавувачите централно
+                            и поврзете ги со вашите процеси за набавка.
+                            поврзете ги.
 
                         </p>
 
@@ -739,14 +739,14 @@
                         <span>05</span>
 
                         <h3>
-                            Kunden & Bestellungen
+                            Клиенти и нарачки
                         </h3>
 
                         <p>
 
-                            Kunden und Aufträge strukturiert
-                            verwalten und Bestände bei der
-                            Auftragsabwicklung berücksichtigen.
+                            Управувајте со клиентите и нарачките структурирано
+                            и земете ги залихите предвид при
+                            обработката на нарачките.
 
                         </p>
 
@@ -760,14 +760,14 @@
                         <span>06</span>
 
                         <h3>
-                            Inventur
+                            Инвентар
                         </h3>
 
                         <p>
 
-                            Inventuren erstellen,
-                            Systembestand mit gezählten Mengen
-                            vergleichen und Differenzen nachvollziehen.
+                            Креирајте инвентари,
+                            споредете ја системската состојба со изброените количини
+                            и следете ги утврдените разлики.
 
                         </p>
 
@@ -781,14 +781,14 @@
                         <span>07</span>
 
                         <h3>
-                            Warenbewegungen
+                            Движења на стока
                         </h3>
 
                         <p>
 
-                            Eingänge, Ausgänge, Umlagerungen,
-                            Inventuren und Korrekturen
-                            nachvollziehbar dokumentieren.
+                            Приеми, издавања, преместувања,
+                            инвентари и корекции
+                            се евидентираат на следлив начин.
 
                         </p>
 
@@ -802,14 +802,14 @@
                         <span>08</span>
 
                         <h3>
-                            Rollen & Benutzer
+                            Улоги и корисници
                         </h3>
 
                         <p>
 
-                            Benutzer verwalten und Zugriffe
-                            über Rollen und Berechtigungen
-                            strukturieren.
+                            Управувајте со корисниците и пристапите
+                            преку улоги и дозволи
+                            на структуриран начин.
 
                         </p>
 
@@ -836,22 +836,22 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Einkauf digital organisieren
+                        Организирајте ја набавката дигитално
                     </span>
 
 
                     <h2>
-                        Lieferanten-Bestellungen
-                        ohne den Überblick zu verlieren.
+                        Нарачки кон добавувачи
+                        без да го изгубите прегледот.
                     </h2>
 
 
                     <p>
 
-                        Erstellen und verwalten Sie
-                        Bestellungen bei Lieferanten und
-                        behalten Sie gelieferte sowie noch
-                        offene Mengen im Blick.
+                        Креирајте и управувајте со
+                        нарачките кон добавувачите и
+                        следете ги испорачаните и сè уште
+                        отворените количини.
 
                     </p>
 
@@ -859,27 +859,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Lieferantenverwaltung
+                            ✓ Управување со добавувачи
                         </li>
 
                         <li>
-                            ✓ Lieferanten-Bestellungen
+                            ✓ Нарачки кон добавувачи
                         </li>
 
                         <li>
-                            ✓ Bestellpositionen
+                            ✓ Ставки на нарачката
                         </li>
 
                         <li>
-                            ✓ Bestellstatus
+                            ✓ Статус на нарачката
                         </li>
 
                         <li>
-                            ✓ Teil-Lieferungen
+                            ✓ Делумни испораки
                         </li>
 
                         <li>
-                            ✓ Gelieferte Mengen
+                            ✓ Испорачани количини
                         </li>
 
                     </ul>
@@ -892,23 +892,23 @@
                     <div class="ops-top">
 
                         <span>
-                            LIEFERANTEN-BESTELLUNG
+                            НАРАЧКА КОН ДОБАВУВАЧ
                         </span>
 
                         <b class="live-tag">
-                            AKTUELL
+                            АКТУЕЛНО
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Bestellung
+                        Нарачка
                     </div>
 
 
                     <small>
-                        Lieferant · Positionen · Mengen · Status
+                        Добавувач · Ставки · Количини · Статус
                     </small>
 
 
@@ -917,7 +917,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Bestellt
+                                Нарачано
                             </span>
 
                             <strong>
@@ -930,7 +930,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Geliefert
+                                Испорачано
                             </span>
 
                             <strong>
@@ -943,7 +943,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Offen
+                                Отворено
                             </span>
 
                             <strong>
@@ -973,24 +973,24 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Bestände verstehen
+                        Разбирање на залихите
                     </span>
 
 
                     <h2>
-                        Nicht nur Bestand sehen.
-                        Bestand verstehen.
+                        Не само да ги гледате залихите.
+                        Разберете ги залихите.
                     </h2>
 
 
                     <p>
 
-                        Warehouse Management unterscheidet
-                        zwischen vorhandenem, reserviertem
-                        und verfügbarem Bestand.
+                        Warehouse Менаџмент разликува
+                        помеѓу расположливи, резервирани
+                        и достапни залихи.
 
-                        So erhalten Sie ein realistischeres
-                        Bild Ihrer Lagerkapazität.
+                        Така добивате пореална
+                        слика за капацитетот на вашиот магацин.
 
                     </p>
 
@@ -998,27 +998,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Gesamtbestand
+                            ✓ Вкупни залихи
                         </li>
 
                         <li>
-                            ✓ Reservierter Bestand
+                            ✓ Резервирани залихи
                         </li>
 
                         <li>
-                            ✓ Verfügbarer Bestand
+                            ✓ Достапни залихи
                         </li>
 
                         <li>
-                            ✓ Mindestbestand
+                            ✓ Минимални залихи
                         </li>
 
                         <li>
-                            ✓ Niedrigbestand
+                            ✓ Ниски залихи
                         </li>
 
                         <li>
-                            ✓ Fehlmengen
+                            ✓ Недостиг на количини
                         </li>
 
                     </ul>
@@ -1031,7 +1031,7 @@
                     <div class="ops-top">
 
                         <span>
-                            BESTANDSÜBERSICHT
+                            ПРЕГЛЕД НА ЗАЛИХИ
                         </span>
 
                         <b class="live-tag">
@@ -1042,12 +1042,12 @@
 
 
                     <div class="ops-number">
-                        Bestandsstatus
+                        Статус на залихите
                     </div>
 
 
                     <small>
-                        Zentrale Übersicht für Ihre Lagerbestände
+                        Централен преглед на вашите магацински залихи
                     </small>
 
 
@@ -1056,7 +1056,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Gesamtbestand
+                                Вкупни залихи
                             </span>
 
                             <strong>
@@ -1069,7 +1069,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Reserviert
+                                Резервирано
                             </span>
 
                             <strong>
@@ -1082,7 +1082,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verfügbar
+                                Достапно
                             </span>
 
                             <strong>
@@ -1095,7 +1095,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Niedrigbestand
+                                Ниски залихи
                             </span>
 
                             <strong>
@@ -1118,29 +1118,29 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="reports">
+                 id="reportsmk">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Reports & Analysen
+                        Извештаи и анализи
                     </span>
 
 
                     <h2>
-                        Aus Ihren Lagerdaten werden
-                        klare Informationen.
+                        Вашите магацински податоци стануваат
+                        јасни информации.
                     </h2>
 
 
                     <p>
 
-                        Finden Sie schneller heraus,
-                        was passiert, wo Probleme entstehen
-                        und welchen Wert Ihr aktueller
-                        Lagerbestand besitzt.
+                        Побрзо дознајте
+                        што се случува, каде настануваат проблеми
+                        и колкава е вредноста на вашите моментални
+                        магацински залихи.
 
                     </p>
 
@@ -1155,12 +1155,12 @@
                         <span>01</span>
 
                         <h3>
-                            Bestandsbericht
+                            Извештај за залихи
                         </h3>
 
                         <p>
-                            Aktuelle Bestände nach Lager,
-                            Lagerplatz und Produkt.
+                            Моментални залихи по магацин,
+                            магацинска позиција и производ.
                         </p>
 
                         <b>→</b>
@@ -1173,12 +1173,12 @@
                         <span>02</span>
 
                         <h3>
-                            Lagerwert
+                            Вредност на магацинот
                         </h3>
 
                         <p>
-                            Einkaufswert und Verkaufswert
-                            Ihres aktuellen Lagerbestands.
+                            Набавна и продажна вредност
+                            на вашите моментални залихи.
                         </p>
 
                         <b>→</b>
@@ -1191,13 +1191,13 @@
                         <span>03</span>
 
                         <h3>
-                            Warenbewegungen
+                            Движења на стока
                         </h3>
 
                         <p>
-                            Historie von Eingängen,
-                            Ausgängen, Umlagerungen,
-                            Inventuren und Korrekturen.
+                            Историја на приеми,
+                            издавања, преместувања,
+                            инвентари и корекции.
                         </p>
 
                         <b>→</b>
@@ -1210,13 +1210,13 @@
                         <span>04</span>
 
                         <h3>
-                            Niedrigbestand
+                            Ниски залихи
                         </h3>
 
                         <p>
-                            Produkte erkennen, deren
-                            Bestand unter den definierten
-                            Mindestbestand fällt.
+                            Препознајте ги производите чија
+                            залиха е под дефинираниот
+                            минимален праг.
                         </p>
 
                         <b>→</b>
@@ -1229,12 +1229,12 @@
                         <span>05</span>
 
                         <h3>
-                            Produktbericht
+                            Извештај за производи
                         </h3>
 
                         <p>
-                            Bestände und Bewegungen
-                            einzelner Produkte analysieren.
+                            Залихите и движењата
+                            на поединечни производи се анализираат.
                         </p>
 
                         <b>→</b>
@@ -1247,13 +1247,13 @@
                         <span>06</span>
 
                         <h3>
-                            Lieferantenbericht
+                            Извештај за добавувачи
                         </h3>
 
                         <p>
-                            Lieferanten und deren
-                            Warenbewegungen übersichtlich
-                            analysieren.
+                            Добавувачите и нивните
+                            движења на стока прегледно
+                            се анализираат.
                         </p>
 
                         <b>→</b>
@@ -1279,23 +1279,23 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Inventur neu gedacht
+                        Инвентар на нов начин
                     </span>
 
 
                     <h2>
-                        Inventur mit System statt
-                        Listen und manueller Suche.
+                        Инвентар со систем наместо
+                        листи и рачно пребарување.
                     </h2>
 
 
                     <p>
 
-                        Erstellen Sie eine Inventur,
-                        wählen Sie das gewünschte Lager,
-                        erfassen Sie die gezählten Mengen
-                        und vergleichen Sie diese direkt
-                        mit dem Systembestand.
+                        Креирајте инвентар,
+                        изберете го саканиот магацин,
+                        внесете ги изброените количини
+                        и директно споредете ги
+                        со системската состојба.
 
                     </p>
 
@@ -1303,27 +1303,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Inventur erstellen
+                            ✓ Креирање инвентар
                         </li>
 
                         <li>
-                            ✓ Lager auswählen
+                            ✓ Избор на магацин
                         </li>
 
                         <li>
-                            ✓ Positionen erfassen
+                            ✓ Внесување ставки
                         </li>
 
                         <li>
-                            ✓ Systembestand vergleichen
+                            ✓ Споредба со системската состојба
                         </li>
 
                         <li>
-                            ✓ Differenzen erkennen
+                            ✓ Препознавање разлики
                         </li>
 
                         <li>
-                            ✓ Inventur abschließen
+                            ✓ Завршување на инвентарот
                         </li>
 
                     </ul>
@@ -1336,23 +1336,23 @@
                     <div class="ops-top">
 
                         <span>
-                            INVENTUR
+                            ИНВЕНТАР
                         </span>
 
                         <b class="live-tag">
-                            KONTROLLE
+                            КОНТРОЛА
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Differenz
+                        Разлика
                     </div>
 
 
                     <small>
-                        Systembestand vs. gezählter Bestand
+                        Системска состојба наспроти изброена состојба
                     </small>
 
 
@@ -1361,7 +1361,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Systembestand
+                                Системска состојба
                             </span>
 
                             <strong>
@@ -1374,7 +1374,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Gezählt
+                                Изброено
                             </span>
 
                             <strong>
@@ -1387,7 +1387,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Differenz
+                                Разлика
                             </span>
 
                             <strong>
@@ -1416,23 +1416,23 @@
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Daten bleiben zugänglich
+                        Податоците остануваат достапни
                     </span>
 
 
                     <h2>
-                        Digitale Prozesse ohne
-                        Ihre bestehenden Daten zu verlieren.
+                        Дигитални процеси без
+                        да ги изгубите постоечките податоци.
                     </h2>
 
 
                     <p>
 
-                        Excel bleibt dort verfügbar,
-                        wo es sinnvoll ist.
-                        Informationen können strukturiert
-                        importiert und relevante Daten
-                        für weitere Verarbeitung exportiert werden.
+                        Excel останува достапен таму
+                        каде што има смисла.
+                        Информациите можат структурирано
+                        да се увезат, а релевантните податоци
+                        да се извезат за понатамошна обработка.
 
                     </p>
 
@@ -1449,12 +1449,12 @@
                         </div>
 
                         <h3>
-                            Excel Import
+                            Excel увоз
                         </h3>
 
                         <p>
-                            Bestehende Stammdaten strukturiert
-                            in das System übernehmen.
+                            Постоечките основни податоци структурирано
+                            да се пренесат во системот.
                         </p>
 
                     </article>
@@ -1467,13 +1467,13 @@
                         </div>
 
                         <h3>
-                            Excel Export
+                            Excel извоз
                         </h3>
 
                         <p>
-                            Berichte und relevante
-                            Systemdaten für weitere
-                            Verarbeitung exportieren.
+                            Извештаи и релевантни
+                            системски податоци за понатамошна
+                            обработка да се извезат.
                         </p>
 
                     </article>
@@ -1486,13 +1486,13 @@
                         </div>
 
                         <h3>
-                            Klare Datenstrukturen
+                            Јасни структури на податоци
                         </h3>
 
                         <p>
-                            Einheitliche Stammdaten schaffen
-                            eine zuverlässige Grundlage
-                            für Ihre täglichen Prozesse.
+                            Унифицираните основни податоци создаваат
+                            сигурна основа
+                            за вашите секојдневни процеси.
                         </p>
 
                     </article>
@@ -1509,29 +1509,29 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="branchen">
+                 id="branchenmk">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Für unterschiedliche Geschäftsmodelle
+                        За различни деловни модели
                     </span>
 
 
                     <h2>
-                        Ein System, das sich an
-                        Ihren Betrieb anpasst.
+                        Еден систем кој се прилагодува на
+                        вашиот бизнис.
                     </h2>
 
 
                     <p>
 
-                        Die Prozesse unterscheiden sich von
-                        Unternehmen zu Unternehmen.
-                        Die Grundlage bleibt jedoch dieselbe:
-                        Produkte, Bestände, Bewegungen und klare Abläufe.
+                        Процесите се разликуваат од
+                        компанија до компанија.
+                        Но основата останува иста:
+                        производи, залихи, движења и јасни процеси.
 
                     </p>
 
@@ -1546,13 +1546,13 @@
                         <span>01</span>
 
                         <h3>
-                            Großhandel
+                            Големопродажба
                         </h3>
 
                         <p>
-                            Viele Artikel, viele Bestellungen
-                            und hohe Warenbewegungen zentral
-                            organisieren.
+                            Многу артикли, многу нарачки
+                            и голем обем на движење на стока централно
+                            да се организираат.
                         </p>
 
                         <b>→</b>
@@ -1565,12 +1565,12 @@
                         <span>02</span>
 
                         <h3>
-                            Baustoffhandel
+                            Трговија со градежни материјали
                         </h3>
 
                         <p>
-                            Große Warenmengen und viele
-                            Lagerplätze strukturiert verwalten.
+                            Големи количини стока и многу
+                            магацински позиции да се управуваат структурирано.
                         </p>
 
                         <b>→</b>
@@ -1583,13 +1583,13 @@
                         <span>03</span>
 
                         <h3>
-                            Ersatzteilhandel
+                            Трговија со резервни делови
                         </h3>
 
                         <p>
-                            Viele SKUs schnell finden,
-                            Bestände kontrollieren und
-                            Bewegungen nachvollziehen.
+                            Брзо пронаоѓање на многу SKU,
+                            контрола на залихите и
+                            следење на движењата.
                         </p>
 
                         <b>→</b>
@@ -1602,13 +1602,13 @@
                         <span>04</span>
 
                         <h3>
-                            Produktionsunternehmen
+                            Производствени компании
                         </h3>
 
                         <p>
-                            Materialien, Lagerbestände
-                            und Warenbewegungen strukturiert
-                            abbilden.
+                            Материјали, магацински залихи
+                            и движења на стока структурирано
+                            да се евидентираат.
                         </p>
 
                         <b>→</b>
@@ -1625,9 +1625,9 @@
                         </h3>
 
                         <p>
-                            Produkte, Bestellungen,
-                            Bestand und Fulfillment
-                            miteinander verbinden.
+                            Производи, нарачки,
+                            залихи и исполнување на нарачки
+                            да се поврзат.
                         </p>
 
                         <b>→</b>
@@ -1640,13 +1640,13 @@
                         <span>06</span>
 
                         <h3>
-                            Technischer Handel
+                            Техничка трговија
                         </h3>
 
                         <p>
-                            Artikelvielfalt und komplexe
-                            Lagerstrukturen übersichtlich
-                            verwalten.
+                            Разновидноста на артикли и сложените
+                            магацински структури прегледно
+                            да се управуваат.
                         </p>
 
                         <b>→</b>
@@ -1672,24 +1672,24 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Für Teams gemacht
+                        Создадено за тимови
                     </span>
 
 
                     <h2>
-                        Die richtigen Informationen
-                        für die richtigen Benutzer.
+                        Вистинските информации
+                        за вистинските корисници.
                     </h2>
 
 
                     <p>
 
-                        Nicht jeder Mitarbeiter benötigt
-                        Zugriff auf dieselben Funktionen.
+                        Не секој вработен има потреба од
+                        пристап до истите функции.
 
-                        Mit Benutzerverwaltung, Rollen
-                        und Berechtigungen lässt sich
-                        der Zugriff strukturiert organisieren.
+                        Со управување со корисници, улоги
+                        и дозволи може
+                        пристапот да се организира структурирано.
 
                     </p>
 
@@ -1697,27 +1697,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Benutzerverwaltung
+                            ✓ Управување со корисници
                         </li>
 
                         <li>
-                            ✓ Rollenverwaltung
+                            ✓ Управување со улоги
                         </li>
 
                         <li>
-                            ✓ Berechtigungen
+                            ✓ Дозволи
                         </li>
 
                         <li>
-                            ✓ Lagerbezogene Prozesse
+                            ✓ Магацински процеси
                         </li>
 
                         <li>
-                            ✓ Einkauf & Verwaltung
+                            ✓ Набавка и администрација
                         </li>
 
                         <li>
-                            ✓ Management & Reports
+                            ✓ Менаџмент и извештаи
                         </li>
 
                     </ul>
@@ -1730,23 +1730,23 @@
                     <div class="ops-top">
 
                         <span>
-                            BENUTZER & ROLLEN
+                            КОРИСНИЦИ И УЛОГИ
                         </span>
 
                         <b class="live-tag">
-                            SICHER
+                            БЕЗБЕДНО
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Zugriff
+                        Пристап
                     </div>
 
 
                     <small>
-                        Strukturierte Benutzer- und Rollenverwaltung
+                        Структурирано управување со корисници и улоги
                     </small>
 
 
@@ -1755,7 +1755,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Lager
+                                Магацин
                             </span>
 
                             <strong>
@@ -1768,7 +1768,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Einkauf
+                                Набавка
                             </span>
 
                             <strong>
@@ -1781,7 +1781,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verkauf
+                                Продажба
                             </span>
 
                             <strong>
@@ -1794,7 +1794,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Management
+                                Менаџмент
                             </span>
 
                             <strong>
@@ -1827,7 +1827,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        zentrale Plattform
+                        централна платформа
                     </span>
 
                 </div>
@@ -1840,7 +1840,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Zugriff auf Ihre Daten
+                        пристап до вашите податоци
                     </span>
 
                 </div>
@@ -1853,7 +1853,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Überblick über Ihre Prozesse
+                        преглед на вашите процеси
                     </span>
 
                 </div>
@@ -1866,7 +1866,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Möglichkeiten zur Erweiterung
+                        можности за проширување
                     </span>
 
                 </div>
@@ -1881,7 +1881,7 @@
              ========================================================= -->
 
         <section class="section faq-section"
-                 id="faq">
+                 id="faqmk">
 
             <div class="container faq-grid">
 
@@ -1889,29 +1889,29 @@
                 <div>
 
                     <span class="section-tag">
-                        Häufige Fragen
+                        Најчесто поставувани прашања
                     </span>
 
 
                     <h2>
-                        Was möchten Sie über
-                        Warehouse Management wissen?
+                        Што сакате да знаете за
+                        Warehouse Менаџмент?
                     </h2>
 
 
                     <p>
 
-                        In einer persönlichen Demo können
-                        wir zusätzlich Ihre individuellen
-                        Anforderungen und Prozesse besprechen.
+                        Во персонализирано демо можеме
+                        дополнително да ги разгледаме вашите индивидуални
+                        барања и процеси.
 
                     </p>
 
 
                     <a class="btn btn-secondary"
-                       href="#demo">
+                       href="/mk#demomk">
 
-                        Demo anfragen →
+                        Побарајте демо →
 
                     </a>
 
@@ -1924,17 +1924,17 @@
                     <details open>
 
                         <summary>
-                            Für welche Unternehmen ist die Lösung geeignet?
+                            За кои компании е погодено решението?
                         </summary>
 
                         <p>
 
-                            Warehouse Management eignet sich insbesondere
-                            für Unternehmen mit eigenem Lager,
-                            vielen Artikeln oder regelmäßigen
-                            Warenbewegungen – unter anderem Großhandel,
-                            Baustoffhandel, Ersatzteilhandel,
-                            Produktion und E-Commerce.
+                            Warehouse Менаџмент е особено погодно
+                            за компании со сопствен магацин,
+                            многу артикли или редовни
+                            движења на стока – меѓу другото големопродажба,
+                            трговија со градежни материјали, резервни делови,
+                            производство и е-трговија.
 
                         </p>
 
@@ -1944,14 +1944,14 @@
                     <details>
 
                         <summary>
-                            Kann ich mehrere Lager verwalten?
+                            Можам ли да управувам со повеќе магацини?
                         </summary>
 
                         <p>
 
-                            Ja. Lager können separat verwaltet
-                            und mit ihren jeweiligen Lagerplätzen
-                            organisiert werden.
+                            Да. Магацините можат одделно да се управуваат
+                            и да се организираат со нивните магацински позиции
+                            .
 
                         </p>
 
@@ -1961,14 +1961,14 @@
                     <details>
 
                         <summary>
-                            Kann ich Lagerplätze verwalten?
+                            Можам ли да управувам со магацински позиции?
                         </summary>
 
                         <p>
 
-                            Ja. Lagerplätze können angelegt,
-                            aktiviert, deaktiviert und
-                            bestimmten Lagern zugeordnet werden.
+                            Да. Магацинските позиции можат да се креираат,
+                            активираат, деактивираат и
+                            да се доделат на одредени магацини.
 
                         </p>
 
@@ -1978,14 +1978,14 @@
                     <details>
 
                         <summary>
-                            Kann ich Lieferanten-Bestellungen verwalten?
+                            Можам ли да управувам со нарачки кон добавувачи?
                         </summary>
 
                         <p>
 
-                            Ja. Lieferanten-Bestellungen,
-                            Positionen, Mengen und Lieferstatus
-                            können zentral verwaltet werden.
+                            Да. Нарачките кон добавувачи,
+                            ставките, количините и статусот на испорака
+                            можат централно да се управуваат.
 
                         </p>
 
@@ -1995,14 +1995,14 @@
                     <details>
 
                         <summary>
-                            Kann ich Kundenbestellungen verwalten?
+                            Можам ли да управувам со нарачки од клиенти?
                         </summary>
 
                         <p>
 
-                            Ja. Kunden und Bestellungen können
-                            verwaltet und mit den
-                            Bestandsprozessen verbunden werden.
+                            Да. Клиентите и нарачките можат
+                            да се управуваат и да се поврзат со
+                            процесите на управување со залихите.
 
                         </p>
 
@@ -2012,15 +2012,15 @@
                     <details>
 
                         <summary>
-                            Gibt es Inventur und Bestandsberichte?
+                            Дали има инвентар и извештаи за залихи?
                         </summary>
 
                         <p>
 
-                            Ja. Das System bietet Inventuren,
-                            Bestandsberichte, Lagerwert,
-                            Warenbewegungen, Niedrigbestand,
-                            Produkt- und Lieferantenberichte.
+                            Да. Системот нуди инвентари,
+                            извештаи за залихи, вредност на магацинот,
+                            движења на стока, ниски залихи,
+                            извештаи за производи и добавувачи.
 
                         </p>
 
@@ -2030,14 +2030,14 @@
                     <details>
 
                         <summary>
-                            Können mehrere Benutzer mit dem System arbeiten?
+                            Можат ли повеќе корисници да работат со системот?
                         </summary>
 
                         <p>
 
-                            Ja. Benutzer und Rollen können
-                            zentral verwaltet und Zugriffe
-                            entsprechend den Aufgaben organisiert werden.
+                            Да. Корисниците и улогите можат
+                            централно да се управуваат, а пристапите
+                            да се организираат според работните задачи.
 
                         </p>
 
@@ -2047,14 +2047,14 @@
                     <details>
 
                         <summary>
-                            Kann ich Daten nach Excel exportieren?
+                            Можам ли да извезувам податоци во Excel?
                         </summary>
 
                         <p>
 
-                            Ja. Relevante Listen und Reports
-                            können für die weitere Verarbeitung
-                            nach Excel exportiert werden.
+                            Да. Релевантните листи и извештаи
+                            можат за понатамошна обработка
+                            да се извезат во Excel.
 
                         </p>
 
@@ -2072,7 +2072,7 @@
              ========================================================= -->
 
         <section class="demo-section"
-                 id="demo">
+                 id="demomk">
 
             <div class="container">
 
@@ -2082,46 +2082,46 @@
                     <div class="demo-info">
 
                         <span class="section-tag">
-                            Persönliche Demo
+                            Персонализирано демо
                         </span>
 
 
                         <h2>
-                            Sehen Sie selbst,
+                            Погледнете сами
                             <em>
-                                was Ihr Lager heute schon können kann.
+                                што вашиот магацин може да постигне уште денес.
                             </em>
                         </h2>
 
 
                         <p>
 
-                            In einer persönlichen Demo zeigen wir
-                            Ihnen die wichtigsten Funktionen von
-                            Warehouse Management und besprechen,
-                            wie Ihre bestehenden Prozesse abgebildet
-                            werden können.
+                            Во персонализирано демо ќе ви ги покажеме
+                            најважните функции на
+                            Warehouse Менаџмент и ќе разговараме
+                            како вашите постоечки процеси
+                            можат да се прикажат во системот.
 
                         </p>
 
 
                         <p class="demo-note">
-                            ◷ Persönlich · Unverbindlich · Auf Deutsch
+                            ◷ Персонализирано · Без обврска · На македонски
                         </p>
 
 
                         <div class="demo-benefits">
 
                             <span>
-                                ✓ Keine Vorbereitung notwendig
+                                ✓ Не е потребна подготовка
                             </span>
 
                             <span>
-                                ✓ An Ihrem Anwendungsfall orientiert
+                                ✓ Прилагодено на вашиот конкретен случај
                             </span>
 
                             <span>
-                                ✓ Konkrete nächste Schritte
+                                ✓ Конкретни следни чекори
                             </span>
 
                         </div>
@@ -2132,12 +2132,12 @@
                     <div class="demo-card glass-card">
 
                         <h3>
-                            Demo-Termin anfragen
+                            Побарајте термин за демо
                         </h3>
 
 
                         <p class="card-subtitle">
-                            Wir melden uns innerhalb eines Werktags bei Ihnen.
+                            Ќе ве контактираме во рок од еден работен ден.
                         </p>
 
 
@@ -2152,7 +2152,7 @@
                             <div class="form-group">
 
                                 <label>
-                                    Vor- und Nachname *
+                                    Име и презиме *
                                 </label>
 
                                 <InputText @bind-Value="DemoRequestItem.Name"
@@ -2170,7 +2170,7 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Unternehmen *
+                                        Компанија *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Company"
@@ -2186,7 +2186,7 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Geschäftliche E-Mail *
+                                        Деловен e-mail *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Email"
@@ -2205,42 +2205,42 @@
                             <div class="form-group">
 
                                 <label>
-                                    Branche
+                                    Индустрија
                                 </label>
 
                                 <InputSelect @bind-Value="DemoRequestItem.Industry"
                                              class="form-control">
 
                                     <option value="">
-                                        Bitte auswählen...
+                                        Ве молиме изберете...
                                     </option>
 
-                                    <option value="Großhandel">
-                                        Großhandel
+                                    <option value="Големопродажба">
+                                        Големопродажба
                                     </option>
 
-                                    <option value="Baustoffhandel">
-                                        Baustoffhandel
+                                    <option value="Трговија со градежни материјали">
+                                        Трговија со градежни материјали
                                     </option>
 
-                                    <option value="Ersatzteilhandel">
-                                        Ersatzteilhandel
+                                    <option value="Трговија со резервни делови">
+                                        Трговија со резервни делови
                                     </option>
 
-                                    <option value="Produktionsbetrieb">
-                                        Produktionsbetrieb
+                                    <option value="Производствена компанија">
+                                        Производствена компанија
                                     </option>
 
-                                    <option value="Online-Handel / E-Commerce">
-                                        Online-Handel / E-Commerce
+                                    <option value="Онлајн продажба / Е-трговија">
+                                        Онлајн продажба / Е-трговија
                                     </option>
 
-                                    <option value="Technischer Handel">
-                                        Technischer Handel
+                                    <option value="Техничка трговија">
+                                        Техничка трговија
                                     </option>
 
-                                    <option value="Andere">
-                                        Andere
+                                    <option value="Друго">
+                                        Друго
                                     </option>
 
                                 </InputSelect>
@@ -2251,12 +2251,12 @@
                             <div class="form-group">
 
                                 <label>
-                                    Was möchten Sie verbessern?
+                                    Што сакате да подобрите?
                                 </label>
 
                                 <InputTextArea @bind-Value="DemoRequestItem.Message"
                                                class="form-control textarea"
-                                               placeholder="Erzählen Sie uns kurz von Ihrem Lager, Ihren aktuellen Prozessen und Ihren Herausforderungen..." />
+                                               placeholder="Накратко опишете ни го вашиот магацин, тековните процеси и предизвиците со кои се соочувате..." />
 
                             </div>
 
@@ -2264,7 +2264,7 @@
                             <button type="submit"
                                     class="btn btn-primary btn-full">
 
-                                Demo anfragen
+                                Побарајте демо
 
                                 <span>
                                     →
@@ -2277,9 +2277,9 @@
                             {
                                 <div class="alert alert-success">
 
-                                    Vielen Dank!
-                                    Ihre Anfrage ist eingegangen.
-                                    Wir melden uns bald bei Ihnen.
+                                    Ви благодариме!
+                                    Вашето барање е успешно примено.
+                                    Наскоро ќе ве контактираме.
 
                                 </div>
                             }
@@ -2317,41 +2317,41 @@
         <div class="container footer-inner">
 
             <span>
-                Warehouse Management
+                Warehouse Менаџмент
             </span>
 
 
             <div class="footer-links">
 
-                <a href="#loesung">
-                    Lösung
+                <a href="/mk#loesungmk">
+                    Решение
                 </a>
 
-                <a href="#funktionen">
-                    Funktionen
+                <a href="/mk#functionmk">
+                    Функции
                 </a>
 
-                <a href="#prozesse">
-                    Prozesse
+                <a href="/mk#prozessemk">
+                    Процеси
                 </a>
 
-                <a href="#branchen">
-                    Branchen
+                <a href="/mk#branchenmk">
+                    Индустрии
                 </a>
 
-                <a href="#reports">
-                    Reports
+                <a href="/mk#reportsmk">
+                    Извештаи
                 </a>
 
-                <a href="#demo">
-                    Demo buchen
+                <a href="/mk#demomk">
+                    Закажете демо
                 </a>
 
             </div>
 
 
             <small>
-                © 2026 Warehouse Management
+                © 2026 Warehouse Менаџмент
             </small>
 
         </div>
@@ -2362,6 +2362,8 @@
 
 
 @code {
+
+
 
     private bool IsActiveLanguage(string language)
     {
@@ -2377,6 +2379,9 @@
             StringComparison.OrdinalIgnoreCase);
     }
 
+
+    
+
     public class DemoRequest
     {
         public string Name { get; set; } = string.Empty;
@@ -2389,4 +2394,6 @@
 
         public string Message { get; set; } = string.Empty;
     }
+
+
 }

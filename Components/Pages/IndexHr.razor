@@ -1,4 +1,4 @@
-@page "/"
+@page "/hr"
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Components.Forms
@@ -8,7 +8,7 @@
 @layout PublicLayout
 
 <PageTitle>
-    Warehouse Management | Die digitale Lösung für moderne Lager
+    Upravljanje Skladištem | Digitalno rješenje za moderna skladišta
 </PageTitle>
 
 <div class="page-wrapper">
@@ -23,13 +23,13 @@
 
             <!-- LOGO -->
             <a class="brand"
-               href="#top"
-               aria-label="Warehouse Management Startseite">
+               href="/hr#tophr"
+               aria-label="Upravljanje skladištem početna stranica">
 
                 <div class="brand-logo">
                     <img class="brand-logo-image"
                          src="/images/wm-logo-premium.webp"
-                         alt="Warehouse Management" />
+                         alt="Upravljanje Skladištem" />
                 </div>
 
             </a>
@@ -38,34 +38,34 @@
             <!-- NAVIGATION -->
             <nav class="nav-menu @(MenuOpen ? "active" : string.Empty)">
 
-                <a href="#loesung"
+                <a href="/hr#loesunghr"
                    @onclick="CloseMenu">
-                    Lösung
+                    Rješenje
                 </a>
 
-                <a href="#funktionen"
+                <a href="/hr#functionhr"
                    @onclick="CloseMenu">
-                    Funktionen
+                    Funkcije
                 </a>
 
-                <a href="#prozesse"
+                <a href="/hr#prozessehr"
                    @onclick="CloseMenu">
-                    Prozesse
+                    Procesi
                 </a>
 
-                <a href="#branchen"
+                <a href="/hr#branchenhr"
                    @onclick="CloseMenu">
-                    Branchen
+                    Industrije
                 </a>
 
-                <a href="#reports"
+                <a href="/hr#reportshr"
                    @onclick="CloseMenu">
-                    Reports
+                    Izvještaji
                 </a>
 
-                <a href="#faq"
+                <a href="/hr#faqhr"
                    @onclick="CloseMenu">
-                    FAQ
+                    Česta pitanja
                 </a>
 
             </nav>
@@ -78,7 +78,7 @@
                 <div class="language-selector">
 
                     <a href="/"
-                       class="language active"
+                       class="language"
                        title="Deutsch">
 
                         DE
@@ -94,7 +94,7 @@
                     </a>
 
                     <a href="/hr"
-                       class="language"
+                       class="language active"
                        title="Hrvatski">
 
                         HR
@@ -114,39 +114,41 @@
 
                 <!-- DEMO BUTTON -->
                 <a class="btn btn-primary"
-                   href="#demo">
+                   href="/hr#demohr">
 
-                    Demo buchen
+                    Zatražite demo
 
                     <span>→</span>
 
                 </a>
-                          <div class="mobile-language-selector">
-    <a href="/"
-       class="mobile-language @(IsActiveLanguage("de") ? "active" : "")">
-        DE
-    </a>
 
-    <a href="/en"
-       class="mobile-language @(IsActiveLanguage("en") ? "active" : "")">
-        EN
-    </a>
+                <!-- MOBILE LANGUAGE SELECTOR -->
+                <div class="mobile-language-selector">
+                    <a href="/"
+                       class="mobile-language @(IsActiveLanguage("de") ? "active" : "")">
+                        DE
+                    </a>
 
-    <a href="/hr"
-       class="mobile-language @(IsActiveLanguage("hr") ? "active" : "")">
-        HR
-    </a>
+                    <a href="/en"
+                       class="mobile-language @(IsActiveLanguage("en") ? "active" : "")">
+                        EN
+                    </a>
 
-    <a href="/mk"
-       class="mobile-language @(IsActiveLanguage("mk") ? "active" : "")">
-        MK
-    </a>
-</div>
+                    <a href="/hr"
+                       class="mobile-language @(IsActiveLanguage("hr") ? "active" : "")">
+                        HR
+                    </a>
+
+                    <a href="/mk"
+                       class="mobile-language @(IsActiveLanguage("mk") ? "active" : "")">
+                        MK
+                    </a>
+                </div>
 
                 <!-- MOBILE MENU -->
                 <button class="mobile-toggle"
                         type="button"
-                        aria-label="Menü öffnen"
+                        aria-label="Otvori izbornik"
                         @onclick="ToggleMenu">
 
                     ☰
@@ -164,7 +166,7 @@
          MAIN
          ========================================================= -->
 
-    <main id="top">
+    <main id="tophr">
 
 
         <!-- =========================================================
@@ -178,17 +180,17 @@
                 <div class="hero-content">
 
                     <span class="badge">
-                        Digitale Lagerverwaltung für moderne Unternehmen
+                        Digitalno upravljanje skladištem za moderne tvrtke
                     </span>
 
 
                     <h1 class="hero-title">
 
-                        Ihr Lager.
+                        Vaše skladište.
                         <br />
 
                         <span>
-                            Ein System. Volle Kontrolle.
+                            Jedan sustav. Potpuna kontrola.
                         </span>
 
                     </h1>
@@ -196,10 +198,10 @@
 
                     <p class="hero-subtitle">
 
-                        Warehouse Management verbindet Produkte, Lager,
-                        Lagerplätze, Bestände, Einkauf, Bestellungen,
-                        Wareneingang, Warenausgang und Inventur
-                        in einer zentralen Plattform.
+                        Upravljanje skladištem povezuje proizvode, skladišta,
+                        skladišna mjesta, zalihe, nabavu, narudžbe,
+                        zaprimanje robe, izdavanje robe i inventuru
+                        na jednoj središnjoj platformi.
 
                     </p>
 
@@ -207,9 +209,9 @@
                     <div class="hero-actions">
 
                         <a class="btn btn-primary"
-                           href="#demo">
+                           href="/hr#demohr">
 
-                            Persönliche Demo buchen
+                            Zatražite personalizirani demo
 
                             <span>→</span>
 
@@ -217,9 +219,9 @@
 
 
                         <a class="btn btn-secondary"
-                           href="#funktionen">
+                           href="/hr#functionhr">
 
-                            Funktionen entdecken
+                            Istražite funkcije
 
                             <span>→</span>
 
@@ -231,11 +233,11 @@
                     <div class="microproof">
 
                         <span class="avatars">
-                            Lager&nbsp;&nbsp;Einkauf&nbsp;&nbsp;Verkauf&nbsp;&nbsp;Management
+                            Skladište&nbsp;&nbsp;Nabava&nbsp;&nbsp;Prodaja&nbsp;&nbsp;Upravljanje
                         </span>
 
                         <span>
-                            Eine Plattform für Ihre täglichen Prozesse.
+                            Jedna platforma za vaše svakodnevne poslovne procese.
                         </span>
 
                     </div>
@@ -248,7 +250,7 @@
                     <div class="glass-card mockup-card">
 
                         <img src="/images/DemoImg.png"
-                             alt="Warehouse Management Dashboard"
+                             alt="Nadzorna ploča za upravljanje skladištem"
                              class="dashboard-img" />
 
 
@@ -256,14 +258,14 @@
 
                             <span class="status-dot"></span>
 
-                            Bestände jederzeit im Blick
+                            Zalihe uvijek pod kontrolom
 
                         </div>
 
 
                         <div class="floating-badge badge-bottom">
 
-                            ✓ Einkauf · Lager · Verkauf · Reports
+                            ✓ Nabava · Skladište · Prodaja · Izvještaji
 
                         </div>
 
@@ -286,11 +288,11 @@
 
                 <p>
 
-                    Eine zentrale Plattform für
+                    Jedna središnja platforma za
 
                     <strong>
-                        strukturierte Lagerprozesse,
-                        aktuelle Bestände und klare Entscheidungen.
+                        strukturirane skladišne procese,
+                        ažurne zalihe i jasne odluke.
                     </strong>
 
                 </p>
@@ -298,11 +300,11 @@
 
                 <div class="logos">
 
-                    <span>GROSSHANDEL</span>
-                    <span>BAUSTOFFHANDEL</span>
-                    <span>ERSATZTEILE</span>
-                    <span>PRODUKTION</span>
-                    <span>E-COMMERCE</span>
+                    <span>VELEPRODAJA</span>
+                    <span>TRGOVINA GRAĐEVINSKIM MATERIJALOM</span>
+                    <span>REZERVNI DIJELOVI</span>
+                    <span>PROIZVODNJA</span>
+                    <span>E-TRGOVINA</span>
 
                 </div>
 
@@ -316,29 +318,29 @@
              ========================================================= -->
 
         <section class="section"
-                 id="loesung">
+                 id="loesunghr">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Mehr als eine Lagerliste
+                        Više od običnog popisa skladišta
                     </span>
 
 
                     <h2>
-                        Vom Einkauf bis zum Warenausgang –
-                        alles miteinander verbunden.
+                        Od nabave do izdavanja robe –
+                        sve je međusobno povezano.
                     </h2>
 
 
                     <p>
 
-                        Moderne Lagerverwaltung bedeutet nicht nur,
-                        den aktuellen Bestand zu kennen.
-                        Sie bedeutet, jeden relevanten Prozess
-                        miteinander zu verbinden.
+                        Moderno upravljanje skladištem ne znači samo
+                        poznavati trenutno stanje zaliha.
+                        Ono znači povezivanje svakog relevantnog procesa
+                        u jednu cjelinu.
 
                     </p>
 
@@ -355,15 +357,14 @@
                         </div>
 
                         <h3>
-                            Ein zentraler Datenbestand
+                            Jedna središnja baza podataka
                         </h3>
 
                         <p>
 
-                            Produkte, Kategorien, Lager,
-                            Lagerplätze, Lieferanten, Kunden
-                            und Bestellungen werden zentral
-                            verwaltet.
+                            Proizvodi, kategorije, skladišta,
+                            skladišna mjesta, dobavljači, kupci
+                            i narudžbe upravljaju se središnje.
 
                         </p>
 
@@ -377,14 +378,14 @@
                         </div>
 
                         <h3>
-                            Jeder Warenfluss nachvollziehbar
+                            Sljedivost svakog kretanja robe
                         </h3>
 
                         <p>
 
-                            Wareneingänge, Warenausgänge,
-                            Umlagerungen, Korrekturen und
-                            Inventuren werden dokumentiert.
+                            Ulazi robe, izlazi robe,
+                            premještanja, korekcije i
+                            inventure u potpunosti se dokumentiraju.
 
                         </p>
 
@@ -398,15 +399,14 @@
                         </div>
 
                         <h3>
-                            Informationen für Entscheidungen
+                            Informacije za donošenje odluka
                         </h3>
 
                         <p>
 
-                            Bestandsberichte, Lagerwert,
-                            Bewegungen, Niedrigbestände,
-                            Produkte und Lieferanten
-                            übersichtlich auswerten.
+                            Jasna analiza izvještaja o zalihama, vrijednosti skladišta,
+                            kretanjima robe, niskim zalihama,
+                            proizvodima i dobavljačima.
 
                         </p>
 
@@ -424,28 +424,28 @@
              ========================================================= -->
 
         <section class="section workflow-section"
-                 id="prozesse">
+                 id="prozessehr">
 
             <div class="container">
 
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Der komplette Warenfluss
+                        Cjelokupni tijek robe
                     </span>
 
 
                     <h2>
-                        Ein durchgängiger Prozess statt
-                        vieler Einzellösungen.
+                        Cjelovit proces umjesto
+                        mnoštva pojedinačnih rješenja.
                     </h2>
 
 
                     <p>
 
-                        Jeder Schritt baut auf dem vorherigen auf.
-                        So bleibt Ihr Bestand nachvollziehbar
-                        und Ihre Mitarbeiter arbeiten mit denselben Daten.
+                        Svaki korak nadograđuje se na prethodni.
+                        Tako vaše zalihe ostaju potpuno sljedive,
+                        a vaši zaposlenici rade s identičnim podacima.
 
                     </p>
 
@@ -466,14 +466,14 @@
                         </div>
 
                         <h3>
-                            Einkauf
+                            Nabava
                         </h3>
 
                         <p>
 
-                            Lieferanten verwalten,
-                            Bestellungen erstellen und
-                            benötigte Waren planen.
+                            Upravljajte dobavljačima,
+                            izradite narudžbenice i
+                            planirajte potrebnu robu.
 
                         </p>
 
@@ -491,14 +491,14 @@
                         </div>
 
                         <h3>
-                            Wareneingang
+                            Zaprimanje robe
                         </h3>
 
                         <p>
 
-                            Gelieferte Mengen erfassen
-                            und Waren dem richtigen
-                            Lager beziehungsweise Lagerplatz zuordnen.
+                            Evidentirajte isporučene količine
+                            i dodijelite robu odgovarajućem
+                            skladištu ili skladišnom mjestu.
 
                         </p>
 
@@ -516,14 +516,14 @@
                         </div>
 
                         <h3>
-                            Einlagern
+                            Skladištenje
                         </h3>
 
                         <p>
 
-                            Bestände gezielt auf Lagerplätze
-                            verteilen und jederzeit wissen,
-                            wo sich ein Artikel befindet.
+                            Rasporedite zalihe na konkretna skladišna mjesta
+                            i u svakom trenutku znajte
+                            gdje se artikl nalazi.
 
                         </p>
 
@@ -541,14 +541,13 @@
                         </div>
 
                         <h3>
-                            Umlagern
+                            Premještanje
                         </h3>
 
                         <p>
 
-                            Waren zwischen Lagerplätzen
-                            oder Lagern bewegen und jede
-                            Bewegung dokumentieren.
+                            Premještajte robu između skladišnih mjesta
+                            ili skladišta i dokumentirajte svako kretanje.
 
                         </p>
 
@@ -566,14 +565,14 @@
                         </div>
 
                         <h3>
-                            Bestellung
+                            Narudžba
                         </h3>
 
                         <p>
 
-                            Kundenbestellungen verwalten,
-                            Positionen prüfen und verfügbare
-                            Bestände berücksichtigen.
+                            Upravljajte narudžbama kupaca,
+                            provjerite stavke i uzmite u obzir
+                            dostupne zalihe.
 
                         </p>
 
@@ -591,14 +590,14 @@
                         </div>
 
                         <h3>
-                            Warenausgang
+                            Izdavanje robe
                         </h3>
 
                         <p>
 
-                            Waren kontrolliert ausbuchen
-                            und den Bestand automatisch
-                            aktuell halten.
+                            Kontrolirano otpisujte i izdajte robu
+                            te automatski održavajte zalihe
+                            ažurnima.
 
                         </p>
 
@@ -616,28 +615,28 @@
              ========================================================= -->
 
         <section class="section"
-                 id="funktionen">
+                 id="functionhr">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Die wichtigsten Werkzeuge
+                        Najvažniji alati
                     </span>
 
 
                     <h2>
-                        Alles, was ein modernes Lager braucht.
+                        Sve što je potrebno modernom skladištu.
                     </h2>
 
 
                     <p>
 
-                        Von der Stammdatenverwaltung bis zur
-                        detaillierten Bestandsanalyse –
-                        Warehouse Management bündelt Ihre Prozesse
-                        in einem System.
+                        Od upravljanja matičnim podacima do
+                        detaljne analize zaliha –
+                        Upravljanje skladištem objedinjuje vaše procese
+                        u jednom sustavu.
 
                     </p>
 
@@ -652,15 +651,14 @@
                         <span>01</span>
 
                         <h3>
-                            Produkte & Kategorien
+                            Proizvodi i kategorije
                         </h3>
 
                         <p>
 
-                            Produkte zentral verwalten,
-                            kategorisieren und mit SKU,
-                            Barcode, Preisen und Mindestbeständen
-                            organisieren.
+                            Upravljajte proizvodima središnje,
+                            kategorizirajte ih i organizirajte uz SKU,
+                            barkod, cijene i minimalne zalihe.
 
                         </p>
 
@@ -674,15 +672,14 @@
                         <span>02</span>
 
                         <h3>
-                            Lager & Lagerplätze
+                            Skladišta i skladišne lokacije
                         </h3>
 
                         <p>
 
-                            Mehrere Lager und strukturierte
-                            Lagerplätze verwalten.
-                            Finden Sie schnell heraus,
-                            wo ein Artikel liegt.
+                            Upravljajte s više skladišta i strukturiranim
+                            skladišnim mjestima. Brzo saznajte
+                            gdje se koji artikl nalazi.
 
                         </p>
 
@@ -696,15 +693,15 @@
                         <span>03</span>
 
                         <h3>
-                            Bestandsverwaltung
+                            Upravljanje zalihama
                         </h3>
 
                         <p>
 
-                            Aktuellen Bestand,
-                            reservierte Mengen,
-                            verfügbare Mengen und
-                            Mindestbestände überwachen.
+                            Pratite trenutne zalihe,
+                            rezervirane količine,
+                            dostupne količine i
+                            minimalne zalihe.
 
                         </p>
 
@@ -718,14 +715,13 @@
                         <span>04</span>
 
                         <h3>
-                            Lieferanten
+                            Dobavljači
                         </h3>
 
                         <p>
 
-                            Lieferanten zentral verwalten
-                            und mit Ihren Beschaffungsprozessen
-                            verbinden.
+                            Upravljajte dobavljačima središnje
+                            i povežite ih sa svojim procesima nabave.
 
                         </p>
 
@@ -739,14 +735,13 @@
                         <span>05</span>
 
                         <h3>
-                            Kunden & Bestellungen
+                            Kupci i narudžbe
                         </h3>
 
                         <p>
 
-                            Kunden und Aufträge strukturiert
-                            verwalten und Bestände bei der
-                            Auftragsabwicklung berücksichtigen.
+                            Strukturirano upravljajte kupcima i narudžbama
+                            te uzmite zalihe u obzir prilikom obrade narudžbi.
 
                         </p>
 
@@ -760,14 +755,14 @@
                         <span>06</span>
 
                         <h3>
-                            Inventur
+                            Inventura
                         </h3>
 
                         <p>
 
-                            Inventuren erstellen,
-                            Systembestand mit gezählten Mengen
-                            vergleichen und Differenzen nachvollziehen.
+                            Izradite inventure,
+                            usporedite stanje u sustavu s prebrojanim količinama
+                            i jednostavno pratite razlike.
 
                         </p>
 
@@ -781,14 +776,13 @@
                         <span>07</span>
 
                         <h3>
-                            Warenbewegungen
+                            Kretanje robe
                         </h3>
 
                         <p>
 
-                            Eingänge, Ausgänge, Umlagerungen,
-                            Inventuren und Korrekturen
-                            nachvollziehbar dokumentieren.
+                            Transparentno dokumentirajte ulaze, izlaze,
+                            premještanja, inventure i ručne korekcije.
 
                         </p>
 
@@ -802,14 +796,13 @@
                         <span>08</span>
 
                         <h3>
-                            Rollen & Benutzer
+                            Uloge i korisnici
                         </h3>
 
                         <p>
 
-                            Benutzer verwalten und Zugriffe
-                            über Rollen und Berechtigungen
-                            strukturieren.
+                            Upravljajte korisnicima i strukturirajte pristupe
+                            putem uloga i detaljnih dozvola.
 
                         </p>
 
@@ -836,22 +829,21 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Einkauf digital organisieren
+                        Digitalna nabava
                     </span>
 
 
                     <h2>
-                        Lieferanten-Bestellungen
-                        ohne den Überblick zu verlieren.
+                        Narudžbe dobavljačima
+                        bez gubitka pregleda.
                     </h2>
 
 
                     <p>
 
-                        Erstellen und verwalten Sie
-                        Bestellungen bei Lieferanten und
-                        behalten Sie gelieferte sowie noch
-                        offene Mengen im Blick.
+                        Izrađujte i upravljajte narudžbama kod dobavljača
+                        te imajte jasan pregled nad isporučenim
+                        i preostalim količinama.
 
                     </p>
 
@@ -859,27 +851,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Lieferantenverwaltung
+                            ✓ Upravljanje dobavljačima
                         </li>
 
                         <li>
-                            ✓ Lieferanten-Bestellungen
+                            ✓ Narudžbe dobavljačima
                         </li>
 
                         <li>
-                            ✓ Bestellpositionen
+                            ✓ Stavke narudžbe
                         </li>
 
                         <li>
-                            ✓ Bestellstatus
+                            ✓ Status narudžbe
                         </li>
 
                         <li>
-                            ✓ Teil-Lieferungen
+                            ✓ Djelomične isporuke
                         </li>
 
                         <li>
-                            ✓ Gelieferte Mengen
+                            ✓ Isporučene količine
                         </li>
 
                     </ul>
@@ -892,23 +884,23 @@
                     <div class="ops-top">
 
                         <span>
-                            LIEFERANTEN-BESTELLUNG
+                            NARUDŽBA DOBAVLJAČU
                         </span>
 
                         <b class="live-tag">
-                            AKTUELL
+                            AKTIVNO
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Bestellung
+                        Narudžba
                     </div>
 
 
                     <small>
-                        Lieferant · Positionen · Mengen · Status
+                        Dobavljač · Stavke · Količine · Status
                     </small>
 
 
@@ -917,7 +909,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Bestellt
+                                Naručeno
                             </span>
 
                             <strong>
@@ -930,7 +922,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
 
                             <span>
-                                Geliefert
+                                Isporučeno
                             </span>
 
                             <strong>
@@ -943,7 +935,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Offen
+                                Preostalo
                             </span>
 
                             <strong>
@@ -973,24 +965,23 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Bestände verstehen
+                        Razumijevanje zaliha
                     </span>
 
 
                     <h2>
-                        Nicht nur Bestand sehen.
-                        Bestand verstehen.
+                        Ne samo gledati zalihe.
+                        Razumijte zalihe.
                     </h2>
 
 
                     <p>
 
-                        Warehouse Management unterscheidet
-                        zwischen vorhandenem, reserviertem
-                        und verfügbarem Bestand.
+                        Upravljanje skladištem razlikuje
+                        fizičke, rezervirane i dostupne zalihe.
 
-                        So erhalten Sie ein realistischeres
-                        Bild Ihrer Lagerkapazität.
+                        Tako dobivate realnu sliku
+                        stvarnog kapaciteta vašeg skladišta.
 
                     </p>
 
@@ -998,27 +989,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Gesamtbestand
+                            ✓ Ukupne zalihe
                         </li>
 
                         <li>
-                            ✓ Reservierter Bestand
+                            ✓ Rezervirane zalihe
                         </li>
 
                         <li>
-                            ✓ Verfügbarer Bestand
+                            ✓ Dostupne zalihe
                         </li>
 
                         <li>
-                            ✓ Mindestbestand
+                            ✓ Minimalne zalihe
                         </li>
 
                         <li>
-                            ✓ Niedrigbestand
+                            ✓ Niske zalihe
                         </li>
 
                         <li>
-                            ✓ Fehlmengen
+                            ✓ Manjak količina
                         </li>
 
                     </ul>
@@ -1031,23 +1022,23 @@
                     <div class="ops-top">
 
                         <span>
-                            BESTANDSÜBERSICHT
+                            PREGLED ZALIHA
                         </span>
 
                         <b class="live-tag">
-                            LIVE
+                            UŽIVO
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Bestandsstatus
+                        Status zaliha
                     </div>
 
 
                     <small>
-                        Zentrale Übersicht für Ihre Lagerbestände
+                        Središnji pregled vaših skladišnih zaliha
                     </small>
 
 
@@ -1056,7 +1047,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Gesamtbestand
+                                Ukupne zalihe
                             </span>
 
                             <strong>
@@ -1069,7 +1060,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Reserviert
+                                Rezervirano
                             </span>
 
                             <strong>
@@ -1082,7 +1073,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verfügbar
+                                Dostupno
                             </span>
 
                             <strong>
@@ -1095,7 +1086,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Niedrigbestand
+                                Niske zalihe
                             </span>
 
                             <strong>
@@ -1118,29 +1109,28 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="reports">
+                 id="reportshr">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Reports & Analysen
+                        Izvještaji i analize
                     </span>
 
 
                     <h2>
-                        Aus Ihren Lagerdaten werden
-                        klare Informationen.
+                        Prevorite skladišne podatke
+                        u jasne i korisne informacije.
                     </h2>
 
 
                     <p>
 
-                        Finden Sie schneller heraus,
-                        was passiert, wo Probleme entstehen
-                        und welchen Wert Ihr aktueller
-                        Lagerbestand besitzt.
+                        Brže saznajte što se događa,
+                        gdje nastaju uska grla i kolika je ukupna vrijednost
+                        vaših trenutnih zaliha.
 
                     </p>
 
@@ -1155,12 +1145,12 @@
                         <span>01</span>
 
                         <h3>
-                            Bestandsbericht
+                            Izvještaj o zalihama
                         </h3>
 
                         <p>
-                            Aktuelle Bestände nach Lager,
-                            Lagerplatz und Produkt.
+                            Trenutne zalihe grupirane po skladištu,
+                            skladišnom mjestu i proizvodu.
                         </p>
 
                         <b>→</b>
@@ -1173,12 +1163,12 @@
                         <span>02</span>
 
                         <h3>
-                            Lagerwert
+                            Vrijednost skladišta
                         </h3>
 
                         <p>
-                            Einkaufswert und Verkaufswert
-                            Ihres aktuellen Lagerbestands.
+                            Ukupna nabavna i prodajna vrijednost
+                            vaših trenutnih zaliha.
                         </p>
 
                         <b>→</b>
@@ -1191,13 +1181,12 @@
                         <span>03</span>
 
                         <h3>
-                            Warenbewegungen
+                            Kretanje robe
                         </h3>
 
                         <p>
-                            Historie von Eingängen,
-                            Ausgängen, Umlagerungen,
-                            Inventuren und Korrekturen.
+                            Povijest ulaza, izlaza, premještanja,
+                            inventura i korekcija.
                         </p>
 
                         <b>→</b>
@@ -1210,13 +1199,12 @@
                         <span>04</span>
 
                         <h3>
-                            Niedrigbestand
+                            Izvještaj o niskim zalihama
                         </h3>
 
                         <p>
-                            Produkte erkennen, deren
-                            Bestand unter den definierten
-                            Mindestbestand fällt.
+                            Prepoznajte proizvode čija je zaliha
+                            pala ispod definirane minimalne količine.
                         </p>
 
                         <b>→</b>
@@ -1229,12 +1217,12 @@
                         <span>05</span>
 
                         <h3>
-                            Produktbericht
+                            Izvještaj o proizvodima
                         </h3>
 
                         <p>
-                            Bestände und Bewegungen
-                            einzelner Produkte analysieren.
+                            Analizirajte kretanje i trendove zaliha
+                            pojedinih proizvoda.
                         </p>
 
                         <b>→</b>
@@ -1247,13 +1235,12 @@
                         <span>06</span>
 
                         <h3>
-                            Lieferantenbericht
+                            Izvještaj o dobavljačima
                         </h3>
 
                         <p>
-                            Lieferanten und deren
-                            Warenbewegungen übersichtlich
-                            analysieren.
+                            Pregledno analizirajte dobavljače i njihovu
+                            povijest kretanja robe.
                         </p>
 
                         <b>→</b>
@@ -1279,23 +1266,23 @@
                 <div class="module-copy">
 
                     <span class="section-tag">
-                        Inventur neu gedacht
+                        Moderna inventura
                     </span>
 
 
                     <h2>
-                        Inventur mit System statt
-                        Listen und manueller Suche.
+                        Sustavna inventura umjesto
+                        papirnatih lista i ručne potrage.
                     </h2>
 
 
                     <p>
 
-                        Erstellen Sie eine Inventur,
-                        wählen Sie das gewünschte Lager,
-                        erfassen Sie die gezählten Mengen
-                        und vergleichen Sie diese direkt
-                        mit dem Systembestand.
+                        Kreirajte zadatak inventure,
+                        odaberite ciljno skladište,
+                        unesite prebrojane količine
+                        i izravno ih usporedite
+                        sa stanjem u sustavu.
 
                     </p>
 
@@ -1303,27 +1290,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Inventur erstellen
+                            ✓ Kreiranje inventure
                         </li>
 
                         <li>
-                            ✓ Lager auswählen
+                            ✓ Odabir skladišta
                         </li>
 
                         <li>
-                            ✓ Positionen erfassen
+                            ✓ Unos stavki
                         </li>
 
                         <li>
-                            ✓ Systembestand vergleichen
+                            ✓ Usporedba sa stanjem u sustavu
                         </li>
 
                         <li>
-                            ✓ Differenzen erkennen
+                            ✓ Prepoznavanje razlika
                         </li>
 
                         <li>
-                            ✓ Inventur abschließen
+                            ✓ Završetak inventure
                         </li>
 
                     </ul>
@@ -1336,23 +1323,23 @@
                     <div class="ops-top">
 
                         <span>
-                            INVENTUR
+                            INVENTURA
                         </span>
 
                         <b class="live-tag">
-                            KONTROLLE
+                            REVIZIJA
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Differenz
+                        Razlika
                     </div>
 
 
                     <small>
-                        Systembestand vs. gezählter Bestand
+                        Stanje u sustavu u odnosu na prebrojano stanje
                     </small>
 
 
@@ -1361,7 +1348,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Systembestand
+                                Stanje u sustavu
                             </span>
 
                             <strong>
@@ -1374,7 +1361,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:18px;">
 
                             <span>
-                                Gezählt
+                                Prebrojano
                             </span>
 
                             <strong>
@@ -1387,7 +1374,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Differenz
+                                Razlika
                             </span>
 
                             <strong>
@@ -1416,23 +1403,21 @@
                 <div class="section-heading centered-heading">
 
                     <span class="section-tag">
-                        Daten bleiben zugänglich
+                        Podaci ostaju dostupni
                     </span>
 
 
                     <h2>
-                        Digitale Prozesse ohne
-                        Ihre bestehenden Daten zu verlieren.
+                        Digitalni procesi bez
+                        gubitka postojećih podataka.
                     </h2>
 
 
                     <p>
 
-                        Excel bleibt dort verfügbar,
-                        wo es sinnvoll ist.
-                        Informationen können strukturiert
-                        importiert und relevante Daten
-                        für weitere Verarbeitung exportiert werden.
+                        Excel ostaje dostupan gdje god ima smisla.
+                        Podaci se mogu strukturirano uvoziti,
+                        a relevantne informacije izvoziti za daljnju obradu.
 
                     </p>
 
@@ -1449,12 +1434,12 @@
                         </div>
 
                         <h3>
-                            Excel Import
+                            Excel uvoz
                         </h3>
 
                         <p>
-                            Bestehende Stammdaten strukturiert
-                            in das System übernehmen.
+                            Jednostavno prenesite postojeće matične podatke
+                            u sustav.
                         </p>
 
                     </article>
@@ -1467,13 +1452,12 @@
                         </div>
 
                         <h3>
-                            Excel Export
+                            Excel izvoz
                         </h3>
 
                         <p>
-                            Berichte und relevante
-                            Systemdaten für weitere
-                            Verarbeitung exportieren.
+                            Izvozite izvještaje i relevantne
+                            podatke sustava za daljnju analizu.
                         </p>
 
                     </article>
@@ -1486,13 +1470,12 @@
                         </div>
 
                         <h3>
-                            Klare Datenstrukturen
+                            Jasne strukture podataka
                         </h3>
 
                         <p>
-                            Einheitliche Stammdaten schaffen
-                            eine zuverlässige Grundlage
-                            für Ihre täglichen Prozesse.
+                            Standardizirani matični podaci pružaju
+                            pouzdanu osnovu za vaše svakodnevno poslovanje.
                         </p>
 
                     </article>
@@ -1509,29 +1492,28 @@
              ========================================================= -->
 
         <section class="section industries-section"
-                 id="branchen">
+                 id="branchenhr">
 
             <div class="container">
 
                 <div class="section-heading">
 
                     <span class="section-tag">
-                        Für unterschiedliche Geschäftsmodelle
+                        Za različite poslovne modele
                     </span>
 
 
                     <h2>
-                        Ein System, das sich an
-                        Ihren Betrieb anpasst.
+                        Sustav koji se prilagođava
+                        vašem poslovanju.
                     </h2>
 
 
                     <p>
 
-                        Die Prozesse unterscheiden sich von
-                        Unternehmen zu Unternehmen.
-                        Die Grundlage bleibt jedoch dieselbe:
-                        Produkte, Bestände, Bewegungen und klare Abläufe.
+                        Procesi se razlikuju od tvrtke do tvrtke,
+                        no osnovni temelji ostaju isti:
+                        proizvodi, zalihe, kretanja robe i jasni tijekovi rada.
 
                     </p>
 
@@ -1546,13 +1528,12 @@
                         <span>01</span>
 
                         <h3>
-                            Großhandel
+                            Veleprodaja
                         </h3>
 
                         <p>
-                            Viele Artikel, viele Bestellungen
-                            und hohe Warenbewegungen zentral
-                            organisieren.
+                            Središnje organizirajte velike kataloge artikala,
+                            velik broj narudžbi i opsežna kretanja robe.
                         </p>
 
                         <b>→</b>
@@ -1565,12 +1546,12 @@
                         <span>02</span>
 
                         <h3>
-                            Baustoffhandel
+                            Trgovina građevinskim materijalom
                         </h3>
 
                         <p>
-                            Große Warenmengen und viele
-                            Lagerplätze strukturiert verwalten.
+                            Sustavno upravljajte velikim količinama robe
+                            i brojnim skladišnim mjestima.
                         </p>
 
                         <b>→</b>
@@ -1583,13 +1564,12 @@
                         <span>03</span>
 
                         <h3>
-                            Ersatzteilhandel
+                            Trgovina rezervnim dijelovima
                         </h3>
 
                         <p>
-                            Viele SKUs schnell finden,
-                            Bestände kontrollieren und
-                            Bewegungen nachvollziehen.
+                            Brzo pronađite visokofrekventne artikle (SKU),
+                            pratite razine zaliha i kretanja.
                         </p>
 
                         <b>→</b>
@@ -1602,13 +1582,12 @@
                         <span>04</span>
 
                         <h3>
-                            Produktionsunternehmen
+                            Proizvodne tvrtke
                         </h3>
 
                         <p>
-                            Materialien, Lagerbestände
-                            und Warenbewegungen strukturiert
-                            abbilden.
+                            Učinkovito strukturirajte sirovine,
+                            skladišne zalihe i kretanje robe.
                         </p>
 
                         <b>→</b>
@@ -1625,9 +1604,8 @@
                         </h3>
 
                         <p>
-                            Produkte, Bestellungen,
-                            Bestand und Fulfillment
-                            miteinander verbinden.
+                            Besprijekorno povežite proizvode, narudžbe,
+                            razine zaliha i isporuku.
                         </p>
 
                         <b>→</b>
@@ -1640,13 +1618,12 @@
                         <span>06</span>
 
                         <h3>
-                            Technischer Handel
+                            Tehnička trgovina
                         </h3>
 
                         <p>
-                            Artikelvielfalt und komplexe
-                            Lagerstrukturen übersichtlich
-                            verwalten.
+                            S lakoćom upravljajte raznolikim asortimanom
+                            i složenim skladišnim strukturama.
                         </p>
 
                         <b>→</b>
@@ -1672,24 +1649,24 @@
                 <div class="feature-text">
 
                     <span class="section-tag">
-                        Für Teams gemacht
+                        Stvoreno za timove
                     </span>
 
 
                     <h2>
-                        Die richtigen Informationen
-                        für die richtigen Benutzer.
+                        Prave informacije
+                        za prave korisnike.
                     </h2>
 
 
                     <p>
 
-                        Nicht jeder Mitarbeiter benötigt
-                        Zugriff auf dieselben Funktionen.
+                        Nema svaki zaposlenik potrebu za
+                        pristupom svim funkcijama.
 
-                        Mit Benutzerverwaltung, Rollen
-                        und Berechtigungen lässt sich
-                        der Zugriff strukturiert organisieren.
+                        Uz upravljanje korisnicima, ulogama
+                        i dozvolama, pristup se može
+                        učinkovito strukturirati.
 
                     </p>
 
@@ -1697,27 +1674,27 @@
                     <ul class="checklist">
 
                         <li>
-                            ✓ Benutzerverwaltung
+                            ✓ Upravljanje korisnicima
                         </li>
 
                         <li>
-                            ✓ Rollenverwaltung
+                            ✓ Upravljanje ulogama
                         </li>
 
                         <li>
-                            ✓ Berechtigungen
+                            ✓ Dozvole
                         </li>
 
                         <li>
-                            ✓ Lagerbezogene Prozesse
+                            ✓ Skladišni procesi
                         </li>
 
                         <li>
-                            ✓ Einkauf & Verwaltung
+                            ✓ Nabava i administracija
                         </li>
 
                         <li>
-                            ✓ Management & Reports
+                            ✓ Upravljanje i izvještaji
                         </li>
 
                     </ul>
@@ -1730,23 +1707,23 @@
                     <div class="ops-top">
 
                         <span>
-                            BENUTZER & ROLLEN
+                            KORISNICI I ULOGE
                         </span>
 
                         <b class="live-tag">
-                            SICHER
+                            SIGURNO
                         </b>
 
                     </div>
 
 
                     <div class="ops-number">
-                        Zugriff
+                        Pristup
                     </div>
 
 
                     <small>
-                        Strukturierte Benutzer- und Rollenverwaltung
+                        Strukturirano upravljanje korisnicima i ulogama
                     </small>
 
 
@@ -1755,7 +1732,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Lager
+                                Skladište
                             </span>
 
                             <strong>
@@ -1768,7 +1745,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Einkauf
+                                Nabava
                             </span>
 
                             <strong>
@@ -1781,7 +1758,7 @@
                         <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
 
                             <span>
-                                Verkauf
+                                Prodaja
                             </span>
 
                             <strong>
@@ -1794,7 +1771,7 @@
                         <div style="display:flex;justify-content:space-between;">
 
                             <span>
-                                Management
+                                Upravljanje
                             </span>
 
                             <strong>
@@ -1827,7 +1804,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        zentrale Plattform
+                        središnja platforma
                     </span>
 
                 </div>
@@ -1840,7 +1817,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Zugriff auf Ihre Daten
+                        pristup vašim podacima
                     </span>
 
                 </div>
@@ -1853,7 +1830,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Überblick über Ihre Prozesse
+                        pregled vaših procesa
                     </span>
 
                 </div>
@@ -1866,7 +1843,7 @@
                     </strong>
 
                     <span style="color:black;">
-                        Möglichkeiten zur Erweiterung
+                        mogućnosti proširenja
                     </span>
 
                 </div>
@@ -1881,7 +1858,7 @@
              ========================================================= -->
 
         <section class="section faq-section"
-                 id="faq">
+                 id="faqhr">
 
             <div class="container faq-grid">
 
@@ -1889,29 +1866,29 @@
                 <div>
 
                     <span class="section-tag">
-                        Häufige Fragen
+                        Često postavljana pitanja
                     </span>
 
 
                     <h2>
-                        Was möchten Sie über
-                        Warehouse Management wissen?
+                        Što biste željeli znati o
+                        upravljanju skladištem?
                     </h2>
 
 
                     <p>
 
-                        In einer persönlichen Demo können
-                        wir zusätzlich Ihre individuellen
-                        Anforderungen und Prozesse besprechen.
+                        U osobnoj demo prezentaciji možemo
+                        razgovarati o vašim specifičnim
+                        zahtjevima i poslovnim procesima.
 
                     </p>
 
 
                     <a class="btn btn-secondary"
-                       href="#demo">
+                       href="/hr#demohr">
 
-                        Demo anfragen →
+                        Zatražite demo →
 
                     </a>
 
@@ -1924,17 +1901,15 @@
                     <details open>
 
                         <summary>
-                            Für welche Unternehmen ist die Lösung geeignet?
+                            Za koje je tvrtke ovo rješenje prikladno?
                         </summary>
 
                         <p>
 
-                            Warehouse Management eignet sich insbesondere
-                            für Unternehmen mit eigenem Lager,
-                            vielen Artikeln oder regelmäßigen
-                            Warenbewegungen – unter anderem Großhandel,
-                            Baustoffhandel, Ersatzteilhandel,
-                            Produktion und E-Commerce.
+                            Sustav je namijenjen tvrtkama s vlastitim skladištima,
+                            velikim asortimanom artikala ili čestim kretanjima robe –
+                            uključujući veleprodaju, trgovinu građevinskim materijalom,
+                            trgovinu rezervnim dijelovima, proizvodnju i e-trgovinu.
 
                         </p>
 
@@ -1944,14 +1919,13 @@
                     <details>
 
                         <summary>
-                            Kann ich mehrere Lager verwalten?
+                            Mogu li upravljati s više skladišta?
                         </summary>
 
                         <p>
 
-                            Ja. Lager können separat verwaltet
-                            und mit ihren jeweiligen Lagerplätzen
-                            organisiert werden.
+                            Da. Više skladišta može se upravljati odvojeno
+                            i organizirati po odgovarajućim skladišnim mjestima.
 
                         </p>
 
@@ -1961,14 +1935,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Lagerplätze verwalten?
+                            Mogu li upravljati skladišnim lokacijama?
                         </summary>
 
                         <p>
 
-                            Ja. Lagerplätze können angelegt,
-                            aktiviert, deaktiviert und
-                            bestimmten Lagern zugeordnet werden.
+                            Da. Skladišna mjesta mogu se kreirati, aktivirati,
+                            deaktivirati i dodijeliti konkretnim skladištima.
 
                         </p>
 
@@ -1978,14 +1951,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Lieferanten-Bestellungen verwalten?
+                            Mogu li upravljati narudžbama dobavljačima?
                         </summary>
 
                         <p>
 
-                            Ja. Lieferanten-Bestellungen,
-                            Positionen, Mengen und Lieferstatus
-                            können zentral verwaltet werden.
+                            Da. Narudžbe dobavljačima, stavke, količine i status
+                            isporuke mogu se upravljati središnje.
 
                         </p>
 
@@ -1995,14 +1967,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Kundenbestellungen verwalten?
+                            Mogu li upravljati narudžbama kupaca?
                         </summary>
 
                         <p>
 
-                            Ja. Kunden und Bestellungen können
-                            verwaltet und mit den
-                            Bestandsprozessen verbunden werden.
+                            Da. Kupci i narudžbe mogu se upravljati te
+                            besprijekorno povezati s procesima zaliha.
 
                         </p>
 
@@ -2012,15 +1983,14 @@
                     <details>
 
                         <summary>
-                            Gibt es Inventur und Bestandsberichte?
+                            Postoje li inventura i izvještaji o zalihama?
                         </summary>
 
                         <p>
 
-                            Ja. Das System bietet Inventuren,
-                            Bestandsberichte, Lagerwert,
-                            Warenbewegungen, Niedrigbestand,
-                            Produkt- und Lieferantenberichte.
+                            Da. Sustav uključuje cjelovite alate za inventuru,
+                            izvještaje o zalihama, vrijednost skladišta, evidenciju kretanja robe,
+                            upozorenja o niskim zalihama te izvještaje o proizvodima i dobavljačima.
 
                         </p>
 
@@ -2030,14 +2000,13 @@
                     <details>
 
                         <summary>
-                            Können mehrere Benutzer mit dem System arbeiten?
+                            Može li više korisnika raditi sa sustavom istovremeno?
                         </summary>
 
                         <p>
 
-                            Ja. Benutzer und Rollen können
-                            zentral verwaltet und Zugriffe
-                            entsprechend den Aufgaben organisiert werden.
+                            Da. Korisnici i uloge mogu se upravljati središnje,
+                            a prava pristupa dodjeljivati prema radnim zadacima.
 
                         </p>
 
@@ -2047,14 +2016,13 @@
                     <details>
 
                         <summary>
-                            Kann ich Daten nach Excel exportieren?
+                            Mogu li izvoziti podatke u Excel?
                         </summary>
 
                         <p>
 
-                            Ja. Relevante Listen und Reports
-                            können für die weitere Verarbeitung
-                            nach Excel exportiert werden.
+                            Da. Svi relevantni popisi i izvještaji mogu se
+                            izvesti u Excel radi daljnje obrade.
 
                         </p>
 
@@ -2072,7 +2040,7 @@
              ========================================================= -->
 
         <section class="demo-section"
-                 id="demo">
+                 id="demohr">
 
             <div class="container">
 
@@ -2082,46 +2050,44 @@
                     <div class="demo-info">
 
                         <span class="section-tag">
-                            Persönliche Demo
+                            Personalizirani demo
                         </span>
 
 
                         <h2>
-                            Sehen Sie selbst,
+                            Pogledajte sami,
                             <em>
-                                was Ihr Lager heute schon können kann.
+                                što vaše skladište može postići već danas.
                             </em>
                         </h2>
 
 
                         <p>
 
-                            In einer persönlichen Demo zeigen wir
-                            Ihnen die wichtigsten Funktionen von
-                            Warehouse Management und besprechen,
-                            wie Ihre bestehenden Prozesse abgebildet
-                            werden können.
+                            U personaliziranoj demo prezentaciji 1-na-1 predstavit ćemo
+                            vam ključne funkcije upravljanja skladištem i raspraviti
+                            kako se vaši trenutni procesi mogu preslikati u sustav.
 
                         </p>
 
 
                         <p class="demo-note">
-                            ◷ Persönlich · Unverbindlich · Auf Deutsch
+                            ◷ Personalizirano · Bez obveze · Na hrvatskom
                         </p>
 
 
                         <div class="demo-benefits">
 
                             <span>
-                                ✓ Keine Vorbereitung notwendig
+                                ✓ Nije potrebna priprema
                             </span>
 
                             <span>
-                                ✓ An Ihrem Anwendungsfall orientiert
+                                ✓ Prilagođeno vašem konkretnom slučaju
                             </span>
 
                             <span>
-                                ✓ Konkrete nächste Schritte
+                                ✓ Jasni sljedeći koraci
                             </span>
 
                         </div>
@@ -2132,12 +2098,12 @@
                     <div class="demo-card glass-card">
 
                         <h3>
-                            Demo-Termin anfragen
+                            Zatražite termin za demo
                         </h3>
 
 
                         <p class="card-subtitle">
-                            Wir melden uns innerhalb eines Werktags bei Ihnen.
+                            Kontaktirat ćemo vas u roku od jednog radnog dana.
                         </p>
 
 
@@ -2152,12 +2118,12 @@
                             <div class="form-group">
 
                                 <label>
-                                    Vor- und Nachname *
+                                    Ime i prezime *
                                 </label>
 
                                 <InputText @bind-Value="DemoRequestItem.Name"
                                            class="form-control"
-                                           placeholder="Anna Müller" />
+                                           placeholder="Ana Horvat" />
 
                                 <ValidationMessage For="@(() => DemoRequestItem.Name)"
                                                    class="val-msg" />
@@ -2170,12 +2136,12 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Unternehmen *
+                                        Tvrtka *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Company"
                                                class="form-control"
-                                               placeholder="Muster GmbH" />
+                                               placeholder="Primjer d.o.o." />
 
                                     <ValidationMessage For="@(() => DemoRequestItem.Company)"
                                                        class="val-msg" />
@@ -2186,13 +2152,13 @@
                                 <div class="form-group">
 
                                     <label>
-                                        Geschäftliche E-Mail *
+                                        Poslovni e-mail *
                                     </label>
 
                                     <InputText @bind-Value="DemoRequestItem.Email"
                                                type="email"
                                                class="form-control"
-                                               placeholder="anna@muster.de" />
+                                               placeholder="ana@primjer.hr" />
 
                                     <ValidationMessage For="@(() => DemoRequestItem.Email)"
                                                        class="val-msg" />
@@ -2205,42 +2171,42 @@
                             <div class="form-group">
 
                                 <label>
-                                    Branche
+                                    Djelatnost
                                 </label>
 
                                 <InputSelect @bind-Value="DemoRequestItem.Industry"
                                              class="form-control">
 
                                     <option value="">
-                                        Bitte auswählen...
+                                        Molimo odaberite...
                                     </option>
 
-                                    <option value="Großhandel">
-                                        Großhandel
+                                    <option value="Veleprodaja">
+                                        Veleprodaja
                                     </option>
 
-                                    <option value="Baustoffhandel">
-                                        Baustoffhandel
+                                    <option value="Trgovina građevinskim materijalom">
+                                        Trgovina građevinskim materijalom
                                     </option>
 
-                                    <option value="Ersatzteilhandel">
-                                        Ersatzteilhandel
+                                    <option value="Trgovina rezervnim dijelovima">
+                                        Trgovina rezervnim dijelovima
                                     </option>
 
-                                    <option value="Produktionsbetrieb">
-                                        Produktionsbetrieb
+                                    <option value="Proizvodna tvrtka">
+                                        Proizvodna tvrtka
                                     </option>
 
-                                    <option value="Online-Handel / E-Commerce">
-                                        Online-Handel / E-Commerce
+                                    <option value="Online prodaja / E-trgovina">
+                                        Online prodaja / E-trgovina
                                     </option>
 
-                                    <option value="Technischer Handel">
-                                        Technischer Handel
+                                    <option value="Tehnička trgovina">
+                                        Tehnička trgovina
                                     </option>
 
-                                    <option value="Andere">
-                                        Andere
+                                    <option value="Drugo">
+                                        Drugo
                                     </option>
 
                                 </InputSelect>
@@ -2251,12 +2217,12 @@
                             <div class="form-group">
 
                                 <label>
-                                    Was möchten Sie verbessern?
+                                    Što želite poboljšati?
                                 </label>
 
                                 <InputTextArea @bind-Value="DemoRequestItem.Message"
                                                class="form-control textarea"
-                                               placeholder="Erzählen Sie uns kurz von Ihrem Lager, Ihren aktuellen Prozessen und Ihren Herausforderungen..." />
+                                               placeholder="Ukratko opišite svoje skladište, trenutačne procese i izazove s kojima se suočavate..." />
 
                             </div>
 
@@ -2264,7 +2230,7 @@
                             <button type="submit"
                                     class="btn btn-primary btn-full">
 
-                                Demo anfragen
+                                Zatražite demo
 
                                 <span>
                                     →
@@ -2277,9 +2243,9 @@
                             {
                                 <div class="alert alert-success">
 
-                                    Vielen Dank!
-                                    Ihre Anfrage ist eingegangen.
-                                    Wir melden uns bald bei Ihnen.
+                                    Hvala vam!
+                                    Vaš zahtjev je uspješno zaprimljen.
+                                    Uskoro ćemo vas kontaktirati.
 
                                 </div>
                             }
@@ -2317,41 +2283,41 @@
         <div class="container footer-inner">
 
             <span>
-                Warehouse Management
+                Upravljanje Skladištem
             </span>
 
 
             <div class="footer-links">
 
-                <a href="#loesung">
-                    Lösung
+                <a href="/hr#loesunghr">
+                    Rješenje
                 </a>
 
-                <a href="#funktionen">
-                    Funktionen
+                <a href="/hr#functionhr">
+                    Funkcije
                 </a>
 
-                <a href="#prozesse">
-                    Prozesse
+                <a href="/hr#prozessehr">
+                    Procesi
                 </a>
 
-                <a href="#branchen">
-                    Branchen
+                <a href="/hr#branchenhr">
+                    Industrije
                 </a>
 
-                <a href="#reports">
-                    Reports
+                <a href="/hr#reportshr">
+                    Izvještaji
                 </a>
 
-                <a href="#demo">
-                    Demo buchen
+                <a href="/hr#demohr">
+                    Zatražite demo
                 </a>
 
             </div>
 
 
             <small>
-                © 2026 Warehouse Management
+                © 2026 Upravljanje Skladištem
             </small>
 
         </div>
@@ -2370,7 +2336,7 @@
             .Trim('/');
 
         if (string.IsNullOrWhiteSpace(path))
-            return language == "de";
+            return language == "hr";
 
         return path.Equals(
             language,
@@ -2389,4 +2355,5 @@
 
         public string Message { get; set; } = string.Empty;
     }
+
 }
