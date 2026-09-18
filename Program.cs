@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using WarehouseManagement.Components;
 using WarehouseManagement.Components.Account;
+using WarehouseManagement.Configuration;
 using WarehouseManagement.Data;
 using WarehouseManagement.Services;
 
@@ -58,6 +59,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.Configure<ShopifyOptions>(
+    builder.Configuration.GetSection("Shopify"));
 
 // =========================================================
 // ASP.NET Core Identity

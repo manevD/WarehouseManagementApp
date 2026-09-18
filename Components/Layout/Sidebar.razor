@@ -3,11 +3,14 @@
 @using Microsoft.Extensions.Localization
 @using WarehouseManagement.Data
 @using WarehouseManagement.Localization
+@using Microsoft.Extensions.Options
+@using WarehouseManagement.Configuration
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<SharedResource> L
-
+@inject IOptions<ShopifyOptions> ShopifyOptions
 @rendermode InteractiveServer
 
 <aside class="sidebar">
@@ -239,6 +242,12 @@
                         <span>@L["RoleManagement"]</span>
 
                     </NavLink>
+                    @if (@ShopifyOptions.Value.SetShopify)
+                    {
+                        <a href="/settings/shopify">
+                            Shopify
+                        </a>
+                    }
 
                 }
             </div>

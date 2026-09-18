@@ -15,7 +15,8 @@ namespace WarehouseManagement.Data
         // =========================================================
         // DbSets
         // =========================================================
-
+        
+            
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Category> Categories { get; set; }
@@ -42,15 +43,65 @@ namespace WarehouseManagement.Data
         public DbSet<Inventory> Inventories { get; set; }
 
         public DbSet<InventoryItem> InventoryItems { get; set; }
+
+        public DbSet<ShopifyProductMapping> ShopifyProductMappings { get; set; }
+
+        public DbSet<ShopifyConnection> ShopifyConnections { get; set; }
+
         // =========================================================
         // Model Configuration
         // =========================================================
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<ShopifyConnection>(entity =>
+            {
+                entity.HasKey(x => x.Id);
 
+                entity.Property(x => x.ShopDomain)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.HasIndex(x => x.ShopDomain)
+                    .IsUnique();
+
+                entity.Property(x => x.ShopName)
+                    .HasMaxLength(200);
+
+                entity.Property(x => x.AccessToken)
+                    .HasMaxLength(2000);
+
+                entity.Property(x => x.LastSyncError)
+                    .HasMaxLength(500);
+            });
+            builder.Entity<ShopifyProductMapping>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.HasIndex(x => x.ProductId)
+                    .IsUnique();
+
+                entity.HasIndex(x => x.ShopifyVariantId)
+                    .IsUnique();
+
+                entity.Property(x => x.ShopifyProductId)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.ShopifyVariantId)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.ShopifyInventoryItemId)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
             // =====================================================
             // CATEGORY
             // =====================================================

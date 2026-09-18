@@ -1,0 +1,350 @@
+﻿@page "/settings/shopify"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Options
+@using WarehouseManagement.Data
+@using WarehouseManagement.Localization
+@using WarehouseManagement.Models
+@using WarehouseManagement.Configuration
+@using Microsoft.Extensions.Localization
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject IOptions<ShopifyOptions> ShopifyOptions
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>Shopify</PageTitle>
+
+<div class="settings-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Shopify</h1>
+
+            <p class="page-description">
+                @L["ShopifyIntegrationDescription"]
+            </p>
+        </div>
+    </div>
+
+
+    @if (!ShopifyOptions.Value.SetShopify)
+    {
+        <div class="alert alert-warning">
+            @L["ShopifyModuleDisabled"]
+        </div>
+    }
+    else
+    {
+        <div class="settings-card">
+
+            <div class="settings-card-header">
+                <div>
+                    <h2>@L["ShopifyConnection"]</h2>
+
+                    <p>
+                        @L["ShopifyConnectionDescription"]
+                    </p>
+                </div>
+
+                @if (Connection?.IsActive == true)
+                {
+                    <span class="status-badge status-active">
+                        @L["Connected"]
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge status-inactive">
+                        @L["NotConnected"]
+                    </span>
+                }
+            </div>
+
+
+            <div class="settings-card-body">
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        @L["ShopDomain"]
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           @bind="ShopDomain"
+                           placeholder="my-store.myshopify.com" />
+
+                    <small class="form-help">
+                        @L["ShopDomainHelp"]
+                    </small>
+
+                </div>
+
+
+                @if (Connection?.IsActive == true)
+                {
+                    <div class="connection-info">
+
+                        <div class="info-row">
+
+                            <span>
+                                @L["ShopName"]
+                            </span>
+
+                            <strong>
+                                @(Connection.ShopName ?? "-")
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span>
+                                @L["LastSync"]
+                            </span>
+
+                            <strong>
+                                @(Connection.LastSyncAt?.ToLocalTime()
+                                    .ToString("dd.MM.yyyy HH:mm")
+                                    ?? "-")
+                            </strong>
+
+                        </div>
+
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @ErrorMessage
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+                {
+                    <div class="alert alert-success">
+                        @SuccessMessage
+                    </div>
+                }
+
+
+                <div class="form-actions">
+
+                    @if (Connection?.IsActive == true)
+                    {
+                        <button type="button"
+                                class="btn btn-secondary"
+                                @onclick="TestConnection"
+                                disabled="@IsLoading">
+
+                            @if (IsLoading)
+                            {
+                                <span>...</span>
+                            }
+                            else
+                            {
+                                <span>🔌 @L["TestConnection"]</span>
+                            }
+
+                        </button>
+
+
+                        <button type="button"
+                                class="btn btn-danger"
+                                @onclick="Disconnect"
+                                disabled="@IsLoading">
+
+                            🔌 @L["Disconnect"]
+
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-primary"
+                                @onclick="Connect"
+                                disabled="@IsLoading">
+
+                            @if (IsLoading)
+                            {
+                                <span>...</span>
+                            }
+                            else
+                            {
+                                <span>🔗 @L["ConnectShopify"]</span>
+                            }
+
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private ShopifyConnection? Connection;
+
+    private string ShopDomain = string.Empty;
+
+    private bool IsLoading;
+
+    private string? ErrorMessage;
+
+    private string? SuccessMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadConnection();
+    }
+
+
+    private async Task LoadConnection()
+    {
+        await using var db =
+            await DbFactory.CreateDbContextAsync();
+
+        Connection =
+            await db.ShopifyConnections
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+        if (Connection is not null)
+        {
+            ShopDomain = Connection.ShopDomain;
+        }
+    }
+
+
+    private async Task Connect()
+    {
+        ErrorMessage = null;
+        SuccessMessage = null;
+
+        if (string.IsNullOrWhiteSpace(ShopDomain))
+        {
+            ErrorMessage =
+                L["ShopDomainRequired"];
+
+            return;
+        }
+
+        ShopDomain =
+            ShopDomain
+                .Trim()
+                .Replace("https://", "")
+                .Replace("http://", "")
+                .TrimEnd('/');
+
+        IsLoading = true;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            Connection =
+                await db.ShopifyConnections
+                    .FirstOrDefaultAsync();
+
+            if (Connection is null)
+            {
+                Connection = new ShopifyConnection
+                {
+                    ShopDomain = ShopDomain,
+                    IsActive = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                db.ShopifyConnections.Add(Connection);
+            }
+            else
+            {
+                Connection.ShopDomain = ShopDomain;
+                Connection.UpdatedAt = DateTime.UtcNow;
+            }
+
+            await db.SaveChangesAsync();
+
+            SuccessMessage =
+                L["ShopifyConnectionSaved"];
+
+            // IMPORTANT:
+            // Here we will later start the real Shopify
+            // OAuth / authentication flow.
+
+            await LoadConnection();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"{L["ErrorSaving"]}: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task TestConnection()
+    {
+        ErrorMessage = null;
+        SuccessMessage = null;
+
+        // Here we will call Shopify GraphQL.
+        // This comes after authentication is implemented.
+
+        SuccessMessage =
+            L["ShopifyConnectionTestSuccessful"];
+    }
+
+
+    private async Task Disconnect()
+    {
+        ErrorMessage = null;
+        SuccessMessage = null;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var connection =
+                await db.ShopifyConnections
+                    .FirstOrDefaultAsync();
+
+            if (connection is null)
+                return;
+
+            connection.IsActive = false;
+            connection.AccessToken = null;
+            connection.UpdatedAt = DateTime.UtcNow;
+
+            await db.SaveChangesAsync();
+
+            await LoadConnection();
+
+            SuccessMessage =
+                L["ShopifyDisconnected"];
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage =
+                $"{L["ErrorSaving"]}: {ex.Message}";
+        }
+    }
+}
