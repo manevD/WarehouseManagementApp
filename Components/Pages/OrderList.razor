@@ -1,4 +1,4 @@
-﻿@page "/orders"
+@page "/orders"
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -18,6 +18,7 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
+@inject OrderPdfService OrderPdf
 @inject IJSRuntime JS
 @inject IStringLocalizer<SharedResource> L
 
@@ -443,6 +444,16 @@
                                             👁
 
                                         </a>
+
+
+                                        <button type="button"
+                                                class="action-button"
+                                                title="@L["SaveAsPdf"]"
+                                                @onclick="() => SaveOrderAsPdf(order.Id)">
+
+                                            📄
+
+                                        </button>
 
 
                                         <a href="/orders/edit/@order.Id"
@@ -1238,6 +1249,48 @@
         {
             Console.WriteLine(
                 $"Excel export error: {ex}");
+        }
+    }
+
+
+    // =========================================================
+    // SAVE ORDER AS PDF
+    // =========================================================
+
+    private async Task SaveOrderAsPdf(int orderId)
+    {
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var order =
+                await db.Orders
+                    .Include(x => x.Customer)
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.Product)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == orderId);
+
+            if (order == null)
+                return;
+
+            var bytes =
+                OrderPdf.Generate(order);
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                $"{order.OrderNumber}.pdf",
+                "application/pdf",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"{L["PdfExportError"]}: {ex}");
         }
     }
 

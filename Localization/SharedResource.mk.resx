@@ -2811,4 +2811,11 @@
   <value>Вкупна разлика : 
 </value>
 					</data>
+	<data name="SaveAsPdf" xml:space="preserve">
+  <value>Зачувај како PDF</value>
+</data>
+
+	<data name="PdfExportError" xml:space="preserve">
+  <value>Грешка при PDF извозот</value>
+</data>
 </root>

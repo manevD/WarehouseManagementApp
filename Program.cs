@@ -24,11 +24,15 @@ builder.Services.AddRazorComponents()
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<IdentityRedirectManager>();
+
 builder.Services.AddScoped<ExcelExportService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<
     AuthenticationStateProvider,
     IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<PurchaseOrderPdfService>();
+builder.Services.AddScoped<OrderPdfService>();
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 // =========================================================
 // Authentication

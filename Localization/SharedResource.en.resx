@@ -2808,4 +2808,11 @@
   <value>Total difference : 
 </value>
 					</data>
+	<data name="SaveAsPdf" xml:space="preserve">
+  <value>Save as PDF</value>
+</data>
+
+	<data name="PdfExportError" xml:space="preserve">
+  <value>PDF export error</value>
+</data>
 </root>

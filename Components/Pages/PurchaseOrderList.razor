@@ -15,6 +15,7 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
 @inject ExcelExportService ExcelExport
+@inject PurchaseOrderPdfService PurchaseOrderPdf
 @inject IJSRuntime JS
 @inject IStringLocalizer<SharedResource> L
 
@@ -579,6 +580,16 @@
 
                                         </a>
 
+                                        <button type="button"
+                                                class="action-button"
+                                                title="@L["SaveAsPdf"]"
+                                                @onclick="() => DownloadPurchaseOrderPdf(order.Id)"
+                                                disabled="@IsPdfDownloading(order.Id)">
+
+                                            @(IsPdfDownloading(order.Id) ? "⏳" : "📄")
+
+                                        </button>
+
 
                                         @if (order.Status ==
                                              PurchaseOrderStatus.Entwurf)
@@ -759,6 +770,8 @@
     // =========================================================
 
     private bool IsLoading = true;
+
+    private int? PdfDownloadingOrderId;
 
 
     // =========================================================
@@ -1170,6 +1183,66 @@
         if (CurrentPage < TotalPages)
         {
             CurrentPage++;
+        }
+    }
+
+
+    // =========================================================
+    // PDF
+    // =========================================================
+
+    private bool IsPdfDownloading(int orderId)
+    {
+        return PdfDownloadingOrderId == orderId;
+    }
+
+
+    private async Task DownloadPurchaseOrderPdf(int orderId)
+    {
+        if (PdfDownloadingOrderId.HasValue)
+            return;
+
+        PdfDownloadingOrderId = orderId;
+
+        try
+        {
+            await using var db =
+                await DbFactory.CreateDbContextAsync();
+
+            var order =
+                await db.PurchaseOrders
+                    .AsNoTracking()
+                    .Include(x => x.Supplier)
+                    .Include(x => x.Items)
+                        .ThenInclude(x => x.Product)
+                    .FirstOrDefaultAsync(x => x.Id == orderId);
+
+            if (order == null)
+                return;
+
+            var bytes =
+                PurchaseOrderPdf.Generate(order);
+
+            var base64 =
+                Convert.ToBase64String(bytes);
+
+            var fileName =
+                $"Bestellung_{order.OrderNumber}.pdf";
+
+            await JS.InvokeVoidAsync(
+                "downloadFile",
+                fileName,
+                "application/pdf",
+                base64);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"{L["PdfExportError"]}: {ex}");
+        }
+        finally
+        {
+            PdfDownloadingOrderId = null;
         }
     }
 

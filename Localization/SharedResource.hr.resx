@@ -2808,4 +2808,12 @@
   <value>Ukupna razlika : 
 </value>
 					</data>
+	<data name="SaveAsPdf" xml:space="preserve">
+  <value>Spremi kao PDF</value>
+</data>
+
+	<data name="PdfExportError" xml:space="preserve">
+  <value>Greška pri izvozu PDF-a</value>
+</data>
+
 </root>

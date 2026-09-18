@@ -2809,4 +2809,11 @@
   <value>Gesamtdifferenz : 
 </value>
 					</data>
+	<data name="SaveAsPdf" xml:space="preserve">
+  <value>Als PDF speichern</value>
+</data>
+
+	<data name="PdfExportError" xml:space="preserve">
+  <value>Fehler beim PDF-Export</value>
+</data>
 </root>
