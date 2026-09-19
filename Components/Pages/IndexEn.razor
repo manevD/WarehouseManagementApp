@@ -7,10 +7,93 @@
 
 @layout PublicLayout
 
-<PageTitle>
-    Warehouse Management | Digital Solution for Modern Warehouses
-</PageTitle>
+<PageTitle>Warehouse Management – Digital Warehouse Management Software</PageTitle>
 
+<HeadContent>
+
+    <!-- SEO -->
+    <meta name="description"
+          content="Warehouse Management is a modern digital solution for managing warehouses efficiently. Manage products, inventory, incoming and outgoing goods, orders, suppliers and storage locations in one place." />
+
+    <meta name="keywords"
+          content="warehouse management, warehouse management software, inventory management, warehouse software, stock management, inventory control, warehouse system, product management, purchase orders, suppliers, warehouse locations" />
+
+    <meta name="robots"
+          content="index, follow" />
+
+    <meta name="author"
+          content="Warehouse Management" />
+
+    <meta name="language"
+          content="en" />
+
+    <!-- Canonical -->
+    <link rel="canonical"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/en")" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"
+          content="website" />
+
+    <meta property="og:title"
+          content="Warehouse Management – Digital Warehouse Management Software" />
+
+    <meta property="og:description"
+          content="A modern digital solution for managing warehouses, products, inventory, orders, suppliers and storage locations efficiently in one place." />
+
+    <meta property="og:url"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/en")" />
+
+    <meta property="og:site_name"
+          content="Warehouse Management" />
+
+    <meta property="og:image"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/images/wm-logo-premium.webp")" />
+
+    <meta property="og:image:width"
+          content="1200" />
+
+    <meta property="og:image:height"
+          content="630" />
+
+    <meta property="og:locale"
+          content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card"
+          content="summary_large_image" />
+
+    <meta name="twitter:title"
+          content="Warehouse Management – Digital Warehouse Management Software" />
+
+    <meta name="twitter:description"
+          content="Manage products, inventory, orders, suppliers and warehouse locations quickly and efficiently with Warehouse Management." />
+
+    <meta name="twitter:image"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/images/wm-logo-premium.webp")" />
+
+    <!-- Hreflang -->
+    <link rel="alternate"
+          hreflang="de"
+          href="@Navigation.BaseUri.TrimEnd('/')" />
+
+    <link rel="alternate"
+          hreflang="mk"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/mk")" />
+
+    <link rel="alternate"
+          hreflang="hr"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/hr")" />
+
+    <link rel="alternate"
+          hreflang="en"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/en")" />
+
+    <link rel="alternate"
+          hreflang="x-default"
+          href="@Navigation.BaseUri.TrimEnd('/')" />
+
+</HeadContent>
 <div class="page-wrapper">
 
     <!-- =========================================================
@@ -62,7 +145,9 @@
                    @onclick="CloseMenu">
                     Reports
                 </a>
-
+                <a href="/en#contacten">
+                    Contact
+                </a>
                 <a href="/en#faqen"
                    @onclick="CloseMenu">
                     FAQ
@@ -2048,7 +2133,93 @@
             </div>
 
         </section>
+        <section class="section contact-section"
+                 id="contacten">
 
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Contact
+                    </span>
+
+                    <h2>
+                        Do you have questions about Warehouse Management?
+                    </h2>
+
+                    <p>
+                        We are happy to advise you personally and show you
+                        how Warehouse Management can support your warehouse
+                        processes digitally and efficiently.
+                    </p>
+
+                </div>
+
+
+                <div class="benefits-grid">
+
+                    <!-- PHONE -->
+                    <a href="tel:+491797264709"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box">
+                            ☎
+                        </div>
+
+                        <h3>
+                            Phone
+                        </h3>
+
+                        <p>
+                            +49 179 7264709
+                        </p>
+
+                    </a>
+
+
+                    <!-- EMAIL -->
+                    <a href="mailto:info@webolar.de"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box orange">
+                            ✉
+                        </div>
+
+                        <h3>
+                            Email
+                        </h3>
+
+                        <p>
+                            info@webolar.de
+                        </p>
+
+                    </a>
+
+
+                    <!-- PERSONAL CONSULTATION -->
+                    <div class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box green">
+                            ✓
+                        </div>
+
+                        <h3>
+                            Personal Consultation
+                        </h3>
+
+                        <p>
+                            Contact us directly.
+                            We are happy to answer your questions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
         <!-- =========================================================
              DEMO
@@ -2323,16 +2494,24 @@
                 <a href="/en#reportsen">
                     Reports
                 </a>
-
+                <a href="/en#contacten">
+                    Contact
+                </a>
                 <a href="/en#demoen">
                     Request Demo
                 </a>
+                <a href="/privacy">
+                    Privacy
+                </a>
 
+                <a href="/impressum">
+                    Impressum
+                </a>
             </div>
 
 
             <small>
-                © 2026 Warehouse Management
+                © @DateTime.UtcNow.Date.Year Webolar. All rights reserved.
             </small>
 
         </div>

@@ -7,9 +7,72 @@
 
 @layout PublicLayout
 
-<PageTitle>
-    Warehouse Менаџмент | Дигитално решение за современи магацини
-</PageTitle>
+<PageTitle>Warehouse Management – Дигитално управување со магацин</PageTitle>
+
+<HeadContent>
+
+    <!-- SEO -->
+    <meta name="description"
+          content="Warehouse Management е современо дигитално решение за управување со магацини. Управувајте со производи, залихи, прием и испорака на стока, нарачки, добавувачи и магацински локации на едно место." />
+
+    <meta name="keywords"
+          content="управување со магацин, магацинско работење, магацински софтвер, софтвер за магацин, управување со залихи, залихи, магацин, магацинска евиденција, управување со производи, нарачки, добавувачи, инвентар" />
+
+    <meta name="robots"
+          content="index, follow" />
+
+    <meta name="author"
+          content="Warehouse Management" />
+
+    <meta name="language"
+          content="mk" />
+
+    <!-- Canonical -->
+    <link rel="canonical"
+          href="@Navigation.BaseUri.TrimEnd('/')/mk" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"
+          content="website" />
+
+    <meta property="og:title"
+          content="Warehouse Management – Дигитално управување со магацин" />
+
+    <meta property="og:description"
+          content="Современо дигитално решение за управување со магацини, производи, залихи, нарачки, добавувачи и магацински локации." />
+
+    <meta property="og:url"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/mk")" />
+
+    <meta property="og:site_name"
+          content="Warehouse Management" />
+
+    <meta property="og:image"
+          content="@($"{Navigation.BaseUri}images/wm-logo-premium.webp")" />
+
+    <meta property="og:image:width"
+          content="1200" />
+
+    <meta property="og:image:height"
+          content="630" />
+
+    <meta property="og:locale"
+          content="mk_MK" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card"
+          content="summary_large_image" />
+
+    <meta name="twitter:title"
+          content="Warehouse Management – Дигитално управување со магацин" />
+
+    <meta name="twitter:description"
+          content="Управувајте со производи, залихи, нарачки, добавувачи и магацински локации брзо и едноставно." />
+
+    <meta name="twitter:image"
+          content="@($"{Navigation.BaseUri}images/wm-logo-premium.webp")" />
+
+</HeadContent>
 
 <div class="page-wrapper">
 
@@ -61,6 +124,10 @@
                 <a href="/mk#reportsmk"
                    @onclick="CloseMenu">
                     Извештаи
+                </a>
+                <a href="/mk#kontaktmk"
+                   @onclick="CloseMenu">
+                    Контакт
                 </a>
 
                 <a href="/mk#faqmk"
@@ -2065,7 +2132,93 @@
             </div>
 
         </section>
+        <section class="section contact-section"
+                 id="kontaktmk">
 
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Контакт
+                    </span>
+
+                    <h2>
+                        Имате прашања за Warehouse Management?
+                    </h2>
+
+                    <p>
+                        Со задоволство ќе ве советуваме лично и ќе ви покажеме
+                        како Warehouse Management може да ги поддржи вашите
+                        магацински процеси дигитално и ефикасно.
+                    </p>
+
+                </div>
+
+
+                <div class="benefits-grid">
+
+                    <!-- ТЕЛЕФОН -->
+                    <a href="tel:+491797264709"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box">
+                            ☎
+                        </div>
+
+                        <h3>
+                            Телефон
+                        </h3>
+
+                        <p>
+                            +49 179 7264709
+                        </p>
+
+                    </a>
+
+
+                    <!-- Е-ПОШТА -->
+                    <a href="mailto:info@webolar.de"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box orange">
+                            ✉
+                        </div>
+
+                        <h3>
+                            Е-пошта
+                        </h3>
+
+                        <p>
+                            info@webolar.de
+                        </p>
+
+                    </a>
+
+
+                    <!-- ЛИЧНО СОВЕТУВАЊЕ -->
+                    <div class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box green">
+                            ✓
+                        </div>
+
+                        <h3>
+                            Лично советување
+                        </h3>
+
+                        <p>
+                            Контактирајте нè директно.
+                            Со задоволство ќе одговориме на вашите прашања.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
         <!-- =========================================================
              DEMO
@@ -2317,7 +2470,7 @@
         <div class="container footer-inner">
 
             <span>
-                Warehouse Менаџмент
+                Warehouse Management
             </span>
 
 
@@ -2343,15 +2496,26 @@
                     Извештаи
                 </a>
 
+                <a href="/mk#kontaktmk">
+                    Контакт
+                </a>
+
                 <a href="/mk#demomk">
                     Закажете демо
                 </a>
 
+                <a href="/privacy">
+                    Privacy
+                </a>
+
+                <a href="/impressum">
+                    Impressum
+                </a>
             </div>
 
 
             <small>
-                © 2026 Warehouse Менаџмент
+                © @DateTime.UtcNow.Date.Year Webolar. Сите права се задржани.
             </small>
 
         </div>

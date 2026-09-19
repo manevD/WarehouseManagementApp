@@ -7,9 +7,73 @@
 
 @layout PublicLayout
 
-<PageTitle>
-    Warehouse Management | Die digitale Lösung für moderne Lager
-</PageTitle>
+<PageTitle>Warehouse Management – Digitale Lagerverwaltung für moderne Unternehmen</PageTitle>
+
+<HeadContent>
+
+    <!-- SEO -->
+    <meta name="description"
+          content="Warehouse Management – die digitale Lösung für moderne Lager. Verwalten Sie Produkte, Lagerbestände, Warenbewegungen, Bestellungen, Lieferanten und Lagerorte effizient und übersichtlich." />
+
+    <meta name="keywords"
+          content="Warehouse Management, Lagerverwaltung, Lagerverwaltung Software, Warenwirtschaft, Bestandsverwaltung, Lager Software, Inventur, Warenbestand, Lagerbestand, digitale Lagerverwaltung" />
+
+    <meta name="robots"
+          content="index, follow" />
+
+    <meta name="author"
+          content="Warehouse Management" />
+
+    <meta name="language"
+          content="de" />
+
+    <!-- Canonical -->
+    <link rel="canonical"
+          href="@Navigation.BaseUri" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type"
+          content="website" />
+
+    <meta property="og:title"
+          content="Warehouse Management – Digitale Lagerverwaltung" />
+
+    <meta property="og:description"
+          content="Die digitale Lösung für moderne Lager. Produkte, Bestände, Warenbewegungen, Bestellungen und Lagerorte einfach und effizient verwalten." />
+
+    <meta property="og:url"
+          content="@Navigation.BaseUri" />
+
+    <meta property="og:site_name"
+          content="Warehouse Management" />
+
+    <meta property="og:image"
+          content="@($"{Navigation.BaseUri}images/wm-logo-premium.webp")" />
+
+    <meta property="og:image:width"
+          content="1200" />
+
+    <meta property="og:image:height"
+          content="630" />
+
+    <meta property="og:locale"
+          content="de_DE" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card"
+          content="summary_large_image" />
+
+    <meta name="twitter:title"
+          content="Warehouse Management – Digitale Lagerverwaltung" />
+
+    <meta name="twitter:description"
+          content="Die digitale Lösung für moderne Lager. Bestände, Produkte, Bestellungen und Warenbewegungen effizient verwalten." />
+
+    <meta name="twitter:image"
+          content="@($"{Navigation.BaseUri}images/wm-logo-premium.webp")" />
+
+</HeadContent>
+
 
 <div class="page-wrapper">
 
@@ -61,6 +125,10 @@
                 <a href="#reports"
                    @onclick="CloseMenu">
                     Reports
+                </a>
+                <a href="#kontakt"
+                   @onclick="CloseMenu">
+                    Kontakt
                 </a>
 
                 <a href="#faq"
@@ -2066,7 +2134,82 @@
 
         </section>
 
+        <!-- =========================================================
+     KONTAKT
+     ========================================================= -->
 
+        <section class="section contact-section"
+                 id="kontakt">
+
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Kontakt
+                    </span>
+
+                    <h2>
+                        Haben Sie Fragen zu Warehouse Management?
+                    </h2>
+
+                    <p>
+                        Wir beraten Sie gerne persönlich und zeigen Ihnen,
+                        wie Warehouse Management Ihre Lagerprozesse
+                        digital und effizient unterstützen kann.
+                    </p>
+
+                </div>
+
+                <div class="benefits-grid">
+
+                    <a href="tel:+491797264709"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box">
+                            ☎
+                        </div>
+
+                        <h3>Telefon</h3>
+
+                        <p>+49 179 7264709</p>
+
+                    </a>
+
+
+                    <a href="mailto:info@webolar.de"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box orange">
+                            ✉
+                        </div>
+
+                        <h3>E-Mail</h3>
+
+                        <p>info@webolar.de</p>
+
+                    </a>
+
+
+                    <div class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box green">
+                            ✓
+                        </div>
+
+                        <h3>Persönliche Beratung</h3>
+
+                        <p>
+                            Kontaktieren Sie uns direkt. Wir beantworten Ihre Fragen gerne.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
         <!-- =========================================================
              DEMO
              ========================================================= -->
@@ -2343,21 +2486,30 @@
                     Reports
                 </a>
 
+                <a href="#kontakt">
+                    Kontakt
+                </a>
+
                 <a href="#demo">
                     Demo buchen
+                </a>
+                <a href="/privacy">
+                    Privacy
+                </a>
+
+                <a href="/impressum">
+                    Impressum
                 </a>
 
             </div>
 
-
             <small>
-                © 2026 Warehouse Management
+                © @DateTime.UtcNow.Date.Year Webolar. Alle rechte vorbehalten.
             </small>
 
         </div>
 
     </footer>
-
 </div>
 
 

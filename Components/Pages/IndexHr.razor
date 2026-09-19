@@ -7,9 +7,89 @@
 
 @layout PublicLayout
 
-<PageTitle>
-    Upravljanje Skladištem | Digitalno rješenje za moderna skladišta
-</PageTitle>
+<PageTitle>Warehouse Management – Digitalno upravljanje skladištem</PageTitle>
+
+<HeadContent>
+
+    <!-- SEO -->
+    <meta name="description"
+          content="Warehouse Management je moderno digitalno rješenje za upravljanje skladištem. Upravljajte proizvodima, zalihama, ulazom i izlazom robe, narudžbama, dobavljačima i skladišnim lokacijama na jednom mjestu." />
+
+    <meta name="keywords"
+          content="upravljanje skladištem, skladišni softver, program za skladište, upravljanje zalihama, skladište, zalihe, evidencija skladišta, upravljanje proizvodima, narudžbe, dobavljači, inventura" />
+
+    <meta name="robots"
+          content="index, follow" />
+
+    <meta name="author"
+          content="Warehouse Management" />
+
+    <meta name="language"
+          content="hr" />
+
+    <!-- Canonical -->
+    <link rel="canonical"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/hr")" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"
+          content="website" />
+
+    <meta property="og:title"
+          content="Warehouse Management – Digitalno upravljanje skladištem" />
+
+    <meta property="og:description"
+          content="Moderno digitalno rješenje za upravljanje skladištem, proizvodima, zalihama, narudžbama, dobavljačima i skladišnim lokacijama." />
+
+    <meta property="og:url"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/hr")" />
+
+    <meta property="og:site_name"
+          content="Warehouse Management" />
+
+    <meta property="og:image"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/images/wm-logo-premium.webp")" />
+
+    <meta property="og:image:width"
+          content="1200" />
+
+    <meta property="og:image:height"
+          content="630" />
+
+    <meta property="og:locale"
+          content="hr_HR" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card"
+          content="summary_large_image" />
+
+    <meta name="twitter:title"
+          content="Warehouse Management – Digitalno upravljanje skladištem" />
+
+    <meta name="twitter:description"
+          content="Upravljajte proizvodima, zalihama, narudžbama, dobavljačima i skladišnim lokacijama brzo i jednostavno." />
+
+    <meta name="twitter:image"
+          content="@($"{Navigation.BaseUri.TrimEnd('/')}/images/wm-logo-premium.webp")" />
+
+    <!-- Hreflang -->
+    <link rel="alternate"
+          hreflang="de"
+          href="@Navigation.BaseUri.TrimEnd('/')" />
+
+    <link rel="alternate"
+          hreflang="mk"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/mk")" />
+
+    <link rel="alternate"
+          hreflang="hr"
+          href="@($"{Navigation.BaseUri.TrimEnd('/')}/hr")" />
+
+    <link rel="alternate"
+          hreflang="x-default"
+          href="@Navigation.BaseUri.TrimEnd('/')" />
+
+</HeadContent>
 
 <div class="page-wrapper">
 
@@ -62,7 +142,10 @@
                    @onclick="CloseMenu">
                     Izvještaji
                 </a>
-
+                <a href="/hr#kontakthr"
+                   @onclick="CloseMenu">
+                    Kontakt
+                </a>
                 <a href="/hr#faqhr"
                    @onclick="CloseMenu">
                     Česta pitanja
@@ -2033,7 +2116,92 @@
             </div>
 
         </section>
+        <section class="section contact-section"
+                 id="kontakthr">
 
+            <div class="container">
+
+                <div class="section-heading centered-heading">
+
+                    <span class="section-tag">
+                        Kontakt
+                    </span>
+
+                    <h2>
+                        Imate pitanja o Warehouse Managementu?
+                    </h2>
+
+                    <p>
+                        Rado ćemo vam osobno pomoći i pokazati kako Warehouse Management
+                        može digitalno i učinkovito podržati vaše skladišne procese.
+                    </p>
+
+                </div>
+
+
+                <div class="benefits-grid">
+
+                    <!-- TELEFON -->
+                    <a href="tel:+491797264709"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box">
+                            ☎
+                        </div>
+
+                        <h3>
+                            Telefon
+                        </h3>
+
+                        <p>
+                            +49 179 7264709
+                        </p>
+
+                    </a>
+
+
+                    <!-- E-MAIL -->
+                    <a href="mailto:info@webolar.de"
+                       class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box orange">
+                            ✉
+                        </div>
+
+                        <h3>
+                            E-mail
+                        </h3>
+
+                        <p>
+                            info@webolar.de
+                        </p>
+
+                    </a>
+
+
+                    <!-- OSOBNO SAVJETOVANJE -->
+                    <div class="benefit-card glass-card contact-card">
+
+                        <div class="icon-box green">
+                            ✓
+                        </div>
+
+                        <h3>
+                            Osobno savjetovanje
+                        </h3>
+
+                        <p>
+                            Kontaktirajte nas izravno.
+                            Rado ćemo odgovoriti na vaša pitanja.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
         <!-- =========================================================
              DEMO
@@ -2308,16 +2476,22 @@
                 <a href="/hr#reportshr">
                     Izvještaji
                 </a>
-
+                <a href="/hr#kontakthr">
+                    Kontakt
+                </a>
                 <a href="/hr#demohr">
                     Zatražite demo
                 </a>
+                <a href="/privacy">
+                    Privacy
+                </a>
 
+                <a href="/impressum">
+                    Impressum
+                </a>
             </div>
-
-
             <small>
-                © 2026 Upravljanje Skladištem
+                © @DateTime.UtcNow.Date.Year Webolar. Sva prava zadržana.
             </small>
 
         </div>

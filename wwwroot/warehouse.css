@@ -3221,3 +3221,218 @@ textarea.form-control {
             color: #ff7a00;
         }
 }
+/* =========================================================
+   CONTACT SECTION
+   ========================================================= */
+
+.contact-section {
+    position: relative;
+}
+
+    .contact-section .centered-heading {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+        .contact-section .centered-heading h2 {
+            margin-bottom: 20px;
+        }
+
+        .contact-section .centered-heading p {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+
+    /* =========================================================
+   CONTACT CARDS
+   ========================================================= */
+
+    .contact-section .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+
+    /* Remove all default <a> browser styling */
+
+    .contact-section a.contact-card,
+    .contact-section a.contact-card:link,
+    .contact-section a.contact-card:visited,
+    .contact-section a.contact-card:hover,
+    .contact-section a.contact-card:active {
+        display: block;
+        color: #111827 !important;
+        text-decoration: none !important;
+    }
+
+
+    /* Card */
+
+    .contact-section .contact-card {
+        position: relative;
+        min-height: 190px;
+        padding: 28px 30px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        cursor: pointer;
+    }
+
+
+        /* Hover */
+
+        .contact-section .contact-card:hover {
+            transform: translateY(-4px);
+            border-color: #cbd5e1;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+        }
+
+
+            /* Remove browser styling from EVERYTHING inside */
+
+            .contact-section .contact-card,
+            .contact-section .contact-card *,
+            .contact-section .contact-card:hover *,
+            .contact-section .contact-card:visited * {
+                text-decoration: none !important;
+            }
+
+
+                /* =========================================================
+   ICON
+   ========================================================= */
+
+                .contact-section .contact-card .icon-box {
+                    width: 48px;
+                    height: 48px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 22px;
+                    border-radius: 12px;
+                    background: #dbeafe;
+                    color: #111827 !important;
+                    font-size: 22px;
+                    line-height: 1;
+                    flex-shrink: 0;
+                }
+
+
+                    /* Same icon style for all contact cards */
+
+                    .contact-section .contact-card .icon-box.orange,
+                    .contact-section .contact-card .icon-box.green {
+                        background: #dbeafe;
+                        color: #111827 !important;
+                    }
+
+
+                /* =========================================================
+   HEADINGS
+   ========================================================= */
+
+                .contact-section .contact-card h3 {
+                    margin: 0 0 9px 0;
+                    color: #111827 !important;
+                    font-size: 18px;
+                    font-weight: 700;
+                    line-height: 1.35;
+                    text-decoration: none !important;
+                }
+
+
+                /* =========================================================
+   TEXT
+   ========================================================= */
+
+                .contact-section .contact-card p {
+                    margin: 0;
+                    color: #475569 !important;
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.6;
+                    text-decoration: none !important;
+                }
+
+
+                /* =========================================================
+   PHONE / EMAIL
+   ========================================================= */
+
+                .contact-section .contact-card[href^="tel:"] p,
+                .contact-section .contact-card[href^="mailto:"] p {
+                    color: #475569 !important;
+                }
+
+
+                /* =========================================================
+   FOCUS
+   ========================================================= */
+
+                .contact-section .contact-card:focus {
+                    outline: none;
+                }
+
+                .contact-section .contact-card:focus-visible {
+                    outline: 3px solid rgba(59, 130, 246, 0.25);
+                    outline-offset: 3px;
+                }
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .contact-section .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .contact-section .contact-card {
+        min-height: auto;
+        padding: 24px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .contact-section .centered-heading h2 {
+        font-size: 34px;
+        line-height: 1.1;
+    }
+
+    .contact-section .centered-heading p {
+        font-size: 15px;
+    }
+
+    .contact-section .contact-card {
+        padding: 22px;
+        border-radius: 16px;
+    }
+
+        .contact-section .contact-card .icon-box {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 18px;
+            border-radius: 11px;
+            font-size: 20px;
+        }
+
+        .contact-section .contact-card h3 {
+            font-size: 17px;
+        }
+
+        .contact-section .contact-card p {
+            font-size: 14px;
+        }
+}
